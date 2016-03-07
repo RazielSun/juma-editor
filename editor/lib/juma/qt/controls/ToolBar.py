@@ -5,7 +5,7 @@ from PySide.QtGui import QMenu, QMenuBar, QToolBar, QAction
 
 from juma.core import signals, app
 from Menu import MenuManager
-# from qt.IconCache import getIcon
+from juma.qt.IconCache import getIcon
 
 class ToolBarItem(object):
 	def __init__( self, name, **option ):
@@ -18,7 +18,7 @@ class ToolBarItem(object):
 		self.cmdArgs  = option.get( 'command_args', None )
 		self.groupId  = option.get( 'group', None )
 		iconName      = option.get( 'icon', None )
-		# self.icon     = iconName and getIcon( iconName ) or None
+		self.icon     = iconName and getIcon( iconName ) or None
 
 		self.parent  = None
 		self.owner   = None

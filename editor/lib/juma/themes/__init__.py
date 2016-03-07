@@ -46,7 +46,7 @@ def load_stylesheet(theme, pyside=True):
     :return the stylesheet string
     """
 
-    import themes.darkstyle.pyside_style_rc
+    import juma.themes.darkstyle.pyside_style_rc
     from PySide.QtCore import QFile, QTextStream
 
     basedir = os.path.abspath(os.path.dirname(__file__))

@@ -49,7 +49,7 @@ class EditorApp(object):
 		self.commandRegistry       = EditorCommandRegistry.get()
 		# self.remoteCommandRegistry = RemoteCommandRegistry.get()
 		
-		# self.registerDataPath( self.getPath('data') )
+		self.registerDataPath( self.getPath('data') )
 
 		signals.connect( 'module.register', self.onModuleRegister )
 
@@ -252,9 +252,6 @@ class EditorApp(object):
 
 	def registerDataPath( self, dataPath ):
 		self.dataPaths.append( dataPath )
-
-	def openEditor( self ):
-		pass
 
 	# def getProject( self ):
 	# 	return Project.get()

@@ -12,66 +12,66 @@ from juma.qt.controls.ToolBar   import ToolBarManager, ToolBarNode, ToolBarItem
 
 ##----------------------------------------------------------------##
 class QtEditorModule( EditorModule ):
-	# @abstractmethod
-	# def getMainWindow( self ):
-	# 	return None
+	@abstractmethod
+	def getMainWindow( self ):
+		return None
 
-	# def getModuleWindow( self ):
-	# 	return None
+	def getModuleWindow( self ):
+		return None
 
-	# def getDependency( self ):
-	# 	return self._dependency
+	def getDependency( self ):
+		return self._dependency
 
-	# def getBaseDependency( self ):
-	# 	return [ 'qt' ]
+	def getBaseDependency( self ):
+		return [ 'qt' ]
 
-	# def getQtSupport( self ):
-	# 	return self.getModule( 'qt' )
+	def getQtSupport( self ):
+		return self.getModule( 'qt' )
 
-	# def getQApplication( self ):
-	# 	qt = self.getModule( 'qt' )
-	# 	return qt.qtApp
+	def getQApplication( self ):
+		qt = self.getModule( 'qt' )
+		return qt.qtApp
 
-	# def addShortcut( self, context, keySeq, target, *args, **option ):
-	# 	contextWindow = None
-	# 	shortcutContext = None
+	def addShortcut( self, context, keySeq, target, *args, **option ):
+		contextWindow = None
+		shortcutContext = None
 		
-	# 	if context == 'main':
-	# 		contextWindow = self.getMainWindow()
-	# 		shortcutContext = Qt.WidgetWithChildrenShortcut
-	# 	elif context == 'module':
-	# 		contextWindow = self.getModuleWindow()
-	# 		shortcutContext = Qt.WidgetWithChildrenShortcut
-	# 	elif context == 'app':
-	# 		contextWindow = self.getMainWindow()
-	# 		shortcutContext = Qt.ApplicationShortcut
-	# 	elif isinstance( context, QtGui.QWidget ):
-	# 		contextWindow = context
-	# 		shortcutContext = Qt.WidgetWithChildrenShortcut
+		if context == 'main':
+			contextWindow = self.getMainWindow()
+			shortcutContext = Qt.WidgetWithChildrenShortcut
+		elif context == 'module':
+			contextWindow = self.getModuleWindow()
+			shortcutContext = Qt.WidgetWithChildrenShortcut
+		elif context == 'app':
+			contextWindow = self.getMainWindow()
+			shortcutContext = Qt.ApplicationShortcut
+		elif isinstance( context, QtGui.QWidget ):
+			contextWindow = context
+			shortcutContext = Qt.WidgetWithChildrenShortcut
 
-	# 	action = QtGui.QAction( contextWindow )
-	# 	action.setShortcut( QtGui.QKeySequence( keySeq ) )
-	# 	action.setShortcutContext( shortcutContext )
-	# 	contextWindow.addAction( action )
+		action = QtGui.QAction( contextWindow )
+		action.setShortcut( QtGui.QKeySequence( keySeq ) )
+		action.setShortcutContext( shortcutContext )
+		contextWindow.addAction( action )
 
-	# 	if isinstance( target, str ): #command
-	# 		def onAction():
-	# 			self.doCommand( target, **option )
-	# 		action.triggered.connect( onAction )
-	# 	elif isinstance( target, QtGui.QAction ):
-	# 		def onAction():
-	# 			target.trigger()
-	# 		action.triggered.connect( onAction )
-	# 	elif isinstance( target, ToolBarItem ):
-	# 		def onAction():
-	# 			target.trigger()
-	# 		action.triggered.connect( onAction )
-	# 	else: #callable
-	# 		def onAction():
-	# 			target( *args, **option )
-	# 		action.triggered.connect( onAction )
+		if isinstance( target, str ): #command
+			def onAction():
+				self.doCommand( target, **option )
+			action.triggered.connect( onAction )
+		elif isinstance( target, QtGui.QAction ):
+			def onAction():
+				target.trigger()
+			action.triggered.connect( onAction )
+		elif isinstance( target, ToolBarItem ):
+			def onAction():
+				target.trigger()
+			action.triggered.connect( onAction )
+		else: #callable
+			def onAction():
+				target( *args, **option )
+			action.triggered.connect( onAction )
 
-	# 	return action
+		return action
 
 	# def requestDockWindow( self, id = None, **windowOption ):
 	# 	if not id: id = self.getName()
@@ -97,35 +97,35 @@ class QtEditorModule( EditorModule ):
 	# 	self.retain( container )
 	# 	return container
 
-	# def setFocus(self):
-	# 	self.onSetFocus()
+	def setFocus(self):
+		self.onSetFocus()
 
-	# def setActiveWindow( self, window ):
-	# 	qt = self.getQtSupport()
-	# 	qt.qtApp.setActiveWindow(window)
+	def setActiveWindow( self, window ):
+		qt = self.getQtSupport()
+		qt.qtApp.setActiveWindow(window)
 
 	#CONFIG
-	# def getQtSettingObject( self ):
-	# 	return self.getQtSupport().getQtSettingObject()		
+	def getQtSettingObject( self ):
+		return self.getQtSupport().getQtSettingObject()		
 
-	# def setQtSetting( self, name, value ):
-	# 	name = 'modules/%s/%s' % (self.getName(), name)
-	# 	self.setGlobalQtSetting( name, value )
+	def setQtSetting( self, name, value ):
+		name = 'modules/%s/%s' % (self.getName(), name)
+		self.setGlobalQtSetting( name, value )
 
-	# def getQtSetting( self, name, default = None ):
-	# 	name = 'modules/%s/%s' % (self.getName(), name)
-	# 	return self.getGlobalQtSetting( name, default )
+	def getQtSetting( self, name, default = None ):
+		name = 'modules/%s/%s' % (self.getName(), name)
+		return self.getGlobalQtSetting( name, default )
 		
-	# def setGlobalQtSetting( self, name, value, **kwarg ):		
-	# 	setting = self.getQtSettingObject()
-	# 	setting.setValue(name, value)
-	# 	setting.sync()
+	def setGlobalQtSetting( self, name, value, **kwarg ):		
+		setting = self.getQtSettingObject()
+		setting.setValue(name, value)
+		setting.sync()
 
-	# def getGlobalQtSetting( self, name, default = None, **kwarg ):
-	# 	setting = self.getQtSettingObject()		
-	# 	v = setting.value(name)
-	# 	if v is None: return default
-	# 	return v
+	def getGlobalQtSetting( self, name, default = None, **kwarg ):
+		setting = self.getQtSettingObject()		
+		v = setting.value(name)
+		if v is None: return default
+		return v
 
 	#MENU CONTROL
 	def addMenuBar( self, name, menubar ):
@@ -198,25 +198,25 @@ class QtEditorModule( EditorModule ):
 
 
 	#WINDOW STATE
-	# def restoreWindowState(self, window, name=None):
-	# 	if not name:
-	# 		name  = window.objectName() or 'window'
-	# 	fullname = self.getName() + '_' + name
-	# 	geodata = self.getQtSetting('geom_'+fullname)
-	# 	if geodata:
-	# 		window.restoreGeometry( geodata )
-	# 	if hasattr( window, 'restoreState' ):
-	# 		statedata = self.getQtSetting('state_'+fullname)
-	# 		if statedata:
-	# 			window.restoreState(statedata)
+	def restoreWindowState(self, window, name=None):
+		if not name:
+			name  = window.objectName() or 'window'
+		fullname = self.getName() + '_' + name
+		geodata = self.getQtSetting('geom_'+fullname)
+		if geodata:
+			window.restoreGeometry( geodata )
+		if hasattr( window, 'restoreState' ):
+			statedata = self.getQtSetting('state_'+fullname)
+			if statedata:
+				window.restoreState(statedata)
 
-	# def saveWindowState(self, window, name=None):
-	# 	if not name:
-	# 		name = window.objectName() or 'window'
-	# 	fullname = self.getName() + '_' + name
-	# 	self.setQtSetting( 'geom_' + fullname, window.saveGeometry())
-	# 	if hasattr(window,'saveState'):
-	# 		self.setQtSetting( 'state_' + fullname, window.saveState())
+	def saveWindowState(self, window, name=None):
+		if not name:
+			name = window.objectName() or 'window'
+		fullname = self.getName() + '_' + name
+		self.setQtSetting( 'geom_' + fullname, window.saveGeometry())
+		if hasattr(window,'saveState'):
+			self.setQtSetting( 'state_' + fullname, window.saveState())
 			
 	def onMenu(self, menuItem):
 		pass

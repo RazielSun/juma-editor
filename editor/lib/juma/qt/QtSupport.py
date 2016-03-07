@@ -2,16 +2,15 @@ import sys
 import os
 
 from PySide import QtCore, QtGui
-from PySide.QtCore import QEventLoop, QEvent, QObject
+from PySide.QtCore import QEventLoop, QEvent, QObject, QSettings, QCoreApplication, QLocale
+
 from time import time
+import locale
 
 from juma.core import *
+import juma.themes
 
-from juma.qt.controls.Window    import MainWindow
 from QtEditorModule            	import QtEditorModule
-# from juma.qt.dialogs            import *
-
-# _QT_SETTING_FILE = 'qt.ini'
 
 ##----------------------------------------------------------------##
 class QtSupportEventFilter(QObject):
@@ -27,6 +26,7 @@ class QtSupportEventFilter(QObject):
 class QtSupport( QtEditorModule ):
 	def __init__( self ):
 		self.statusWindow = None
+		self.currentTheme = None
 
 	def getName( self ):
 		return 'qt'
@@ -37,38 +37,22 @@ class QtSupport( QtEditorModule ):
 	def getBaseDependency( self ):
 		return []
 
-	def setupStyle( self ):
-		# setup styles
-		# QtGui.QApplication.setStyle(QtGui.QStyleFactory.create('Windows'))
-		QtCore.QDir.setSearchPaths( 'theme', [ self.getApp().getPath( 'data/theme' ) ] )
-		QtGui.QFontDatabase.addApplicationFont( self.getApp().getPath( 'data/default_font.ttf' ) )
-		try:
-			# styleSheetName = 'dark.qss'
-			styleSheetName = 'gii.qss'
-			self.qtApp.setStyleSheet(
-					open( self.getApp().getPath( 'data/theme/' + styleSheetName ) ).read() 
-				)
-		except Exception, e:
-			# logging.info('style sheet not load',e)
-			self.qtApp.setStyleSheet('''
-				QWidget{
-					font: 10pt;				
-				}
+	def useStyle(self, style = ""):
+		self.currentTheme = style
+		self.applyTheme()
 
-				QMainWindow::Separator{
-					width:4px;
-					height:4px;
-					border:1px solid #c9c9c9;
-				}
-				''')
+	def applyTheme(self):
+		if self.currentTheme == "":
+			self.qtApp.setStyleSheet("")
+		else:
+			self.qtApp.setStyleSheet( juma.themes.load_stylesheet(self.currentTheme) )
 
 	def setupMainWindow( self ):
-		self.mainWindow = QtMainWindow( None )
+		self.mainWindow = QtMainWindow(None)
 		self.mainWindow.setBaseSize( 800, 600 )
 		self.mainWindow.resize( 800, 600 )
-		self.mainWindow.setWindowTitle( 'JUMA' )
-
 		self.mainWindow.setFixedSize(0,0)
+		
 		self.mainWindow.show()
 		self.mainWindow.raise_() #bring app to front
 		self.mainWindow.hide()
@@ -79,50 +63,50 @@ class QtSupport( QtEditorModule ):
 		
 		self.menu = self.addMenuBar( 'main', self.sharedMenuBar )
 		self.menu.addChild('&File').addChild([
-			'System Status',
-			'----',
-			'Asset Editor|F2',
-			'Scene Editor|F3',
-			'Debug View|F9',
-			'----',
-			'Refresh Theme',
 			'----',
 			'E&xit',
 			]
-		)	
-		self.menu.addChild('&Edit').addChild( [
-			'Undo|Ctrl+Z',
-			'Redo|Ctrl+Shift+Z',
+		)
+		self.menu.addChild('&Edit')
+		self.menu.addChild('&Window').addChild([
+			'----',
+			'Default Theme',
+			'Dark Theme',
+			'Robot Theme',
+			'----',
 			]
 		)
-		self.menu.addChild('&Find')
 
 	def getSharedMenubar( self ):
 		return self.sharedMenuBar
 
 	def showSystemStatusWindow( self ):
-		if not self.statusWindow:
-			self.statusWindow = self.requestSubWindow( 'SystemStatus',
-					title     = 'System Status',
-					size      = (200,200),
-					minSize   = (200,200)
-				)
-			self.statusWindow.body = self.statusWindow.addWidgetFromFile(
-					self.getApp().getPath( 'data/ui/SystemStatus.ui' )
-				)
-		self.statusWindow.show()
-		self.statusWindow.raise_()
+		pass
+		# if not self.statusWindow:
+		# 	self.statusWindow = self.requestSubWindow( 'SystemStatus',
+		# 			title     = 'System Status',
+		# 			size      = (200,200),
+		# 			minSize   = (200,200)
+		# 		)
+		# 	self.statusWindow.body = self.statusWindow.addWidgetFromFile(
+		# 			self.getApp().getPath( 'data/ui/SystemStatus.ui' )
+		# 		)
+		# self.statusWindow.show()
+		# self.statusWindow.raise_()
 
 	def setActiveWindow(self, window):
 		self.qtApp.setActiveWindow(window)
 
 	def onLoad( self ):
-		self.qtApp   = QtGui.QApplication( [ '-graphicssystem', 'opengl' ] )
-		# self.qtSetting = QtCore.QSettings(
-					# self.getProject().getConfigPath( _QT_SETTING_FILE ),
-					# QtCore.QSettings.IniFormat
-				# )
-		# self.setupStyle()
+		QLocale.setDefault(QLocale(QLocale.C))
+		locale.setlocale(locale.LC_ALL, 'C')
+
+		QCoreApplication.setOrganizationName("CloudTeam")
+		QCoreApplication.setOrganizationDomain("cloudteam.pro")
+		QCoreApplication.setApplicationName("JUMA Editor")
+
+		self.qtApp = QtGui.QApplication( sys.argv )
+		self.qtSetting = QtCore.QSettings()
 		
 		self.setupMainWindow()		
 
@@ -141,8 +125,6 @@ class QtSupport( QtEditorModule ):
 	def onUpdate( self ):
 		if not self.qtApp.hasPendingEvents(): return
 		self.qtApp.processEvents( QEventLoop.AllEvents, 4 )
-		# self.qtApp.processEvents( QEventLoop.AllEvents )
-		# self.qtApp.processEvents( QEventLoop.WaitForMoreEvents )
 	
 	def getMainWindow( self ):
 		return self.mainWindow
@@ -152,45 +134,55 @@ class QtSupport( QtEditorModule ):
 	
 	def onStart( self ):	
 		self.restoreWindowState( self.mainWindow )
+		self.currentTheme = self.qtSetting.value("theme/style", 'darkstyle')
+		self.applyTheme()
 		self.qtApp.processEvents( QEventLoop.AllEvents )
 
 	def onStop( self ):
+		self.qtSetting.setValue("theme/style", self.currentTheme)
 		self.saveWindowState( self.mainWindow )
 
 	def onMenu(self, node):
 		name = node.name
 		if name == 'exit':
 			self.getApp().stop()
-		elif name == 'system_status':
-			self.showSystemStatusWindow()
-		elif name == 'asset_editor':
-			self.getModule('asset_editor').setFocus()
-		elif name == 'scene_editor':
-			self.getModule('scene_editor').setFocus()
-		elif name == 'debug_view':
-			self.getModule('debug_view').setFocus()
-		elif name == 'refresh_theme':
-			self.setupStyle()
-		elif name == 'copy':
-			print 'copy'
-		elif name == 'paste':
-			print 'paste'
-		elif name == 'cut':
-			print 'cut'
+		elif name == 'default_theme':
+			self.useStyle()
+		elif name == 'dark_theme':
+			self.useStyle( 'darkstyle' )
+		elif name == 'robot_theme':
+			self.useStyle( 'robotstyle' )
+		# elif name == 'system_status':
+		# 	self.showSystemStatusWindow()
+		# elif name == 'asset_editor':
+		# 	self.getModule('asset_editor').setFocus()
+		# elif name == 'scene_editor':
+		# 	self.getModule('scene_editor').setFocus()
+		# elif name == 'debug_view':
+		# 	self.getModule('debug_view').setFocus()
+		# elif name == 'refresh_theme':
+		# 	self.setupStyle()
+		# elif name == 'copy':
+		# 	print 'copy'
+		# elif name == 'paste':
+		# 	print 'paste'
+		# elif name == 'cut':
+		# 	print 'cut'
 
-		elif name == 'undo':
-			stack = EditorCommandRegistry.get().getCommandStack( 'scene_editor' )
-			stack.undoCommand()
+		# elif name == 'undo':
+		# 	stack = EditorCommandRegistry.get().getCommandStack( 'scene_editor' )
+		# 	stack.undoCommand()
 
-		elif name == 'redo':
-			stack = EditorCommandRegistry.get().getCommandStack( 'scene_editor' )
-			stack.redoCommand()
-			
+		# elif name == 'redo':
+		# 	stack = EditorCommandRegistry.get().getCommandStack( 'scene_editor' )
+		# 	stack.redoCommand()
+
+	
 
 QtSupport().register()
 
 ##----------------------------------------------------------------##
-class QtMainWindow( MainWindow ):
+class QtMainWindow( QtGui.QMainWindow ):
 	"""docstring for QtMainWindow"""
 	def __init__(self, parent,*args):
 		super(QtMainWindow, self).__init__(parent, *args)

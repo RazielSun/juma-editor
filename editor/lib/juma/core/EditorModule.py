@@ -77,8 +77,8 @@ class EditorModule( ResHolder ):
 	# def getAssetLibrary( self ):
 	# 	return self.getProject().getAssetLibrary()
 	
-	# def getManager(self):
-	# 	return self._manager
+	def getManager(self):
+		return self._manager
 
 	def getModule(self, name):
 		return self._manager.getModule(name)
@@ -106,21 +106,21 @@ class EditorModule( ResHolder ):
 	# 	fullname = self.getName()+'/'+name
 	# 	return self.getApp().getConfig( fullname, defaultValue )
 	
-	# def isDependencyReady(self):
-	# 	dep=self.getActualDependency()
-	# 	if not dep: return True
+	def isDependencyReady(self):
+		dep=self.getActualDependency()
+		if not dep: return True
 
-	# 	manager=self.getManager()
-	# 	for name in dep:
-	# 		m = manager.affirmModule(name)
-	# 		if not getattr(m,'alive'): return False
-	# 	return True
+		manager=self.getManager()
+		for name in dep:
+			m = manager.affirmModule(name)
+			if not getattr(m,'alive'): return False
+		return True
 	
-	# def isDependentUnloaded(self): #FIXME: use a clear name		
-	# 	dependent = self.dependent #added by manager
-	# 	for m in dependent:
-	# 		if m.alive: return False
-	# 	return True
+	def isDependentUnloaded(self): #FIXME: use a clear name		
+		dependent = self.dependent #added by manager
+		for m in dependent:
+			if m.alive: return False
+		return True
 
 	def load(self):
 		logging.info('loading module:%s' % self.getName())

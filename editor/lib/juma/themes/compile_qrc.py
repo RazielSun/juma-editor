@@ -57,6 +57,7 @@ def compile_all():
 
     print("Compiling for PySide: style.qrc -> pyside_style_rc.py")
     os.system("pyside-rcc -py3 darkstyle/style.qrc -o darkstyle/pyside_style_rc.py")
+    os.system("pyside-rcc -py3 robotstyle/style.qrc -o robotstyle/pyside_style_rc.py")
 
 
 if __name__ == "__main__":
