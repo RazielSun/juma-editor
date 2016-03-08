@@ -14,7 +14,7 @@ import juma.themes
 from juma.qt.controls.Window    import MainWindow
 from juma.qt.QtEditorModule     import QtEditorModule
 
-from Scene                      import SceneMOAI
+from Scene                      import SceneObject, getSceneByType
 from SceneWidgets               import SceneSizeComboBox
 
 ##----------------------------------------------------------------##
@@ -136,11 +136,10 @@ class SceneEditor( QtEditorModule ):
         return tab.currentWidget()
 
     def newScene(self, type = 'moai'):
-        scene = None
-        if type == 'moai':
-            scene = SceneMOAI( None )
-
+        scene = getSceneByType( type )
         if scene:
+            obj = SceneObject()
+            scene.setObject( obj )
             self.addScene( scene )
         return scene
 

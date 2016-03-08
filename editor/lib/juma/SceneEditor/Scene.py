@@ -8,24 +8,39 @@ from juma.moai import *
 
 ##----------------------------------------------------------------##
 class SceneObject(object):
-	_type = None
 	_width = 100
 	_height = 100
-	_workingDir = None
-	_runningFile = None
+	_dir_path = ""
+	_source = None
 
 	def __init__(self):
 		pass
+
+	def setSize(self, width, height):
+		self._width = width
+		self._height = height
+
+	def setSource(self, source, dir_path):
+		self._source = source
+		self._dir_path = dir_path
+
+	def width(self):
+		return self._width
+
+	def height(self):
+		return self._height
+
+	def source(self):
+		return self._source
+
+	def dir(self):
+		return self._dir_path
 
 ##----------------------------------------------------------------##
 class Scene( QtGui.QScrollArea ):
 	_object = None
 	_type = None
 	_name = 'Scene'
-	_width = 100
-	_height = 100
-	_workingDir = None
-	_runningFile = None
 
 	def __init__( self, parent=None ):
 		super(Scene, self).__init__( parent )
@@ -43,9 +58,14 @@ class Scene( QtGui.QScrollArea ):
 	def setName( self, index ):
 		self._name = 'Scene {}'.format(index)
 
-	@abstractmethod
 	def getName( self ):
 		return self._name
+
+	def setObject( self, obj ):
+		self._object = obj
+
+	def obj(self):
+		return self._object
 
 	@abstractmethod
 	def start( self ):
@@ -85,12 +105,10 @@ class SceneMOAI( Scene ):
 	def setName( self, index ):
 		self._name = 'MOAI {}'.format(index)
 
-	def getName( self ):
-		return self._name
-
 	def start( self ):
-		if self._runningFile:
-			self.moaiWidget.runScript( self._runningFile )
+		obj_ = self.obj()
+		if obj_ and obj_.source():
+			self.moaiWidget.runScript( obj_.source() )
 
 	def pause( self ):
 		pass
@@ -99,14 +117,19 @@ class SceneMOAI( Scene ):
 		pass
 
 	def reload( self ):
-		if self._workingDir and self._runningFile:
-			self.openFile( self._runningFile, self._workingDir )
+		obj_ = self.obj()
+		if obj_ and obj_.source():
+			self.openFile( obj_.source(), obj_.dir() )
 
 	def resize( self, width, height ):
-		self.moaiWidget.resize( width, height )
+		obj_ = self.obj()
+		if obj_:
+			obj_.setSize( width, height )
+			self.moaiWidget.resize( obj_.width(), obj_.height() )
 
 	def openProject( self ):
-		fileName, filt = QtGui.QFileDialog.getOpenFileName(self, "Run Script", self._workingDir or "~", "Lua source (*.lua )")
+		obj_ = self.obj()
+		fileName, filt = QtGui.QFileDialog.getOpenFileName(self, "Run Script", obj_.dir() or "~", "Lua source (*.lua )")
 		if fileName:
 			dir_path = os.path.dirname(fileName)
 			file_path = os.path.basename(fileName)
@@ -121,8 +144,8 @@ class SceneMOAI( Scene ):
 		self.moaiWidget.loadEditorFramework()
 		self.moaiWidget.loadLuaFramework()
 
-		self._runningFile = filename
-		self._workingDir = workingDir
+		obj_ = self.obj()
+		obj_.setSource( filename, workingDir )
 		self.start()
 
     # def readSettings(self):
@@ -176,4 +199,10 @@ class SceneMOAI( Scene ):
 #         # self.runAttempts = 0
 #         # settings = QSettings()
 #         # settings.setValue("main/openProjectAttempts", self.runAttempts)
-    
+
+def getSceneByType( type ):
+	scene = None
+	if type == 'moai':
+		scene = SceneMOAI( None )
+
+	return scene
