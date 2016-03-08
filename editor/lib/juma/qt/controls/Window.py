@@ -45,13 +45,9 @@ class MainWindow( QMainWindow ):
         font.setPointSize(11)
         self.setFont(font)
 
-        # signals.connect( 'app.open_file', self.onAppOpenFile )
-
         self.tabWidget = QtGui.QTabWidget( None )
         self.tabWidget.setTabsClosable( True )
         self.tabWidget.setMovable( False )
-        # self.tabWidget.currentChanged.connect(self.onTabBarChange)
-        # self.tabWidget.tabCloseRequested.connect(self.onTabBarClose)
 
         self.setCentralWidget( self.tabWidget )
 

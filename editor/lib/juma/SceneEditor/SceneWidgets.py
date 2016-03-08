@@ -46,6 +46,10 @@ class SceneSizeComboBox( QtGui.QComboBox ):
 					self.setCurrentIndex(index)
 					break
 
+	def findSizeObj(self, obj):
+		if obj and obj.width and obj.height:
+			self.findSize( obj.width(), obj.height() )
+
 	def onSizeChanged(self, index):
 		size = self.sizes[index]
 		if 'width' in size and 'height' in size:

@@ -22,6 +22,7 @@ class SceneEditor( QtEditorModule ):
     _name       = 'scene_editor'
     _dependency = ['qt']
     _scenes = 0
+    _currentIndex = -1
 
     def __init__( self ):
         pass
@@ -37,6 +38,9 @@ class SceneEditor( QtEditorModule ):
         self.mainToolBar = self.addToolBar( 'scene', self.mainWindow.requestToolBar( 'main' ) )     
         self.statusBar = QtGui.QStatusBar()
         self.mainWindow.setStatusBar(self.statusBar)
+
+        self.getTab().currentChanged.connect(self.onSceneChanged)
+        self.getTab().tabCloseRequested.connect(self.onSceneCloseRequested)
 
     def onLoad( self ):
         self.setupMainWindow()
@@ -99,33 +103,29 @@ class SceneEditor( QtEditorModule ):
     def saveWindowState( self, window ):
         super(SceneEditor, self).saveWindowState( window )
         settings = self.getQtSettingObject()
-        # beginWriteArray
+        tab = self.getTab()
+        settings.beginWriteArray(self.getName() + '_tab_widgets')
+        for i in range(tab.count()):
+            settings.setArrayIndex(i)
+            scene = tab.widget(i)
+            settings.setValue( "type", scene.getType() )
+            obj_ = scene.obj()
+            settings.setValue( "object", obj_ )
+        settings.endArray()
 
     def restoreWindowState( self, window ):
         super(SceneEditor, self).restoreWindowState( window )
         settings = self.getQtSettingObject()
-        # beginReadArray
-
-    # Callbacks Toolbar and Menu
-    def onMenu(self, node):
-        name = node.name
-
-        if name == 'new_scene_moai':
-            self.newScene()
-        elif name == 'open_scene':
-            self.openSceneProject()
-        elif name == 'reload_scene':
-            self.reloadSceneProject()
-
-    def onTool(self, node):
-        name = node.name
-
-        if name == 'new_scene_moai':
-            self.newScene()
-        elif name == 'open_scene':
-            self.openSceneProject()
-        elif name == 'reload_scene':
-            self.reloadSceneProject()
+        size = settings.beginReadArray(self.getName() + '_tab_widgets')
+        for i in range(size):
+            settings.setArrayIndex(i)
+            type = settings.value( "type" )
+            scene = getSceneByType( type )
+            obj = settings.value( "object" )
+            if scene:
+                scene.setObject( obj )
+                self.addScene( scene )
+        settings.endArray()
 
     # Scene methods
     def getTab(self):
@@ -159,7 +159,48 @@ class SceneEditor( QtEditorModule ):
         if scene:
             scene.reload()
 
+    def swapProjects(self, prevIndex, nextIndex):
+        tab = self.getTab()
+        if prevIndex >= 0:
+            prevScene = tab.widget( prevIndex )
+            prevScene.pause()
+
+        nextScene = tab.widget( nextIndex )
+        nextScene.start()
+        self.sceneSizeWidget.findSizeObj( nextScene.obj() )
+        self._currentIndex = nextIndex
+
     # Callbacks
+    def onMenu(self, node):
+        name = node.name
+
+        if name == 'new_scene_moai':
+            self.newScene()
+        elif name == 'open_scene':
+            self.openSceneProject()
+        elif name == 'reload_scene':
+            self.reloadSceneProject()
+
+    def onTool(self, node):
+        name = node.name
+
+        if name == 'new_scene_moai':
+            self.newScene()
+        elif name == 'open_scene':
+            self.openSceneProject()
+        elif name == 'reload_scene':
+            self.reloadSceneProject()
+
+    def onSceneChanged(self, index):
+        self.swapProjects(self._currentIndex, index)
+
+    def onSceneCloseRequested(self, index):
+        tab = self.getTab()
+        closeScene = tab.widget( index )
+        closeScene.stop()
+
+        tab.removeTab( index )
+
     def sceneChangeSize(self, size):
         scene = self.getScene()
         if scene:

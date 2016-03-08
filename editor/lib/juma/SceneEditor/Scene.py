@@ -8,8 +8,8 @@ from juma.moai import *
 
 ##----------------------------------------------------------------##
 class SceneObject(object):
-	_width = 100
-	_height = 100
+	_width = 640
+	_height = 480
 	_dir_path = ""
 	_source = None
 
@@ -38,9 +38,10 @@ class SceneObject(object):
 
 ##----------------------------------------------------------------##
 class Scene( QtGui.QScrollArea ):
-	_object = None
-	_type = None
 	_name = 'Scene'
+	_type = None
+	_object = None
+	_started = False
 
 	def __init__( self, parent=None ):
 		super(Scene, self).__init__( parent )
@@ -62,10 +63,14 @@ class Scene( QtGui.QScrollArea ):
 		return self._name
 
 	def setObject( self, obj ):
-		self._object = obj
+		if obj:
+			self._object = obj
 
 	def obj(self):
 		return self._object
+
+	def getType(self):
+		return self._type
 
 	@abstractmethod
 	def start( self ):
@@ -106,9 +111,9 @@ class SceneMOAI( Scene ):
 		self._name = 'MOAI {}'.format(index)
 
 	def start( self ):
-		obj_ = self.obj()
-		if obj_ and obj_.source():
-			self.moaiWidget.runScript( obj_.source() )
+		if not self._started:
+			self.reload()
+			self._started = True
 
 	def pause( self ):
 		pass
@@ -146,7 +151,7 @@ class SceneMOAI( Scene ):
 
 		obj_ = self.obj()
 		obj_.setSource( filename, workingDir )
-		self.start()
+		self.moaiWidget.runScript( obj_.source() )
 
     # def readSettings(self):
     #     settings = QSettings()
