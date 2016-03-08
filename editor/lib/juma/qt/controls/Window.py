@@ -72,10 +72,6 @@ class MainWindow( QMainWindow ):
         toolbar._icon_size = iconSize
         return toolbar
 
-    # def closeEvent(self, event):
-    #     self.writeSettings()
-    #     event.accept()
-
     # def onAppOpenFile(self):
     #     layer = self.layersEditor.currentLayer()
     #     if layer:

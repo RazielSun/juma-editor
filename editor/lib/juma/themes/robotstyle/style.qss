@@ -217,7 +217,7 @@ QRadioButton::indicator:unchecked:disabled
 
 QMenuBar
 {
-    background-color: #302F2F;
+    background-color: #2d3036;
     color: silver;
 }
 
@@ -321,7 +321,7 @@ QMenu::right-arrow {
 QWidget:disabled
 {
     color: #404040;
-    background-color: #302F2F;
+    background-color: #2d3036;
 }
 
 QAbstractItemView
@@ -540,7 +540,7 @@ QSizeGrip {
 
 QMainWindow::separator
 {
-    background-color: #302F2F;
+    background-color: #2d3036;
     color: white;
     padding-left: 4px;
     spacing: 2px;
@@ -588,7 +588,7 @@ QStackedWidget
 
 QToolBar {
     border: 1px transparent #393838;
-    background: 1px solid #302F2F;
+    background: 1px solid #2d3036;
     font-weight: bold;
 }
 
@@ -625,7 +625,7 @@ QPushButton
 
 QPushButton:disabled
 {
-    background-color: #302f2f;
+    background-color: #2d3036;
     border-width: 1px;
     border-color: #3A3939;
     border-style: solid;
@@ -678,6 +678,10 @@ QComboBox QAbstractItemView
     border-radius: 2px;
     border: 1px solid #444;
     selection-background-color: #5285a6;
+}
+
+QComboBox QAbstractItemView::item {
+    margin-top: 2px;
 }
 
 QComboBox::drop-down
