@@ -3,7 +3,7 @@ from abc        import ABCMeta, abstractmethod
 
 from PySide import QtCore, QtGui
 
-from juma.core import app, signals
+from juma.core import app, signals, Project
 from juma.moai import *
 
 ##----------------------------------------------------------------##
@@ -41,10 +41,13 @@ class Scene( QtGui.QScrollArea ):
 	_name = 'Scene'
 	_type = None
 	_object = None
+	_project = None
 	_started = False
 
 	def __init__( self, parent=None ):
 		super(Scene, self).__init__( parent )
+
+		self._project = Project( self._type )
 
 		self.setBackgroundRole(QtGui.QPalette.Dark)
 		self.setAlignment(QtCore.Qt.AlignCenter)
@@ -68,6 +71,12 @@ class Scene( QtGui.QScrollArea ):
 
 	def obj(self):
 		return self._object
+
+	def setProject( self, project ):
+		self._project = project
+
+	def project( self ):
+		return self._project
 
 	def getType(self):
 		return self._type

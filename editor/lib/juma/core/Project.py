@@ -14,6 +14,10 @@ import jsonHelper
 
 ##----------------------------------------------------------------##
 class Project(object):
+	_type = None
 
-	def __init__(self):
-		pass
+	def __init__(self, type):
+		self._type = type
+
+	def getType(self):
+		return self._type
