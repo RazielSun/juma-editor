@@ -134,7 +134,7 @@ class QtSupport( QtEditorModule ):
 	
 	def onStart( self ):	
 		self.restoreWindowState( self.mainWindow )
-		self.currentTheme = self.qtSetting.value("theme/style", 'darkstyle')
+		self.currentTheme = self.qtSetting.value("theme/style", 'robotstyle')
 		self.applyTheme()
 		self.qtApp.processEvents( QEventLoop.AllEvents )
 

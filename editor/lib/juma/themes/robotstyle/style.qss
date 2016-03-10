@@ -777,17 +777,15 @@ QTabBar::tab:selected:disabled {
 QTabBar::tab
 {
     min-width: 80px;
-    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444);
-    color:#999;
-    padding:5px 10px 3px 10px;
-    border-bottom: 1px solid #222;
-    border-top: 1px solid #222;
-    border-right: 1px solid #222;
-    border-left: 0px solid #222;
+    min-height: 10px;
+    background-color: #282828; /* QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444); */
+    color: #999;
+    padding: 5px 10px;
+    border: 0px solid #222;
 }
 
 QTabBar::tab:first{
-    border-left: 1px solid #222;
+    border-left: 0px solid #222;
 }
 
 QTabBar::tab:!selected:hover
@@ -799,103 +797,52 @@ QTabBar::tab:selected
 {
     padding-top: 4px;
     padding-bottom: 4px;
-    color:#cdcdcd;  
+    color: #cdcdcd;  
 }
 
 /* TOP TABS */
 QTabBar::tab:top {
-    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444);
+    background-color: #282828; /* QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444); */
     border-top: 1px solid #3c3c3c;
     border-bottom: 0;
 }
 
 QTabBar::tab:top:selected
 {
-    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333);
+    background-color: #323232; /* QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333); */
     border-top: 1px solid #eda900;
 }
 
 /* BOTTOM TABS */
 QTabBar::tab:bottom {
-    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #555);
+    background-color: #282828; /* QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #555, stop:1 #444); */
     border-bottom: 1px solid #3c3c3c;
     border-top: 0;
 }
 
 QTabBar::tab:bottom:selected
 {
-    background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #333, stop:1 #444);
+    background-color: #323232; /* QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:0 #444, stop:1 #333); */
     border-bottom: 1px solid #eda900;
 }
 
-/* LEFT TABS */
-QTabBar::tab:left {
-    color: #b1b1b1;
-    border: 1px solid #4A4949;
-    border-left: 1px transparent black;
-    background-color: #424141;
-    padding: 5px;
-    border-top-right-radius: 2px;
-    border-bottom-right-radius: 2px;
-}
-
-QTabBar::tab:left:!selected
-{
-    color: #b1b1b1;
-    background-color: #201F1F;
-    border: 1px transparent #4A4949;
-    border-right: 1px transparent #4A4949;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-}
-
-QTabBar::tab:left:!selected:hover {
-    background-color: #48576b;
-}
-
-
-/* RIGHT TABS */
-QTabBar::tab:right {
-    color: #b1b1b1;
-    border: 1px solid #4A4949;
-    border-right: 1px transparent black;
-    background-color: #424141;
-    padding: 5px;
-    border-top-left-radius: 2px;
-    border-bottom-left-radius: 2px;
-}
-
-QTabBar::tab:right:!selected
-{
-    color: #b1b1b1;
-    background-color: #201F1F;
-    border: 1px transparent #4A4949;
-    border-right: 1px transparent #4A4949;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-}
-
-QTabBar::tab:right:!selected:hover {
-    background-color: #48576b;
-}
-
 QTabBar QToolButton::right-arrow:enabled {
-     image: url(:/qss_icons/rc/right_arrow.png);
- }
+    image: url(:/qss_icons/rc/right_arrow.png);
+}
 
- QTabBar QToolButton::left-arrow:enabled {
-     image: url(:/qss_icons/rc/left_arrow.png);
- }
+QTabBar QToolButton::left-arrow:enabled {
+    image: url(:/qss_icons/rc/left_arrow.png);
+}
 
 QTabBar QToolButton::right-arrow:disabled {
-     image: url(:/qss_icons/rc/right_arrow_disabled.png);
- }
+    image: url(:/qss_icons/rc/right_arrow_disabled.png);
+}
 
- QTabBar QToolButton::left-arrow:disabled {
-     image: url(:/qss_icons/rc/left_arrow_disabled.png);
- }
+QTabBar QToolButton::left-arrow:disabled {
+    image: url(:/qss_icons/rc/left_arrow_disabled.png);
+}
 
-
+/* DOCK WIDGET */
 QDockWidget {
     border: 1px solid #403F3F;
     titlebar-close-icon: url(:/qss_icons/rc/close.png);
@@ -917,6 +864,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     background: rgba(255, 255, 255, 10);
 }
 
+/* */
 QTreeView, QListView
 {
     border: 1px solid #444;

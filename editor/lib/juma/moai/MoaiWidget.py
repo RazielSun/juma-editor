@@ -140,10 +140,13 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         return key
 
     # Game Management API
-    def refreshContext(self):
+    def deleteContext(self):
         context = AKUGetContext ()
         if context:
             AKUDeleteContext ( context )
+
+    def refreshContext(self):
+        self.deleteContext()
 
         AKUAppInitialize ()
         AKUModulesAppInitialize ()
