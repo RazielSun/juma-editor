@@ -30,7 +30,7 @@ class TopEditorModule( QtEditorModule ):
 		self.onSetupMainWindow( window )
 
 	def onSetupMainWindow( self, window ):
-		pass	
+		pass
 
 	def load( self ):
 		self.commands = self._app.createCommandStack( self.getName() )
