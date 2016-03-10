@@ -48,6 +48,7 @@ class MainWindow( QMainWindow ):
         self.tabWidget = QtGui.QTabWidget( None )
         self.tabWidget.setTabsClosable( True )
         self.tabWidget.setMovable( False )
+        # self.tabWidget.setDocumentMode( True )
 
         self.setCentralWidget( self.tabWidget )
 
