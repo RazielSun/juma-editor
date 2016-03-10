@@ -2,8 +2,8 @@
 
 # Resource object code
 #
-# Created: чт марта 10 12:14:00 2016
-#      by: The Resource Compiler for PySide (Qt v4.8.5)
+# Created: Fri Mar 11 00:40:28 2016
+#      by: The Resource Compiler for PySide (Qt v4.8.7)
 #
 # WARNING! All changes made in this file will be lost!
 
