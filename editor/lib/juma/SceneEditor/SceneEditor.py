@@ -7,7 +7,7 @@ from PySide import QtCore, QtGui
 
 from juma.core import app, signals
 from juma.qt.controls.Window    import MainWindow
-from juma.qt.TopEditorModule    import TopEditorModule, SubEditorModule
+from juma.qt.TopEditorModule    import TopEditorModule, QtMainWindow, SubEditorModule
 
 from Scene                      import SceneObject, getSceneByType
 from SceneWidgets               import SceneSizeComboBox
@@ -19,23 +19,16 @@ class SceneEditor( TopEditorModule ):
     _scenes = 0
     _currentIndex = -1
 
-    def setupMainWindow( self ):
-        self.mainWindow = QtMainWindow(None)
-        self.mainWindow.setBaseSize( 800, 600 )
-        self.mainWindow.resize( 800, 600 )
-        self.mainWindow.setWindowTitle( 'Scene Editor' )
+    def getWindowTitle( self ):
+        return 'Scene Editor'
+
+    def onLoad( self ):
         self.mainWindow.setMenuWidget( self.getQtSupport().getSharedMenubar() )
-        self.mainWindow.module = self
         
         self.mainToolBar = self.addToolBar( 'scene', self.mainWindow.requestToolBar( 'main' ) )     
-        self.statusBar = QtGui.QStatusBar()
-        self.mainWindow.setStatusBar(self.statusBar)
 
         self.getTab().currentChanged.connect(self.onSceneChanged)
         self.getTab().tabCloseRequested.connect(self.onSceneCloseRequested)
-
-    def onLoad( self ):
-        self.setupMainWindow()
         self.containers  = {}
 
         self.sceneSizeWidget = SceneSizeComboBox( None )
@@ -173,18 +166,6 @@ class SceneEditor( TopEditorModule ):
             scene.resize( size['width'], size['height'] )
             scene.reload()
         print('Scene {} size changed: {} x {}'.format(scene.getName(), size['width'], size['height']))
-
-class QtMainWindow( MainWindow ):
-    """docstring for QtMainWindow"""
-    def __init__(self, parent,*args):
-        super(QtMainWindow, self).__init__(parent, *args)
-    
-    def closeEvent(self,event):
-        if self.module.alive:
-            self.hide()
-            event.ignore()
-        else:
-            pass
 
 ##----------------------------------------------------------------##
 class SceneEditorModule( SubEditorModule ):
