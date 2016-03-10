@@ -8,7 +8,7 @@ from time import time
 import locale
 
 from juma.core import *
-import juma.themes
+import themes
 
 from QtEditorModule            	import QtEditorModule
 
@@ -45,7 +45,7 @@ class QtSupport( QtEditorModule ):
 		if self.currentTheme == "":
 			self.qtApp.setStyleSheet("")
 		else:
-			self.qtApp.setStyleSheet( juma.themes.load_stylesheet(self.currentTheme) )
+			self.qtApp.setStyleSheet( themes.load_stylesheet(self.currentTheme) )
 
 	def setupMainWindow( self ):
 		self.mainWindow = QtMainWindow(None)

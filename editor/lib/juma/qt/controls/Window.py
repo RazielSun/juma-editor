@@ -10,7 +10,6 @@ from juma.qt.helpers.helper import restrainWidgetToScreen
 
 from juma.core import signals
 from juma.qt.controls.Menu import MenuManager
-from juma.qt.controls.Layers import LayerWidget
 
 def getWindowScreenId(window):
     desktop=QtGui.QApplication.desktop()
