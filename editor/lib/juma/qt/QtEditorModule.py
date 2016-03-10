@@ -73,29 +73,29 @@ class QtEditorModule( EditorModule ):
 
 		return action
 
-	# def requestDockWindow( self, id = None, **windowOption ):
-	# 	if not id: id = self.getName()
-	# 	mainWindow = self.getMainWindow()
-	# 	container = mainWindow.requestDockWindow( id, **windowOption )
-	# 	# self.containers[id] = container
-	# 	self.retain( container )
-	# 	return container
+	def requestDockWindow( self, id = None, **windowOption ):
+		if not id: id = self.getName()
+		mainWindow = self.getMainWindow()
+		container = mainWindow.requestDockWindow( id, **windowOption )
+		# self.containers[id] = container
+		self.retain( container )
+		return container
 
-	# def requestSubWindow( self, id = None, **windowOption ):
-	# 	if not id: id = self.getName()
-	# 	mainWindow = self.getMainWindow()
-	# 	container = mainWindow.requestSubWindow( id, **windowOption )
-	# 	# self.containers[id] = container
-	# 	self.retain( container )
-	# 	return container
+	def requestSubWindow( self, id = None, **windowOption ):
+		if not id: id = self.getName()
+		mainWindow = self.getMainWindow()
+		container = mainWindow.requestSubWindow( id, **windowOption )
+		# self.containers[id] = container
+		self.retain( container )
+		return container
 
-	# def requestDocumentWindow( self, id = None, **windowOption ):
-	# 	if not id: id = self.getName()
-	# 	mainWindow = self.getMainWindow()
-	# 	container = mainWindow.requestDocumentWindow( id, **windowOption )
-	# 	# self.containers[id] = container
-	# 	self.retain( container )
-	# 	return container
+	def requestDocumentWindow( self, id = None, **windowOption ):
+		if not id: id = self.getName()
+		mainWindow = self.getMainWindow()
+		container = mainWindow.requestDocumentWindow( id, **windowOption )
+		# self.containers[id] = container
+		self.retain( container )
+		return container
 
 	def setFocus(self):
 		self.onSetFocus()

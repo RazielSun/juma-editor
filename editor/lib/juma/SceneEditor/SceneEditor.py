@@ -4,28 +4,20 @@ import sys
 import os
 
 from PySide import QtCore, QtGui
-from PySide.QtCore import QEventLoop, QEvent, QObject, QSettings, QCoreApplication, QLocale
-
-from time import time
-import locale
 
 from juma.core import app, signals
-import juma.themes
 from juma.qt.controls.Window    import MainWindow
-from juma.qt.QtEditorModule     import QtEditorModule
+from juma.qt.TopEditorModule    import TopEditorModule, SubEditorModule
 
 from Scene                      import SceneObject, getSceneByType
 from SceneWidgets               import SceneSizeComboBox
 
 ##----------------------------------------------------------------##
-class SceneEditor( QtEditorModule ):
+class SceneEditor( TopEditorModule ):
     _name       = 'scene_editor'
     _dependency = ['qt']
     _scenes = 0
     _currentIndex = -1
-
-    def __init__( self ):
-        pass
 
     def setupMainWindow( self ):
         self.mainWindow = QtMainWindow(None)
@@ -70,34 +62,6 @@ class SceneEditor( QtEditorModule ):
     def onStart( self ):
         self.setFocus()
         self.restoreWindowState( self.mainWindow )
-    
-    def onStop( self ):
-        self.saveWindowState( self.mainWindow )
-
-    #controls
-    def onSetFocus(self):
-        self.mainWindow.show()
-        self.mainWindow.raise_()
-        self.mainWindow.setFocus()
-
-    #resource provider
-    # def requestDockWindow( self, id, **dockOptions ):
-    #     container = self.mainWindow.requestDockWindow(id, **dockOptions)        
-    #     self.containers[id] = container
-    #     return container
-
-    # def requestSubWindow( self, id, **windowOption ):
-    #     container = self.mainWindow.requestSubWindow(id, **windowOption)        
-    #     self.containers[id] = container
-    #     return container
-
-    # def requestDocumentWindow( self, id, **windowOption ):
-    #     container = self.mainWindow.requestDocuemntWindow(id, **windowOption)
-    #     self.containers[id] = container
-    #     return container
-
-    def getMainWindow( self ):
-        return self.mainWindow
 
     # Save and Restore States
     def saveWindowState( self, window ):
@@ -223,13 +187,28 @@ class QtMainWindow( MainWindow ):
             pass
 
 ##----------------------------------------------------------------##
-class SceneEditorModule( QtEditorModule ):
-    def getMainWindow( self ):
-        return self.getModule('scene_editor').getMainWindow()
+class SceneEditorModule( SubEditorModule ):
+    def getParentModuleId( self ):
+        return 'scene_editor'
+
+    def getSceneEditor( self ):
+        return self.getParentModule()
+
+    # def getSceneToolManager( self ):
+    #     return self.getModule( 'scene_tool_manager' )
+
+    # def changeSceneTool( self, toolId ):
+    #     self.getSceneToolManager().changeTool( toolId )
+
+    # def getAssetSelection( self ):
+    #     return getSelectionManager( 'asset' ).getSelection()
+
+##----------------------------------------------------------------##
+def getSceneSelectionManager():
+    return app.getModule('scene_editor').selectionManager
 
 ##----------------------------------------------------------------##
 SceneEditor().register()
-
 
 ##----------------------------------------------------------------##
 # class TabSceneEditor( QtGui.QTabWidget ):

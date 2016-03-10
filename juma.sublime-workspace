@@ -348,10 +348,26 @@
 	"buffers":
 	[
 		{
-			"file": "editor/lib/juma/core/EditorApp.py",
+			"file": "editor/lib/juma/themes/robotstyle/style.qss",
 			"settings":
 			{
-				"buffer_size": 7345,
+				"buffer_size": 23135,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "editor/lib/juma/qt/QtSupport.py",
+			"settings":
+			{
+				"buffer_size": 5800,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "editor/lib/juma/SceneEditor/SceneEditor.py",
+			"settings":
+			{
+				"buffer_size": 9309,
 				"line_ending": "Unix"
 			}
 		},
@@ -359,15 +375,7 @@
 			"file": ".gitignore",
 			"settings":
 			{
-				"buffer_size": 82,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "editor/lib/juma/core/Project.py",
-			"settings":
-			{
-				"buffer_size": 364,
+				"buffer_size": 89,
 				"line_ending": "Unix"
 			}
 		},
@@ -375,23 +383,15 @@
 			"file": "editor/lib/juma/SceneEditor/Scene.py",
 			"settings":
 			{
-				"buffer_size": 5545,
+				"buffer_size": 4320,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "editor/lib/juma/core/__init__.py",
+			"file": "editor/lib/juma/moai/MoaiWidget.py",
 			"settings":
 			{
-				"buffer_size": 600,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": ".gitmodules",
-			"settings":
-			{
-				"buffer_size": 108,
+				"buffer_size": 7707,
 				"line_ending": "Unix"
 			}
 		}
@@ -445,11 +445,19 @@
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/core",
+		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/themes",
+		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/themes/robotstyle",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/lua",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/tools"
 	],
 	"file_history":
 	[
+		"/Users/rzs/Developer/Moai/juma-editor/.gitmodules",
+		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/core/__init__.py",
+		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/SceneEditor/Scene.py",
+		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/core/Project.py",
+		"/Users/rzs/Developer/Moai/juma-editor/.gitignore",
+		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/core/EditorApp.py",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/core/tool.py",
 		"/Users/rzs/Developer/Moai/juma-editor/README.md",
 		"/Users/rzs/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
@@ -571,17 +579,11 @@
 		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/framework/storage/JsonStorageEngine.lua",
 		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/scenes/ExtraDialog.lua",
 		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/scenes/MorelivesDialog.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/external/moai-android-twitter/manifest_declarations.xml",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/external/moai-android-tapjoy/manifest_declarations.xml",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/external/moai-android-fortumo/manifest_declarations.xml",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/external/moai-android-facebook/manifest_declarations.xml",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/external/moai-android-chartboost/manifest_declarations.xml",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/external/moai-android-adcolony/manifest_declarations.xml",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/gamelogic/GameBottomBarView.lua"
+		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/external/moai-android-twitter/manifest_declarations.xml"
 	],
 	"find":
 	{
-		"height": 23.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -603,6 +605,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Projec",
+			"SceneMOAI",
+			"QTabBa",
 			"getScoreResponse",
 			"startTool",
 			"ide",
@@ -727,10 +732,7 @@
 			"MapBottomBarView",
 			"star2.png",
 			"map_navbar_bg.png",
-			"stars_progress_bar_active.png",
-			"small_star_spot.png",
-			"small_star.png",
-			"star_spot.png"
+			"stars_progress_bar_active.png"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -759,24 +761,54 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "editor/lib/juma/core/EditorApp.py",
+					"file": "editor/lib/juma/themes/robotstyle/style.qss",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7345,
+						"buffer_size": 23135,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								14846,
+								14829
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 11077.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "editor/lib/juma/qt/QtSupport.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5800,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3494,
+								3494
 							]
 						],
 						"settings":
@@ -785,35 +817,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3252.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": ".gitignore",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 82,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								82,
-								82
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Material Theme/langs/Git.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2177.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 4,
@@ -821,27 +825,29 @@
 				},
 				{
 					"buffer": 2,
-					"file": "editor/lib/juma/core/Project.py",
+					"file": "editor/lib/juma/SceneEditor/SceneEditor.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 364,
+						"buffer_size": 9309,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								364,
-								364
+								5786,
+								5786
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.sublime-syntax"
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 2003.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
@@ -849,76 +855,19 @@
 				},
 				{
 					"buffer": 3,
-					"file": "editor/lib/juma/SceneEditor/Scene.py",
+					"file": ".gitignore",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5545,
+						"buffer_size": 89,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								147,
-								147
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "editor/lib/juma/core/__init__.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 600,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								600,
-								600
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": ".gitmodules",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 108,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								47,
-								47
+								88,
+								88
 							]
 						],
 						"settings":
@@ -929,7 +878,66 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "editor/lib/juma/SceneEditor/Scene.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4320,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2219,
+								2209
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1426.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "editor/lib/juma/moai/MoaiWidget.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7707,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4227,
+								4227
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1802.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -984,8 +992,20 @@
 		"selected_items":
 		[
 			[
-				"sce",
+				"moai",
+				"editor/lib/juma/moai/MoaiWidget.py"
+			],
+			[
+				"scene",
 				"editor/lib/juma/SceneEditor/Scene.py"
+			],
+			[
+				"sce",
+				"editor/lib/juma/SceneEditor/SceneEditor.py"
+			],
+			[
+				"qts",
+				"editor/lib/juma/qt/QtSupport.py"
 			],
 			[
 				"pro",
@@ -1444,10 +1464,6 @@
 				"lua/framework/core/Layer.lua"
 			],
 			[
-				"scene",
-				"lua/framework/core/Scene.lua"
-			],
-			[
 				"scrol",
 				"lua/framework/gui/ScrollView.lua"
 			],
@@ -1486,14 +1502,6 @@
 			[
 				"billi",
 				"lua/src/init/Billing.lua"
-			],
-			[
-				"gameb",
-				"lua/src/gamelogic/GameBottomBarView.lua"
-			],
-			[
-				"gamen",
-				"lua/src/gamelogic/GameNavBar.lua"
 			]
 		],
 		"width": 0.0
