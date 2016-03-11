@@ -4,18 +4,15 @@ import os
 
 from PySide import QtCore, QtGui
 
-from juma.core import app, signals, Project
+from juma.core import app, signals
 from juma.moai import *
 
 ##----------------------------------------------------------------##
-class SceneHeaderObject(object):
+class SceneHeader(object):
 	_width = 640
 	_height = 480
 	_dir_path = ""
 	_source = None
-
-	def __init__(self):
-		pass
 
 	def setSize(self, width, height):
 		self._width = width
@@ -41,6 +38,21 @@ class SceneHeaderObject(object):
 		return os.path.join( self._dir_path, self._source )
 
 ##----------------------------------------------------------------##
+class SceneProject(object):
+	_type = 'moai'
+	_header = None
+
+	def getType(self):
+		return self._type
+
+	# Header
+	def setHeader( self, header ):
+		if header:
+			self._header = header
+
+	def head(self):
+		return self._header
+##----------------------------------------------------------------##
 class Scene( QtGui.QScrollArea ):
 	_sid = -1
 	_name = 'None'
@@ -52,7 +64,7 @@ class Scene( QtGui.QScrollArea ):
 	def __init__( self, parent=None ):
 		super(Scene, self).__init__( parent )
 
-		self._project = Project()
+		self._project = SceneProject()
 
 		self.setBackgroundRole(QtGui.QPalette.Dark)
 		self.setAlignment(QtCore.Qt.AlignCenter)
@@ -74,9 +86,12 @@ class Scene( QtGui.QScrollArea ):
 	def getName( self ):
 		return self._name
 
-	# Object and Project
+	# Scene Header and Project
 	def setHeader( self, header ):
 		self._project.setHeader( header )
+		obj_ = self.head()
+		if obj_:
+			self.moaiWidget.resize( obj_.width(), obj_.height() )
 
 	def head(self):
 		return self._project.head()
@@ -90,6 +105,8 @@ class Scene( QtGui.QScrollArea ):
 	# Lifecycle methods
 	@abstractmethod
 	def start( self ):
+		self.moaiWidget.checkContext()
+		self.moaiWidget.makeCurrent()
 		if not self._started:
 			self.reload()
 			self._started = True
@@ -97,13 +114,14 @@ class Scene( QtGui.QScrollArea ):
 
 	@abstractmethod
 	def pause( self ):
+		self.moaiWidget.pause( True )
 		signals.emitNow( 'scene.pause', self._sid )
 
 	@abstractmethod
 	def stop( self ):
 		signals.emitNow( 'scene.stop', self._sid )
 		self.moaiWidget.deleteContext()
-		self.moaiWidget.finalize()
+		# self.moaiWidget.finalize()
 
 	# Methods
 	@abstractmethod

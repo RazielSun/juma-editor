@@ -8,7 +8,7 @@ from PySide import QtCore, QtGui
 from juma.core import app, signals
 from juma.qt.TopEditorModule    import TopEditorModule, QtMainWindow, SubEditorModule
 
-from Scene                      import SceneHeaderObject, getSceneByType
+from Scene                      import SceneHeader, getSceneByType
 from SceneWidgets               import SceneSizeComboBox
 
 ##----------------------------------------------------------------##
@@ -64,7 +64,7 @@ class SceneEditor( TopEditorModule ):
         for i in range(tab.count()):
             settings.setArrayIndex(i)
             scene = tab.widget(i)
-            settings.setValue( "type", scene.getType() )
+            settings.setValue( "type", scene.project().getType() )
             obj_ = scene.head()
             settings.setValue( "object", obj_ )
         settings.endArray()
@@ -94,7 +94,7 @@ class SceneEditor( TopEditorModule ):
     def newScene(self, type = 'moai'):
         scene = getSceneByType( type )
         if scene:
-            obj = SceneHeaderObject()
+            obj = SceneHeader()
             scene.setHeader( obj )
             self.addScene( scene )
         return scene

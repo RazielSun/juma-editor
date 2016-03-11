@@ -19,6 +19,7 @@ KEYBOARD, POINTER, MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT, MOUSE_WHEEL, TOTAL = r
 KeyCodes = moaipy.KeyCodesDict()
 
 class MOAIWidget( QtOpenGL.QGLWidget ):
+    _context = None
     windowReady = False
     contextReady = False
     initialized = False
@@ -32,17 +33,14 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         self.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.setMouseTracking(True)
 
+        self._context = None
         self.refreshContext()
 
         timer = QtCore.QBasicTimer()
         timer.start(1000 * AKUGetSimStep(), self)
         self.timer = timer
 
-
     # Qt callbacks and overrides
-    def sizeHint(self):
-        return QtCore.QSize(640, 480)
-
     def resizeGL(self, w, h):
         if self.windowReady:
             AKUSetScreenSize(w, h)
@@ -51,7 +49,6 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
     def initializeGL(self):
         self.glReady = True
         glClearColor(0, 0, 0, 1)
-        
 
     def paintGL(self):
         if self.windowReady:
@@ -78,10 +75,8 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
 
         if button == QtCore.Qt.LeftButton:
             AKUEnqueueButtonEvent ( 0, MOUSE_LEFT, True)
-
         elif button == QtCore.Qt.RightButton:
             AKUEnqueueButtonEvent ( 0, MOUSE_RIGHT, True)
-
         elif button == QtCore.Qt.MidButton:
             AKUEnqueueButtonEvent ( 0, MOUSE_MIDDLE, True)
 
@@ -90,10 +85,8 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
 
         if button == QtCore.Qt.LeftButton:
             AKUEnqueueButtonEvent ( 0, MOUSE_LEFT, False)
-
         elif button == QtCore.Qt.RightButton:
             AKUEnqueueButtonEvent ( 0, MOUSE_RIGHT, False)
-
         elif button == QtCore.Qt.MidButton:
             AKUEnqueueButtonEvent ( 0, MOUSE_MIDDLE, False)
 
@@ -102,13 +95,10 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         
         if key == QtCore.Qt.Key_Shift:
             AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_SHIFT"], True)
-
         elif key == QtCore.Qt.Key_Control:
             AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_CONTROL"], True)
-
         elif key == QtCore.Qt.Key_Alt:
             AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_ALT"], True)
-
         else:
             key = self.normalizeKeyCode(key)
             if key:
@@ -120,13 +110,10 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
 
         if key == QtCore.Qt.Key_Shift:
             AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_SHIFT"], False)
-
         elif key == QtCore.Qt.Key_Control:
             AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_CONTROL"], False)
-
         elif key == QtCore.Qt.Key_Alt:
             AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_ALT"], False)
-
         else:
             key = self.normalizeKeyCode(key)
             if key:
@@ -141,10 +128,16 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         return key
 
     # Game Management API
+    def checkContext(self):
+        if self._context:
+            pass
+            # AKUCheckContext ( self._context )
+            # AKUPause( False )
+
     def deleteContext(self):
-        context = AKUGetContext ()
-        if context:
-            AKUDeleteContext ( context )
+        if self._context:
+            AKUDeleteContext ( self._context )
+            self._context = None
 
     def refreshContext(self):
         self.deleteContext()
@@ -152,7 +145,7 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         AKUAppInitialize ()
         AKUModulesAppInitialize ()
 
-        AKUCreateContext ()
+        self._context = AKUCreateContext ()
         AKUModulesContextInitialize ()
 
         AKUInitializeCallbacks ()
@@ -200,7 +193,6 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         self.coloredlog = ColoredLog(self.lua)
         self.fileDialog = FileDialog(self.lua, self)
 
-
     def openWindow(self, title, width, height):
         AKUDetectGfxContext()
 
@@ -212,7 +204,7 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         self.windowReady = True
 
     def pause(self, value):
-        AKUPause(value)
+        AKUPause ( value )
 
     def finalize(self):
         self.windowReady = False
@@ -248,5 +240,3 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
             end
         end""")
         setFunc(before, after)
-
-
