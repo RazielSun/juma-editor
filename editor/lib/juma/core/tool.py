@@ -70,9 +70,6 @@ def startTool( toolInfo ):
 def printHeader():
 	output = Fore.YELLOW + Style.BRIGHT +"""
 &b---&y JUMA MOAI Editor &b---
-&r Based on:
-&r  Vavius IDE https://github.com/Vavius/moai-ide
-&r  Tommo IDE https://github.com/pixpil/gii
  """
 
 	output = string.replace( output, '&y', Fore.YELLOW + Style.BRIGHT )

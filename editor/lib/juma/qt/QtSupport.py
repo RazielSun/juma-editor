@@ -68,7 +68,7 @@ class QtSupport( QtEditorModule ):
 			]
 		)
 		self.menu.addChild('&Edit')
-		self.menu.addChild('&Window').addChild([
+		self.menu.addChild('&View').addChild([
 			'----',
 			'Default Theme',
 			'Dark Theme',
@@ -76,6 +76,14 @@ class QtSupport( QtEditorModule ):
 			'----',
 			]
 		)
+		self.menu.addChild('&Window').addChild([
+			'----',
+			'Scene Editor',
+			'Stats Viewer',
+			'----',
+			]
+		)
+		self.menu.addChild('&Help')
 
 	def getSharedMenubar( self ):
 		return self.sharedMenuBar
@@ -156,8 +164,10 @@ class QtSupport( QtEditorModule ):
 		# 	self.showSystemStatusWindow()
 		# elif name == 'asset_editor':
 		# 	self.getModule('asset_editor').setFocus()
-		# elif name == 'scene_editor':
-		# 	self.getModule('scene_editor').setFocus()
+		elif name == 'scene_editor':
+			self.getModule('scene_editor').setFocus()
+		elif name == 'stats_viewer':
+			self.getModule('stats_viewer').show()
 		# elif name == 'debug_view':
 		# 	self.getModule('debug_view').setFocus()
 		# elif name == 'refresh_theme':

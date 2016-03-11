@@ -176,6 +176,9 @@ class MainWindow( QMainWindow ):
 
 ##----------------------------------------------------------------##
 class SubWindow( QtGui.QMainWindow ):
+    """docstring for DockWindow"""
+    callbackOnClose = None
+    
     def __init__(self, parent):
         super(SubWindow, self).__init__(parent)
         self.setupUi()
@@ -222,6 +225,14 @@ class SubWindow( QtGui.QMainWindow ):
     def ensureVisible(self):
         restrainWidgetToScreen(self)
 
+    def setCallbackOnClose( self, callback ):
+        self.callbackOnClose = callback
+
+    def onClose( self ):
+        if self.callbackOnClose:
+            return self.callbackOnClose()
+        return True
+
 ##----------------------------------------------------------------##
 class DocumentWindow( SubWindow ):
     def show( self, *args ):
@@ -256,7 +267,9 @@ class DockWindowTitleBar( QtGui.QWidget ):
 
 ##----------------------------------------------------------------##
 class DockWindow( QtGui.QDockWidget ):
-    """docstring for DockWindow"""  
+    """docstring for DockWindow"""
+    callbackOnClose = None
+
     def __init__(self, parent):
         super(DockWindow, self).__init__(parent)
         font = QtGui.QFont()
@@ -324,3 +337,11 @@ class DockWindow( QtGui.QDockWidget ):
 
     def ensureVisible(self):
         restrainWidgetToScreen(self)
+
+    def setCallbackOnClose( self, callback ):
+        self.callbackOnClose = callback
+
+    def onClose( self ):
+        if self.callbackOnClose:
+            return self.callbackOnClose()
+        return True

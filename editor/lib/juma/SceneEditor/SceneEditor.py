@@ -6,7 +6,6 @@ import os
 from PySide import QtCore, QtGui
 
 from juma.core import app, signals
-from juma.qt.controls.Window    import MainWindow
 from juma.qt.TopEditorModule    import TopEditorModule, QtMainWindow, SubEditorModule
 
 from Scene                      import SceneObject, getSceneByType
@@ -43,9 +42,9 @@ class SceneEditor( TopEditorModule ):
             dict( name = 'reload_scene', label = 'Reload', shortcut = 'ctrl+R' ),
         ], self )
 
-        self.addTool( 'scene/new_scene_moai', label = 'New MOAI', menuLink = 'main/file/new_scene_moai', icon = 'file' )
-        self.addTool( 'scene/open_scene', label = 'Open', menuLink = 'main/file/open_scene', icon = 'folder' )
-        self.addTool( 'scene/reload_scene', label = 'Reload', menuLink = 'main/edit/reload_scene', icon = 'repeat' )
+        self.addTool( 'scene/new_scene_moai', label = 'New MOAI', menu_link = 'main/file/new_scene_moai', icon = 'file' )
+        self.addTool( 'scene/open_scene', label = 'Open', menu_link = 'main/file/open_scene', icon = 'folder' )
+        self.addTool( 'scene/reload_scene', label = 'Reload', menu_link = 'main/edit/reload_scene', icon = 'repeat' )
         self.addTool( 'scene/size_scene', widget = self.sceneSizeWidget )
 
         signals.connect( 'scene.change_size', self.sceneChangeSize )
@@ -86,7 +85,7 @@ class SceneEditor( TopEditorModule ):
 
     # Scene methods
     def getTab(self):
-        return self.mainWindow.centralWidget()
+        return self.mainWindow.tabWidget
 
     def getScene(self):
         tab = self.getTab()
@@ -132,6 +131,7 @@ class SceneEditor( TopEditorModule ):
     # Callbacks
     def onMenu(self, node):
         name = node.name
+        print("SceneEditor onMenu: " + name )
 
         if name == 'new_scene_moai':
             self.newScene()
@@ -142,13 +142,7 @@ class SceneEditor( TopEditorModule ):
 
     def onTool(self, node):
         name = node.name
-
-        if name == 'new_scene_moai':
-            self.newScene()
-        elif name == 'open_scene':
-            self.openSceneSource()
-        elif name == 'reload_scene':
-            self.reloadSceneSource()
+        print("SceneEditor onTool: " + name )
 
     def onSceneChanged(self, index):
         self.swapProjects(self._currentIndex, index)
@@ -190,58 +184,4 @@ def getSceneSelectionManager():
 
 ##----------------------------------------------------------------##
 SceneEditor().register()
-
-##----------------------------------------------------------------##
-# class TabSceneEditor( QtGui.QTabWidget ):
-#     scenes = 0
-
-#     def __init__(self, parent=None):
-#         super(TabSceneEditor, self).__init__( parent )
-
-#         self.setObjectName("TabSceneEditor")
-
-#         self.setTabsClosable(True)
-#         self.setMovable(False)
-#         self.currentChanged.connect(self.onTabBarChange)
-#         self.tabCloseRequested.connect(self.onTabBarClose)
-
-    # def newLayer(self):
-    #     layer = LayerWidget()
-    #     self.addLayer( layer )
-    #     layer.start()
-    
-    # def addLayer(self, widget, name=""):
-    #     self.layers += 1
-    #     layerName = '%s Layer' % name
-    #     widget.setLayerId('layer_%d' % self.layers)
-    #     if name == "":
-    #         layerName = 'Layer %d' % self.layers
-    #     self.addTab( widget, layerName )
-
-    # def currentLayer(self):
-    #     return self.currentWidget()
-
-    # def readSettings(self):
-    #     settings = QSettings()
-
-    #     self.restoreGeometry(settings.value("layerseditor/geometry"))
-    #     # self.restoreState(settings.value("layerseditor/windowState"))
-
-    #     # FIXME for all layers opened
-    #     self.currentLayer().readSettings()
-
-    # def writeSettings(self):
-    #     settings = QSettings()
-
-    #     settings.setValue("layerseditor/geometry", self.saveGeometry())
-    #     # settings.setValue("layerseditor/windowState", self.saveState())
-
-    #     # FIXME for all layers opened
-    #     self.currentLayer().writeSettings()
-
-    # def onTabBarChange(self, index):
-    #     print("tabBar changed", index)
-
-    # def onTabBarClose(self, index):
-    #     print("tabBar closed", index)
         

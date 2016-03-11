@@ -36,10 +36,10 @@ class ToolBarItem(object):
 
 		elif menuLink:
 			m = MenuManager.get().find( menuLink )
-			if m and hasattr( m, 'qtAction' ):
-				self.qtAction = m.qtAction
+			if m and hasattr( m, 'qtaction' ):
+				self.qtAction = m.qtaction
 			else:
-				logging.error( 'not valid menu link:' + self.menuLink )
+				logging.error( 'not valid menu link:' + menuLink )
 				self.qtAction = QtGui.QAction( self.label, None )					
 
 		else:

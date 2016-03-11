@@ -113,3 +113,8 @@ class SubEditorModule( QtEditorModule ):
 		self.getMainWindow().raise_()
 		self.getMainWindow().setFocus()
 		self.onSetFocus()
+
+	def show( self ):
+		self.setFocus()
+		if self.window:
+			self.window.show()

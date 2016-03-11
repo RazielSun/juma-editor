@@ -16,19 +16,13 @@ from ui.statsdock_ui import Ui_statsdock as Ui
 ##----------------------------------------------------------------##
 class StatsViewer( SceneEditorModule ):
 	"""docstring for StatsViewer"""
-
-	def getName(self):
-		return 'statsviewer'
-
-	def getDependency(self):
-		return ['qt', 'scene_editor']
+	_name       = 'stats_viewer'
+	_dependency = ['qt', 'scene_editor']
 	
 	def onLoad( self ):
 		self.window = self.requestDockWindow( 'StatsViewer',
 			title     = 'Stats',
-			size      = (120,120),
-			minSize   = (120,120),
-			dock      = 'right'
+			dock      = 'right',
 		)
 		
 		ui = Ui()
@@ -36,13 +30,12 @@ class StatsViewer( SceneEditorModule ):
 		self.ui.setupUi(self.window)
 
 		self.window.setStayOnTop( True )
-		self.window.show()
 		self.window.setObjectName( 'StatsViewer' )
+		self.window.hide()
 		# signals.connect( 'selection.changed', self.onSelectionChanged )
 		# signals.connect( 'component.added',   self.onComponentAdded )
 		# signals.connect( 'component.removed', self.onComponentRemoved )
 		# signals.connect( 'entity.modified',   self.onEntityModified ) 
-		# self.widgetCacheHolder = QtGui.QWidget()
 
 ##----------------------------------------------------------------##
 
