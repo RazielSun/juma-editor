@@ -111,7 +111,7 @@ class QtSupport( QtEditorModule ):
 
 		QCoreApplication.setOrganizationName("CloudTeam")
 		QCoreApplication.setOrganizationDomain("cloudteam.pro")
-		QCoreApplication.setApplicationName("JUMA Editor")
+		QCoreApplication.setApplicationName("juma-moai-editor")
 
 		self.qtApp = QtGui.QApplication( sys.argv )
 		self.qtSetting = QtCore.QSettings()

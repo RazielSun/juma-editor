@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from abc        import ABCMeta, abstractmethod
+import os
 
 from PySide import QtCore, QtGui
 
@@ -7,7 +8,7 @@ from juma.core import app, signals, Project
 from juma.moai import *
 
 ##----------------------------------------------------------------##
-class SceneObject(object):
+class SceneHeaderObject(object):
 	_width = 640
 	_height = 480
 	_dir_path = ""
@@ -36,19 +37,22 @@ class SceneObject(object):
 	def dir(self):
 		return self._dir_path
 
+	def full_path(self):
+		return os.path.join( self._dir_path, self._source )
+
 ##----------------------------------------------------------------##
 class Scene( QtGui.QScrollArea ):
 	_sid = -1
-	_name = 'Scene'
-	_type = 'moai'
-	_object = None
+	_name = 'None'
 	_project = None
 	_started = False
+
+	colorPrintEnabled = True
 
 	def __init__( self, parent=None ):
 		super(Scene, self).__init__( parent )
 
-		self._project = Project( self._type )
+		self._project = Project()
 
 		self.setBackgroundRole(QtGui.QPalette.Dark)
 		self.setAlignment(QtCore.Qt.AlignCenter)
@@ -70,16 +74,12 @@ class Scene( QtGui.QScrollArea ):
 	def getName( self ):
 		return self._name
 
-	def getType(self):
-		return self._type
-
 	# Object and Project
-	def setObject( self, obj ):
-		if obj:
-			self._object = obj
+	def setHeader( self, header ):
+		self._project.setHeader( header )
 
-	def obj(self):
-		return self._object
+	def head(self):
+		return self._project.head()
 
 	def setProject( self, project ):
 		self._project = project
@@ -107,20 +107,25 @@ class Scene( QtGui.QScrollArea ):
 	# Methods
 	@abstractmethod
 	def reload( self ):
-		obj_ = self.obj()
+		obj_ = self.head()
 		if obj_ and obj_.source():
+			printSeparator( obj_.full_path(), self.colorPrintEnabled )
 			self.openFile( obj_.source(), obj_.dir() )
 
 	@abstractmethod
 	def resize( self, width, height ):
-		obj_ = self.obj()
+		success = False
+		obj_ = self.head()
 		if obj_:
-			obj_.setSize( width, height )
-			self.moaiWidget.resize( obj_.width(), obj_.height() )
+			if width != obj_.width() and height != obj_.height():
+				obj_.setSize( width, height )
+				self.moaiWidget.resize( obj_.width(), obj_.height() )
+				success = True
+		return success
 
 	@abstractmethod
 	def openSource( self ):
-		obj_ = self.obj()
+		obj_ = self.head()
 		fileName, filt = QtGui.QFileDialog.getOpenFileName(self, "Run Script", obj_.dir() or "~", "Lua source (*.lua )")
 		if fileName:
 			dir_path = os.path.dirname(fileName)
@@ -139,7 +144,7 @@ class Scene( QtGui.QScrollArea ):
 		self.moaiWidget.loadEditorFramework()
 		self.moaiWidget.loadLuaFramework()
 
-		obj_ = self.obj()
+		obj_ = self.head()
 		obj_.setSource( filename, workingDir )
 		self.moaiWidget.runScript( obj_.source() )
 

@@ -8,7 +8,7 @@ from PySide import QtCore, QtGui
 from juma.core import app, signals
 from juma.qt.TopEditorModule    import TopEditorModule, QtMainWindow, SubEditorModule
 
-from Scene                      import SceneObject, getSceneByType
+from Scene                      import SceneHeaderObject, getSceneByType
 from SceneWidgets               import SceneSizeComboBox
 
 ##----------------------------------------------------------------##
@@ -65,7 +65,7 @@ class SceneEditor( TopEditorModule ):
             settings.setArrayIndex(i)
             scene = tab.widget(i)
             settings.setValue( "type", scene.getType() )
-            obj_ = scene.obj()
+            obj_ = scene.head()
             settings.setValue( "object", obj_ )
         settings.endArray()
 
@@ -79,7 +79,7 @@ class SceneEditor( TopEditorModule ):
             scene = getSceneByType( type )
             obj = settings.value( "object" )
             if scene:
-                scene.setObject( obj )
+                scene.setHeader( obj )
                 self.addScene( scene )
         settings.endArray()
 
@@ -94,8 +94,8 @@ class SceneEditor( TopEditorModule ):
     def newScene(self, type = 'moai'):
         scene = getSceneByType( type )
         if scene:
-            obj = SceneObject()
-            scene.setObject( obj )
+            obj = SceneHeaderObject()
+            scene.setHeader( obj )
             self.addScene( scene )
         return scene
 
@@ -126,7 +126,7 @@ class SceneEditor( TopEditorModule ):
         nextScene = tab.widget( nextIndex )
         if nextScene and nextScene is not None:
             nextScene.start()
-            self.sceneSizeWidget.findSizeObj( nextScene.obj() )
+            self.sceneSizeWidget.findSizeObj( nextScene.head() )
 
     # Callbacks
     def onMenu(self, node):
@@ -154,9 +154,10 @@ class SceneEditor( TopEditorModule ):
     def onSceneSizeChanged(self, size):
         scene = self.getScene()
         if scene:
-            print('Scene {} size changed: {} x {}'.format(scene.getName(), size['width'], size['height']))
-            scene.resize( size['width'], size['height'] )
-            scene.reload()
+            success = scene.resize( size['width'], size['height'] )
+            if success:
+                print('Scene {} size changed: {} x {}'.format(scene.getName(), size['width'], size['height']))
+                scene.reload()
 
 ##----------------------------------------------------------------##
 class SceneEditorModule( SubEditorModule ):

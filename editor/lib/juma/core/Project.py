@@ -14,10 +14,19 @@ import jsonHelper
 
 ##----------------------------------------------------------------##
 class Project(object):
-	_type = None
+	_type = 'moai'
+	_header = None
 
-	def __init__(self, type):
-		self._type = type
+	def __init__(self):
+		pass
 
 	def getType(self):
 		return self._type
+
+	# Header
+	def setHeader( self, header ):
+		if header:
+			self._header = header
+
+	def head(self):
+		return self._header

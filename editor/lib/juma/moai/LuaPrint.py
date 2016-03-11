@@ -3,6 +3,8 @@ import sys
 
 from colorama import Fore, Back, Style
 
+from time import strftime
+
 def tracebackFunc(trace):
     print(Style.RESET_ALL + Fore.RED + Style.BRIGHT + trace + Style.RESET_ALL + Style.DIM)
 
