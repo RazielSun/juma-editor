@@ -103,6 +103,7 @@ class Scene( QtGui.QScrollArea ):
 	def stop( self ):
 		signals.emitNow( 'scene.stop', self._sid )
 		self.moaiWidget.deleteContext()
+		self.moaiWidget.finalize()
 
 	# Methods
 	@abstractmethod

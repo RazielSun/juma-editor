@@ -211,6 +211,9 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
 
         self.windowReady = True
 
+    def pause(self, value):
+        AKUPause(value)
+
     def finalize(self):
         self.windowReady = False
         self.glReady = False
