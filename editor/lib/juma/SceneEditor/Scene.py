@@ -38,6 +38,7 @@ class SceneObject(object):
 
 ##----------------------------------------------------------------##
 class Scene( QtGui.QScrollArea ):
+	_sid = -1
 	_name = 'Scene'
 	_type = 'moai'
 	_object = None
@@ -59,9 +60,12 @@ class Scene( QtGui.QScrollArea ):
 		return self.moaiWidget
 
 	# Names and types
-	@abstractmethod
-	def setName( self, index ):
-		self._name = 'Moai {}'.format(index)
+	def setSId( self, index ):
+		self._sid = index
+		self.setName('Moai {}'.format(index))
+
+	def setName( self, name ):
+		self._name = name
 
 	def getName( self ):
 		return self._name
@@ -89,13 +93,15 @@ class Scene( QtGui.QScrollArea ):
 		if not self._started:
 			self.reload()
 			self._started = True
+		signals.emitNow( 'scene.start', self._sid )
 
 	@abstractmethod
 	def pause( self ):
-		pass
+		signals.emitNow( 'scene.pause', self._sid )
 
 	@abstractmethod
 	def stop( self ):
+		signals.emitNow( 'scene.stop', self._sid )
 		self.moaiWidget.deleteContext()
 
 	# Methods
@@ -123,6 +129,8 @@ class Scene( QtGui.QScrollArea ):
 
 	@abstractmethod
 	def openFile( self, filename, workingDir = "" ):
+		signals.emitNow( 'scene.pre_open_source', self._sid )
+		
 		self.moaiWidget.refreshContext()
 		self.moaiWidget.setWorkingDirectory( workingDir )
 		self.moaiWidget.setTraceback( tracebackFunc )
@@ -134,6 +142,10 @@ class Scene( QtGui.QScrollArea ):
 		obj_ = self.obj()
 		obj_.setSource( filename, workingDir )
 		self.moaiWidget.runScript( obj_.source() )
+
+		self.moaiWidget.initialized = True
+
+		signals.emitNow( 'scene.open_source', self._sid )
 
 ##----------------------------------------------------------------##
 

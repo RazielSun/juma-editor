@@ -297,12 +297,10 @@ class DockWindow( QtGui.QDockWidget ):
         emptyTitle = QtGui.QWidget()
         self.setTitleBarWidget(emptyTitle)
 
-    def startTimer(self, fps, trigger):
+    def addTimer(self, trigger):
         assert(hasattr(trigger,'__call__'))
-        interval = 1000/fps
         timer=QtCore.QTimer(self)
         timer.timeout.connect(trigger)
-        timer.start(interval)
         return timer
 
     def onTopLevelChanged(self, toplevel):

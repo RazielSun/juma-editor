@@ -47,7 +47,7 @@ class SceneEditor( TopEditorModule ):
         self.addTool( 'scene/reload_scene', label = 'Reload', menu_link = 'main/edit/reload_scene', icon = 'repeat' )
         self.addTool( 'scene/size_scene', widget = self.sceneSizeWidget )
 
-        signals.connect( 'scene.change_size', self.sceneChangeSize )
+        signals.connect( 'scene.change_size', self.onSceneSizeChanged )
 
         return True
 
@@ -100,8 +100,8 @@ class SceneEditor( TopEditorModule ):
         return scene
 
     def addScene(self, scene):
+        scene.setSId( self._scenes )
         self._scenes += 1
-        scene.setName( self._scenes )
         tab = self.getTab()
         tab.addTab( scene, scene.getName() )
 
@@ -131,8 +131,6 @@ class SceneEditor( TopEditorModule ):
     # Callbacks
     def onMenu(self, node):
         name = node.name
-        print("SceneEditor onMenu: " + name )
-
         if name == 'new_scene_moai':
             self.newScene()
         elif name == 'open_scene':
@@ -142,7 +140,6 @@ class SceneEditor( TopEditorModule ):
 
     def onTool(self, node):
         name = node.name
-        print("SceneEditor onTool: " + name )
 
     def onSceneChanged(self, index):
         self.swapProjects(self._currentIndex, index)
@@ -154,12 +151,12 @@ class SceneEditor( TopEditorModule ):
 
         tab.removeTab( index )
 
-    def sceneChangeSize(self, size):
+    def onSceneSizeChanged(self, size):
         scene = self.getScene()
         if scene:
+            print('Scene {} size changed: {} x {}'.format(scene.getName(), size['width'], size['height']))
             scene.resize( size['width'], size['height'] )
             scene.reload()
-        print('Scene {} size changed: {} x {}'.format(scene.getName(), size['width'], size['height']))
 
 ##----------------------------------------------------------------##
 class SceneEditorModule( SubEditorModule ):

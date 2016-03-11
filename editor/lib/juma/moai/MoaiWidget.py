@@ -21,6 +21,7 @@ KeyCodes = moaipy.KeyCodesDict()
 class MOAIWidget( QtOpenGL.QGLWidget ):
     windowReady = False
     contextReady = False
+    initialized = False
 
     def __init__(self, parent=None):
         fmt = QtOpenGL.QGLFormat()
@@ -174,7 +175,6 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         AKUInitParticlePresets ()
         self.runString("MOAIEnvironment.setValue('horizontalResolution', %d) MOAIEnvironment.setValue('verticalResolution', %d)" %
             ( int ( self.size().width() ), int ( self.size().height()) ) )
-        # AKUSetWorkingDirectory()
         
         self.lua = LuaRuntime()
         self.lua.init()
@@ -183,6 +183,7 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         moaipy.callback_OpenWindow = self.openWindow
 
         self.windowReady = False
+        self.initialized = False
 
     def loadEditorFramework(self):
         luaEditorFrameworkPath = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../lua/editor/?.lua")        
