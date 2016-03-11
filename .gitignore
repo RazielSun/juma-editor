@@ -5,3 +5,5 @@
 *.DS_Store
 
 *.pyc
+
+editor/lib/lua/framework
