@@ -28,8 +28,9 @@ class SceneEditor( TopEditorModule ):
         
         self.mainToolBar = self.addToolBar( 'scene', self.mainWindow.requestToolBar( 'main' ) )     
 
-        # self.getTab().currentChanged.connect(self.onSceneChanged)
-        # self.getTab().tabCloseRequested.connect(self.onSceneCloseRequested)
+        self.getTab().currentChanged.connect(self.onSceneChanged)
+        self.getTab().tabCloseRequested.connect(self.onSceneCloseRequested)
+
         self.containers  = {}
 
         self.sceneSizeWidget = SceneSizeComboBox( None )
@@ -108,7 +109,7 @@ class SceneEditor( TopEditorModule ):
         # scene.setSId( self._scenes )
         self._scenes += 1
         tab = self.getTab()
-        tab.addTab( scene, "moai {}.scene".format(self._scenes) )
+        tab.addTab( scene, "moai {}.scene *".format(self._scenes) )
         # tab.addTab( scene, scene.getName() )
 
     def openSceneSource(self):
@@ -126,13 +127,13 @@ class SceneEditor( TopEditorModule ):
         if prevIndex >= 0:
             prevScene = tab.widget( prevIndex )
             if prevScene and prevScene is not None:
-                prevScene.pause()
+                prevScene.stop()
 
         self._currentIndex = nextIndex
         nextScene = tab.widget( nextIndex )
         if nextScene and nextScene is not None:
             nextScene.start()
-            self.sceneSizeWidget.findSizeObj( nextScene.head() )
+            # self.sceneSizeWidget.findSizeObj( nextScene.head() )
 
     # Callbacks
     def onMenu(self, node):

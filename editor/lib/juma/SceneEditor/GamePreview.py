@@ -419,10 +419,6 @@ class GamePreviewCanvas(MOAICanvasBase):
 	def onDraw(self):
 		self.module.renderView()
 
-	def onUpdateModule(self):
-		pass
-		# self.module.updateModule()
-
 ##----------------------------------------------------------------##
 
 # GamePreview().register()

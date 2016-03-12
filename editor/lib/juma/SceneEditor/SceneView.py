@@ -22,7 +22,7 @@ class SceneView( QtGui.QScrollArea ):
 
 		self.canvas.resize( 640, 480 )
 		self.canvas.onMoaiReset()
-		self.canvas.startUpdateTimer()
+		
 
 	def openSource(self):
 		fileName, filt = QFileDialog.getOpenFileName(self, "Run Script", app.getProject().path or "~", "Lua source (*.lua )")
@@ -31,18 +31,22 @@ class SceneView( QtGui.QScrollArea ):
 			file_path = os.path.basename(fileName)
 			self.canvas.openFile( file_path, dir_path )
 
+	def start(self):
+		self.canvas.startUpdateTimer()
+
+	def stop(self):
+		self.canvas.stopUpdateTimer()
+
 
 ##----------------------------------------------------------------##
 class SceneViewCanvas( MOAIEditCanvas ):
 	def __init__( self, *args, **kwargs ):
 		super( SceneViewCanvas, self ).__init__( *args, **kwargs )
 
-	def openFile(self, file, path):
-		runtime = self.runtime
-		# runtime.resume()
-		runtime.setWorkingDirectory( path )
-
+	def openFile(self, file, path):		
 		self.makeCurrent()
+		runtime = self.runtime
+		runtime.setWorkingDirectory( path )
 		runtime.runScript( file )
 		# self.canvas.startRefreshTimer( self.activeFPS )
 		# self.canvas.refreshTimer.start()

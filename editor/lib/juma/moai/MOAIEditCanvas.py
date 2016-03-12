@@ -31,6 +31,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		
 		# self.scriptEnv   = None
 		# self.scriptPath  = None
+		self.enabled = False
 		self.lastUpdateTime = 0 
 		self.updateStep  = 0
 		# self.alwaysForcedUpdate = False
@@ -46,12 +47,14 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		signals.connect('moai.set_sim_step', self.setSimStep)
 
 	def startUpdateTimer( self, fps = 60 ):
+		self.enabled = True
 		step = 1.0 / fps
 		self.updateTimer.start( 1000 * step )
 		self.updateStep = step
 		self.lastUpdateTime = getTime()
 
 	def stopUpdateTimer(self):
+		self.enabled = False
 		self.updateTimer.stop()
 
 	def onMoaiReset( self ):
@@ -62,6 +65,8 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.stopRefreshTimer()
 
 	def openWindow(self, title, width, height):
+		if not self.enabled: return False
+		print("Update Window: {} to {} {} {}".format(self.contextName, title, width, height))
 		# runtime = self.runtime
 		# w = self.size().width()
 		# h = self.size().height()
@@ -71,6 +76,8 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.windowReady = True
 
 	def setSimStep(self, step):
+		if not self.enabled: return False
+		print("Set Sim Step: " + self.contextName)
 		self.updateTimer.setInterval( 1000 * step )
 		self.updateStep = step
 
@@ -141,6 +148,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 	def resizeGL(self, width, height):
 		# self.delegate.onResize(width,height)
 		print("resizeGL: {} {}".format(width, height))
+		self.makeCurrent()
 		self.viewWidth  = width
 		self.viewHeight = height
 		runtime = self.runtime

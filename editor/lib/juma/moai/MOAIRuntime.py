@@ -12,8 +12,9 @@ from exceptions import *
 from LuaTableProxy   import LuaTableProxy
 
 ##----------------------------------------------------------------##
-_G   		= LuaTableProxy( None )
-_Runtime 	= LuaTableProxy( None )
+_G   			= LuaTableProxy( None )
+_RenderContext 	= LuaTableProxy( None )
+# _Runtime 	= LuaTableProxy( None )
 
 # signals.register( 'lua.msg' )
 # signals.register( 'moai.clean' )
@@ -64,13 +65,14 @@ class MOAIRuntime( EditorModule ):
 	def getLuaEnv(self):
 		return _G
 
-	def getRuntimeEnv(self):
-		return _Runtime
+	# def getRuntimeEnv(self):
+	# 	return _Runtime
 
 	#-------Context Control
 	def initContext(self):
 		global _G
-		global _Runtime
+		# global _Runtime
+		global _RenderContext
 
 		self.luaModules        = []
 
@@ -90,14 +92,17 @@ class MOAIRuntime( EditorModule ):
 		# _G['GII_DATA_PATH']                = self.getApp().getPath('data')
 
 		_G['LIB_LUA_PATH'] = self.getApp().getPath('lib/lua')
+		_G['LIB_EDITOR_PATH'] = self.getApp().getPath('lib/lua/editor')
 
 		self.runScript(
 			self.getApp().getPath( 'lib/lua/init.lua' )
 		)
 
-		_Runtime._setTarget( _G['editor'] )
+		# _Runtime._setTarget( _G['editor'] )
+		_RenderContext._setTarget( _G['RenderContext'] )
 
-		assert _Runtime, "Failed loading Lua Runtime!"
+		# assert _Runtime, "Failed loading Lua Runtime!"
+		assert _RenderContext, "Failed loading Lua Render Context!"
 		#finish loading lua bridge
 		
 		self.AKUReady      		= True
@@ -199,10 +204,10 @@ class MOAIRuntime( EditorModule ):
 
 ##----------------------------------------------------------------##
 	def createRenderContext( self, key, clearColor = (0,0,0,0) ):
-		_Runtime.createRenderContext( key, *clearColor )
+		_RenderContext.createRenderContext( key, *clearColor )
 
 	def changeRenderContext(self, contextId, w, h ):
-		_Runtime.changeRenderContext( contextId or False, w or False, h or False )
+		_RenderContext.changeRenderContext( contextId or False, w or False, h or False )
 
 ##----------------------------------------------------------------##
 	def onLoad(self):
