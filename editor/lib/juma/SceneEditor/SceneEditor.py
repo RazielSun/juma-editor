@@ -8,6 +8,8 @@ from PySide import QtCore, QtGui
 from juma.core import app, signals
 from juma.qt.TopEditorModule    import TopEditorModule, QtMainWindow, SubEditorModule
 
+from SceneView                  import SceneView
+
 from Scene                      import SceneHeader, getSceneByType
 from SceneWidgets               import SceneSizeComboBox
 
@@ -26,28 +28,28 @@ class SceneEditor( TopEditorModule ):
         
         self.mainToolBar = self.addToolBar( 'scene', self.mainWindow.requestToolBar( 'main' ) )     
 
-        self.getTab().currentChanged.connect(self.onSceneChanged)
-        self.getTab().tabCloseRequested.connect(self.onSceneCloseRequested)
+        # self.getTab().currentChanged.connect(self.onSceneChanged)
+        # self.getTab().tabCloseRequested.connect(self.onSceneCloseRequested)
         self.containers  = {}
 
         self.sceneSizeWidget = SceneSizeComboBox( None )
         self.sceneSizeWidget.owner = self
 
         self.findMenu( 'main/file' ).addChild([
-            dict( name = 'new_scene_moai', label = 'New MOAI...', shortcut = 'ctrl+N' ),
-            dict( name = 'open_scene', label = 'Open', shortcut = 'ctrl+O' ),
+            dict( name = 'new_scene', label = 'New Scene', shortcut = 'ctrl+N' ),
+            dict( name = 'open_file', label = 'Open File', shortcut = 'ctrl+O' ),
         ], self )
 
-        self.findMenu( 'main/edit' ).addChild([
-            dict( name = 'reload_scene', label = 'Reload', shortcut = 'ctrl+R' ),
-        ], self )
+        # self.findMenu( 'main/edit' ).addChild([
+        #     dict( name = 'reload_scene', label = 'Reload', shortcut = 'ctrl+R' ),
+        # ], self )
 
-        self.addTool( 'scene/new_scene_moai', label = 'New MOAI', menu_link = 'main/file/new_scene_moai', icon = 'file' )
-        self.addTool( 'scene/open_scene', label = 'Open', menu_link = 'main/file/open_scene', icon = 'folder' )
-        self.addTool( 'scene/reload_scene', label = 'Reload', menu_link = 'main/edit/reload_scene', icon = 'repeat' )
-        self.addTool( 'scene/size_scene', widget = self.sceneSizeWidget )
+        self.addTool( 'scene/new_scene', label = 'New Scene', menu_link = 'main/file/new_scene', icon = 'file' )
+        self.addTool( 'scene/open_file', label = 'Open File', menu_link = 'main/file/open_file', icon = 'folder' )
+        # self.addTool( 'scene/reload_scene', label = 'Reload', menu_link = 'main/edit/reload_scene', icon = 'repeat' )
+        # self.addTool( 'scene/size_scene', widget = self.sceneSizeWidget )
 
-        signals.connect( 'scene.change_size', self.onSceneSizeChanged )
+        # signals.connect( 'scene.change_size', self.onSceneSizeChanged )
 
         return True
 
@@ -58,30 +60,30 @@ class SceneEditor( TopEditorModule ):
     # Save and Restore States
     def saveWindowState( self, window ):
         super(SceneEditor, self).saveWindowState( window )
-        settings = self.getQtSettingObject()
-        tab = self.getTab()
-        settings.beginWriteArray(self.getName() + '_tab_widgets')
-        for i in range(tab.count()):
-            settings.setArrayIndex(i)
-            scene = tab.widget(i)
-            settings.setValue( "type", scene.project().getType() )
-            obj_ = scene.head()
-            settings.setValue( "object", obj_ )
-        settings.endArray()
+        # settings = self.getQtSettingObject()
+        # tab = self.getTab()
+        # settings.beginWriteArray(self.getName() + '_tab_widgets')
+        # for i in range(tab.count()):
+        #     settings.setArrayIndex(i)
+        #     scene = tab.widget(i)
+        #     settings.setValue( "type", scene.project().getType() )
+        #     obj_ = scene.head()
+        #     settings.setValue( "object", obj_ )
+        # settings.endArray()
 
     def restoreWindowState( self, window ):
         super(SceneEditor, self).restoreWindowState( window )
-        settings = self.getQtSettingObject()
-        size = settings.beginReadArray(self.getName() + '_tab_widgets')
-        for i in range(size):
-            settings.setArrayIndex(i)
-            type = settings.value( "type" )
-            scene = getSceneByType( type )
-            obj = settings.value( "object" )
-            if scene:
-                scene.setHeader( obj )
-                self.addScene( scene )
-        settings.endArray()
+        # settings = self.getQtSettingObject()
+        # size = settings.beginReadArray(self.getName() + '_tab_widgets')
+        # for i in range(size):
+        #     settings.setArrayIndex(i)
+        #     type = settings.value( "type" )
+        #     scene = getSceneByType( type )
+        #     obj = settings.value( "object" )
+        #     if scene:
+        #         scene.setHeader( obj )
+        #         self.addScene( scene )
+        # settings.endArray()
 
     # Scene methods
     def getTab(self):
@@ -92,18 +94,22 @@ class SceneEditor( TopEditorModule ):
         return tab.currentWidget()
 
     def newScene(self, type = 'moai'):
-        scene = getSceneByType( type )
-        if scene:
-            obj = SceneHeader()
-            scene.setHeader( obj )
-            self.addScene( scene )
+        scene = SceneView()
+        self.addScene( scene )
         return scene
+        # scene = getSceneByType( type )
+        # if scene:
+        #     obj = SceneHeader()
+        #     scene.setHeader( obj )
+        #     self.addScene( scene )
+        # return scene
 
     def addScene(self, scene):
-        scene.setSId( self._scenes )
+        # scene.setSId( self._scenes )
         self._scenes += 1
         tab = self.getTab()
-        tab.addTab( scene, scene.getName() )
+        tab.addTab( scene, "moai {}.scene".format(self._scenes) )
+        # tab.addTab( scene, scene.getName() )
 
     def openSceneSource(self):
         scene = self.getScene()
@@ -131,12 +137,14 @@ class SceneEditor( TopEditorModule ):
     # Callbacks
     def onMenu(self, node):
         name = node.name
-        if name == 'new_scene_moai':
+        if name == 'new_scene':
             self.newScene()
-        elif name == 'open_scene':
+        elif name == 'open_file':
             self.openSceneSource()
-        elif name == 'reload_scene':
-            self.reloadSceneSource()
+        # elif name == 'open_scene':
+        #     self.openSceneSource()
+        # elif name == 'reload_scene':
+        #     self.reloadSceneSource()
 
     def onTool(self, node):
         name = node.name

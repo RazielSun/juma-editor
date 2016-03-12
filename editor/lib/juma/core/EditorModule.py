@@ -25,12 +25,12 @@ class EditorModuleMeta( ABCMeta ):
 			m._dependency = dependency
 			m._name       = name
 			m.getDependency = lambda: dependency
-			EditorModuleManager.get().registerModule(	m )
+			EditorModuleManager.get().registerModule( m )
 
 
 
 ##----------------------------------------------------------------##
-## EDITORMODULE
+## EDITOR MODULE
 ##----------------------------------------------------------------##
 class EditorModule( ResHolder ):
 	__metaclass__ = EditorModuleMeta
@@ -41,7 +41,7 @@ class EditorModule( ResHolder ):
 		return self._dependency or []
 
 	def getBaseDependency( self ):
-		return [ 'juma' ]
+		return []
 
 	def getActualDependency( self ):
 		return self.getDependency() + self.getBaseDependency()

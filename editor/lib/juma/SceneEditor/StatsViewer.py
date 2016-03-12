@@ -156,7 +156,7 @@ class StatsViewer( SceneEditorModule ):
 		if self._sceneId == -1 and sceneId != -1:
 			self._sceneId = sceneId
 			moai = self.getSceneEditor().getScene().moai()
-			if moai.initialized:
+			if moai.initReady:
 				self.setLuaState( moai.lua )
 			self.startTimer()
 
@@ -185,4 +185,4 @@ class StatsViewer( SceneEditorModule ):
 
 ##----------------------------------------------------------------##
 
-StatsViewer().register()
+# StatsViewer().register()

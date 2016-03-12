@@ -19,10 +19,12 @@ KEYBOARD, POINTER, MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT, MOUSE_WHEEL, TOTAL = r
 KeyCodes = moaipy.KeyCodesDict()
 
 class MOAIWidget( QtOpenGL.QGLWidget ):
-    _context = None
+    _context = 0
+    timer = None
     windowReady = False
     contextReady = False
-    initialized = False
+    initReady = False
+
 
     def __init__(self, parent=None):
         fmt = QtOpenGL.QGLFormat()
@@ -33,16 +35,11 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         self.setFocusPolicy(QtCore.Qt.ClickFocus)
         self.setMouseTracking(True)
 
-        self._context = None
         self.refreshContext()
-
-        timer = QtCore.QBasicTimer()
-        timer.start(1000 * AKUGetSimStep(), self)
-        self.timer = timer
 
     # Qt callbacks and overrides
     def resizeGL(self, w, h):
-        if self.windowReady:
+        if self.windowReady and self.contextReady:
             AKUSetScreenSize(w, h)
             AKUSetViewSize(w, h)
 
@@ -51,73 +48,75 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         glClearColor(0, 0, 0, 1)
 
     def paintGL(self):
-        if self.windowReady:
+        print("paintGL")
+        if self.windowReady and self.contextReady:
             AKURender()
         elif self.glReady:
             glClear(GL_COLOR_BUFFER_BIT)
 
     def timerEvent(self, event):
-        if self.windowReady:
+        print("tick")
+        if self.windowReady and self.contextReady:
             AKUModulesUpdate()
             self.updateGL()
 
     # Input
-    def wheelEvent(self, event):
-        AKUEnqueueWheelEvent ( 0, MOUSE_WHEEL, event.delta() )
-        event.accept()
+    # def wheelEvent(self, event):
+    #     AKUEnqueueWheelEvent ( 0, MOUSE_WHEEL, event.delta() )
+    #     event.accept()
 
-    def mouseMoveEvent(self, event):
-        x, y = event.x(), event.y()
-        AKUEnqueuePointerEvent ( 0, POINTER, x, y )
+    # def mouseMoveEvent(self, event):
+    #     x, y = event.x(), event.y()
+    #     AKUEnqueuePointerEvent ( 0, POINTER, x, y )
 
-    def mousePressEvent(self, event):
-        button = event.button()
+    # def mousePressEvent(self, event):
+    #     button = event.button()
 
-        if button == QtCore.Qt.LeftButton:
-            AKUEnqueueButtonEvent ( 0, MOUSE_LEFT, True)
-        elif button == QtCore.Qt.RightButton:
-            AKUEnqueueButtonEvent ( 0, MOUSE_RIGHT, True)
-        elif button == QtCore.Qt.MidButton:
-            AKUEnqueueButtonEvent ( 0, MOUSE_MIDDLE, True)
+    #     if button == QtCore.Qt.LeftButton:
+    #         AKUEnqueueButtonEvent ( 0, MOUSE_LEFT, True)
+    #     elif button == QtCore.Qt.RightButton:
+    #         AKUEnqueueButtonEvent ( 0, MOUSE_RIGHT, True)
+    #     elif button == QtCore.Qt.MidButton:
+    #         AKUEnqueueButtonEvent ( 0, MOUSE_MIDDLE, True)
 
-    def mouseReleaseEvent(self, event):
-        button = event.button()
+    # def mouseReleaseEvent(self, event):
+    #     button = event.button()
 
-        if button == QtCore.Qt.LeftButton:
-            AKUEnqueueButtonEvent ( 0, MOUSE_LEFT, False)
-        elif button == QtCore.Qt.RightButton:
-            AKUEnqueueButtonEvent ( 0, MOUSE_RIGHT, False)
-        elif button == QtCore.Qt.MidButton:
-            AKUEnqueueButtonEvent ( 0, MOUSE_MIDDLE, False)
+    #     if button == QtCore.Qt.LeftButton:
+    #         AKUEnqueueButtonEvent ( 0, MOUSE_LEFT, False)
+    #     elif button == QtCore.Qt.RightButton:
+    #         AKUEnqueueButtonEvent ( 0, MOUSE_RIGHT, False)
+    #     elif button == QtCore.Qt.MidButton:
+    #         AKUEnqueueButtonEvent ( 0, MOUSE_MIDDLE, False)
 
-    def keyPressEvent(self, event):
-        key = event.key()
+    # def keyPressEvent(self, event):
+    #     key = event.key()
         
-        if key == QtCore.Qt.Key_Shift:
-            AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_SHIFT"], True)
-        elif key == QtCore.Qt.Key_Control:
-            AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_CONTROL"], True)
-        elif key == QtCore.Qt.Key_Alt:
-            AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_ALT"], True)
-        else:
-            key = self.normalizeKeyCode(key)
-            if key:
-                AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, key, False)
+    #     if key == QtCore.Qt.Key_Shift:
+    #         AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_SHIFT"], True)
+    #     elif key == QtCore.Qt.Key_Control:
+    #         AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_CONTROL"], True)
+    #     elif key == QtCore.Qt.Key_Alt:
+    #         AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_ALT"], True)
+    #     else:
+    #         key = self.normalizeKeyCode(key)
+    #         if key:
+    #             AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, key, False)
 
 
-    def keyReleaseEvent(self, event):
-        key = event.key()
+    # def keyReleaseEvent(self, event):
+    #     key = event.key()
 
-        if key == QtCore.Qt.Key_Shift:
-            AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_SHIFT"], False)
-        elif key == QtCore.Qt.Key_Control:
-            AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_CONTROL"], False)
-        elif key == QtCore.Qt.Key_Alt:
-            AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_ALT"], False)
-        else:
-            key = self.normalizeKeyCode(key)
-            if key:
-                AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, key, False)
+    #     if key == QtCore.Qt.Key_Shift:
+    #         AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_SHIFT"], False)
+    #     elif key == QtCore.Qt.Key_Control:
+    #         AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_CONTROL"], False)
+    #     elif key == QtCore.Qt.Key_Alt:
+    #         AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, KeyCodes["MOAI_KEY_ALT"], False)
+    #     else:
+    #         key = self.normalizeKeyCode(key)
+    #         if key:
+    #             AKUEnqueueKeyboardKeyEvent(0, KEYBOARD, key, False)
 
     # Wrap key code to MOAI accepted range [0, 511]
     def normalizeKeyCode(self, key):
@@ -128,16 +127,16 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         return key
 
     # Game Management API
-    def checkContext(self):
-        if self._context:
-            pass
-            # AKUCheckContext ( self._context )
+    def setupContext(self):
+        if self._context != 0:
+            AKUSetContext ( self._context )
             # AKUPause( False )
 
     def deleteContext(self):
-        if self._context:
+        if self._context != 0:
             AKUDeleteContext ( self._context )
-            self._context = None
+            self._context = 0
+        self.contextReady = False
 
     def refreshContext(self):
         self.deleteContext()
@@ -147,6 +146,7 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
 
         self._context = AKUCreateContext ()
         AKUModulesContextInitialize ()
+        self.contextReady = True
 
         AKUInitializeCallbacks ()
 
@@ -176,7 +176,12 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         moaipy.callback_OpenWindow = self.openWindow
 
         self.windowReady = False
-        self.initialized = False
+        self.initReady = False
+
+        if not self.timer:
+            timer = QtCore.QBasicTimer()
+            timer.start(1000 * AKUGetSimStep(), self)
+            self.timer = timer
 
     def loadEditorFramework(self):
         luaEditorFrameworkPath = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../lua/editor/?.lua")        
@@ -186,12 +191,14 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
             MOAINotificationsIOS = MOAINotifications or require('MOAINotifications')
         """)
 
-    def loadLuaFramework(self):
-        luaFrameworkPath = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../lua/framework/src/?.lua")
-        self.runString("package.path = '%s;' .. package.path" % luaFrameworkPath)
-        self.runString("""  require ('include')""" )
-        self.coloredlog = ColoredLog(self.lua)
-        self.fileDialog = FileDialog(self.lua, self)
+    def loadLuaFramework(self, dir_path):
+        if dir_path:
+            luaFrameworkPath = os.path.join(dir_path, "framework/?.lua")
+            if os.path.exists(luaFrameworkPath):
+                self.runString("package.path = '%s;' .. package.path" % luaFrameworkPath)
+                self.runString("""  require ('include')""" )
+                self.coloredlog = ColoredLog(self.lua)
+                self.fileDialog = FileDialog(self.lua, self)
 
     def openWindow(self, title, width, height):
         AKUDetectGfxContext()
@@ -211,7 +218,7 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         self.glReady = False
         self.timer.stop()
         AKUModulesAppFinalize()
-        AKUAppFinalize()
+        # AKUAppFinalize()
 
     def setSimStep(self, step):
         self.timer.start(step * 1000, self)

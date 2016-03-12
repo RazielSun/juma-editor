@@ -105,23 +105,22 @@ class Scene( QtGui.QScrollArea ):
 	# Lifecycle methods
 	@abstractmethod
 	def start( self ):
-		self.moaiWidget.checkContext()
-		self.moaiWidget.makeCurrent()
+		self.moaiWidget.setupContext()
 		if not self._started:
 			self.reload()
 			self._started = True
+		self.moaiWidget.makeCurrent()
 		signals.emitNow( 'scene.start', self._sid )
 
 	@abstractmethod
 	def pause( self ):
-		self.moaiWidget.pause( True )
+		# self.moaiWidget.pause( True )
 		signals.emitNow( 'scene.pause', self._sid )
 
 	@abstractmethod
 	def stop( self ):
 		signals.emitNow( 'scene.stop', self._sid )
-		self.moaiWidget.deleteContext()
-		# self.moaiWidget.finalize()
+		# self.moaiWidget.deleteContext()
 
 	# Methods
 	@abstractmethod
@@ -136,7 +135,7 @@ class Scene( QtGui.QScrollArea ):
 		success = False
 		obj_ = self.head()
 		if obj_:
-			if width != obj_.width() and height != obj_.height():
+			if width != obj_.width() or height != obj_.height():
 				obj_.setSize( width, height )
 				self.moaiWidget.resize( obj_.width(), obj_.height() )
 				success = True
@@ -160,14 +159,14 @@ class Scene( QtGui.QScrollArea ):
 		self.moaiWidget.setTraceback( tracebackFunc )
 		self.moaiWidget.setPrint( luaBeforePrint, luaAfterPrint )
 
-		self.moaiWidget.loadEditorFramework()
-		self.moaiWidget.loadLuaFramework()
-
 		obj_ = self.head()
 		obj_.setSource( filename, workingDir )
+
+		self.moaiWidget.loadEditorFramework()
+		self.moaiWidget.loadLuaFramework( workingDir )
 		self.moaiWidget.runScript( obj_.source() )
 
-		self.moaiWidget.initialized = True
+		self.moaiWidget.initReady = True
 
 		signals.emitNow( 'scene.open_source', self._sid )
 

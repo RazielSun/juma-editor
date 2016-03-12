@@ -10,7 +10,7 @@ import jsonHelper
 
 import globalSignals
 from EditorModule   import EditorModule, EditorModuleManager
-# from project        import Project
+from Project        import Project
 # from package        import PackageManager
 from MainModulePath import getMainModulePath
 from Command        import EditorCommandRegistry
@@ -37,7 +37,7 @@ class EditorApp(object):
 		self.defaultMainloopBudget = 0.005
 
 		self.initialized   = False
-		# self.projectLoaded = False
+		self.projectLoaded = False
 		# self.flagModified  = False
 		# self.debugging     = False
 		self.running       = False
@@ -81,8 +81,8 @@ class EditorApp(object):
 		
 		self.loadConfig()
 
-		# if self.initialized: return True
-		# self.openProject()
+		if self.initialized: return True
+		self.openProject()
 		
 		# #scan packages
 		# excludePackages = self.getProject().getConfig( 'excluded_packages' )
@@ -253,10 +253,14 @@ class EditorApp(object):
 	def registerDataPath( self, dataPath ):
 		self.dataPaths.append( dataPath )
 
-	# def getProject( self ):
-	# 	return Project.get()
+	def getProject( self ):
+		return Project.get()
 
-	# def openProject( self, basePath = None ):
+	def openProject( self, basePath = None ):
+		proj = Project.get()
+		if proj.load( basePath ):
+			self.projectLoaded = True
+
 	# 	if self.projectLoaded: return Project.get()
 	# 	info = Project.findProject( basePath )
 	# 	if not info:

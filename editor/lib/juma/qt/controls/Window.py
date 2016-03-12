@@ -283,7 +283,6 @@ class DockWindow( QtGui.QDockWidget ):
         self.customTitleBar = DockWindowTitleBar( self )
         self.customTitleBar = self.originTitleBar
         self.setTitleBarWidget( self.customTitleBar )
-        pass
 
     def _useWindowFlags(self):
         pass
@@ -302,6 +301,35 @@ class DockWindow( QtGui.QDockWidget ):
         timer=QtCore.QTimer(self)
         timer.timeout.connect(trigger)
         return timer
+
+    def setupUi(self):
+        self.callbackOnClose = None
+
+        self.container = self.createContainer()
+
+        self.mainLayout = QtGui.QVBoxLayout(self.container)
+        # self.mainLayout.setSpacing(0)
+        # self.mainLayout.setMargin(0)
+        self.mainLayout.setObjectName('MainLayout')
+
+    def createContainer(self):
+        container = QtGui.QWidget(self)
+        self.setWidget(container)
+        return container
+
+    def addWidget(self, widget, **layoutOption):
+        if layoutOption.get('fixed', False):
+            widget.setSizePolicy(
+                QtGui.QSizePolicy.Fixed,
+                QtGui.QSizePolicy.Fixed
+                )
+        elif layoutOption.get('expanding', True):
+            widget.setSizePolicy(
+                QtGui.QSizePolicy.Expanding,
+                QtGui.QSizePolicy.Expanding
+                )       
+        self.mainLayout.addWidget(widget)
+        return widget
 
     def onTopLevelChanged(self, toplevel):
         self.topLevel = toplevel

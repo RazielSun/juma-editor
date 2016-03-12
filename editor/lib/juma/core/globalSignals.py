@@ -14,63 +14,68 @@ register('app.remote')
 
 register('app.open_file')
 
-register('module.loaded')
-
-register('command.new')
-register('command.undo')
-register('command.redo')
-register('command.clear')
-
-register('game.pause')
-register('game.resume')
-
-register('preview.start')
-register('preview.resume')
-register('preview.stop')
-register('preview.pause')
-
-register('debug.enter')
-register('debug.exit')
-register('debug.continue')
-register('debug.stop')
-
-register('debug.command')
-register('debug.info')
-
-register('file.modified')
-register('file.removed')
-register('file.added')
-register('file.moved')
-
-register('module.register')
-register('module.unregister')
-register('module.load')
-register('module.unload')
-
-register('selection.changed')
-register('selection.hint')
-
 register('project.init')
 register('project.preload')
 register('project.presave')
 register('project.load')
 register('project.save')
 
-register('project.pre_deploy')
-register('project.deploy')
-register('project.post_deploy')
-register('project.done_deploy')
+register('module.loaded')
+register('module.register')
+register('module.unregister')
+register('module.load')
+register('module.unload')
 
-register('asset.reset')
-register('asset.post_import_all')
-register('asset.added')
-register('asset.removed')
-register('asset.modified')
-register('asset.moved')
-register('asset.deploy.changed')
+# 
 
-register('asset.register')
-register('asset.unregister')
+# register('command.new')
+# register('command.undo')
+# register('command.redo')
+# register('command.clear')
+
+# register('game.pause')
+# register('game.resume')
+
+# register('preview.start')
+# register('preview.resume')
+# register('preview.stop')
+# register('preview.pause')
+
+# register('debug.enter')
+# register('debug.exit')
+# register('debug.continue')
+# register('debug.stop')
+
+# register('debug.command')
+# register('debug.info')
+
+# register('file.modified')
+# register('file.removed')
+# register('file.added')
+# register('file.moved')
+
+
+
+# register('selection.changed')
+# register('selection.hint')
+
+
+
+# register('project.pre_deploy')
+# register('project.deploy')
+# register('project.post_deploy')
+# register('project.done_deploy')
+
+# register('asset.reset')
+# register('asset.post_import_all')
+# register('asset.added')
+# register('asset.removed')
+# register('asset.modified')
+# register('asset.moved')
+# register('asset.deploy.changed')
+
+# register('asset.register')
+# register('asset.unregister')
 
 
 

@@ -3,6 +3,7 @@ import os
 
 from PySide import QtCore, QtGui
 from PySide.QtCore import QEventLoop, QEvent, QObject, QSettings, QCoreApplication, QLocale
+from PySide.QtGui import QFileDialog
 
 from time import time
 import locale
@@ -24,28 +25,11 @@ class QtSupportEventFilter(QObject):
 
 ##----------------------------------------------------------------##
 class QtSupport( QtEditorModule ):
-	def __init__( self ):
-		self.statusWindow = None
-		self.currentTheme = None
+	_name = "qt"
+	_dependency = []
 
-	def getName( self ):
-		return 'qt'
-
-	def getDependency( self ):
-		return []
-
-	def getBaseDependency( self ):
-		return []
-
-	def useStyle(self, style = ""):
-		self.currentTheme = style
-		self.applyTheme()
-
-	def applyTheme(self):
-		if self.currentTheme == "":
-			self.qtApp.setStyleSheet("")
-		else:
-			self.qtApp.setStyleSheet( themes.load_stylesheet(self.currentTheme) )
+	statusWindow = None
+	currentTheme = None
 
 	def setupMainWindow( self ):
 		self.mainWindow = QtMainWindow(None)
@@ -63,6 +47,7 @@ class QtSupport( QtEditorModule ):
 		
 		self.menu = self.addMenuBar( 'main', self.sharedMenuBar )
 		self.menu.addChild('&File').addChild([
+			'Open Project',
 			'----',
 			'E&xit',
 			]
@@ -76,13 +61,13 @@ class QtSupport( QtEditorModule ):
 			'----',
 			]
 		)
-		self.menu.addChild('&Window').addChild([
-			'----',
-			'Scene Editor',
-			'Stats Viewer',
-			'----',
-			]
-		)
+		# self.menu.addChild('&Window').addChild([
+		# 	'----',
+		# 	'Scene Editor',
+		# 	'Stats Viewer',
+		# 	'----',
+		# 	]
+		# )
 		self.menu.addChild('&Help')
 
 	def getSharedMenubar( self ):
@@ -105,6 +90,30 @@ class QtSupport( QtEditorModule ):
 	def setActiveWindow(self, window):
 		self.qtApp.setActiveWindow(window)
 
+	def getMainWindow( self ):
+		return self.mainWindow
+
+	def getQtSettingObject( self ):
+		return self.qtSetting
+
+	##----------------------------------------------------------------##
+	def openProject( self ):
+		fileName, filt = QFileDialog.getOpenFileName(self.mainWindow, "Open Project File", "~", "Project file (*.json )")
+		if fileName:
+			path = os.path.dirname( fileName )
+			self.getApp().openProject( path )
+
+	def useStyle( self, style = "" ):
+		self.currentTheme = style
+		self.applyTheme()
+
+	def applyTheme( self ):
+		if self.currentTheme == "":
+			self.qtApp.setStyleSheet("")
+		else:
+			self.qtApp.setStyleSheet( themes.load_stylesheet(self.currentTheme) )
+	
+	##----------------------------------------------------------------##
 	def onLoad( self ):
 		QLocale.setDefault(QLocale(QLocale.C))
 		locale.setlocale(locale.LC_ALL, 'C')
@@ -120,6 +129,7 @@ class QtSupport( QtEditorModule ):
 
 		self.initialized = True
 		self.running     = False
+
 		return True
 
 	def onStart( self ):
@@ -129,31 +139,31 @@ class QtSupport( QtEditorModule ):
 
 	def needUpdate( self ):
 		return True
-
+	
 	def onUpdate( self ):
 		if not self.qtApp.hasPendingEvents(): return
 		self.qtApp.processEvents( QEventLoop.AllEvents, 4 )
-	
-	def getMainWindow( self ):
-		return self.mainWindow
 
-	def getQtSettingObject( self ):
-		return self.qtSetting
-	
 	def onStart( self ):	
 		self.restoreWindowState( self.mainWindow )
+		# FIXME
+		self.getApp().openProject( self.qtSetting.value("project/path", '~') )
 		self.currentTheme = self.qtSetting.value("theme/style", 'robotstyle')
 		self.applyTheme()
 		self.qtApp.processEvents( QEventLoop.AllEvents )
 
 	def onStop( self ):
 		self.qtSetting.setValue("theme/style", self.currentTheme)
+		# FIXME
+		self.qtSetting.setValue("project/path", self.getApp().getProject().path )
 		self.saveWindowState( self.mainWindow )
 
 	def onMenu(self, node):
 		name = node.name
 		if name == 'exit':
 			self.getApp().stop()
+		if name == 'open_project':
+			self.openProject()
 		elif name == 'default_theme':
 			self.useStyle()
 		elif name == 'dark_theme':
