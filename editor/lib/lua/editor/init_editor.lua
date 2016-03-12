@@ -1,4 +1,3 @@
-require("util.globals.table")
 require("KeyMap")
 
 RenderContext = require("RenderContext")
