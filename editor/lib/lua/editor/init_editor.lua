@@ -19,12 +19,12 @@ function Game.setRenderStack( context, bufferTable, renderTableMap )
 	end
 
 	if context == Game.currentRenderContext then
-		-- for i, renderTable in ipairs( renderTableMap ) do
-		-- 	framebuffer = bufferTable[i]
-		-- 	print("keys:", framebuffer, renderTable )
-		-- 	framebuffer:setRenderTable( renderTable )		
+		-- for framebuffer, renderTable in pairs( renderTableMap ) do
+		-- 	-- framebuffer = bufferTable[i]
+		-- 	-- print("keys:", framebuffer, renderTable )
+		-- 	framebuffer:setRenderTable( renderTable )
 		-- end
-		-- MOAIRenderMgr.setBufferTable( bufferTable )
+		MOAIRenderMgr.setBufferTable( bufferTable )
 		MOAIRenderMgr.setRenderTable( renderTableMap )	
 	end
 end

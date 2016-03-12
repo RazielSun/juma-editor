@@ -17,7 +17,7 @@ class SceneView( QtGui.QScrollArea ):
 		self.setBackgroundRole(QtGui.QPalette.Dark)
 		self.setAlignment(QtCore.Qt.AlignCenter)
 
-		self.canvas = SceneViewCanvas()
+		self.canvas = SceneViewCanvas( context_prefix = 'scene_edit' )
 		self.setWidget(self.canvas)
 
 		self.canvas.resize( 640, 480 )

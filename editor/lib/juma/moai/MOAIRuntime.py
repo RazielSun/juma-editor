@@ -8,7 +8,7 @@ from juma.core import signals, app, EditorModule
 from moaipy import *
 
 from exceptions import *
-# from MOAIInputDevice import MOAIInputDevice
+from MOAIInputDevice import MOAIInputDevice
 from LuaTableProxy   import LuaTableProxy
 
 ##----------------------------------------------------------------##
@@ -153,10 +153,38 @@ class MOAIRuntime( EditorModule ):
 		self.createContext()
 
 	def finalize(self):
-		AKUModulesAppFinalize ()	
+		AKUModulesAppFinalize ()
 
 ##----------------------------------------------------------------##
+## Input Device Management
+##----------------------------------------------------------------##
+	def getInputDevice(self, name):
+		return self.inputDevices.get(name, None)
 
+	def addInputDevice(self, name):
+		device = MOAIInputDevice( name, self.lastInputDeviceId )
+		self.inputDevices[name] = device
+		self.lastInputDeviceId += 1
+
+		AKUReserveInputDevices ( self.lastInputDeviceId )
+		print("AKUReserveInputDevices {}".format( self.lastInputDeviceId ))
+		for inputDevice in self.inputDevices.values():
+			inputDevice.onRegister()
+		return device
+
+	def addDefaultInputDevice( self, name='device' ):
+		device = self.addInputDevice( name )
+		# device.addSensor('touch',       'touch')
+		device.addSensor('pointer',     'pointer')
+		device.addSensor('keyboard',    'keyboard')
+		device.addSensor('mouseLeft',   'button')
+		device.addSensor('mouseRight',  'button')
+		device.addSensor('mouseMiddle', 'button')
+		# for i in range( 0, 4 ):
+		# 	device.addJoystickSensors( i + 1 )
+		return device
+
+##----------------------------------------------------------------##
 	def openWindow(self, title, width, height):
 		AKUDetectGfxContext()
 		signals.emitNow( 'moai.open_window', title, width, height )
