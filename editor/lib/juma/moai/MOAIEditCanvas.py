@@ -8,8 +8,15 @@ from PySide.QtCore import Qt
 from juma import *
 
 from juma.qt.controls.GLWidget 	import GLWidget
-from MOAIRuntime              	import MOAIRuntime#, MOAILuaDelegate
+from MOAIRuntime              	import MOAIRuntime, MOAILuaDelegate
 from MOAICanvasBase           	import MOAICanvasBase
+
+
+
+##----------------------------------------------------------------##
+class MOAIEditCanvasLuaDelegate( MOAILuaDelegate ):
+	def load(self, scriptPath, scriptEnv = None ):
+		super( MOAIEditCanvasLuaDelegate, self ).load( scriptPath, scriptEnv )
 
 
 
@@ -24,13 +31,13 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.clearColor  = kwargs.get( 'clear_color', ( 0, 0, 0, 1 ) )
 		self.runtime     = app.affirmModule( 'moai' )
 		self.contextName = '%s<%d>' % ( contextPrefix, MOAIEditCanvas._id )
-		# self.delegate    = MOAIEditCanvasLuaDelegate( self, autoReload = False )
+		self.delegate    = MOAIEditCanvasLuaDelegate( self, autoReload = False )
 		self.updateTimer = QtCore.QTimer(self)
 		self.viewWidth   = 0
 		self.viewHeight  = 0
 		
-		# self.scriptEnv   = None
-		# self.scriptPath  = None
+		self.scriptEnv   = None
+		self.scriptPath  = None
 		self.enabled = False
 		self.lastUpdateTime = 0 
 		self.updateStep  = 0
@@ -41,8 +48,8 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 		self.updateTimer.timeout.connect( self.updateCanvas )
 
-		# signals.connect('moai.reset', self.onMoaiReset)
-		# signals.connect('moai.clean', self.onMoaiClean)
+		signals.connect('moai.reset', self.onMoaiReset)
+		signals.connect('moai.clean', self.onMoaiClean)
 		signals.connect('moai.open_window', self.openWindow)
 		signals.connect('moai.set_sim_step', self.setSimStep)
 
@@ -56,6 +63,43 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 	def stopUpdateTimer(self):
 		self.enabled = False
 		self.updateTimer.stop()
+
+	def loadScript( self, scriptPath, env = None, **kwargs ):
+		self.scriptPath = scriptPath
+		self.scriptEnv  = env
+		self.setupContext()
+
+	def setupContext(self):
+		self.runtime.createRenderContext( self.contextName, self.clearColor )
+		# self.setInputDevice( self.runtime.addDefaultInputDevice( self.contextName ) )
+		
+		if self.scriptPath:
+			self.makeCurrent()
+			env = {}
+		# 		'updateCanvas'     : boundToClosure( self.updateCanvas ),
+		# 		'hideCursor'       : boundToClosure( self.hideCursor ),
+		# 		'showCursor'       : boundToClosure( self.showCursor ),
+		# 		'setCursor'        : boundToClosure( self.setCursorById ),
+		# 		'setCursorPos'     : boundToClosure( self.setCursorPos ),
+		# 		'getCanvasSize'    : boundToClosure( self.getCanvasSize ),
+		# 		'startUpdateTimer' : boundToClosure( self.startUpdateTimer ),
+		# 		'stopUpdateTimer'  : boundToClosure( self.stopUpdateTimer ),
+		# 		'contextName'      : boundToClosure( self.contextName )				
+		# 	}
+			
+			if self.scriptEnv:
+				env.update( self.scriptEnv )
+			self.delegate.load( self.scriptPath, env )
+
+			loaded = self.delegate.safeCall( 'onLoad' )
+			print("loaded: {}".format(loaded))
+			# self.resizeGL(self.width(), self.height())
+			# self.startRefreshTimer()
+			# self.updateCanvas()
+			self.windowReady = True
+
+	def makeCurrent( self ):
+		self.runtime.changeRenderContext( self.contextName, self.viewWidth, self.viewHeight )
 
 	def onMoaiReset( self ):
 		self.setupContext()
@@ -80,36 +124,6 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		print("Set Sim Step: " + self.contextName)
 		self.updateTimer.setInterval( 1000 * step )
 		self.updateStep = step
-
-	def setupContext(self):
-		self.runtime.createRenderContext( self.contextName, self.clearColor )
-		# self.setInputDevice( self.runtime.addDefaultInputDevice( self.contextName ) )
-		
-		# if self.scriptPath:
-			# self.makeCurrent()
-		# 	env = {
-		# 		'updateCanvas'     : boundToClosure( self.updateCanvas ),
-		# 		'hideCursor'       : boundToClosure( self.hideCursor ),
-		# 		'showCursor'       : boundToClosure( self.showCursor ),
-		# 		'setCursor'        : boundToClosure( self.setCursorById ),
-		# 		'setCursorPos'     : boundToClosure( self.setCursorPos ),
-		# 		'getCanvasSize'    : boundToClosure( self.getCanvasSize ),
-		# 		'startUpdateTimer' : boundToClosure( self.startUpdateTimer ),
-		# 		'stopUpdateTimer'  : boundToClosure( self.stopUpdateTimer ),
-		# 		'contextName'      : boundToClosure( self.contextName )				
-		# 	}
-			
-		# 	if self.scriptEnv:
-		# 		env.update( self.scriptEnv )
-		# 	self.delegate.load( self.scriptPath, env )
-
-		# 	self.delegate.safeCall( 'onLoad' )
-			# self.resizeGL(self.width(), self.height())
-		# 	self.startRefreshTimer()
-			# self.updateCanvas()
-
-	def makeCurrent( self ):
-		self.runtime.changeRenderContext( self.contextName, self.viewWidth, self.viewHeight )
 
 	def onDraw(self):
 		runtime = self.runtime

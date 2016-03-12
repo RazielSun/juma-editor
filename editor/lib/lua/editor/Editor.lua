@@ -1,13 +1,14 @@
 require("KeyMap")
 
 RenderContext = require("RenderContext")
+Bridge = require("Bridge")
 
-Game = {}
+Editor = {}
 
 --------------------------------------------------------------------
---Context Related
+-- Context Related
 --------------------------------------------------------------------
-function Game.setRenderStack( context, bufferTable, renderTableMap )
+function Editor.setRenderStack( context, bufferTable, renderTableMap )
 	if RenderContext then
 		print("setRenderStack:", context, bufferTable, renderTableMap)
 		local renderContext = RenderContext.getRenderContext( context )
@@ -18,7 +19,7 @@ function Game.setRenderStack( context, bufferTable, renderTableMap )
 		print( 'no RenderContext module found for render context functions')
 	end
 
-	if context == Game.currentRenderContext then
+	if context == Editor.currentRenderContext then
 		-- for framebuffer, renderTable in pairs( renderTableMap ) do
 		-- 	-- framebuffer = bufferTable[i]
 		-- 	-- print("keys:", framebuffer, renderTable )
@@ -29,17 +30,17 @@ function Game.setRenderStack( context, bufferTable, renderTableMap )
 	end
 end
 
-function Game.setCurrentRenderContext( key )
-	Game.currentRenderContext = key or 'game'
+function Editor.setCurrentRenderContext( key )
+	Editor.currentRenderContext = key or 'game'
 end
 
-function Game.getCurrentRenderContext()
-	return Game.currentRenderContext or 'game'
+function Editor.getCurrentRenderContext()
+	return Editor.currentRenderContext or 'game'
 end
 
 --------------------------------------------------------------------
 local function onContextChange( ctx, oldCtx )
-	Game.setCurrentRenderContext( ctx )
+	Editor.setCurrentRenderContext( ctx )
 end
 
 RenderContext.addContextChangeListeners( onContextChange )

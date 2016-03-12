@@ -10,6 +10,12 @@ from juma.moai.MOAIEditCanvas import  MOAIEditCanvas
 
 
 ##----------------------------------------------------------------##
+def _getModulePath( path ):
+	return os.path.dirname( __file__ ) + '/' + path
+
+
+
+##----------------------------------------------------------------##
 class SceneView( QtGui.QScrollArea ):
 	def __init__( self, parent=None ):
 		super(SceneView, self).__init__( parent )
@@ -19,10 +25,8 @@ class SceneView( QtGui.QScrollArea ):
 
 		self.canvas = SceneViewCanvas( context_prefix = 'scene_edit' )
 		self.setWidget(self.canvas)
-
-		self.canvas.resize( 640, 480 )
-		self.canvas.onMoaiReset()
-		
+		self.canvas.resize(600, 400)
+		self.canvas.loadScript( _getModulePath('SceneView.lua') )		
 
 	def openSource(self):
 		fileName, filt = QFileDialog.getOpenFileName(self, "Run Script", app.getProject().path or "~", "Lua source (*.lua )")
