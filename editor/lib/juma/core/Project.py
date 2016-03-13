@@ -71,10 +71,11 @@ class Project(object):
 		assert not Project._singleton
 		Project._singleton = self
 
-		self.loaded 	= False
 		self.path      	= None
 		self.gamePath 	= None
+
 		self.info 		= None
+		self.config 	= None
 
 	def _initPath( self, path ):
 		self.path = path
@@ -83,6 +84,9 @@ class Project(object):
 
 	def _affirmDirectories( self ):
 		_affirmPath( self.gamePath )
+
+	def isLoaded( self ):
+		return self.path != None
 
 	def init(self, path):
 		signals.emitNow('project.init', self)
@@ -97,6 +101,10 @@ class Project(object):
 		self._initPath( path )
 		self._affirmDirectories()
 		self.info = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_INFO_FILE ) )
+		self.config = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_CONFIG_FILE ) )
+		if not self.config:
+			self.config = {}
+			self.saveConfig()
 
 		self.loaded = True
 		signals.emitNow( 'project.preload', self )
@@ -107,7 +115,7 @@ class Project(object):
 	def save(self):
 		signals.emitNow('project.presave', self)
 		#save project info & config
-		jsonHelper.trySaveJSON( self.info, self.getBasePath( _PROJECT_INFO_FILE ), 'project info' )
+		jsonHelper.trySaveJSON( self.info, self.getBasePath( _PROJECT_INFO_FILE ) )
 
 		#save asset & cache
 		# self.assetLibrary.save()
@@ -117,14 +125,27 @@ class Project(object):
 		signals.emitNow( 'project.save', self )
 		return True
 
+	def saveConfig( self ):
+		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _PROJECT_CONFIG_FILE ))
+
 	def getPath( self, path = None ):
 		return self.getBasePath( path )
 		
 	def getBasePath( self, path = None ):
 		return os.path.join( self.path, path )
 
-	def isLoaded( self ):
-		return self.loaded
+	def getConfigPath(self, path=None):
+		return os.path.join( self.path, path )
+
+##----------------------------------------------------------------##
+	def getConfigDict( self ):
+		return self.config
+
+	def getConfig( self, key, default = None ):
+		return self.config.get( key, default )
+
+	def setConfig( self, key, value ):
+		self.config[ key ] = value
 
 ##----------------------------------------------------------------##
 

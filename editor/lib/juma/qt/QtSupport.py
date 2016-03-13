@@ -66,7 +66,7 @@ class QtSupport( QtEditorModule ):
 			'----',
 			'Scene Editor',
 			'Game Preview',
-		# 	'Stats Viewer',
+			'Stats Viewer',
 			'----',
 			]
 		)
@@ -178,8 +178,8 @@ class QtSupport( QtEditorModule ):
 			self.getModule('scene_editor').setFocus()
 		elif name == 'game_preview':
 			self.getModule('game_preview').show()
-		# elif name == 'stats_viewer':
-		# 	self.getModule('stats_viewer').show()
+		elif name == 'stats_viewer':
+			self.getModule('stats_viewer').show()
 		# elif name == 'debug_view':
 		# 	self.getModule('debug_view').setFocus()
 		# elif name == 'refresh_theme':

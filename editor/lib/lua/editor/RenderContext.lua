@@ -103,7 +103,7 @@ function RenderContext.changeRenderContext( key, w, h )
 	-- 	deviceBuffer:setRenderTable  ( currentContext.deviceRenderTable )
 	-- end
 	-- MOAIRenderMgr.setRenderTable ( currentContext.renderTableMap )
-	MOAIActionMgr.setRoot        ( currentContext.actionRoot )
+	-- MOAIActionMgr.setRoot        ( currentContext.actionRoot )
 end
 
 function RenderContext.getCurrentRenderContextKey()

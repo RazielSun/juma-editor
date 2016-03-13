@@ -4,7 +4,7 @@ import logging
 import os.path
 import moaipy
 
-from juma.core import signals, app, EditorModule
+from juma.core import signals, app, EditorModule, printTraceBack
 from moaipy import *
 
 from exceptions import *
@@ -17,6 +17,8 @@ _RenderContext 	= LuaTableProxy( None )
 _Bridge		 	= LuaTableProxy( None )
 
 # signals.register( 'lua.msg' )
+
+signals.register( 'moai.prepare_clean' )
 signals.register( 'moai.clean' )
 signals.register( 'moai.reset' )
 signals.register( 'moai.ready' )
@@ -171,6 +173,7 @@ class MOAIRuntime( EditorModule ):
 	
 	#clean holded lua object(this is CRITICAL!!!)
 	def cleanLuaReferences(self):
+		signals.emitNow( 'moai.prepare_clean' )
 		# for m in self.luaModules:
 		# 	unregisterModule(m)
 
@@ -185,7 +188,7 @@ class MOAIRuntime( EditorModule ):
 		# 		if isinstance(ins.target,(_LuaTable, _LuaObject, _LuaThread, _LuaFunction)):
 		# 			ins.clear()
 
-		signals.emitNow('moai.clean')
+		signals.emitNow( 'moai.clean' )
 
 ##----------------------------------------------------------------##
 ## Input Device Management

@@ -7,13 +7,9 @@ from PySide.QtGui import QFileDialog
 from juma.core import signals, app
 from juma.moai.MOAIEditCanvas import  MOAIEditCanvas
 
-
-
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
-
-
 
 ##----------------------------------------------------------------##
 class SceneView( QtGui.QScrollArea ):

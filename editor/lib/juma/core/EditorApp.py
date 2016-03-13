@@ -135,7 +135,7 @@ class EditorApp(object):
 				self.doMainLoop()
 
 		except Exception, e:
-			#TODO: popup a alert window?
+			# TODO: popup a alert window?
 			logging.exception( e )
 			hasError = True
 
@@ -144,8 +144,9 @@ class EditorApp(object):
 		signals.dispatchAll()
 		EditorModuleManager.get().stopAllModules()
 		
-	# 	if not hasError:
-	# 		self.getProject().save()
+		if not hasError:
+			self.getProject().save()
+			self.getProject().saveConfig()
 
 		signals.dispatchAll()
 		EditorModuleManager.get().unloadAllModules()
