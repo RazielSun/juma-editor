@@ -55,7 +55,6 @@ end
 function RenderContext.changeRenderContext( key, w, h )
 	if currentContextKey == key then return end
 	local context = renderContextTable[key]
-	print("changeRenderContext:", currentContextKey, key, w, h)
 	assert ( context, 'no render context for:'..tostring(key) )
 	for f in pairs( ContextChangeListeners ) do
 		f( key, currentContextKey )
@@ -89,12 +88,12 @@ function RenderContext.changeRenderContext( key, w, h )
 	currentContext.w  = w
 	currentContext.h  = h
 
-	local clearColor = currentContext.clearColor
-	if clearColor then 
-		MOAIGfxDevice.getFrameBuffer():setClearColor( unpack( clearColor ) )
-	else
-		MOAIGfxDevice.getFrameBuffer():setClearColor( )
-	end
+	-- local clearColor = currentContext.clearColor
+	-- if clearColor then 
+	-- 	MOAIGfxDevice.getFrameBuffer():setClearColor( unpack( clearColor ) )
+	-- else
+	-- 	MOAIGfxDevice.getFrameBuffer():setClearColor( )
+	-- end
 
 	-- for fb, rt in pairs( currentContext.renderTableMap ) do
 	-- 	fb:setRenderTable( rt )
@@ -103,7 +102,7 @@ function RenderContext.changeRenderContext( key, w, h )
 	-- if currentContext.deviceRenderTable then
 	-- 	deviceBuffer:setRenderTable  ( currentContext.deviceRenderTable )
 	-- end
-	MOAIRenderMgr.setRenderTable ( currentContext.renderTableMap )
+	-- MOAIRenderMgr.setRenderTable ( currentContext.renderTableMap )
 	MOAIActionMgr.setRoot        ( currentContext.actionRoot )
 end
 

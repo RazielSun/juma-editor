@@ -71,4 +71,15 @@ function Bridge.loadLuaDelegate(file, env, ...)
 	return env
 end
 
+--------------------------------------------------------------------
+-- 
+--------------------------------------------------------------------
+
+function Bridge.setLuaEnvResolution(width, height)
+	MOAIEnvironment.setValue('horizontalResolution', width)
+	MOAIEnvironment.setValue('verticalResolution', height)
+end
+
+--------------------------------------------------------------------
+
 return Bridge

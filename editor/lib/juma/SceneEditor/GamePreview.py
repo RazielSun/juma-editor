@@ -69,6 +69,8 @@ class GamePreview( SceneEditorModule ):
 
 
 	def onLoad(self):
+		self.paused = None
+
 		self.window = self.requestDockWindow(
 			'GamePreview',
 			title = 'Game Preview',
@@ -87,12 +89,12 @@ class GamePreview( SceneEditorModule ):
 		self.window.addWidget( self.scrollArea )
 
 		self.canvas = GamePreviewCanvas()
-		self.canvas.resize(512, 512)
+		self.viewWidth = 320
+		self.viewHeight = 480
+		self.canvas.resize(self.viewWidth, self.viewHeight)
 		self.scrollArea.setWidget( self.canvas )
 		# self.canvas.startRefreshTimer( self.nonActiveFPS )
 		self.canvas.module = self
-
-		self.paused = False
 
 		self.updateTimer = None
 		
@@ -104,7 +106,6 @@ class GamePreview( SceneEditorModule ):
 	# 	signals.connect( 'debug.stop',     self.onDebugStop )
 		
 		signals.connect( 'moai.reset',     self.onMoaiReset )
-		# self.onMoaiReset()
 		
 		self.menu = self.findMenu( 'main/preview' )
 
@@ -189,13 +190,13 @@ class GamePreview( SceneEditorModule ):
 		runtime.renderAKU()
 
 	def onMoaiReset( self ):
-		self.started = False
 		runtime = self.getRuntime()
 		runtime.createRenderContext( 'game' )
-		runtime.addDefaultInputDevice( 'device' )
-		print("onMoaiReset")
+		runtime.setLuaEnvResolution(self.viewWidth, self.viewHeight)
+		runtime.runGame()
 
-	def openWindow(self, title, window, height):
+	def openWindow(self, title, width, height):
+		# self.canvas.resize(width, height)
 		self.resizeView(self.viewWidth, self.viewHeight)
 	
 	# def onDebugEnter(self):
@@ -327,31 +328,27 @@ class GamePreview( SceneEditorModule ):
 	# 		self.getRuntime().pause()
 
 	def startPreview(self):
-		print("startPreview self.paused = {}".format(self.paused))
-		# if self.paused == False: return
+		if self.paused == False: return
 
 		self.makeCurrent()
 		GLWidget.getSharedWidget().makeCurrent()
 		runtime = self.getRuntime()
 		self.canvas.setInputDevice( runtime.getInputDevice('device') )
-		if not self.started:
-			self.started = True
-			runtime.setWorkingDirectory( self.getProject().gamePath )
-			runtime.runScript( "main.lua" )
-			print("runScript: main.lua")
 
 		self.getApp().setMinimalMainLoopBudget()
 
 		# self.canvas.startRefreshTimer( self.activeFPS )
 		# self.canvas.refreshTimer.start()
-		self.updateTimer = self.window.startTimer( runtime.simStep, self.updateView )
+		if self.paused:
+			self.updateTimer.start()
+		elif self.paused is None:
+			self.updateTimer = self.window.startTimer( runtime.simStep, self.updateView )
 
 		self.setFocus()
 		runtime.resume()
 		self.paused = False
 
 	def stopPreview(self):
-		print("stopPreview self.paused = {}".format(self.paused))
 		if self.paused is None: return
 
 		self.canvas.setInputDevice( None )
@@ -363,7 +360,6 @@ class GamePreview( SceneEditorModule ):
 		self.paused = None
 
 	def pausePreview(self):
-		print("pausePreview self.paused = {}".format(self.paused))
 		if self.paused: return
 		
 		self.canvas.setInputDevice( None )
@@ -456,7 +452,6 @@ class GamePreviewCanvas(MOAICanvasBase):
 		return False
 
 	def resizeGL(self, width, height):
-		print("resizeGL:", width, height)
 		self.module.resizeView(width, height)
 		MOAICanvasBase.resizeGL(self, width, height)
 

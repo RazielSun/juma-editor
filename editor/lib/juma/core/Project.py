@@ -32,6 +32,8 @@ _PROJECT_GAME_DIR			= 'lua'
 _PROJECT_INFO_FILE          = 'project.json'
 _PROJECT_CONFIG_FILE        = 'config.json'
 
+
+
 ##----------------------------------------------------------------##
 def _affirmPath( path ):
 	if os.path.exists( path ): return
@@ -40,8 +42,6 @@ def _affirmPath( path ):
 	except Exception, e:
 		pass
 		
-
-
 ##----------------------------------------------------------------##
 class Project(object):
 	_singleton=None
@@ -71,6 +71,7 @@ class Project(object):
 		assert not Project._singleton
 		Project._singleton = self
 
+		self.loaded 	= False
 		self.path      	= None
 		self.gamePath 	= None
 		self.info 		= None
@@ -97,6 +98,7 @@ class Project(object):
 		self._affirmDirectories()
 		self.info = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_INFO_FILE ) )
 
+		self.loaded = True
 		signals.emitNow( 'project.preload', self )
 		signals.emitNow( 'project.load', self )
 
@@ -120,6 +122,11 @@ class Project(object):
 		
 	def getBasePath( self, path = None ):
 		return os.path.join( self.path, path )
+
+	def isLoaded( self ):
+		return self.loaded
+
+##----------------------------------------------------------------##
 
 Project()
 		

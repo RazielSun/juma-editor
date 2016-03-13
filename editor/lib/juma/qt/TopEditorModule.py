@@ -100,14 +100,14 @@ class SubEditorModule( QtEditorModule ):
 	def getMainWindow( self ):
 		return self.getParentModule().getMainWindow()
 
-	def getSelectionManager( self ):
-		return self.getParentModule().selectionManager
+	# def getSelectionManager( self ):
+	# 	return self.getParentModule().selectionManager
 
-	def getSelection( self ):
-		return self.getSelectionManager().getSelection()
+	# def getSelection( self ):
+	# 	return self.getSelectionManager().getSelection()
 
-	def changeSelection( self, selection ):
-		self.getSelectionManager().changeSelection( selection )
+	# def changeSelection( self, selection ):
+	# 	self.getSelectionManager().changeSelection( selection )
 
 	def setFocus( self ):
 		self.getMainWindow().raise_()

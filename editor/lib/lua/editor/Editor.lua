@@ -1,9 +1,8 @@
-require("KeyMap")
+--------------------------------------------------------------------
+-- EDITOR
+--------------------------------------------------------------------
 
-RenderContext = require("RenderContext")
-Bridge = require("Bridge")
-
-Editor = {}
+local Editor = {}
 
 --------------------------------------------------------------------
 -- Context Related
@@ -25,8 +24,8 @@ function Editor.setRenderStack( context, bufferTable, renderTableMap )
 		-- 	-- print("keys:", framebuffer, renderTable )
 		-- 	framebuffer:setRenderTable( renderTable )
 		-- end
-		MOAIRenderMgr.setBufferTable( bufferTable )
-		MOAIRenderMgr.setRenderTable( renderTableMap )	
+		-- MOAIRenderMgr.setBufferTable( bufferTable )
+		-- MOAIRenderMgr.setRenderTable( renderTableMap )	
 	end
 end
 
@@ -38,9 +37,4 @@ function Editor.getCurrentRenderContext()
 	return Editor.currentRenderContext or 'game'
 end
 
---------------------------------------------------------------------
-local function onContextChange( ctx, oldCtx )
-	Editor.setCurrentRenderContext( ctx )
-end
-
-RenderContext.addContextChangeListeners( onContextChange )
+return Editor
