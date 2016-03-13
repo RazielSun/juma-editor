@@ -53,6 +53,7 @@ class QtSupport( QtEditorModule ):
 			]
 		)
 		self.menu.addChild('&Edit')
+		self.menu.addChild( dict( name = 'preview', label = 'Game' ) )
 		self.menu.addChild('&View').addChild([
 			'----',
 			'Default Theme',
@@ -61,13 +62,14 @@ class QtSupport( QtEditorModule ):
 			'----',
 			]
 		)
-		# self.menu.addChild('&Window').addChild([
-		# 	'----',
-		# 	'Scene Editor',
+		self.menu.addChild('&Window').addChild([
+			'----',
+			'Scene Editor',
+			'Game Preview',
 		# 	'Stats Viewer',
-		# 	'----',
-		# 	]
-		# )
+			'----',
+			]
+		)
 		self.menu.addChild('&Help')
 
 	def getSharedMenubar( self ):
@@ -146,7 +148,6 @@ class QtSupport( QtEditorModule ):
 
 	def onStart( self ):	
 		self.restoreWindowState( self.mainWindow )
-		# FIXME
 		self.getApp().openProject( self.qtSetting.value("project/path", '~') )
 		self.currentTheme = self.qtSetting.value("theme/style", 'robotstyle')
 		self.applyTheme()
@@ -154,8 +155,7 @@ class QtSupport( QtEditorModule ):
 
 	def onStop( self ):
 		self.qtSetting.setValue("theme/style", self.currentTheme)
-		# FIXME
-		self.qtSetting.setValue("project/path", self.getApp().getProject().path )
+		self.qtSetting.setValue("project/path", self.getProject().path )
 		self.saveWindowState( self.mainWindow )
 
 	def onMenu(self, node):
@@ -176,8 +176,10 @@ class QtSupport( QtEditorModule ):
 		# 	self.getModule('asset_editor').setFocus()
 		elif name == 'scene_editor':
 			self.getModule('scene_editor').setFocus()
-		elif name == 'stats_viewer':
-			self.getModule('stats_viewer').show()
+		elif name == 'game_preview':
+			self.getModule('game_preview').show()
+		# elif name == 'stats_viewer':
+		# 	self.getModule('stats_viewer').show()
 		# elif name == 'debug_view':
 		# 	self.getModule('debug_view').setFocus()
 		# elif name == 'refresh_theme':

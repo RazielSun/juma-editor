@@ -10,7 +10,7 @@ function onLoad()
 	Editor.setRenderStack( Editor.getCurrentRenderContext(), {}, { layer } )
 
 	local gfxQuad = MOAIGfxQuad2D.new ()
-	gfxQuad:setTexture ( "editor/lib/lua/moai.png" )
+	gfxQuad:setTexture ( "moai.png" )
 	gfxQuad:setRect ( -64, -64, 64, 64 )
 
 	local prop = MOAIProp2D.new ()
@@ -19,7 +19,7 @@ function onLoad()
 	layer:insertProp ( prop )
 
 	local font = MOAIFont.new ()
-	font:loadFromTTF ( "editor/lib/lua/arialbd.ttf", " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.?!", 12, 163 )
+	font:loadFromTTF ( "arialbd.ttf", " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.?!", 12, 163 )
 
 	local textbox = MOAITextBox.new ()
 	textbox:setFont ( font )

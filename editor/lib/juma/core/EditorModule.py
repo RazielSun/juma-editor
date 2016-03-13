@@ -8,7 +8,7 @@ import time
 from res     import *
 
 import signals
-# from project import Project
+from Project import Project
 from Command import EditorCommandRegistry
 
 
@@ -71,8 +71,8 @@ class EditorModule( ResHolder ):
 	def doCommand( self, fullname, *args, **kwargs ):
 		return self._app.doCommand( fullname, *args, **kwargs )
 
-	# def getProject( self ):
-	# 	return Project.get()
+	def getProject( self ):
+		return Project.get()
 
 	# def getAssetLibrary( self ):
 	# 	return self.getProject().getAssetLibrary()

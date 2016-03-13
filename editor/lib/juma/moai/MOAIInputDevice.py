@@ -32,7 +32,6 @@ class MOAIInputDevice(object):
 		self.lastSensorId += 1
 
 		AKUReserveInputDeviceSensors ( self.id, self.lastSensorId )
-		print("AKUReserveInputDeviceSensors : {} {}".format( self.id, self.lastSensorId ))
 		for k in self.sensors:
 			sensor = self.sensors[k]
 			sensor.onRegister()
@@ -43,8 +42,6 @@ class MOAIInputDevice(object):
 	def onRegister(self):
 		AKUSetInputDevice ( self.id, self.name )
 		AKUReserveInputDeviceSensors ( self.id, self.lastSensorId )
-		print("AKUSetInputDevice {} {}".format( self.id, self.name ))
-		print("AKUReserveInputDeviceSensors {} {}".format( self.id, self.lastSensorId ))
 		for k in self.sensors:
 			sensor = self.sensors[k]
 			sensor.onRegister()

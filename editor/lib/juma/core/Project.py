@@ -27,9 +27,19 @@ import jsonHelper
 # _GII_ENV_LIB_DIR        = _GII_ENV_DIR  + '/lib'
 # _GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
 
+_PROJECT_GAME_DIR			= 'lua'
+
 _PROJECT_INFO_FILE          = 'project.json'
 _PROJECT_CONFIG_FILE        = 'config.json'
 
+##----------------------------------------------------------------##
+def _affirmPath( path ):
+	if os.path.exists( path ): return
+	try:
+		os.mkdir( path )
+	except Exception, e:
+		pass
+		
 
 
 ##----------------------------------------------------------------##
@@ -62,7 +72,16 @@ class Project(object):
 		Project._singleton = self
 
 		self.path      	= None
+		self.gamePath 	= None
 		self.info 		= None
+
+	def _initPath( self, path ):
+		self.path = path
+
+		self.gamePath          = path + '/' + _PROJECT_GAME_DIR
+
+	def _affirmDirectories( self ):
+		_affirmPath( self.gamePath )
 
 	def init(self, path):
 		signals.emitNow('project.init', self)
@@ -70,12 +89,12 @@ class Project(object):
 	def load(self, path):
 		if not path:
 			path = self.path
-			if not self.path:
-				return False
+			if not self.path: return False
 
 		if not os.path.exists( path + '/' + _PROJECT_INFO_FILE ): return False
 
-		self.path = path
+		self._initPath( path )
+		self._affirmDirectories()
 		self.info = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_INFO_FILE ) )
 
 		signals.emitNow( 'project.preload', self )

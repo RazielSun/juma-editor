@@ -44,11 +44,11 @@ class MainWindow( QMainWindow ):
         font.setPointSize(11)
         self.setFont(font)
 
-        self.tabWidget = QtGui.QTabWidget( None )
-        self.tabWidget.setTabsClosable( True )
-        self.tabWidget.setMovable( False )
+        self.centerTabWidget = QtGui.QTabWidget( None )
+        self.centerTabWidget.setTabsClosable( True )
+        self.centerTabWidget.setMovable( False )
 
-        self.setCentralWidget( self.tabWidget )
+        self.setCentralWidget( self.centerTabWidget )
 
     def moveToCenter(self):
         moveWindowToCenter( self )
@@ -92,13 +92,12 @@ class MainWindow( QMainWindow ):
     def requestDocumentWindow(self, id, **windowOption ):
         title  = windowOption.get('title',id)
         
-        window = DocumentWindow( self.tabWidget )
+        window = DocumentWindow( self.centerTabWidget )
         window.parentWindow = self
         window.setWindowTitle( title )
 
         window.windowMode = 'tab'
         window.titleBase = title
-
 
         minSize = windowOption.get('minSize',None)
         if minSize:
@@ -181,18 +180,20 @@ class SubWindow( QtGui.QMainWindow ):
     
     def __init__(self, parent):
         super(SubWindow, self).__init__(parent)
-        self.setupUi()
+        self.setupBasicUi()
         self.stayOnTop = False
         self.setFocusPolicy( Qt.WheelFocus )
 
+    def setDocumentName( self, name ):
+        self.documentName = name
+        if name:
+            title = '%s - %s' % ( self.documentName, self.titleBase )
+            self.setWindowTitle( title )
+        else:
+            self.setWindowTitle( self.titleBase )
+
     def hideTitleBar(self):
         pass
-
-    def createContainer(self):
-        container=QtGui.QWidget(self)
-        self.setCentralWidget(container)
-        return container
-
 
     def startTimer(self, fps, trigger):
         assert(hasattr(trigger,'__call__'))
@@ -202,22 +203,32 @@ class SubWindow( QtGui.QMainWindow ):
         timer.start(interval)
         return timer
 
-    def focusOutEvent(self, event):
-        pass
-
-    def focusInEvent(self, event):
-        pass
-
-    def closeEvent( self, event ):
-        if self.onClose():
-            return super( SubWindow, self ).closeEvent( event )
-        else:
-            event.ignore()
+    def setupBasicUi(self):
+        self.callbackOnClose = None
+        self.container = self.createContainer()
+        self.mainLayout = QtGui.QVBoxLayout(self.container)
+        # self.mainLayout.setSpacing(0)
+        self.mainLayout.setContentsMargins(0, 0, 0, 0)
+        self.mainLayout.setObjectName('MainLayout')
 
     def createContainer(self):
-        container = QtGui.QWidget(self)
-        self.setWidget(container)
+        container=QtGui.QWidget(self)
+        self.setCentralWidget(container)
         return container
+
+    def addWidget(self, widget, **layoutOption):
+        if layoutOption.get('fixed', False):
+            widget.setSizePolicy(
+                QtGui.QSizePolicy.Fixed,
+                QtGui.QSizePolicy.Fixed
+                )
+        elif layoutOption.get('expanding', True):
+            widget.setSizePolicy(
+                QtGui.QSizePolicy.Expanding,
+                QtGui.QSizePolicy.Expanding
+                )       
+        self.mainLayout.addWidget(widget)
+        return widget
 
     def moveToCenter(self):
         moveWindowToCenter(self)
@@ -232,6 +243,18 @@ class SubWindow( QtGui.QMainWindow ):
         if self.callbackOnClose:
             return self.callbackOnClose()
         return True
+
+    def focusOutEvent(self, event):
+        pass
+
+    def focusInEvent(self, event):
+        pass
+
+    def closeEvent( self, event ):
+        if self.onClose():
+            return super( SubWindow, self ).closeEvent( event )
+        else:
+            event.ignore()
 
 ##----------------------------------------------------------------##
 class DocumentWindow( SubWindow ):
@@ -272,6 +295,7 @@ class DockWindow( QtGui.QDockWidget ):
 
     def __init__(self, parent):
         super(DockWindow, self).__init__(parent)
+        self.setupBasicUi()
         font = QtGui.QFont()
         font.setPointSize(11)
         self.setFont(font)
@@ -296,20 +320,20 @@ class DockWindow( QtGui.QDockWidget ):
         emptyTitle = QtGui.QWidget()
         self.setTitleBarWidget(emptyTitle)
 
-    def addTimer(self, trigger):
+    def startTimer(self, step, trigger):
         assert(hasattr(trigger,'__call__'))
+        interval = 1000 * step
         timer=QtCore.QTimer(self)
         timer.timeout.connect(trigger)
+        timer.start(interval)
         return timer
 
-    def setupUi(self):
+    def setupBasicUi(self):
         self.callbackOnClose = None
-
         self.container = self.createContainer()
-
         self.mainLayout = QtGui.QVBoxLayout(self.container)
         # self.mainLayout.setSpacing(0)
-        # self.mainLayout.setMargin(0)
+        self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.mainLayout.setObjectName('MainLayout')
 
     def createContainer(self):

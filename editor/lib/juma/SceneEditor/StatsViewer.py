@@ -23,12 +23,16 @@ def _getModulePath( path ):
 class StatsViewer( SceneEditorModule ):
 	"""docstring for StatsViewer"""
 	_name       = 'stats_viewer'
-	_dependency = ['qt', 'scene_editor']
-	_sceneId = -1
-	_setuped = False
-	statsFunc = None
-	startFunc = None
-	stopFunc = None
+	_dependency = ['qt', 'moai', 'scene_editor']
+
+	def __init__(self):
+		super(GamePreview, self).__init__()
+		self.statsFunc = None
+		self.startFunc = None
+		self.stopFunc = None
+
+	def getRuntime(self):
+		return self.affirmModule('moai')
 	
 	def onLoad( self ):
 		self.window = self.requestDockWindow( 'StatsViewer',
@@ -44,18 +48,13 @@ class StatsViewer( SceneEditorModule ):
 		self.window.setObjectName( 'StatsViewer' )
 		self.window.hide()
 
-		self.statsFunc = None
-		self.startFunc = None
-		self.stopFunc = None
-		self._setuped = False
-
 		self.timer = self.window.addTimer( self.onUpdateStats )
 
-		signals.connect( 'scene.start', self.onSceneStarted )
-		signals.connect( 'scene.stop', self.onSceneStoped )
-		signals.connect( 'scene.pause', self.onScenePaused )
-		signals.connect( 'scene.open_source', self.onSceneSourceOpened )
-		signals.connect( 'scene.pre_open_source', self.onSceneSourcePreOpened )
+		# signals.connect( 'scene.start', self.onSceneStarted )
+		# signals.connect( 'scene.stop', self.onSceneStoped )
+		# signals.connect( 'scene.pause', self.onScenePaused )
+		# signals.connect( 'scene.open_source', self.onSceneSourceOpened )
+		# signals.connect( 'scene.pre_open_source', self.onSceneSourcePreOpened )
 
 	def onStop( self ):
 		self.stopTimer()

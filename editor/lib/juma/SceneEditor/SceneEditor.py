@@ -9,9 +9,8 @@ from juma.core import app, signals
 from juma.qt.TopEditorModule    import TopEditorModule, QtMainWindow, SubEditorModule
 
 from SceneView                  import SceneView
-
-from Scene                      import SceneHeader, getSceneByType
-from SceneWidgets               import SceneSizeComboBox
+# from Scene                      import SceneHeader, getSceneByType
+from SceneEditorHelpers         import SceneSizeComboBox
 
 ##----------------------------------------------------------------##
 class SceneEditor( TopEditorModule ):
@@ -38,7 +37,7 @@ class SceneEditor( TopEditorModule ):
 
         self.findMenu( 'main/file' ).addChild([
             dict( name = 'new_scene', label = 'New Scene', shortcut = 'ctrl+N' ),
-            dict( name = 'open_file', label = 'Open File', shortcut = 'ctrl+O' ),
+            # dict( name = 'open_file', label = 'Open File', shortcut = 'ctrl+O' ),
         ], self )
 
         # self.findMenu( 'main/edit' ).addChild([
@@ -46,7 +45,7 @@ class SceneEditor( TopEditorModule ):
         # ], self )
 
         self.addTool( 'scene/new_scene', label = 'New Scene', menu_link = 'main/file/new_scene', icon = 'file' )
-        self.addTool( 'scene/open_file', label = 'Open File', menu_link = 'main/file/open_file', icon = 'folder' )
+        # self.addTool( 'scene/open_file', label = 'Open File', menu_link = 'main/file/open_file', icon = 'folder' )
         # self.addTool( 'scene/reload_scene', label = 'Reload', menu_link = 'main/edit/reload_scene', icon = 'repeat' )
         # self.addTool( 'scene/size_scene', widget = self.sceneSizeWidget )
 
@@ -88,7 +87,7 @@ class SceneEditor( TopEditorModule ):
 
     # Scene methods
     def getTab(self):
-        return self.mainWindow.tabWidget
+        return self.mainWindow.centerTabWidget
 
     def getScene(self):
         tab = self.getTab()

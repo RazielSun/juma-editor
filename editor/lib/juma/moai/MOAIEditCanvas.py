@@ -27,6 +27,8 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		MOAIEditCanvas._id += 1
 		super(MOAIEditCanvasBase, self).__init__( *args )
 
+		self.enabled = False
+
 		contextPrefix = kwargs.get( 'context_prefix', 'edit_canvas')
 		self.clearColor  = kwargs.get( 'clear_color', ( 0, 0, 0, 1 ) )
 		self.runtime     = app.affirmModule( 'moai' )
@@ -38,7 +40,6 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		
 		self.scriptEnv   = None
 		self.scriptPath  = None
-		self.enabled = False
 		self.lastUpdateTime = 0 
 		self.updateStep  = 0
 		# self.alwaysForcedUpdate = False
@@ -50,8 +51,8 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 		signals.connect('moai.reset', self.onMoaiReset)
 		signals.connect('moai.clean', self.onMoaiClean)
-		signals.connect('moai.open_window', self.openWindow)
-		signals.connect('moai.set_sim_step', self.setSimStep)
+		# signals.connect('moai.open_window', self.openWindow)
+		# signals.connect('moai.set_sim_step', self.setSimStep)
 
 	def startUpdateTimer( self, fps = 60 ):
 		self.enabled = True
@@ -75,7 +76,8 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		
 		if self.scriptPath:
 			self.makeCurrent()
-			env = {}
+			env = {
+			}
 		# 		'updateCanvas'     : boundToClosure( self.updateCanvas ),
 		# 		'hideCursor'       : boundToClosure( self.hideCursor ),
 		# 		'showCursor'       : boundToClosure( self.showCursor ),
@@ -92,11 +94,10 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 			self.delegate.load( self.scriptPath, env )
 
 			loaded = self.delegate.safeCall( 'onLoad' )
-			print("loaded: {}".format(loaded))
+			print("function onLoad called: {}".format(loaded))
 			# self.resizeGL(self.width(), self.height())
 			# self.startRefreshTimer()
 			# self.updateCanvas()
-			self.windowReady = True
 
 	def makeCurrent( self ):
 		self.runtime.changeRenderContext( self.contextName, self.viewWidth, self.viewHeight )
@@ -108,23 +109,24 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.stopUpdateTimer()
 		self.stopRefreshTimer()
 
-	def openWindow(self, title, width, height):
-		if not self.enabled: return False
-		print("Update Window: {} to {} {} {}".format(self.contextName, title, width, height))
-		# runtime = self.runtime
-		# w = self.size().width()
-		# h = self.size().height()
-		# runtime.setScreenSize(w, h)
-		# runtime.setViewSize(w, h)
-		self.resize(width, height)
-		self.windowReady = True
+	# need remove
+	# def openWindow(self, title, width, height):
+	# 	if not self.enabled: return False
+	# 	print("Update Window: {} to {} {} {}".format(self.contextName, title, width, height))
+	# 	# runtime = self.runtime
+	# 	# w = self.size().width()
+	# 	# h = self.size().height()
+	# 	# runtime.setScreenSize(w, h)
+	# 	# runtime.setViewSize(w, h)
+	# 	self.resize(width, height)
 
-	def setSimStep(self, step):
-		if not self.enabled: return False
-		print("Set Sim Step: " + self.contextName)
-		self.updateTimer.setInterval( 1000 * step )
-		self.updateStep = step
+	# def setSimStep(self, step):
+	# 	if not self.enabled: return False
+	# 	print("Set Sim Step: " + self.contextName)
+	# 	self.updateTimer.setInterval( 1000 * step )
+	# 	self.updateStep = step
 
+	# fixme
 	def onDraw(self):
 		runtime = self.runtime
 		# runtime.setBufferSize( self.viewWidth, self.viewHeight )
@@ -134,10 +136,10 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		runtime.renderAKU()
 
 	def updateCanvas( self, **option ):
-		if self.windowReady:
-			self.makeCurrent()
-			self.runtime.updateAKU()
-			self.updateGL()
+		self.makeCurrent()
+		if self.runtime.updateAKU():
+			self.forceUpdateGL()
+
 		# currentTime = getTime()
 		# step = currentTime - self.lastUpdateTime
 		# self.lastUpdateTime = currentTime
@@ -159,6 +161,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		# else:
 		# 	self.updateGL()
 
+	# change
 	def resizeGL(self, width, height):
 		# self.delegate.onResize(width,height)
 		print("resizeGL: {} {}".format(width, height))

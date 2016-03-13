@@ -32,16 +32,12 @@ import bridge
 ##----------------------------------------------------------------##
 class MOAIRuntime( EditorModule ):
 	_singleton = None
-
-	_name       = 'moai'
-	_dependency = []
-	_initialized = False
-
-	lua = None
-
 	@staticmethod
 	def get():
 		return MOAIRuntime._singleton
+
+	_name       = 'moai'
+	_dependency = []
 
 	def __init__(self):
 		assert not MOAIRuntime._singleton
@@ -51,6 +47,7 @@ class MOAIRuntime( EditorModule ):
 		self.paused            	= False
 		self.GLContextReady    	= False
 		self.AKUReady			= False
+		self.lua 				= None
 		
 		self.luaModules        	= []
 		self.luaDelegates      	= {}
@@ -59,6 +56,8 @@ class MOAIRuntime( EditorModule ):
 		self.lastInputDeviceId 	= 0
 
 		self.simStep 			= 0
+		
+		signals.connect( 'project.load', self.onProjectLoaded )
 
 	##----------------------------------------------------------------##
 	def getLuaEnv(self):
@@ -67,8 +66,8 @@ class MOAIRuntime( EditorModule ):
 	#-------Context Control
 	def initContext(self):
 		global _G
-		# global _Runtime
 		global _RenderContext
+		global _Bridge
 
 		self.luaModules        = []
 
@@ -78,28 +77,25 @@ class MOAIRuntime( EditorModule ):
 		self.GLContextReady = False
 		self.resetContext()
 
-		AKUSetInputConfigurationName ( 'JUMA' )
-
 		self.lua = LuaRuntime()
 		self.lua.init()
 
+		moaipy.callback_SetSimStep = self.setSimStep
+		moaipy.callback_OpenWindow = self.openWindow
+
 		# inject python env
-		_G._setTarget( self.lua.globals() )
-		_G['PYTHON_BRIDGE']            = bridge
+		# _G._setTarget( self.lua.globals() )
+		# _G['PYTHON_BRIDGE']            	= bridge
 		# _G['GII_DATA_PATH']                = self.getApp().getPath('data')
 
-		_G['LIB_LUA_PATH'] = self.getApp().getPath('lib/lua')
-		_G['LIB_EDITOR_PATH'] = self.getApp().getPath('lib/lua/editor')
+		# _G['LIB_EDITOR_PATH'] 			= self.getApp().getPath('lib/lua/editor')
 
-		self.runScript(
-			self.getApp().getPath( 'lib/lua/init.lua' )
-		)
+		# self.runScript( self.getApp().getPath( 'lib/lua/editor/init.lua' ) )
 
-		_RenderContext._setTarget( _G['RenderContext'] )
-		assert _RenderContext, "Failed loading Lua Render Context!"
-
-		_Bridge._setTarget( _G['Bridge'] )
-		assert _Bridge, "Failed loading Lua Bridge!"
+		# _RenderContext._setTarget( _G['RenderContext'] )
+		# assert _RenderContext, "Failed loading Lua Render Context!"
+		# _Bridge._setTarget( _G['Bridge'] )
+		# assert _Bridge, "Failed loading Lua Bridge!"
 		#finish loading lua bridge
 		
 		self.AKUReady      		= True
@@ -119,31 +115,25 @@ class MOAIRuntime( EditorModule ):
 		return True
 
 	def createContext(self):
-		if not self._initialized:
-			AKUAppInitialize ()
-			AKUModulesAppInitialize ()
-			self._initialized = True
+		AKUAppInitialize ()
+		AKUModulesAppInitialize ()
 
 		AKUCreateContext ()
 		AKUModulesContextInitialize ()
 		
 		AKUInitializeCallbacks ()
 
-		AKUSetInputConfigurationName ( "QtEditor" );
+		AKUSetInputConfigurationName ( 'JUMA' )
 
 		AKUModulesRunLuaAPIWrapper ()
 		AKUInitParticlePresets ()
 
-		moaipy.callback_SetSimStep = self.setSimStep
-		moaipy.callback_OpenWindow = self.openWindow		
-
 	def destroyContext(self):
 		context = AKUGetContext ()
 		if context != 0:
-			self.lua.destroy()
-			self.lua = None
+			# self.lua.destroy()
+			# self.lua = None
 			AKUDeleteContext ( context )
-			self.finalize()
 
 	def resetContext(self):
 		self.destroyContext()
@@ -153,12 +143,13 @@ class MOAIRuntime( EditorModule ):
 		if not self.AKUReady: return
 		self.cleanLuaReferences()
 		self.initContext()
-		# self.setWorkingDirectory( self.getProject().getPath() )
+		self.setWorkingDirectory( self.getProject().gamePath )
 		signals.emitNow( 'moai.reset' )
 		signals.emitNow( 'moai.ready' )
 
 	def finalize(self):
 		AKUModulesAppFinalize ()
+		AKUAppFinalize ()
 
 	####  LuaModule Related
 	def registerLuaModule(self, m):
@@ -195,7 +186,6 @@ class MOAIRuntime( EditorModule ):
 		self.lastInputDeviceId += 1
 
 		AKUReserveInputDevices ( self.lastInputDeviceId )
-		print("AKUReserveInputDevices {}".format( self.lastInputDeviceId ))
 		for inputDevice in self.inputDevices.values():
 			inputDevice.onRegister()
 		return device
@@ -260,10 +250,12 @@ class MOAIRuntime( EditorModule ):
 
 ##----------------------------------------------------------------##
 	def createRenderContext( self, key, clearColor = (0,0,0,0) ):
-		_RenderContext.createRenderContext( key, *clearColor )
+		pass
+		# _RenderContext.createRenderContext( key, *clearColor )
 
 	def changeRenderContext(self, contextId, w, h ):
-		_RenderContext.changeRenderContext( contextId or False, w or False, h or False )
+		pass
+		# _RenderContext.changeRenderContext( contextId or False, w or False, h or False )
 
 	def loadLuaDelegate( self, file, env = None, **option ):
 		try:
@@ -274,10 +266,14 @@ class MOAIRuntime( EditorModule ):
 			logging.error( 'error loading lua:\n' + str(e) )
 
 ##----------------------------------------------------------------##
+	def onProjectLoaded(self, project):
+		self.reset()
+		# pass
+
 	def onLoad(self):
 		self.AKUReady = False
 		self.initContext()
-		# self.setWorkingDirectory( self.getProject().getPath() )
+		self.setWorkingDirectory( self.getApp().getPath() )
 		self.initGLContext()
 
 	def onUnload(self):

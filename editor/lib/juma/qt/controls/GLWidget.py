@@ -1,7 +1,5 @@
 from PySide import QtCore, QtGui, QtOpenGL
 from PySide.QtCore import Qt
-from OpenGL.GL import *
-from OpenGL.GLU import *
 
 class GLWidget(QtOpenGL.QGLWidget):
 	sharedWidget = None
@@ -40,19 +38,12 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.setFocusPolicy(QtCore.Qt.ClickFocus)
 		self.setMouseTracking(True)
 
-		self.glReady = False
-		self.windowReady = False
-
 		self.allowRefresh   = False
 		self.pendingRefresh = False
 
 		self.refreshTimer   = QtCore.QTimer(self)
 		self.refreshTimer.setSingleShot( True )
 		self.refreshTimer.timeout.connect( self.onRefreshTimer )
-
-	def initializeGL(self):
-		self.glReady = True
-		glClearColor(0, 0, 0, 1)
 
 	def startRefreshTimer( self, fps = 60 ):
 		self.allowRefresh = True
@@ -74,7 +65,6 @@ class GLWidget(QtOpenGL.QGLWidget):
 
 	#auto render if has pending render
 	def onRefreshTimer(self): 
-		print("GLWidget refreshTick")
 		if self.pendingRefresh:
 			self.pendingRefresh = False
 			self.allowRefresh = True
@@ -82,19 +72,15 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.allowRefresh = True
 
 	def paintGL( self ):
-		if self.windowReady:		
-			self.onDraw()
-		elif self.glReady:
-			glClear(GL_COLOR_BUFFER_BIT)
+		self.onDraw()
 
-	# def updateGL( self ):
-	# 	print("GLWidget updateGl")
-	# 	if not self.allowRefresh:
-	# 		self.pendingRefresh = True
-	# 		return
-	# 	self.allowRefresh = False
-	# 	self.refreshTimer.start()
-	# 	super( GLWidget, self ).updateGL()
+	def updateGL( self ):
+		if not self.allowRefresh:
+			self.pendingRefresh = True
+			return
+		self.allowRefresh = False
+		self.refreshTimer.start()
+		super( GLWidget, self ).updateGL()
 
 	def onDraw(self):
 		pass

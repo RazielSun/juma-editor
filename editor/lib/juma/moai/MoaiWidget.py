@@ -48,14 +48,12 @@ class MOAIWidget( QtOpenGL.QGLWidget ):
         glClearColor(0, 0, 0, 1)
 
     def paintGL(self):
-        print("paintGL")
         if self.windowReady and self.contextReady:
             AKURender()
         elif self.glReady:
             glClear(GL_COLOR_BUFFER_BIT)
 
     def timerEvent(self, event):
-        print("tick")
         if self.windowReady and self.contextReady:
             AKUModulesUpdate()
             self.updateGL()
