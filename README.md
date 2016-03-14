@@ -1,22 +1,34 @@
 # Juma MOAI Editor
 
+## About
+
 ### Based on
-Vavius IDE https://github.com/Vavius/moai-ide
-Tommo IDE https://github.com/pixpil/gii
+[Vavius IDE](https://github.com/Vavius/moai-ide)
+[Tommo IDE](https://github.com/pixpil/gii)
+[Icons](https://www.behance.net/gallery/12268595/IKONS)
 
 ### Features
 * Host for latest MOAI SDK (currently 1.7)
 
 ### Running
+```
     cd juma-editor
     ./juma
     ./juma ide
-
+```
     Use file->open or cmd+O to open any moai main.lua file. 
 
-### Roadmap
-* Create DebugDraw DockWidget
-* Create RunString DockWidget
+## Build
+
+Link lua_framework with path: editor/lib/lua/framework
+
+Moai libs for build moaipy.so put to dev/moaipy/lib/nojit folder.
+Export vars:
+```
+export MOAI_ROOT=/Users/yourname/moai-dev/
+```
+
+## Customs
 
 ### RobotStyle Theme
 * Top Color - #323232
@@ -29,6 +41,9 @@ Tommo IDE https://github.com/pixpil/gii
 * Red(close) - #b70000
 * Red - #ff0a0c
 
+### Roadmap
+* Create DebugDraw DockWidget
+* Create RunString DockWidget
 
 
 # About Vavius version Editor
@@ -65,3 +80,4 @@ Python module sources located in dev/moaipy:
 This editor is a Python-Qt based host for MOAI SDK.
 
 ### Technical details
+...
