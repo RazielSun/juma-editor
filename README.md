@@ -15,9 +15,19 @@ Tommo IDE https://github.com/pixpil/gii
     Use file->open or cmd+O to open any moai main.lua file. 
 
 ### Roadmap
-* Create Stats DockWidget
 * Create DebugDraw DockWidget
 * Create RunString DockWidget
+
+### RobotStyle Theme
+* Top Color - #323232
+* Widget Color - #282828
+* Dark Color - #1E1E1E
+* Label - #f0f0f0
+* Disabled - #999999
+* Mint - #00af95
+* Yellow(select) - #eda900
+* Red(close) - #b70000
+* Red - #ff0a0c
 
 
 

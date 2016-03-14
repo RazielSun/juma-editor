@@ -45,7 +45,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.refreshTimer.setSingleShot( True )
 		self.refreshTimer.timeout.connect( self.onRefreshTimer )
 
-	def startRefreshTimer( self, fps = 60 ):
+	def startRefreshTimer(self, fps = 60):
 		self.allowRefresh = True
 		interval = 1000/fps
 		self.refreshTimer.setInterval( interval )
@@ -55,15 +55,7 @@ class GLWidget(QtOpenGL.QGLWidget):
 		self.allowRefresh = False
 		self.refreshTimer.stop()
 
-	def forceUpdateGL(self):
-		self.allowRefresh = True
-		self.refreshTimer.stop()
-		self.updateGL()
-
-	def minimumSizeHint(self):
-		return QtCore.QSize(50, 50)
-
-	#auto render if has pending render
+	# auto render if has pending render
 	def onRefreshTimer(self): 
 		if self.pendingRefresh:
 			self.pendingRefresh = False
@@ -71,7 +63,12 @@ class GLWidget(QtOpenGL.QGLWidget):
 			self.updateGL()
 		self.allowRefresh = True
 
-	def paintGL( self ):
+	def forceUpdateGL(self):
+		self.allowRefresh = True
+		self.refreshTimer.stop()
+		self.updateGL()
+
+	def paintGL(self):
 		self.onDraw()
 
 	def updateGL( self ):

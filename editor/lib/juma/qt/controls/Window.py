@@ -39,7 +39,7 @@ class MainWindow( QMainWindow ):
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.ClickFocus)
 
-        self.defaultToolBarIconSize = 16
+        self.defaultToolBarIconSize = 32
         font=QtGui.QFont()
         font.setPointSize(11)
         self.setFont(font)

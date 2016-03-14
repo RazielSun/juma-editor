@@ -93,7 +93,7 @@ class GamePreview( SceneEditorModule ):
 		self.viewHeight = 480
 		self.canvas.resize(self.viewWidth, self.viewHeight)
 		self.scrollArea.setWidget( self.canvas )
-		# self.canvas.startRefreshTimer( self.nonActiveFPS )
+		self.canvas.startRefreshTimer( self.nonActiveFPS )
 		self.canvas.module = self
 
 		self.updateTimer = None
@@ -217,15 +217,44 @@ class GamePreview( SceneEditorModule ):
 	# def onDebugStop(self):
 	# 	self.paused=True
 
-	# def onSetFocus(self):
-	# 	self.window.show()
-	# 	self.window.raise_()
-	# 	self.window.setFocus()
-	# 	self.canvas.setFocus()
-	# 	self.canvas.activateWindow()
-	# 	self.setActiveWindow( self.window )
+	# def onAppActivate(self):
+	# 	if self.waitActivate:
+	# 		self.waitActivate=False
+	# 		self.getRuntime().resume()
 
-	# def startPreview( self ):
+	# def onAppDeactivate(self):
+	# 	if self.getConfig('pause_on_leave',False):
+	# 		self.waitActivate=True
+	# 		self.getRuntime().pause()
+
+	def onSetFocus(self):
+		self.window.show()
+		self.window.raise_()
+		self.window.setFocus()
+		self.canvas.setFocus()
+		self.canvas.activateWindow()
+		self.setActiveWindow( self.window )
+
+	def startPreview(self):
+		if self.paused == False: return
+
+		self.makeCurrent()
+		GLWidget.getSharedWidget().makeCurrent()
+		runtime = self.getRuntime()
+		self.canvas.setInputDevice( runtime.getInputDevice('device') )
+
+		self.getApp().setMinimalMainLoopBudget()
+
+		# self.canvas.startRefreshTimer( self.activeFPS )
+		# self.canvas.refreshTimer.start()
+		if self.paused:
+			self.updateTimer.start()
+		elif self.paused is None:
+			self.updateTimer = self.window.startTimer( runtime.simStep, self.updateView )
+
+		self.setFocus()
+		runtime.resume()
+		self.paused = False
 	# 	if self.paused == False: return
 	# 	runtime = self.getRuntime()
 	# 	runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
@@ -259,7 +288,16 @@ class GamePreview( SceneEditorModule ):
 	# 	self.setFocus()
 	# 	logging.info('game preview started')
 
-	# def stopPreview( self ):
+	def stopPreview(self):
+		if self.paused is None: return
+
+		self.canvas.setInputDevice( None )
+
+		self.getApp().resetMainLoopBudget()
+
+		self.updateTimer.stop()
+		self.updateTimer = None
+		self.paused = None
 	# 	if self.paused is None: return
 	# 	logging.info('stop game preview')
 	# 	self.canvas.setInputDevice( None )
@@ -283,21 +321,16 @@ class GamePreview( SceneEditorModule ):
 	# 	self.canvas.startRefreshTimer( self.nonActiveFPS )
 	# 	logging.info('game preview stopped')
 
-	
-	# def runGameExternal( self ):
-	# 	pass
-	# 	#TODO: use a modal window to indicate external host state
-	# 	# ExternRun.runGame( parent_window = self.getMainWindow() )
+	def pausePreview(self):
+		if self.paused: return
+		
+		self.canvas.setInputDevice( None )
 
+		self.getApp().resetMainLoopBudget()
 
-	# def runSceneExternal( self ):
-	# 	#TODO: use a modal window to indicate external host state
-	# 	scnEditor = self.getModule( 'scenegraph_editor' )
-	# 	if scnEditor and scnEditor.activeSceneNode:
-	# 		path = scnEditor.activeSceneNode.getNodePath()
-	# 		# ExternRun.runScene( path, parent_window = self.getMainWindow() )
-
-	# def pausePreview( self ):
+		runtime = self.getRuntime()
+		runtime.pause()
+		self.paused = True
 	# 	if self.paused: return
 	# 	self.canvas.setInputDevice( None )
 	# 	jhook = self.getModule( 'joystick_hook' )
@@ -316,59 +349,6 @@ class GamePreview( SceneEditorModule ):
 	# 	self.paused = True
 	# 	self.getRuntime().pause()
 	# 	self.canvas.startRefreshTimer( self.nonActiveFPS )
-
-	# def onAppActivate(self):
-	# 	if self.waitActivate:
-	# 		self.waitActivate=False
-	# 		self.getRuntime().resume()
-
-	# def onAppDeactivate(self):
-	# 	if self.getConfig('pause_on_leave',False):
-	# 		self.waitActivate=True
-	# 		self.getRuntime().pause()
-
-	def startPreview(self):
-		if self.paused == False: return
-
-		self.makeCurrent()
-		GLWidget.getSharedWidget().makeCurrent()
-		runtime = self.getRuntime()
-		self.canvas.setInputDevice( runtime.getInputDevice('device') )
-
-		self.getApp().setMinimalMainLoopBudget()
-
-		# self.canvas.startRefreshTimer( self.activeFPS )
-		# self.canvas.refreshTimer.start()
-		if self.paused:
-			self.updateTimer.start()
-		elif self.paused is None:
-			self.updateTimer = self.window.startTimer( runtime.simStep, self.updateView )
-
-		self.setFocus()
-		runtime.resume()
-		self.paused = False
-
-	def stopPreview(self):
-		if self.paused is None: return
-
-		self.canvas.setInputDevice( None )
-
-		self.getApp().resetMainLoopBudget()
-
-		self.updateTimer.stop()
-		self.updateTimer = None
-		self.paused = None
-
-	def pausePreview(self):
-		if self.paused: return
-		
-		self.canvas.setInputDevice( None )
-
-		self.getApp().resetMainLoopBudget()
-
-		runtime = self.getRuntime()
-		runtime.pause()
-		self.paused = True
 
 	def onMenu(self, node):
 		name = node.name

@@ -28,7 +28,7 @@ function RenderContext.removeContextChangeListener( f )
 	ContextChangeListeners[ f ] = nil
 end
 
-function RenderContext.createRenderContext( key, cr,cg,cb,ca )
+function RenderContext.createRenderContext( key, cr, cg, cb, ca )
 	local clearColor = {0,0,0,1}
 	if cr==false then
 		clearColor = false
