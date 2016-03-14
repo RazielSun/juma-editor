@@ -3,7 +3,12 @@
 
 .DS_Store
 *.DS_Store
+Thumbs.db
 
+# Python compiled files
 *.pyc
 
+# Libs & builds
 editor/lib/lua/framework
+dev/moaipy/build/
+dev/moaipy/lib/
