@@ -235,7 +235,7 @@ class GamePreview( SceneEditorModule ):
 		self.canvas.activateWindow()
 		self.setActiveWindow( self.window )
 
-	def startPreview(self):
+	def runPreview(self):
 		if self.paused == False: return
 
 		self.makeCurrent()
@@ -350,17 +350,24 @@ class GamePreview( SceneEditorModule ):
 	# 	self.getRuntime().pause()
 	# 	self.canvas.startRefreshTimer( self.nonActiveFPS )
 
+	def reloadGame(self):
+		self.getRuntime().reset()
+
+##----------------------------------------------------------------##
 	def onMenu(self, node):
 		name = node.name
 
-		if name == 'start_game':
-			self.startPreview()
+		if name == 'run_game':
+			self.runPreview()
+
 		elif name == 'pause_game':
 			self.pausePreview()
+
 		elif name == 'stop_game':
 			self.stopPreview()
-		elif name == 'reload_project':
-			self.getRuntime().reset()
+			
+		elif name == 'reload_game':
+			self.reloadGame()
 
 		# if name == 'open_scene':
 		# 	self.openProject()

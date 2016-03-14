@@ -16,7 +16,7 @@ MOAIApp.BACK_BUTTON_PRESSED = 5
 MOAIApp.ACTIVITY_ON_START = 6
 MOAIApp.ACTIVITY_ON_STOP = 7
 
-local listenerTable = {  }
+local listenerTable = {}
 
 function MOAIApp.setListener(event, callback)
     if event then

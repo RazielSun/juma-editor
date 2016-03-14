@@ -13,8 +13,7 @@ from LuaTableProxy   import LuaTableProxy
 
 ##----------------------------------------------------------------##
 _G   			= LuaTableProxy( None )
-_RenderContext 	= LuaTableProxy( None )
-_Bridge		 	= LuaTableProxy( None )
+_Editor 		= LuaTableProxy( None )
 
 # signals.register( 'lua.msg' )
 
@@ -68,8 +67,7 @@ class MOAIRuntime( EditorModule ):
 	#-------Context Control
 	def initContext(self):
 		global _G
-		global _RenderContext
-		global _Bridge
+		global _Editor
 
 		self.luaModules        = []
 
@@ -93,12 +91,11 @@ class MOAIRuntime( EditorModule ):
 		_G['LIB_FRAMEWORK_PATH'] 		= self.getApp().getPath('lib/lua/framework/src')
 		_G['ASSET_EDITOR_PATH'] 		= self.getApp().getPath('data/assets')
 
+		self.addDefaultInputDevice( 'device' )
 		self.runScript( self.getApp().getPath( 'lib/lua/editor/init.lua' ) )
 
-		_RenderContext._setTarget( _G['RenderContext'] )
-		assert _RenderContext, "Failed loading Lua Render Context!"
-		_Bridge._setTarget( _G['Bridge'] )
-		assert _Bridge, "Failed loading Lua Bridge!"
+		_Editor._setTarget( _G['editor'] )
+		assert _Editor, "Failed loading Editor!"
 		### finish loading lua bridge
 		
 		self.AKUReady      		= True
@@ -133,11 +130,9 @@ class MOAIRuntime( EditorModule ):
 		context = AKUGetContext ()
 		if context != 0:
 			global _G
-			global _RenderContext
-			global _Bridge
+			global _Editor
 			_G._setTarget( None )
-			_RenderContext._setTarget( None )
-			_Bridge._setTarget( None )
+			_Editor._setTarget( None )
 			self.lua = None
 			AKUDeleteContext ( context )
 
@@ -147,9 +142,6 @@ class MOAIRuntime( EditorModule ):
 
 	def runGame(self):
 		if self.getProject().isLoaded():
-			device = self.getInputDevice()
-			if device is None:
-				self.addDefaultInputDevice( 'device' )
 			self.setWorkingDirectory( self.getProject().gamePath )
 			self.runScript( "main.lua" )
 		else:
@@ -267,14 +259,16 @@ class MOAIRuntime( EditorModule ):
 
 ##----------------------------------------------------------------##
 	def createRenderContext( self, key, clearColor = (0,0,0,0) ):
-		_RenderContext.createRenderContext( key, *clearColor )
+		pass
+		# _RenderContext.createRenderContext( key, *clearColor )
 
 	def changeRenderContext(self, contextId, w, h ):
-		_RenderContext.changeRenderContext( contextId or False, w or False, h or False )
+		pass
+		# _RenderContext.changeRenderContext( contextId or False, w or False, h or False )
 
 	def setLuaEnvResolution( self, width, height ):
 		try:
-			_Bridge.setLuaEnvResolution( width, height )
+			_Editor.setLuaEnvResolution( width, height )
 		except Exception, e:
 			logging.error( 'error loading lua:\n' + str(e) )
 
@@ -282,7 +276,7 @@ class MOAIRuntime( EditorModule ):
 		try:
 			if env:
 				assert isinstance( env, dict )
-			return _Bridge.loadLuaDelegate( file, env, option.get( 'isdelegate', False ) )
+			return _G.loadLuaDelegate( file, env, option.get( 'isdelegate', False ) )
 		except Exception, e:
 			logging.error( 'error loading lua:\n' + str(e) )
 

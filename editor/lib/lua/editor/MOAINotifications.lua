@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------
 
 
-local MOAINotifications = {  }
+local MOAINotifications = {}
 
 MOAINotifications.LOCAL_NOTIFICATION_MESSAGE_RECEIVED = 0
 MOAINotifications.REMOTE_NOTIFICATION_MESSAGE_RECEIVED = 2

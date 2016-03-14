@@ -22,15 +22,9 @@ function tableToDict(table)
 end
 
 --------------------------------------------------------------------
--- Class
---------------------------------------------------------------------
-
-local Bridge = {}
-
---------------------------------------------------------------------
 -- PYTHON-LUA DELEGATION CREATION
 --------------------------------------------------------------------
-function Bridge.loadLuaDelegate(file, env, ...)
+function loadLuaDelegate(file, env, ...)
 	if env then
 		assert ( type( env ) == 'userdata' )
 		env = dictToTablePlain( env )
@@ -69,15 +63,6 @@ function Bridge.loadLuaDelegate(file, env, ...)
 	-- end
 
 	return env
-end
-
---------------------------------------------------------------------
--- 
---------------------------------------------------------------------
-
-function Bridge.setLuaEnvResolution(width, height)
-	MOAIEnvironment.setValue('horizontalResolution', width)
-	MOAIEnvironment.setValue('verticalResolution', height)
 end
 
 --------------------------------------------------------------------

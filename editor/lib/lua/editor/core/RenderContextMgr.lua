@@ -1,34 +1,39 @@
 --------------------------------------------------------------------
--- RENDER CONTEXT
+-- RENDER CONTEXT MGR
 --------------------------------------------------------------------
 
-local RenderContext = {}
+local EventDispatcher = require("core.EventDispatcher")
 
-local renderContextTable = {}
---[[
-	RenderContext incluces:
-		1. an action root
-		2. a render table
-	shares:
-		layer information
-		prop
-		assets
-]]
+local RenderContextMgr = Class( EventDispatcher, "RenderContextMgr" )
 
-local currentContext    = false
-local currentContextKey = false
+--------------------------------------------------------------------
+--
+function RenderContextMgr:init( params )
+	EventDispatcher.init( self, params )
 
-local ContextChangeListeners = {}
-
-function RenderContext.addContextChangeListeners( f )
-	ContextChangeListeners[ f ] = true
+	self.contexts = {}
+	self.current    = false
+	self.currentKey = false
+	self.listeners = {}
 end
 
-function RenderContext.removeContextChangeListener( f )
-	ContextChangeListeners[ f ] = nil
+--------------------------------------------------------------------
+--
+function RenderContextMgr:addListener( f )
+	self.listeners[ f ] = true
 end
 
-function RenderContext.createRenderContext( key, cr, cg, cb, ca )
+function RenderContextMgr:removeListener( f )
+	self.listeners[ f ] = nil
+end
+
+--------------------------------------------------------------------
+--
+function RenderContextMgr:create( key, cr, cg, cb, ca )
+	if self.contexts[ key ] then
+		return
+	end
+
 	local clearColor = {0,0,0,1}
 	if cr==false then
 		clearColor = false
@@ -49,15 +54,16 @@ function RenderContext.createRenderContext( key, cr, cg, cb, ca )
 		bufferTable      = {},
 		renderTableMap   = {},
 	}
-	renderContextTable[ key ] = context
+
+	self.contexts[ key ] = context
 end
 
-function RenderContext.changeRenderContext( key, w, h )
-	if currentContextKey == key then return end
-	local context = renderContextTable[key]
+function RenderContextMgr:change( key, w, h )
+	if currentKey == key then return end
+	local context = self.contexts[key]
 	assert ( context, 'no render context for:'..tostring(key) )
-	for f in pairs( ContextChangeListeners ) do
-		f( key, currentContextKey )
+	for f in pairs( self.listeners ) do
+		f( key, currentKey )
 	end
 
 	local deviceBuffer = MOAIGfxDevice.getFrameBuffer()
@@ -106,26 +112,26 @@ function RenderContext.changeRenderContext( key, w, h )
 	-- MOAIActionMgr.setRoot        ( currentContext.actionRoot )
 end
 
-function RenderContext.getCurrentRenderContextKey()
+function RenderContextMgr:getCurrentKey()
 	return currentContextKey
 end
 
-function RenderContext.getCurrentRenderContext()
+function RenderContextMgr:getCurrent()
 	return currentContext
 end
 
-function RenderContext.getRenderContext( key )
-	return renderContextTable[ key ]
+function RenderContextMgr:get( key )
+	return self.contexts[ key ]
 end
 
-function RenderContext.setCurrentRenderContextActionRoot( root )
-	currentContext.actionRoot = root
+function RenderContextMgr:setCurrentActionRoot( root )
+	self.current.actionRoot = root
 	MOAIActionMgr.setRoot( root )
 end
 
-function RenderContext.setRenderContextActionRoot( key, root )
-	local context =  getRenderContext( key )
-	if key == currentContextKey then
+function RenderContextMgr:setActionRoot( key, root )
+	local context =  self:get( key )
+	if key == self.currentKey then
 		MOAIActionMgr.setRoot( root )
 	end
 	if context then
@@ -133,4 +139,4 @@ function RenderContext.setRenderContextActionRoot( key, root )
 	end
 end
 
-return RenderContext
+return RenderContextMgr
