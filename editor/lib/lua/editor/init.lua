@@ -1,8 +1,17 @@
 --------------------------------------------------------------------
---Setup package path
---------------------------------------------------------------------
+-- Setup package path
+
 package.path = package.path
+	.. ( ';' .. LIB_FRAMEWORK_PATH .. '/?.lua' )
 	.. ( ';' .. LIB_EDITOR_PATH .. '/?.lua' )
+
+--------------------------------------------------------------------
+-- Init Lua Framework
+
+require("include")
+
+--------------------------------------------------------------------
+-- Init Editor Framework
 
 MOAIApp = MOAIApp or require ('MOAIApp')
 MOAINotificationsIOS = MOAINotifications or require('MOAINotifications')
@@ -14,6 +23,7 @@ Bridge = require("Bridge")
 Editor = require("Editor")
 
 --------------------------------------------------------------------
+--
 local function onContextChange( ctx, oldCtx )
 	Editor.setCurrentRenderContext( ctx )
 end
@@ -21,5 +31,5 @@ end
 RenderContext.addContextChangeListeners( onContextChange )
 
 function getEditorAssetPath( asset )
-	return ASSETS_EDITOR_PATH .. '/' .. asset
+	return ASSET_EDITOR_PATH .. '/' .. asset
 end

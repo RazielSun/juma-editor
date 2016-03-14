@@ -90,7 +90,8 @@ class MOAIRuntime( EditorModule ):
 
 		_G['PYTHON_BRIDGE']            	= bridge
 		_G['LIB_EDITOR_PATH'] 			= self.getApp().getPath('lib/lua/editor')
-		_G['ASSETS_EDITOR_PATH'] 		= self.getApp().getPath('data/assets')
+		_G['LIB_FRAMEWORK_PATH'] 		= self.getApp().getPath('lib/lua/framework/src')
+		_G['ASSET_EDITOR_PATH'] 		= self.getApp().getPath('data/assets')
 
 		self.runScript( self.getApp().getPath( 'lib/lua/editor/init.lua' ) )
 
