@@ -105,52 +105,34 @@ class GamePreview( SceneEditorModule ):
 	# 	signals.connect( 'debug.exit',     self.onDebugExit )
 	# 	signals.connect( 'debug.stop',     self.onDebugStop )
 		
-		signals.connect( 'moai.reset',     self.onMoaiReset )
+		signals.connect( 'moai.reset',     		self.onMoaiReset )
+		signals.connect( 'moai.open_window', 	self.openWindow )
+		# signals.connect('moai.set_sim_step', self.setSimStep)
 		
 		self.menu = self.findMenu( 'main/preview' )
 
-		self.findMenu( 'main/edit' ).addChild([
-			dict( name = 'reload_project', label = 'Reload Project', shortcut = 'ctrl+R' ),
-		], self )
-
 		self.menu.addChild([
-				{'name':'start_game',  'label':'Play'}, #, 'shortcut':'meta+]' 
-				{'name':'pause_game',  'label':'Pause' }, #,  'shortcut':'meta+shit+]'
-				{'name':'stop_game',   'label':'Stop'}, #,   'shortcut':'meta+[' 
-		# 		'----',
-		# 		{'name':'start_external_scene',  'label':'Run Scene',  'shortcut':'meta+alt+]' },
-		# 		{'name':'start_external_game',   'label':'Run Game',  'shortcut':'meta+alt+shift+]' },
-		# 		'----',
-		# 		{'name':'pause_on_leave', 'label':'Pause On Leave', 'type':'check', 'checked':self.getConfig('pause_on_leave')},
+				{'name':'run_game',   'label':'Run'}, #, 'shortcut':'meta+]' 
+				{'name':'pause_game', 'label':'Pause' }, #,  'shortcut':'meta+shit+]'
+				{'name':'stop_game',  'label':'Stop'}, #,   'shortcut':'meta+['
 			], self)
 
-	# 	self.addTool( 'game_preview/switch_screen_profile', label = 'Screen Profile' )
+		##----------------------------------------------------------------##
+		self.previewToolBar = self.addToolBar( 'game_preview_tools', 
+			self.getMainWindow().requestToolBar( 'preview_tools' )
+			)
 
-	# 	##----------------------------------------------------------------##
-	# 	self.previewToolBar = self.addToolBar( 'game_preview_tools', 
-	# 		self.getMainWindow().requestToolBar( 'view_tools' )
-	# 		)
+		self.addTool('game_preview_tools/run_game', label = 'Run',
+			menu_link = 'main/preview/run_game', icon = 'tools/play')
 
-	# 	self.addTool(	'game_preview_tools/run_external',
-	# 		label = 'Play External',
-	# 		icon = 'tools/run_external',
-	# 		)
+		self.addTool('game_preview_tools/pause_game', label = 'Pause',
+			menu_link = 'main/preview/pause_game', icon = 'tools/pause',)
+		
+		self.addTool('game_preview_tools/stop_game', label = 'Stop',
+			menu_link = 'main/preview/stop_game', icon = 'tools/stop',)
 
-	# 	self.addTool(	'game_preview_tools/run_game_external',
-	# 		label = 'Play Game External',
-	# 		icon = 'tools/run_game_external',
-	# 		)
-
-	# 	self.enableMenu( 'main/preview/pause_game',  False )
-	# 	self.enableMenu( 'main/preview/stop_game',   False )
-		signals.connect('moai.open_window', self.openWindow)
-		# signals.connect('moai.set_sim_step', self.setSimStep)
-
-	# def onStart( self ):
-	# 	pass
-
-	# def onAppReady( self ):
-	# 	pass
+		self.enableMenu( 'main/preview/pause_game',  False )
+		self.enableMenu( 'main/preview/stop_game',   False )
 
 	def onStop( self ):
 		if self.updateTimer:
@@ -192,12 +174,12 @@ class GamePreview( SceneEditorModule ):
 	def onMoaiReset( self ):
 		runtime = self.getRuntime()
 		runtime.createRenderContext( 'game' )
-		runtime.setLuaEnvResolution(self.viewWidth, self.viewHeight)
+		runtime.setLuaEnvResolution( self.viewWidth, self.viewHeight )
 		runtime.runGame()
 
 	def openWindow(self, title, width, height):
 		# self.canvas.resize(width, height)
-		self.resizeView(self.viewWidth, self.viewHeight)
+		self.resizeView( self.viewWidth, self.viewHeight )
 	
 	# def onDebugEnter(self):
 	# 	self.paused = True
@@ -239,7 +221,7 @@ class GamePreview( SceneEditorModule ):
 		if self.paused == False: return
 
 		self.makeCurrent()
-		GLWidget.getSharedWidget().makeCurrent()
+
 		runtime = self.getRuntime()
 		self.canvas.setInputDevice( runtime.getInputDevice('device') )
 
@@ -247,79 +229,46 @@ class GamePreview( SceneEditorModule ):
 
 		# self.canvas.startRefreshTimer( self.activeFPS )
 		# self.canvas.refreshTimer.start()
+		# 	self.canvas.interceptShortcut = True
+
+		self.enableMenu( 'main/preview/pause_game', True )
+		self.enableMenu( 'main/preview/stop_game',  True )
+		self.enableMenu( 'main/preview/run_game', 	False )
+
 		if self.paused:
 			self.updateTimer.start()
+			signals.emitNow( 'preview.resume' )
 		elif self.paused is None:
+			signals.emitNow( 'preview.start' )
+			signals.emitNow( 'preview.resume' )
 			self.updateTimer = self.window.startTimer( runtime.simStep, self.updateView )
 
-		self.setFocus()
-		runtime.resume()
+		self.window.setWindowTitle( 'Game Preview [ RUNNING ]')
+		
 		self.paused = False
-	# 	if self.paused == False: return
-	# 	runtime = self.getRuntime()
-	# 	runtime.changeRenderContext( 'game', self.viewWidth, self.viewHeight )
-	# 	self.canvas.setInputDevice( runtime.getInputDevice('device') )
-	# 	self.canvas.startRefreshTimer( self.activeFPS )
-	# 	self.canvas.interceptShortcut = True
-	# 	self.getApp().setMinimalMainLoopBudget()
-	# 	jhook = self.getModule( 'joystick_hook' )
-	# 	if jhook:
-	# 		jhook.refreshJoysticks()
-	# 		jhook.setInputDevice( runtime.getInputDevice('device') )
-
-	# 	self.enableMenu( 'main/preview/pause_game', True )
-	# 	self.enableMenu( 'main/preview/stop_game',  True )
-	# 	self.enableMenu( 'main/preview/start_game', False )
-
-	# 	if self.paused: #resume
-	# 		logging.info('resume game preview')
-	# 		signals.emitNow( 'preview.resume' )
-
-	# 	elif self.paused is None: #start
-	# 		logging.info('start game preview')
-	# 		signals.emitNow( 'preview.start' )
-	# 		signals.emitNow( 'preview.resume' )
-	# 		self.updateTimer = self.window.startTimer( 60, self.updateView )
-
-	# 	self.window.setWindowTitle( 'Game Preview [ RUNNING ]')
-	# 	self.qtool.setStyleSheet('QToolBar{ border-top: 1px solid rgb(0, 120, 0); }')
-	# 	self.paused = False
-	# 	runtime.resume()
-	# 	self.setFocus()
-	# 	logging.info('game preview started')
+		runtime.resume()
+		self.setFocus()
 
 	def stopPreview(self):
 		if self.paused is None: return
 
 		self.canvas.setInputDevice( None )
+		# 	self.canvas.interceptShortcut = False
 
 		self.getApp().resetMainLoopBudget()
 
+		signals.emitNow( 'preview.stop' )
 		self.updateTimer.stop()
+
+		self.enableMenu( 'main/preview/stop_game',  False )
+		self.enableMenu( 'main/preview/pause_game', False )
+		self.enableMenu( 'main/preview/run_game', 	True )
+
+		self.window.setWindowTitle( 'Game Preview' )
+
 		self.updateTimer = None
 		self.paused = None
-	# 	if self.paused is None: return
-	# 	logging.info('stop game preview')
-	# 	self.canvas.setInputDevice( None )
-	# 	self.canvas.interceptShortcut = False
-	# 	jhook = self.getModule( 'joystick_hook' )
-	# 	if jhook: jhook.setInputDevice( None )
-		
-	# 	self.getApp().resetMainLoopBudget()
-
-	# 	signals.emitNow( 'preview.stop' )
-	# 	self.updateTimer.stop()
-	# 	self.enableMenu( 'main/preview/stop_game',  False )
-	# 	self.enableMenu( 'main/preview/pause_game', False )
-	# 	self.enableMenu( 'main/preview/start_game', True )
-		
-	# 	self.window.setWindowTitle( 'Game Preview' )
-	# 	self.qtool.setStyleSheet('QToolBar{ border-top: none; }')
-
-	# 	self.paused = None
-	# 	self.updateTimer = None
-	# 	self.canvas.startRefreshTimer( self.nonActiveFPS )
-	# 	logging.info('game preview stopped')
+		# 	self.canvas.startRefreshTimer( self.nonActiveFPS )
 
 	def pausePreview(self):
 		if self.paused: return
@@ -328,30 +277,17 @@ class GamePreview( SceneEditorModule ):
 
 		self.getApp().resetMainLoopBudget()
 
+		signals.emitNow( 'preview.pause' )
+
+		self.enableMenu( 'main/preview/run_game', 	True )
+		self.enableMenu( 'main/preview/pause_game',	False )
+
+		self.window.setWindowTitle( 'Game Preview[ Paused ]')
+
 		runtime = self.getRuntime()
 		runtime.pause()
 		self.paused = True
-	# 	if self.paused: return
-	# 	self.canvas.setInputDevice( None )
-	# 	jhook = self.getModule( 'joystick_hook' )
-	# 	if jhook: jhook.setInputDevice( None )
-
-	# 	self.getApp().resetMainLoopBudget()
-
-	# 	signals.emitNow( 'preview.pause' )
-	# 	logging.info('pause game preview')
-	# 	self.enableMenu( 'main/preview/start_game', True )
-	# 	self.enableMenu( 'main/preview/pause_game',  False )
-		
-	# 	self.window.setWindowTitle( 'Game Preview[ Paused ]')
-	# 	self.qtool.setStyleSheet('QToolBar{ border-top: 1px solid rgb(255, 0, 0); }')
-
-	# 	self.paused = True
-	# 	self.getRuntime().pause()
-	# 	self.canvas.startRefreshTimer( self.nonActiveFPS )
-
-	def reloadGame(self):
-		self.getRuntime().reset()
+		# 	self.canvas.startRefreshTimer( self.nonActiveFPS )
 
 ##----------------------------------------------------------------##
 	def onMenu(self, node):
@@ -365,9 +301,6 @@ class GamePreview( SceneEditorModule ):
 
 		elif name == 'stop_game':
 			self.stopPreview()
-			
-		elif name == 'reload_game':
-			self.reloadGame()
 
 		# if name == 'open_scene':
 		# 	self.openProject()

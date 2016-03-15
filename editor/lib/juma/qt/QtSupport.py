@@ -49,6 +49,8 @@ class QtSupport( QtEditorModule ):
 		self.menu.addChild('&File').addChild([
 			'Open Project',
 			'----',
+			'Scene Editor|F2',
+			'----',
 			'E&xit',
 			]
 		)
@@ -64,13 +66,12 @@ class QtSupport( QtEditorModule ):
 		)
 		self.menu.addChild('&Window').addChild([
 			'----',
-			'Scene Editor',
 			'Game Preview',
 			'Stats Viewer',
 			'----',
 			]
 		)
-		self.menu.addChild('&Help')
+		# self.menu.addChild('&Help')
 
 	def getSharedMenubar( self ):
 		return self.sharedMenuBar
@@ -162,24 +163,32 @@ class QtSupport( QtEditorModule ):
 		name = node.name
 		if name == 'exit':
 			self.getApp().stop()
+
 		if name == 'open_project':
 			self.openProject()
+
 		elif name == 'default_theme':
 			self.useStyle()
+
 		elif name == 'dark_theme':
 			self.useStyle( 'darkstyle' )
+
 		elif name == 'robot_theme':
 			self.useStyle( 'robotstyle' )
+
 		# elif name == 'system_status':
 		# 	self.showSystemStatusWindow()
 		# elif name == 'asset_editor':
 		# 	self.getModule('asset_editor').setFocus()
 		elif name == 'scene_editor':
 			self.getModule('scene_editor').setFocus()
+
 		elif name == 'game_preview':
 			self.getModule('game_preview').show()
+
 		elif name == 'stats_viewer':
 			self.getModule('stats_viewer').show()
+
 		# elif name == 'debug_view':
 		# 	self.getModule('debug_view').setFocus()
 		# elif name == 'refresh_theme':

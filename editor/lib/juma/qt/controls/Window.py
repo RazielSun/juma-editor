@@ -59,7 +59,7 @@ class MainWindow( QMainWindow ):
     def requestToolBar( self, name, **options ):
         toolbar = QtGui.QToolBar()
         toolbar.setFloatable( options.get( 'floatable', False ) )
-        toolbar.setMovable(   options.get( 'movable',   False ) )        
+        toolbar.setMovable(   options.get( 'movable',   True ) )        
         toolbar.setObjectName( 'toolbar-%s' % name )
         iconSize = options.get('icon_size', self.defaultToolBarIconSize )
         self.addToolBar( toolbar )

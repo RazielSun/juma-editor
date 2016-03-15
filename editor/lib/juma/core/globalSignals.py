@@ -26,20 +26,18 @@ register('module.unregister')
 register('module.load')
 register('module.unload')
 
-# 
+register('preview.start')
+register('preview.resume')
+register('preview.stop')
+register('preview.pause')
+
+# register('game.pause')
+# register('game.resume')
 
 # register('command.new')
 # register('command.undo')
 # register('command.redo')
 # register('command.clear')
-
-# register('game.pause')
-# register('game.resume')
-
-# register('preview.start')
-# register('preview.resume')
-# register('preview.stop')
-# register('preview.pause')
 
 # register('debug.enter')
 # register('debug.exit')
