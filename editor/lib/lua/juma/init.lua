@@ -8,18 +8,17 @@ package.path = package.path
 
 --------------------------------------------------------------------
 -- Init Lua Framework
-
 require("include")
-
 assert(Class, "No 'Class' constructor for Editor Lua Framework")
 
 --------------------------------------------------------------------
--- Init Editor Framework
+-- Init Juma
 require("bridge")
 require("keymap")
 
 MOAIApp = MOAIApp or require('MOAIApp')
 MOAINotificationsIOS = MOAINotifications or require('MOAINotifications')
 
-
+--------------------------------------------------------------------
+-- Init Editor Framework
 require("setup_editor")

@@ -4,7 +4,7 @@
 
 local bridge = PYTHON_BRIDGE
 
-function dictToTablePlain(dict) --just one level?
+function dictToTablePlain( dict )
 	local t = {}
 	for k in python.iter( dict ) do
 		t[k] = dict[k]
@@ -13,12 +13,12 @@ function dictToTablePlain(dict) --just one level?
 end
 
 --data conversion
-local encodeDict=bridge.encodeDict
-local decodeDict=bridge.decodeDict
+local encodeDict = bridge.encodeDict
+local decodeDict = bridge.decodeDict
 
-function tableToDict(table)
+function tableToDict( table )
 	local json = MOAIJsonParser.encode(table)
-	return decodeDict(json)
+	return decodeDict( json )
 end
 
 --------------------------------------------------------------------
@@ -37,8 +37,6 @@ function loadLuaDelegate(file, env, ...)
 	if not func then
 		error('Failed load script:'..file..'\n'..err, 2)
 	end
-	
-	-- env._M    = env
 
 	setfenv(func, env)
 	local args = {...}
@@ -46,6 +44,7 @@ function loadLuaDelegate(file, env, ...)
 	local function _f()
 		return func( unpack( args ))
 	end
+
 	local function _onError( err, level )
 		print ( err )
 		print( debug.traceback( level or 2 ) )
@@ -56,11 +55,6 @@ function loadLuaDelegate(file, env, ...)
 	if not succ then
 		error('Failed start script:'.. file, 2)
 	end
-
-	-- local dir = env._path
-	-- function env.dofile( path )
-
-	-- end
 
 	return env
 end

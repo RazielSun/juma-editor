@@ -4,12 +4,13 @@ import logging
 import os.path
 import moaipy
 
-from juma.core import signals, app, EditorModule, printTraceBack
-from moaipy import *
+from juma.core 	import signals, app, EditorModule
+from moaipy 	import *
 
-from exceptions import *
-from MOAIInputDevice import MOAIInputDevice
-from LuaTableProxy   import LuaTableProxy
+from exceptions 		import *
+from MOAIInputDevice 	import MOAIInputDevice
+from LuaTableProxy   	import LuaTableProxy
+from LuaPrint			import printSeparator, printTraceBack
 
 ##----------------------------------------------------------------##
 _G   			= LuaTableProxy( None )
@@ -143,8 +144,11 @@ class MOAIRuntime( EditorModule ):
 
 	def runGame(self):
 		if self.getProject().isLoaded():
-			self.setWorkingDirectory( self.getProject().gamePath )
-			self.runScript( "main.lua" )
+			filename = "main.lua"
+			path = self.getProject().gamePath
+			printSeparator( path, filename )
+			self.setWorkingDirectory( path )
+			self.runScript( filename )
 		else:
 			self.setWorkingDirectory( self.getApp().getPath() )
 

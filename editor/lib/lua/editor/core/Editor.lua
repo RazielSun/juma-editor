@@ -57,7 +57,7 @@ end
 
 --------------------------------------------------------------------
 --
-function Editor.setLuaEnvResolution(width, height)
+function Editor.setResolution( width, height )
 	MOAIEnvironment.setValue('horizontalResolution', width)
 	MOAIEnvironment.setValue('verticalResolution', height)
 end

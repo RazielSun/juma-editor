@@ -7,7 +7,6 @@ import globalSignals
 
 ##----------------------------------------------------------------##
 from guid           import *
-from helpers        import *
 from model          import *
 from res            import ResGuard
 from tool 			import startupTool
