@@ -2,12 +2,9 @@
 -- Setup package path
 
 package.path = package.path
-	.. ( ';' .. LIB_FRAMEWORK_PATH .. '/?.lua' )
-	.. ( ';' .. LIB_EDITOR_PATH .. '/?.lua' )
-
-function editorAsset( asset )
-	return ASSET_EDITOR_PATH .. '/' .. asset
-end
+	.. ( ';' .. LIB_FRAMEWORK_LUA_PATH .. '/?.lua' )
+	.. ( ';' .. LIB_EDITOR_LUA_PATH .. '/?.lua' )
+	.. ( ';' .. LIB_JUMA_LUA_PATH .. '/?.lua' )
 
 --------------------------------------------------------------------
 -- Init Lua Framework
@@ -18,12 +15,11 @@ assert(Class, "No 'Class' constructor for Editor Lua Framework")
 
 --------------------------------------------------------------------
 -- Init Editor Framework
-require("util.bridge")
-require("util.keymap")
+require("bridge")
+require("keymap")
 
-MOAIApp = MOAIApp or require ('MOAIApp')
+MOAIApp = MOAIApp or require('MOAIApp')
 MOAINotificationsIOS = MOAINotifications or require('MOAINotifications')
 
-local Editor = require("core.Editor")
 
-editor = Editor()
+require("setup_editor")
