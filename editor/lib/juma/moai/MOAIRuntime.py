@@ -273,7 +273,7 @@ class MOAIRuntime( EditorModule ):
 
 	def setLuaEnvResolution( self, width, height ):
 		try:
-			_Editor.setLuaEnvResolution( width, height )
+			_Editor.setResolution( width, height )
 		except Exception, e:
 			logging.error( 'error loading lua:\n' + str(e) )
 
