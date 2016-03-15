@@ -64,16 +64,16 @@ def load_stylesheet(theme, pyside=True):
         f.open(QFile.ReadOnly | QFile.Text)
         ts = QTextStream(f)
         stylesheet = ts.readAll()
-        if platform.system().lower() == 'darwin':  # see issue #12 on github
-            mac_fix = '''
-            QDockWidget::title
-            {
-                background-color: #353434;
-                text-align: center;
-                height: 12px;
-            }
-            '''
-            stylesheet += mac_fix
+        # if platform.system().lower() == 'darwin':  # see issue #12 on github
+        #     mac_fix = '''
+        #     QDockWidget::title
+        #     {
+        #         background-color: #353434;
+        #         text-align: center;
+        #         height: 10px;
+        #     }
+        #     '''
+        #     stylesheet += mac_fix
         return stylesheet
 
 # def load_stylesheet_pyqt5():

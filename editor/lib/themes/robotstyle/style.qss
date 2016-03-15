@@ -844,6 +844,14 @@ QDockWidget {
     titlebar-normal-icon: url(:/qss_icons/rc/undock.png);
 }
 
+QDockWidget::title
+{
+    background-color: #323232;
+    text-align: center;
+    height: 12px;
+    border-top: 1px solid #1e1e1e;
+}
+
 QDockWidget::close-button, QDockWidget::float-button {
     border: 1px solid transparent;
     border-radius: 2px;
@@ -1143,3 +1151,5 @@ QSplitter::handle:horizontal {
 QSplitter::handle:vertical {
     height: 1px;
 }
+
+
