@@ -2,19 +2,9 @@
 -- EDITOR
 --------------------------------------------------------------------
 
-local RenderContextMgr = require("core.RenderContextMgr")
+local Editor = {}
 
-local Editor = Class( "Editor" )
-
---------------------------------------------------------------------
--- Context Related
---------------------------------------------------------------------
-
-function Editor:init( params )
-	self.contextMgr = RenderContextMgr()
-
-	self.contextMgr:create( 'game' )
-end
+Editor.contexts = {}
 
 --------------------------------------------------------------------
 --
@@ -55,45 +45,5 @@ end
 -- function Editor.getCurrentRenderContext()
 -- 	return Editor.currentRenderContext or 'game'
 -- end
-
---------------------------------------------------------------------
---
-function Editor.createRenderContext( contextId, clearColor )
-	if editor then
-		editor.contextMgr:create( contextId, clearColor )
-	end
-end
-
-function Editor.changeRenderContext( contextId, width, height )
-	if editor then
-		editor.contextMgr:change( contextId, width, height )
-	end
-end
-
-function Editor.setBufferSize( width, height )
-	if editor then
-		editor.contextMgr:setBufferSizeForCurrent( width, height )
-	end
-end
-
-function Editor.manualRenderAll()
-	if editor then
-		editor.contextMgr:manualRenderAll()
-	end
-end
-
---------------------------------------------------------------------
---
-
--- function Editor.updateStep( step )
--- 	if editor then
--- 		editor.contextMgr:manualRenderAll()
--- 	end
--- end
-
-function Editor.setResolution( width, height )
-	MOAIEnvironment.setValue('horizontalResolution', width)
-	MOAIEnvironment.setValue('verticalResolution', height)
-end
 
 return Editor

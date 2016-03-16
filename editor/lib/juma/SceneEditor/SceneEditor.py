@@ -8,8 +8,6 @@ from PySide import QtCore, QtGui
 from juma.core import app, signals
 from juma.qt.TopEditorModule    import TopEditorModule, QtMainWindow, SubEditorModule
 
-from LayoutView                  import LayoutView
-
 ##----------------------------------------------------------------##
 class SceneEditor( TopEditorModule ):
     _name       = 'scene_editor'
@@ -30,17 +28,10 @@ class SceneEditor( TopEditorModule ):
     def onLoad( self ):
         self.mainWindow.setMenuWidget( self.getQtSupport().getSharedMenubar() )
 
-        self.getTab().currentChanged.connect(self.onTabChanged)
-        self.getTab().tabCloseRequested.connect(self.onTabCloseRequested)
-
         self.containers  = {}
 
         self.findMenu( 'main/edit' ).addChild([
             dict( name = 'reload_project', label = 'Reload Project', shortcut = 'ctrl+R' ),
-        ], self )
-
-        self.findMenu( 'main/layout' ).addChild([
-            dict( name = 'new_layout', label = 'New Layout' ),
         ], self )
 
         self.mainToolBar = self.addToolBar( 'editor', self.mainWindow.requestToolBar( 'main' ) )     
@@ -54,46 +45,8 @@ class SceneEditor( TopEditorModule ):
         return True
 
     def onStart( self ):
-        self.setFocus()
         self.restoreWindowState( self.mainWindow )
-
-    # Save and Restore States
-    def saveWindowState( self, window ):
-        super(SceneEditor, self).saveWindowState( window )
-        # settings = self.getQtSettingObject()
-        # tab = self.getTab()
-        # settings.beginWriteArray(self.getName() + '_tab_widgets')
-        # for i in range(tab.count()):
-        #     settings.setArrayIndex(i)
-        #     scene = tab.widget(i)
-        #     settings.setValue( "type", scene.project().getType() )
-        #     obj_ = scene.head()
-        #     settings.setValue( "object", obj_ )
-        # settings.endArray()
-
-    def restoreWindowState( self, window ):
-        super(SceneEditor, self).restoreWindowState( window )
-        # settings = self.getQtSettingObject()
-        # size = settings.beginReadArray(self.getName() + '_tab_widgets')
-        # for i in range(size):
-        #     settings.setArrayIndex(i)
-        #     type = settings.value( "type" )
-        #     scene = getSceneByType( type )
-        #     obj = settings.value( "object" )
-        #     if scene:
-        #         scene.setHeader( obj )
-        #         self.addScene( scene )
-        # settings.endArray()
-
-    # Scene methods
-    def getTab(self):
-        return self.mainWindow.centerTabWidget
-
-    def newLayout(self):
-        layout = LayoutView()
-        tab = self.getTab()
-        tab.addTab( layout, "moai.layout *" )
-        tab.setCurrentIndex( tab.count()-1 )
+        self.setFocus()
 
     def reloadProject(self):
         runtime = self.getRuntime()
@@ -105,28 +58,8 @@ class SceneEditor( TopEditorModule ):
         if name == 'reload_project':
             self.reloadProject()
 
-        if name == 'new_layout':
-            self.newLayout()
-        # if name == 'new_scene':
-        #     self.newScene()
-        # elif name == 'open_file':
-        #     self.openSceneSource()
-        # elif name == 'open_scene':
-        #     self.openSceneSource()
-        # elif name == 'reload_scene':
-        #     self.reloadSceneSource()
-
     def onTool(self, node):
         name = node.name
-
-    def onTabChanged(self, index):
-        pass
-
-    def onTabCloseRequested(self, index):
-        tab = self.getTab()
-    #     closeScene = tab.widget( index )
-    #     closeScene.stop()
-        tab.removeTab( index )
 
     
 
@@ -152,5 +85,6 @@ def getSceneSelectionManager():
     return app.getModule('scene_editor').selectionManager
 
 ##----------------------------------------------------------------##
+
 SceneEditor().register()
         

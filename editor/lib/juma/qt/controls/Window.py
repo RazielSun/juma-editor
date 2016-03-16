@@ -50,6 +50,10 @@ class MainWindow( QMainWindow ):
 
         self.setCentralWidget( self.centerTabWidget )
 
+        self.centerTabWidget.currentChanged.connect( self.onDocumentTabChanged )
+        self.centerTabWidget.tabCloseRequested.connect( self.onTabCloseRequested )
+
+
     def moveToCenter(self):
         moveWindowToCenter( self )
 
@@ -172,6 +176,15 @@ class MainWindow( QMainWindow ):
 
     def requestToolWindow(self, id, **option ):
         pass
+
+    def onTabCloseRequested( self, idx ):
+        subwindow = self.centerTabWidget.widget( idx )
+        if subwindow.close():
+            self.centerTabWidget.removeTab( idx )
+        
+    def onDocumentTabChanged( self, idx ):
+        w = self.centerTabWidget.currentWidget()
+        if w: w.setFocus()
 
 ##----------------------------------------------------------------##
 class SubWindow( QtGui.QMainWindow ):
@@ -376,11 +389,6 @@ class DockWindow( QtGui.QDockWidget ):
             return super( DockWindow, self ).closeEvent( event )
         else:
             event.ignore()
-
-    def createContainer(self):
-        container = QtGui.QWidget(self)
-        self.setWidget(container)
-        return container
 
     def moveToCenter(self):
         moveWindowToCenter(self)

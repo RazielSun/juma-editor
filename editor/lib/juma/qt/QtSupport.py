@@ -56,7 +56,7 @@ class QtSupport( QtEditorModule ):
 		)
 		self.menu.addChild('&Edit')
 		self.menu.addChild( dict( name = 'preview', label = 'Game' ) )
-		self.menu.addChild('&Layout')
+		self.menu.addChild('&Scene')
 		self.menu.addChild('&View').addChild([
 			'----',
 			'Default Theme',
@@ -68,6 +68,8 @@ class QtSupport( QtEditorModule ):
 		self.menu.addChild('&Window').addChild([
 			'----',
 			'Game Preview',
+			'Scenegraph',
+			'Introspector',
 			'Stats Viewer',
 			'----',
 			]
@@ -189,6 +191,12 @@ class QtSupport( QtEditorModule ):
 
 		elif name == 'stats_viewer':
 			self.getModule('stats_viewer').show()
+
+		elif name == 'scenegraph':
+			self.getModule('scenegraph_editor').show()
+
+		elif name == 'introspector':
+			self.getModule('introspector').show()
 
 		# elif name == 'debug_view':
 		# 	self.getModule('debug_view').setFocus()

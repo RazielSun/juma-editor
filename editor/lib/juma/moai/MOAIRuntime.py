@@ -14,7 +14,7 @@ from LuaPrint			import printSeparator, printTraceBack
 
 ##----------------------------------------------------------------##
 _G   			= LuaTableProxy( None )
-_Editor 		= LuaTableProxy( None )
+_Render 		= LuaTableProxy( None )
 
 # signals.register( 'lua.msg' )
 
@@ -68,7 +68,7 @@ class MOAIRuntime( EditorModule ):
 	#-------Context Control
 	def initContext(self):
 		global _G
-		global _Editor
+		global _Render
 
 		self.luaModules        = []
 
@@ -96,8 +96,8 @@ class MOAIRuntime( EditorModule ):
 		self.addDefaultInputDevice( 'device' )
 		self.runScript( self.getApp().getPath( 'lib/lua/juma/init.lua' ) )
 
-		_Editor._setTarget( _G['editor'] )
-		assert _Editor, "Failed loading Editor!"
+		_Render._setTarget( _G['RenderContextMgr'] )
+		assert _Render, "Failed loading Editor!"
 		### finish loading lua bridge
 		
 		self.AKUReady      		= True
@@ -132,9 +132,9 @@ class MOAIRuntime( EditorModule ):
 		context = AKUGetContext ()
 		if context != 0:
 			global _G
-			global _Editor
+			global _Render
 			_G._setTarget( None )
-			_Editor._setTarget( None )
+			_Render._setTarget( None )
 			self.lua = None
 			AKUDeleteContext ( context )
 
@@ -223,7 +223,6 @@ class MOAIRuntime( EditorModule ):
 	def openWindow(self, title, width, height):
 		AKUDetectGfxContext()
 		signals.emitNow( 'moai.open_window', title, width, height )
-  		print("OPEN WINDOW: {} {} {}".format(title, width, height))
 
 	def setSimStep(self, step):
 		self.simStep = step
@@ -267,22 +266,28 @@ class MOAIRuntime( EditorModule ):
 
 ##----------------------------------------------------------------##
 	def createRenderContext( self, key, clearColor = (0,0,0,0) ):
-		_Editor.createRenderContext( key, *clearColor )
+		_Render.createRenderContext( key, *clearColor )
 
 	def changeRenderContext( self, contextId, w, h ):
-		_Editor.changeRenderContext( contextId or False, w or False, h or False )
+		_Render.changeRenderContext( contextId or False, w or False, h or False )
 
 	def setBufferSize( self, width, height ):
-		_Editor.setBufferSize( width, height )
+		_Render.setBufferSize( width, height )
 
-	def manualRenderAll( self ):
+	def manualRender( self):
 		if not self.GLContextReady:
 			return
-		_Editor.manualRenderAll()
+		_Render.manualRender()
+
+	def updateStepSim( self, step ):
+		try:
+			_G.updateStepSim( step )
+		except Exception, e:
+			logging.error( 'error loading lua:\n' + str(e) )
 
 	def setLuaEnvResolution( self, width, height ):
 		try:
-			_Editor.setResolution( width, height )
+			_G.setGameResolution( width, height )
 		except Exception, e:
 			logging.error( 'error loading lua:\n' + str(e) )
 

@@ -5,6 +5,14 @@ function editorAsset( asset )
 	return ASSET_EDITOR_PATH .. '/' .. asset
 end
 
-local Editor = require("core.Editor")
+function setGameResolution( width, height )
+	MOAIEnvironment.setValue('horizontalResolution', width)
+	MOAIEnvironment.setValue('verticalResolution', height)
+end
 
-editor = Editor()
+--------------------------------------------------------------------
+-- Setups
+
+Editor = require("core.Editor")
+RenderContextMgr = require("core.RenderContextMgr")
+EditorSceneMgr = require("core.EditorSceneMgr")

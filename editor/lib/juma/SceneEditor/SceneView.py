@@ -1,52 +1,44 @@
 import os.path
 
 from PySide  import QtCore, QtGui, QtOpenGL
-from PySide.QtCore import Qt
-from PySide.QtGui import QFileDialog
 
-from juma.core import signals, app
-from juma.moai.MOAIEditCanvas import  MOAIEditCanvas
+from juma.core 					import signals, app
+from juma.moai.MOAIEditCanvas 	import  MOAIEditCanvas
+from SceneEditor             	import SceneEditorModule
+
+
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 ##----------------------------------------------------------------##
-class SceneView( QtGui.QScrollArea ):
-	def __init__( self, parent=None ):
-		super(SceneView, self).__init__( parent )
+class SceneView( SceneEditorModule ):
+	_name       = 'scene_view'
+	_dependency = [ 'scene_editor', 'scenegraph_editor' ]
 
-		self.setBackgroundRole(QtGui.QPalette.Dark)
-		self.setAlignment(QtCore.Qt.AlignCenter)
+	def __init__(self):
+		super( SceneView, self ).__init__()
 
-		self.canvas = SceneViewCanvas( context_prefix = 'scene_edit' )
-		self.setWidget(self.canvas)
-		self.canvas.resize(600, 400)
-		self.canvas.loadScript( _getModulePath('SceneView.lua') )		
+	def onLoad( self ):
+		self.window = self.requestDocumentWindow(
+				title = 'Scene'
+			)
 
-	def openSource(self):
-		fileName, filt = QFileDialog.getOpenFileName(self, "Run Script", app.getProject().path or "~", "Lua source (*.lua )")
-		if fileName:
-			dir_path = os.path.dirname(fileName)
-			file_path = os.path.basename(fileName)
-			self.canvas.openFile( file_path, dir_path )
+		self.tool = self.addToolBar( 'scene_view_config', self.window.addToolBar() )
 
-	def start(self):
-		self.canvas.startUpdateTimer()
+		self.canvas = self.window.addWidget(
+				SceneViewCanvas()
+			)
+		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 
-	def stop(self):
-		self.canvas.stopUpdateTimer()
+		self.window.show()
 
+##----------------------------------------------------------------##
+
+SceneView().register()
 
 ##----------------------------------------------------------------##
 class SceneViewCanvas( MOAIEditCanvas ):
 	def __init__( self, *args, **kwargs ):
 		super( SceneViewCanvas, self ).__init__( *args, **kwargs )
-
-	def openFile(self, file, path):		
-		self.makeCurrent()
-		runtime = self.runtime
-		runtime.setWorkingDirectory( path )
-		runtime.runScript( file )
-		# self.canvas.startRefreshTimer( self.activeFPS )
-		# self.canvas.refreshTimer.start()

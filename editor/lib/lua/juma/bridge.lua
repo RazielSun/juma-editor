@@ -60,5 +60,45 @@ function loadLuaDelegate(file, env, ...)
 end
 
 --------------------------------------------------------------------
+-- CTHelper methods
+--------------------------------------------------------------------
+
+assert(CTHelper.stepSim, "CTHelper stepSim is NULL")
+assert(CTHelper.setBufferSize, "CTHelper setBufferSize is NULL")
+assert(CTHelper.renderFrameBuffer, "CTHelper renderFrameBuffer is NULL")
+
+local renderFrameBuffer = CTHelper.renderFrameBuffer
+
+function renderTable( t )
+	for _, item in ipairs(t) do
+		local itemType = type(item)
+		if itemType == 'table' then
+			renderTable( item )
+		elseif itemType == 'userdata' then
+			renderFrameBuffer( item )
+		end
+	end
+end
+
+local setBufferSize = CTHelper.setBufferSize
+
+function setBufferSizeForTable( t, width, height )
+	for _, item in ipairs(t) do
+		local itemType = type(item)
+		if itemType == 'table' then
+			setBufferSizeForTable( item, width, height )
+		elseif itemType == 'userdata' then
+			setBufferSize( item, width, height )
+		end
+	end
+end
+
+local stepSim = CTHelper.stepSim
+
+function updateStepSim( step )
+	stepSim( step )
+end
+
+--------------------------------------------------------------------
 
 return Bridge

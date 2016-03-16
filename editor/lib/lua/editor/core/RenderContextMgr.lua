@@ -2,21 +2,20 @@
 -- RENDER CONTEXT MGR
 --------------------------------------------------------------------
 
-local RenderContextMgr = Class( "RenderContextMgr" )
+local RenderContextMgr = {}
 
-assert(CTHelper.setBufferSize, "CTHelper setBufferSize is NULL")
-assert(CTHelper.renderFrameBuffer, "CTHelper renderFrameBuffer is NULL")
+RenderContextMgr.contexts 	= {}
+RenderContextMgr.current    = nil
+RenderContextMgr.currentKey = nil
 
 --------------------------------------------------------------------
 --
-function RenderContextMgr:init( params )
-	self.contexts = {}
-	self.current    = nil
-	self.currentKey = nil
+function RenderContextMgr.createRenderContext( key, cr, cg, cb, ca )
+	if RenderContextMgr then
+		RenderContextMgr:create( key, cr, cg, cb, ca )
+	end
 end
 
---------------------------------------------------------------------
---
 function RenderContextMgr:create( key, cr, cg, cb, ca )
 	if self.contexts[ key ] then
 		return
@@ -33,67 +32,37 @@ function RenderContextMgr:create( key, cr, cg, cb, ca )
 	root:setAutoStop( false )
 	root._contextKey = key
 
+	local frameBuffer = MOAIFrameBuffer.new()
+	frameBuffer:setClearColor( 0.5, 0.5, 0.5, 1.0 )
 	local context = {
 		key              = key,
 		w                = false,
 		h                = false,
 		clearColor       = clearColor,
 		actionRoot       = root,
-		bufferTable      = {},
-		renderTableMap   = {},
+		bufferTable      = { frameBuffer },
 	}
 
 	self.contexts[ key ] = context
 end
 
+function RenderContextMgr.changeRenderContext( key, w, h )
+	if RenderContextMgr then
+		RenderContextMgr:change( key, w, h )
+	end
+end
+
 function RenderContextMgr:change( key, w, h )
 	if self.currentKey == key then return end
 
-	local context = self.contexts[key]
+	local context = self:get(key)
 	assert ( context, 'no render context for:'..tostring(key) )
-
-	-- local deviceBuffer = MOAIGfxDevice.getFrameBuffer()
-
-	-- if currentContext then --persist context
-	-- 	local bufferTable  = MOAIRenderMgr.getBufferTable()
-	-- 	local renderTableMap = {}
-	-- 	local hasDeviceBuffer = false
-	-- 	for i, fb in pairs( bufferTable ) do
-	-- 		if fb.getRenderTarget then
-	-- 			renderTableMap[fb] = fb:getRenderTable()
-	-- 		end
-	-- 	end
-	-- 	currentContext.bufferTable       = bufferTable
-	-- 	currentContext.renderTableMap    = renderTableMap
-
-	-- 	if currentContext.deviceRenderTable ~= false then
-	-- 		currentContext.deviceRenderTable = deviceBuffer:getRenderTable()
-	-- 	end
-
-	-- 	currentContext.actionRoot        = assert( currentContext.actionRoot )
-	-- end
-
-	--TODO: persist clear depth& color flag(need to modify moai)
 
 	self.current    = context
 	self.currentKey = key
 	self.current.w  = w
 	self.current.h  = h
 
-	-- local clearColor = currentContext.clearColor
-	-- if clearColor then 
-	-- 	MOAIGfxDevice.getFrameBuffer():setClearColor( unpack( clearColor ) )
-	-- else
-	-- 	MOAIGfxDevice.getFrameBuffer():setClearColor()
-	-- end
-
-	for fb, rt in pairs( self.current.renderTableMap ) do
-		fb:setRenderTable( rt )
-	end
-	-- MOAIRenderMgr.setBufferTable ( self.current.bufferTable )	
-	-- if currentContext.deviceRenderTable then
-	-- 	deviceBuffer:setRenderTable  ( currentContext.deviceRenderTable )
-	-- end
 	-- MOAIActionMgr.setRoot( self.current.actionRoot )
 end
 
@@ -116,43 +85,42 @@ end
 
 function RenderContextMgr:setActionRoot( key, root )
 	local context =  self:get( key )
-
 	if key == self.currentKey then
 		MOAIActionMgr.setRoot( root )
 	end
-
 	if context then
 		context.actionRoot = root
-	end
-end
-
-function RenderContextMgr:updateCurrentContext( bufferTable )
-	local context = self.current
-
-	if context then
-		context.bufferTable = bufferTable
 	end
 end
 
 --------------------------------------------------------------------
 --
 
-local setBufferSize = CTHelper.setBufferSize
+function RenderContextMgr:pushCurrentRenderTable( renderTable )
+	self:pushRenderTable( self.currentKey, renderTable )
+end
 
-local function setBufferSizeForTable( t, width, height )
-	for _, item in ipairs(t) do
-		local itemType = type(item)
-		if itemType == 'table' then
-			setBufferSizeForTable( item, width, height )
-		elseif itemType == 'userdata' then
-			setBufferSize( item, width, height )
+function RenderContextMgr:pushRenderTable( key, renderTable )
+	local context = self:get( key )
+	if context then
+		local frameBuffer = context.bufferTable[#context.bufferTable]
+		if not frameBuffer then
+			frameBuffer = MOAIFrameBuffer.new()
+			table.insert( context.bufferTable, frameBuffer )
 		end
+		frameBuffer:setRenderTable( renderTable )
 	end
 end
 
-function RenderContextMgr:setBufferSizeForCurrent( width, height )
-	local context = self.current
+--------------------------------------------------------------------
+--
 
+function RenderContextMgr.setBufferSize( width, height )
+	RenderContextMgr:setBufferSizeForContext( RenderContextMgr.currentKey, width, height )
+end
+
+function RenderContextMgr:setBufferSizeForContext( key, width, height )
+	local context = self:get( key )
 	if context then
 		local bufferTable = context.bufferTable
 		setBufferSizeForTable( bufferTable, width, height )
@@ -162,29 +130,12 @@ end
 --------------------------------------------------------------------
 --
 
-local renderFrameBuffer = CTHelper.renderFrameBuffer
-
-local function renderTable( t )
-	for _, item in ipairs(t) do
-		local itemType = type(item)
-		if itemType == 'table' then
-			renderTable( item )
-		elseif itemType == 'userdata' then
-			renderFrameBuffer( item )
-		end
-	end
+function RenderContextMgr.manualRender()
+	RenderContextMgr:manualRenderForContext( RenderContextMgr.currentKey )
 end
 
-function RenderContextMgr:manualRenderAll()
-	-- local bufferTable = MOAIRenderMgr.getBufferTable()
-
-	-- if bufferTable then
-	-- 	renderTable( bufferTable )
-	-- else
-	-- 	renderFrameBuffer(MOAIGfxDevice.getFrameBuffer())
-	-- end
-	local context = self.current
-
+function RenderContextMgr:manualRenderForContext( key )
+	local context = self:get( key )
 	if context then
 		local bufferTable = context.bufferTable
 		renderTable( bufferTable )
