@@ -56,6 +56,7 @@ class QtSupport( QtEditorModule ):
 		)
 		self.menu.addChild('&Edit')
 		self.menu.addChild( dict( name = 'preview', label = 'Game' ) )
+		self.menu.addChild('&Layout')
 		self.menu.addChild('&View').addChild([
 			'----',
 			'Default Theme',

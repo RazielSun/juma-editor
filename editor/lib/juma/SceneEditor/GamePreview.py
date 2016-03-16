@@ -7,13 +7,11 @@ from PySide.QtCore            import Qt
 
 from juma.core                import signals, app
 
-# from juma.moai.MOAIRuntime    import getAKU
-from juma.moai.MOAICanvasBase import MOAICanvasBase
-from juma.qt.controls.GLWidget import GLWidget
-# from gii.moai.MOAIEditCanvas import MOAIEditCanvas
+from juma.moai.MOAICanvasBase 	import MOAICanvasBase
+from juma.qt.controls.GLWidget 	import GLWidget
 
-from SceneEditor             import SceneEditorModule
-# import ExternRun
+from SceneEditor             	import SceneEditorModule
+from SceneEditorHelpers         import SceneSizeComboBox
 
 ##----------------------------------------------------------------##
 class GamePreview( SceneEditorModule ):
@@ -95,6 +93,13 @@ class GamePreview( SceneEditorModule ):
 		self.scrollArea.setWidget( self.canvas )
 		self.canvas.startRefreshTimer( self.nonActiveFPS )
 		self.canvas.module = self
+
+		# self.sceneSizeWidget = SceneSizeComboBox( None )
+        # self.sceneSizeWidget.owner = self
+
+        # self.addTool( 'scene/size_scene', widget = self.sceneSizeWidget )
+
+        # signals.connect( 'scene.change_size', self.onSceneSizeChanged )
 
 		self.updateTimer = None
 		
@@ -353,6 +358,14 @@ class GamePreview( SceneEditorModule ):
 
 	# 	elif name == 'run_game_external':
 	# 		self.runGameExternal()
+
+	# def onSceneSizeChanged(self, size):
+    #     scene = self.getScene()
+    #     if scene:
+    #         success = scene.resize( size['width'], size['height'] )
+    #         if success:
+    #             print('Scene {} size changed: {} x {}'.format(scene.getName(), size['width'], size['height']))
+    #             scene.reload()
 
 ##----------------------------------------------------------------##
 class GamePreviewCanvas(MOAICanvasBase):

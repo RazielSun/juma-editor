@@ -207,7 +207,7 @@ class SubWindow( QtGui.QMainWindow ):
         self.callbackOnClose = None
         self.container = self.createContainer()
         self.mainLayout = QtGui.QVBoxLayout(self.container)
-        # self.mainLayout.setSpacing(0)
+        self.mainLayout.setSpacing(0)
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.mainLayout.setObjectName('MainLayout')
 

@@ -12,4 +12,4 @@
 # pyside-uic -o particleeditor_ui.py particleeditor.ui
 # pyside-uic -o particlescriptdialog_ui.py particlescriptdialog.ui
 
-pyside-uic -o stats_dock_ui.py stats_dock.ui
+pyside-uic -o statsdock_ui.py statsdock.ui

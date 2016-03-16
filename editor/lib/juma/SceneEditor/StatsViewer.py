@@ -11,7 +11,7 @@ from PySide.QtGui import QDockWidget
 from juma.core 				import app, signals
 from juma.moai.MOAIRuntime	import MOAILuaDelegate
 from SceneEditor  			import SceneEditorModule
-from ui.stats_dock_ui 		import Ui_StatsDock as Ui
+from ui.statsdock_ui 		import Ui_statsdock as Ui
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -95,20 +95,15 @@ class StatsViewer( SceneEditorModule ):
 	def onUpdateStats(self):
 		if self.ready:
 			fps, drawcalls, luaCount, luaMem, textureMem, actionTree, nodeMgr, sim, render = self.delegate.safeCall( 'onStats' )
-			self.ui.mainLabel.setText("FPS: {:,}     Draws: {}     Render: {}".format(int(fps), drawcalls,render))
-			self.ui.luaLabel.setText("LUA Objects: {:,}     Memory: {:,}".format(int(luaCount), int(luaMem)))
-			self.ui.memoryLabel.setText("Texture Memory: {:,}".format(int(textureMem)))
-			self.ui.actionLabel.setText("ActionTree: {}     NodeMgr: {}     Sim: {}".format(actionTree, nodeMgr, sim))
-
-			# self.ui.valueFps.setText(str(fps))
-			# self.ui.valueDrawCalls.setText(str(drawcalls))
-			# self.ui.valueLuaCount.setText( '{:,}'.format(int(luaCount)) )
-			# self.ui.valueLuaMemory.setText( '{:,}'.format(int(luaMem)) )
-			# self.ui.valeuTextureMemory.setText( '{:,}'.format(int(textureMem)) )
-			# self.ui.valueNodeMgr.setText(str(actionTree))
-			# self.ui.valueActionTree.setText(str(nodeMgr))
-			# self.ui.valueSim.setText(str(sim))
-			# self.ui.valueRender.setText(str(render))
+			self.ui.valueFps.setText(str(fps))
+			self.ui.valueDrawCalls.setText(str(drawcalls))
+			self.ui.valueLuaCount.setText( '{:,}'.format(int(luaCount)) )
+			self.ui.valueLuaMemory.setText( '{:,}'.format(int(luaMem)) )
+			self.ui.valeuTextureMemory.setText( '{:,}'.format(int(textureMem)) )
+			self.ui.valueNodeMgr.setText(str(actionTree))
+			self.ui.valueActionTree.setText(str(nodeMgr))
+			self.ui.valueSim.setText(str(sim))
+			self.ui.valueRender.setText(str(render))
 
 ##----------------------------------------------------------------##
 

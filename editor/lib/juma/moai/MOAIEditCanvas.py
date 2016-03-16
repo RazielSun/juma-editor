@@ -42,7 +42,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.scriptPath  = None
 		self.lastUpdateTime = 0 
 		self.updateStep  = 0
-		# self.alwaysForcedUpdate = False
+		self.alwaysForcedUpdate = False
 
 		# self.currentCursorId = 'arrow'
 		# self.cursorHidden = False
@@ -51,8 +51,6 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 		signals.connect('moai.reset', self.onMoaiReset)
 		signals.connect('moai.clean', self.onMoaiClean)
-		# signals.connect('moai.open_window', self.openWindow)
-		# signals.connect('moai.set_sim_step', self.setSimStep)
 
 	def startUpdateTimer( self, fps = 60 ):
 		self.enabled = True
@@ -72,7 +70,6 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 
 	def setupContext(self):
 		self.runtime.createRenderContext( self.contextName, self.clearColor )
-		# self.setInputDevice( self.runtime.addDefaultInputDevice( self.contextName ) )
 		
 		if self.scriptPath:
 			self.makeCurrent()
@@ -93,11 +90,11 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 				env.update( self.scriptEnv )
 			self.delegate.load( self.scriptPath, env )
 
-			loaded = self.delegate.safeCall( 'onLoad' )
-			print("function onLoad called: {}".format(loaded))
-			# self.resizeGL(self.width(), self.height())
-			# self.startRefreshTimer()
-			# self.updateCanvas()
+			self.delegate.safeCall( 'onLoad' )
+			self.resizeGL(self.width(), self.height())
+			self.startRefreshTimer()
+			self.startUpdateTimer() # FIXME
+			self.updateCanvas()
 
 	def makeCurrent( self ):
 		self.runtime.changeRenderContext( self.contextName, self.viewWidth, self.viewHeight )
@@ -109,68 +106,41 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.stopUpdateTimer()
 		self.stopRefreshTimer()
 
-	# need remove
-	# def openWindow(self, title, width, height):
-	# 	if not self.enabled: return False
-	# 	print("Update Window: {} to {} {} {}".format(self.contextName, title, width, height))
-	# 	# runtime = self.runtime
-	# 	# w = self.size().width()
-	# 	# h = self.size().height()
-	# 	# runtime.setScreenSize(w, h)
-	# 	# runtime.setViewSize(w, h)
-	# 	self.resize(width, height)
-
-	# def setSimStep(self, step):
-	# 	if not self.enabled: return False
-	# 	print("Set Sim Step: " + self.contextName)
-	# 	self.updateTimer.setInterval( 1000 * step )
-	# 	self.updateStep = step
-
-	# fixme
 	def onDraw(self):
 		runtime = self.runtime
-		# runtime.setBufferSize( self.viewWidth, self.viewHeight )
+		runtime.setBufferSize( self.viewWidth, self.viewHeight )
 		self.makeCurrent()
-		# runtime.manualRenderAll()
+		runtime.manualRenderAll()
 		# self.delegate.postDraw()
-		runtime.renderAKU()
 
 	def updateCanvas( self, **option ):
-		self.makeCurrent()
-		if self.runtime.updateAKU():
-			self.forceUpdateGL()
+		currentTime = getTime()
+		step = currentTime - self.lastUpdateTime
+		self.lastUpdateTime = currentTime
+		
+		step = self.updateStep #>>>>>>
 
-		# currentTime = getTime()
-		# step = currentTime - self.lastUpdateTime
-		# self.lastUpdateTime = currentTime
-		
-		# step = self.updateStep #>>>>>>
-		
-		# runtime = self.runtime
-		# runtime.setBufferSize( self.viewWidth, self.viewHeight )
-		
-		# # self.makeCurrent()
+		runtime = self.runtime
+		runtime.setBufferSize( self.viewWidth, self.viewHeight )
 
 		# if not option.get( 'no_sim', False ):	
 		# 	runtime.stepSim( step )
 		# 	getAKU().updateFMOD()
 
 		# self.delegate.onUpdate( step )
-		# if option.get( 'forced', self.alwaysForcedUpdate ):
-		# 	self.forceUpdateGL()
-		# else:
-		# 	self.updateGL()
+		if self.runtime.updateAKU(): # FIXME
+			if option.get( 'forced', self.alwaysForcedUpdate ):
+				self.forceUpdateGL()
+			else:
+				self.updateGL()
 
 	# change
 	def resizeGL(self, width, height):
 		# self.delegate.onResize(width,height)
 		print("resizeGL: {} {}".format(width, height))
-		self.makeCurrent()
 		self.viewWidth  = width
 		self.viewHeight = height
-		runtime = self.runtime
-		runtime.setScreenSize(width, height)
-		runtime.setViewSize(width, height)
+
 
 
 ##----------------------------------------------------------------##

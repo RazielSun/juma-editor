@@ -149,16 +149,19 @@ class MOAIRuntime( EditorModule ):
 			printSeparator( path, filename )
 			self.setWorkingDirectory( path )
 			self.runScript( filename )
-		else:
-			self.setWorkingDirectory( self.getApp().getPath() )
 
 	def reset(self):
 		if not self.AKUReady: return
 		self.cleanLuaReferences()
-		self.initContext()
+		self.setup()
 
 		signals.emitNow( 'moai.reset' )
 		signals.emitNow( 'moai.ready' )
+
+	def setup(self):
+		self.initContext()
+		self.setWorkingDirectory( self.getApp().getPath() )
+		self.initGLContext()
 
 	def finalize(self):
 		AKUModulesAppFinalize ()
@@ -264,12 +267,18 @@ class MOAIRuntime( EditorModule ):
 
 ##----------------------------------------------------------------##
 	def createRenderContext( self, key, clearColor = (0,0,0,0) ):
-		pass
-		# _RenderContext.createRenderContext( key, *clearColor )
+		_Editor.createRenderContext( key, *clearColor )
 
-	def changeRenderContext(self, contextId, w, h ):
-		pass
-		# _RenderContext.changeRenderContext( contextId or False, w or False, h or False )
+	def changeRenderContext( self, contextId, w, h ):
+		_Editor.changeRenderContext( contextId or False, w or False, h or False )
+
+	def setBufferSize( self, width, height ):
+		_Editor.setBufferSize( width, height )
+
+	def manualRenderAll( self ):
+		if not self.GLContextReady:
+			return
+		_Editor.manualRenderAll()
 
 	def setLuaEnvResolution( self, width, height ):
 		try:
@@ -288,13 +297,10 @@ class MOAIRuntime( EditorModule ):
 ##----------------------------------------------------------------##
 	def onProjectLoaded(self, project):
 		self.reset()
-		# pass
 
 	def onLoad(self):
 		self.AKUReady = False
-		self.initContext()
-		self.setWorkingDirectory( self.getApp().getPath() )
-		self.initGLContext()
+		self.setup()
 
 	def onUnload(self):
 		self.AKUReady   = False
