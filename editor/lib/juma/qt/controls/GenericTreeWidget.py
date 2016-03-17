@@ -21,6 +21,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.readonlyItemDelegate = self.getReadonlyItemDelegate()
 		self.defaultItemDelegate  = self.getDefaultItemDelegate()
 
+		self.refreshing = False
+		self.rebuilding = False
+
 		self.option = option
 		headerInfo = self.getHeaderInfo()
 		headerItem = QtGui.QTreeWidgetItem()
@@ -55,7 +58,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.itemCollapsed        .connect( self.onItemCollapsed )
 		self.itemSelectionChanged .connect( self.onItemSelectionChanged )
 		self.itemActivated        .connect( self.onItemActivated )
-		self.itemChanged          .connect( self.onItemChanged )
+		self.itemChanged          .connect( self._onItemChanged )
 		self.setIndentation( 12 )
 
 		self.initRootItem()
@@ -107,10 +110,11 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		else:
 			self.rootItem = self.invisibleRootItem()
 
-	def newItem( self ):
+	def createItem( self ):
 		item  = QtGui.QTreeWidgetItem()
 		return item
 
+	# FIXME
 	def createEntity( self ):
 		self.counts += 1
 		root = self.rootItem
@@ -145,6 +149,10 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def onClipboardPaste( self ):
 		pass
+
+	def _onItemChanged( self, item, col ):
+		if self.refreshing: return
+		return self.onItemChanged( item, col )
 
 	def onItemChanged( self, item, col ):
 		pass

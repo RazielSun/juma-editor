@@ -99,7 +99,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.enabled = False
 
 		contextPrefix = kwargs.get( 'context_prefix', 'edit_canvas')
-		self.clearColor  = kwargs.get( 'clear_color', ( 0, 0, 0, 1 ) )
+		self.clearColor  = kwargs.get( 'clear_color', ( 0, 0, 0, 0 ) )
 		self.runtime     = app.affirmModule( 'moai' )
 		self.contextName = '%s<%d>' % ( contextPrefix, MOAIEditCanvas._id )
 		self.delegate    = MOAIEditCanvasLuaDelegate( self, autoReload = False )

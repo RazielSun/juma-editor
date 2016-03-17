@@ -1,3 +1,6 @@
+local Entity = require("core.Entity")
+local EntityGroup = require("core.EntityGroup")
+
 local EditorSceneMgr = {}
 
 EditorSceneMgr.scenes = {}
@@ -44,13 +47,17 @@ function EditorSceneMgr:newScene()
 	layer:setViewport(viewport)
 	layer:setCamera(camera)
 
+	local group = EntityGroup()
+	group:setLayer( layer )
+
 	local scene = {
-		layer      = layer,
-		camera     = camera,
-		cameraScl  = 1,
-		viewport   = viewport,
-		viewWidth  = 0,
-		viewHeight = 0,
+		layer      	= layer,
+		root		= group,
+		camera     	= camera,
+		cameraScl  	= 1,
+		viewport   	= viewport,
+		viewWidth  	= 0,
+		viewHeight 	= 0,
 	}
 	scene = setmetatable( scene, { __index = EditCanvasContext } )
 
@@ -62,8 +69,6 @@ function EditCanvasContext:resize( w, h )
 	self.viewport:setScale(w,h)
 
 	self.viewWidth, self.viewHeight = w, h
-
-	print("resize viewport:", w, h)
 end
 
 return EditorSceneMgr

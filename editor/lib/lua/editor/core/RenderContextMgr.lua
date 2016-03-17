@@ -21,11 +21,8 @@ function RenderContextMgr:create( key, cr, cg, cb, ca )
 		return
 	end
 
-	local clearColor = {0,0,0,1}
-	if cr==false then
-		clearColor = false
-	else
-		clearColor = { cr or 0, cg or 0, cb or 0, ca or 0 }
+	if cr==0 and cg == 0 and cb == 0 and ca == 0 then
+		cr, cg, cb, ca = nil, nil, nil, nil
 	end
 
 	local root = MOAIAction.new()
@@ -33,12 +30,11 @@ function RenderContextMgr:create( key, cr, cg, cb, ca )
 	root._contextKey = key
 
 	local frameBuffer = MOAIFrameBuffer.new()
-	frameBuffer:setClearColor( 0.5, 0.5, 0.5, 1.0 )
+	frameBuffer:setClearColor( cr or 0.06, cg or 0.06, cb or 0.06, ca or 1.0 )
 	local context = {
 		key              = key,
 		w                = false,
 		h                = false,
-		clearColor       = clearColor,
 		actionRoot       = root,
 		bufferTable      = { frameBuffer },
 	}

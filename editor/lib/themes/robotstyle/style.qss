@@ -874,25 +874,39 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
 
 QTreeView, QListView
 {
-    border: 1px solid #444;
-    background-color: #201F1F;
+    background-color:#1e1e1e;
+    alternate-background-color:#494949;
+    border:1px solid #222;
 }
 
-QTreeView:branch:selected, QTreeView:branch:hover
+QTreeWidget
+{
+    color:#ddd;
+    border:0 solid green;
+}
+
+QTreeView::indicator
+{
+    border:0 solid red;
+    width:14px;
+    height:16px;
+}
+
+/*QTreeView:branch:selected, QTreeView:branch:hover
 {
     background: url(:/qss_icons/rc/transparent.png);
-}
+}*/
 
 QTreeView::branch:has-siblings:!adjoins-item {
-    border-image: url(:/qss_icons/rc/transparent.png);
+    border-image: url(:/qss_icons/rc/transparent.png); /* url(theme:vline.png) 0; */
 }
 
 QTreeView::branch:has-siblings:adjoins-item {
-    border-image: url(:/qss_icons/rc/transparent.png);
+    border-image: url(:/qss_icons/rc/transparent.png); /* url(theme:branch_more.png) 0; */
 }
 
 QTreeView::branch:!has-children:!has-siblings:adjoins-item {
-    border-image: url(:/qss_icons/rc/transparent.png);
+    border-image: url(:/qss_icons/rc/transparent.png); /* url(theme:branch_end.png) 0; */
 }
 
 QTreeView::branch:has-children:!has-siblings:closed,
@@ -924,14 +938,6 @@ QListView::item:!selected:hover, QListView::item:!selected:hover, QTreeView::ite
 QListView::item:selected:hover, QListView::item:selected:hover, QTreeView::item:selected:hover  {
     background: #5285a6;
     color: #FFFFFF;
-}
-
-/* */
-
-QTreeWidget
-{
-    border: 1px transparent #000;
-    background-color: #1e1e1e;
 }
 
 /* */
