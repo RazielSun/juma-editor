@@ -5,7 +5,7 @@ from PySide.QtCore            import Qt
 
 from juma.core                	import signals, app
 from juma.moai.MOAIRuntime import MOAILuaDelegate
-from juma.qt.controls.GenericTreeWidget import GenericTreeWidget
+from juma.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from SceneEditor             	import SceneEditorModule
 
 
@@ -32,7 +32,12 @@ class SceneGraphEditor( SceneEditorModule ):
 			size      = (200,200),
 			minSize   = (200,200),
 			)
-
+		self.treeFilter = self.window.addWidget(
+				GenericTreeFilter(
+					self.window
+				),
+				expanding = False
+			)
 		self.tree = self.window.addWidget( 
 				SceneGraphTreeWidget( 
 					self.window,
@@ -43,6 +48,7 @@ class SceneGraphEditor( SceneEditorModule ):
 				)
 			)
 
+		self.treeFilter.setTargetTree( self.tree )
 		self.tree.module = self
 
 		self.tool = self.addToolBar( 'scene_graph', self.window.addToolBar() )
@@ -58,7 +64,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		pass
 
 	def createEntity(self):
-		pass
+		self.tree.createEntity()
 
 	def destroyItem(self):
 		pass
