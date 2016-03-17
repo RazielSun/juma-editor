@@ -119,7 +119,8 @@ class GamePreview( SceneEditorModule ):
 			], self)
 
 		self.addTool( 'game_preview/size_scene', widget = self.sceneSizeWidget )
-		self.addTool( 'game_preview/print_screen', label = 'Print Screen', icon = 'macbook' )
+		self.addTool( 'game_preview/collect_garbage', label = 'Collect Garbage', icon = 'bin' )
+		self.addTool( 'game_preview/take_screenshot', label = 'Take Screenshot', icon = 'camera' )
 
 		##----------------------------------------------------------------##
 		self.previewToolBar = self.addToolBar( 'game_preview_tools', 

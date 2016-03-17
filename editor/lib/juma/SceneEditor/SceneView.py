@@ -38,10 +38,20 @@ class SceneView( SceneEditorModule ):
 
 		self.window.show()
 
+		# SIGNALS
+
+		signals.connect( 'selection.changed', self.onSelectionChanged )
+
+##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
 		if name == 'scene_show':
 			self.window.show()
+
+	def onSelectionChanged( self, selection, key ):
+		if key != 'scene': return
+		print("SceneView onSelectionChanged")
+		# self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
 
 ##----------------------------------------------------------------##
 

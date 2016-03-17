@@ -17,6 +17,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.setUniformRowHeights( True )
 		self.setHorizontalScrollMode( QtGui.QAbstractItemView.ScrollPerPixel )
 		self.setVerticalScrollMode( QtGui.QAbstractItemView.ScrollPerItem )
+		self.nodeDict = {}
 
 		self.readonlyItemDelegate = self.getReadonlyItemDelegate()
 		self.defaultItemDelegate  = self.getDefaultItemDelegate()
@@ -62,8 +63,6 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.setIndentation( 12 )
 
 		self.initRootItem()
-
-		self.counts = 0
 
 	def getReadonlyItemDelegate( self ):
 		return ReadonlyItemDelegate( self )
@@ -114,11 +113,41 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		item  = QtGui.QTreeWidgetItem()
 		return item
 
-	# FIXME
-	def createEntity( self ):
-		self.counts += 1
-		root = self.rootItem
-		item = QtGui.QTreeWidgetItem( root, ["Entity {}".format(self.counts), "default"])
+	def getItemByNode(self, node):
+		return self.nodeDict.get( node, None )
+
+	def addNode( self, node, addChildren = True, **option ):
+		assert not node is None, 'attempt to insert null node '
+		item = self.nodeDict.get( node, None )
+		if item:
+			return item
+
+		pnode = self.getNodeParent( node )
+		assert pnode != node, 'parent is item itself'
+
+		pitem = self.getItemByNode( pnode )
+		if not pitem:
+			pitem = self.rootItem
+			pitem.node = pnode
+			self.nodeDict[ pnode ] = pitem
+
+		item  = self.createItem()
+		item.node = node
+
+		pnode.addChild( pnode, node )
+		pitem.addChild( item )
+
+		self.nodeDict[ node ] = item
+
+		item.setExpanded( self.getOption( 'expanded', True ) )
+
+		item.setText( 0, node.name or '<unnamed>' )
+		# item.setIcon( 0, getIcon('entity_group') )
+
+		return item
+
+	def getParentNode( self, node ):
+		return None
 
 	##----------------------------------------------------------------##
 	# Event Callback

@@ -26,6 +26,24 @@ class SceneIntrospector( SceneEditorModule ):
 				minSize = (200,200)
 		)
 
+		# SIGNALS
+
+		signals.connect( 'selection.changed', self.onSelectionChanged )
+
+	def onSelectionChanged( self, selection, key ):
+		if key != 'scene': return
+		print("SceneIntrospector onSelectionChanged")
+		# if not self.activeInstance: return
+		# target = None
+		# if isinstance( selection, list ):
+		# 	target = selection
+		# elif isinstance( selection, tuple ):
+		# 	(target) = selection
+		# else:
+		# 	target=selection
+		# #first selection only?
+		# self.activeInstance.setTarget(target)
+
 ##----------------------------------------------------------------##
 
 SceneIntrospector().register()

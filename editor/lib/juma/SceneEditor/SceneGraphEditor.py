@@ -56,20 +56,39 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
+		self.luaMgrId = 'graphMgr'
 
 		self.addTool( 'scene_graph/create_group', label ='+ Group', icon = 'folder_plus' )
 		self.addTool( 'scene_graph/create_entity', label ='+ Entity', icon = 'plus_mint' )
 		self.addTool( 'scene_graph/destroy_item', label ='- Item', icon = 'minus' )
 
+		#SIGNALS
+		signals.connect( 'moai.clean',        self.onMoaiClean        )
+
+		signals.connect( 'selection.changed', self.onSelectionChanged )
+		signals.connect( 'selection.hint',    self.onSelectionHint    )
+
+	def getActiveScene( self ):
+		return self.delegate.safeCallMethod( self.luaMgrId, 'getScene' )
+
+	def getActiveSceneRootGroup( self ):
+		scene = self.getActiveScene()
+		if scene:
+			return scene.rootNode
+		return None
+
+##----------------------------------------------------------------##
 	def createGroup(self):
 		pass
 
 	def createEntity(self):
-		self.tree.createEntity()
+		node = self.delegate.safeCallMethod( self.luaMgrId, 'createEntity' )
+		self.tree.addNode( node, expanded = False )
 
 	def destroyItem(self):
 		pass
 
+##----------------------------------------------------------------##
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'create_group':
@@ -80,6 +99,26 @@ class SceneGraphEditor( SceneEditorModule ):
 
 		elif name == 'destroy_item':
 			self.destroyItem()
+
+	def onMoaiClean( self ):
+		self.tree.clear()
+
+	def onSelectionChanged( self, selection, key ):
+		if key != 'scene': return
+		print("SceneGraphEditor onSelectionChanged")
+		# if self.tree.syncSelection:
+		# 	self.tree.blockSignals( True )
+		# 	self.tree.selectNode( None )
+		# 	for e in selection:
+		# 		self.tree.selectNode( e, add = True)
+		# 	self.tree.blockSignals( False )
+
+	def onSelectionHint( self, selection ):
+		print("SceneGraphEditor onSelectionHint")
+		# if selection._entity:
+		# 	self.changeSelection( selection._entity )			
+		# else:
+		# 	self.changeSelection( selection )
 
 ##----------------------------------------------------------------##
 
@@ -130,13 +169,13 @@ class ReadonlySceneGraphTreeItemDelegate( SceneGraphTreeItemDelegate ):
 class SceneGraphTreeWidget( GenericTreeWidget ):
 	def __init__( self, *args, **kwargs ):
 		super( SceneGraphTreeWidget, self ).__init__( *args, **kwargs )
-		# self.syncSelection = True
+		self.syncSelection = True
 		# self.adjustingRange = False
 		# self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )
 		self.setIndentation( 13 )
 
 	def getHeaderInfo( self ):
-		return [('Name',240), ('V',27 ), ('L',27 ), ( 'Layer', 50 ), ('', -1) ]
+		return [('Name',160), ('V',32 ), ('L',32 ), ( 'Layer', 50 ), ('', -1) ]
 
 	def getReadonlyItemDelegate( self ):
 		return ReadonlySceneGraphTreeItemDelegate( self )
@@ -146,6 +185,9 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 
 	def getRootNode( self ):
 		return self.module.getActiveSceneRootGroup()
+
+	def getNodeParent( self, node ):
+		return self.getRootNode()
 
 	##----------------------------------------------------------------##
 	# Event Callback
@@ -157,7 +199,13 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		print("onDClicked", item, col)
 		
 	def onItemSelectionChanged(self):
-		print("onItemSelectionChanged")
+		if not self.syncSelection: return
+		items = self.selectedItems()
+		if items:
+			selections=[item.node for item in items]
+			self.module.changeSelection(selections)
+		else:
+			self.module.changeSelection(None)
 
 	def onItemActivated(self, item, col):
 		print("onItemActivated", item, col)

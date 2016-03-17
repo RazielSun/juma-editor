@@ -47,12 +47,12 @@ function EditorSceneMgr:newScene()
 	layer:setViewport(viewport)
 	layer:setCamera(camera)
 
-	local group = EntityGroup()
-	group:setLayer( layer )
+	local node = EntityGroup()
+	node:setLayer( layer )
 
 	local scene = {
 		layer      	= layer,
-		root		= group,
+		rootNode	= node,
 		camera     	= camera,
 		cameraScl  	= 1,
 		viewport   	= viewport,

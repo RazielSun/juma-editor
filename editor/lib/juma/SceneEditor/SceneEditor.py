@@ -20,6 +20,9 @@ class SceneEditor( TopEditorModule ):
     def getWindowTitle( self ):
         return 'Scene Editor'
 
+    def getSelectionGroup( self ):
+        return 'scene'
+
     def getRuntime(self):
         if not self.runtime:
             self.runtime = self.affirmModule('moai')
@@ -37,7 +40,7 @@ class SceneEditor( TopEditorModule ):
         self.mainToolBar = self.addToolBar( 'editor', self.mainWindow.requestToolBar( 'main' ) )     
 
         self.addTool( 'editor/open_project', label = 'Open Project',
-            menu_link = 'main/file/open_project', icon = 'tools/folder' )
+            menu_link = 'main/file/open_project', icon = 'tools/inbox' )
         
         self.addTool( 'editor/reload_project', label = 'Reload Project',
             menu_link = 'main/edit/reload_project', icon = 'tools/reload' )
@@ -60,8 +63,6 @@ class SceneEditor( TopEditorModule ):
 
     def onTool(self, node):
         name = node.name
-
-    
 
 ##----------------------------------------------------------------##
 class SceneEditorModule( SubEditorModule ):

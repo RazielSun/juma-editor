@@ -31,6 +31,9 @@ register('preview.resume')
 register('preview.stop')
 register('preview.pause')
 
+register('selection.changed')
+register('selection.hint')
+
 # register('game.pause')
 # register('game.resume')
 
@@ -51,13 +54,6 @@ register('preview.pause')
 # register('file.removed')
 # register('file.added')
 # register('file.moved')
-
-
-
-# register('selection.changed')
-# register('selection.hint')
-
-
 
 # register('project.pre_deploy')
 # register('project.deploy')

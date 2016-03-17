@@ -5,11 +5,11 @@ import os
 
 from PySide import QtCore, QtGui
 
-from juma.core 					import app, signals
-from juma.core.selection 		import SelectionManager
+from juma.core 						import app, signals
+from juma.core.SelectionManager 	import SelectionManager
 
-from juma.qt.controls.Window    import MainWindow
-from juma.qt.QtEditorModule     import QtEditorModule
+from juma.qt.controls.Window    	import MainWindow
+from juma.qt.QtEditorModule     	import QtEditorModule
 
 ##----------------------------------------------------------------##
 class TopEditorModule( QtEditorModule ):
@@ -100,14 +100,14 @@ class SubEditorModule( QtEditorModule ):
 	def getMainWindow( self ):
 		return self.getParentModule().getMainWindow()
 
-	# def getSelectionManager( self ):
-	# 	return self.getParentModule().selectionManager
+	def getSelectionManager( self ):
+		return self.getParentModule().selectionManager
 
-	# def getSelection( self ):
-	# 	return self.getSelectionManager().getSelection()
+	def getSelection( self ):
+		return self.getSelectionManager().getSelection()
 
-	# def changeSelection( self, selection ):
-	# 	self.getSelectionManager().changeSelection( selection )
+	def changeSelection( self, selection ):
+		self.getSelectionManager().changeSelection( selection )
 
 	def setFocus( self ):
 		self.getMainWindow().raise_()
