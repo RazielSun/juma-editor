@@ -49,24 +49,6 @@ class Project(object):
 	def get():		
 		return Project._singleton
 
-	# @staticmethod
-	# def findProject( path = None ):
-	# 	#TODO: return project info dict instead of path?
-	# 	path = os.path.abspath( path or '' )
-	# 	opath = None
-	# 	while path and not ( path in ( '', '/','\\' ) ):
-	# 		if   os.path.exists( path + '/' + _GII_ENV_CONFIG_DIR ) \
-	# 		and  os.path.exists( path + '/' + _GII_INFO_FILE ) :
-	# 			#get info
-	# 			info = jsonHelper.tryLoadJSON( path + '/' + _GII_INFO_FILE )
-	# 			info['path'] = path
-	# 			return info
-	# 		#go up level
-	# 		opath = path
-	# 		path = os.path.dirname( path )
-	# 		if path == opath: break
-	# 	return None
-
 	def __init__(self):
 		assert not Project._singleton
 		Project._singleton = self
@@ -102,7 +84,6 @@ class Project(object):
 		self._affirmDirectories()
 		self.info = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_INFO_FILE ) )
 		self.config = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_CONFIG_FILE ) )
-		print("Project load")
 		if not self.config:
 			self.config = {}
 			self.saveConfig()
@@ -115,14 +96,7 @@ class Project(object):
 
 	def save(self):
 		signals.emitNow('project.presave', self)
-		#save project info & config
 		jsonHelper.trySaveJSON( self.info, self.getBasePath( _PROJECT_INFO_FILE ) )
-
-		#save asset & cache
-		# self.assetLibrary.save()
-		# self.cacheManager.clearFreeCacheFiles()
-		# self.cacheManager.save()
-
 		signals.emitNow( 'project.save', self )
 		return True
 

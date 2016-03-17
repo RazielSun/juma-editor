@@ -898,15 +898,15 @@ QTreeView::indicator
 }*/
 
 QTreeView::branch:has-siblings:!adjoins-item {
-    border-image: url(:/qss_icons/rc/transparent.png); /* url(theme:vline.png) 0; */
+        border-image: url(theme:vline.png) 0;
 }
 
 QTreeView::branch:has-siblings:adjoins-item {
-    border-image: url(:/qss_icons/rc/transparent.png); /* url(theme:branch_more.png) 0; */
+        border-image: url(theme:branch_more.png) 0;
 }
 
 QTreeView::branch:!has-children:!has-siblings:adjoins-item {
-    border-image: url(:/qss_icons/rc/transparent.png); /* url(theme:branch_end.png) 0; */
+        border-image: url(theme:branch_end.png) 0;
 }
 
 QTreeView::branch:has-children:!has-siblings:closed,
