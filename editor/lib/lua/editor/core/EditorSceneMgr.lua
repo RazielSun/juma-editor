@@ -5,7 +5,7 @@ EditorSceneMgr.currentKey = nil
 EditorSceneMgr.currentScene = nil
 
 function EditorSceneMgr:setupScene()
-	local key = RenderContextMgr:getCurrentContext()
+	local key = RenderContextMgr:getCurrentContextKey()
 
 	local scene = self.scenes[key]
 	if not scene then
@@ -13,7 +13,6 @@ function EditorSceneMgr:setupScene()
 		self.scenes[key] = scene
 	end
 
-	print("Scene setuped", key)
 	RenderContextMgr:pushRenderTable( key, { scene.layer } )
 
 	self.currentScene = scene
@@ -23,7 +22,7 @@ function EditorSceneMgr:setupScene()
 end
 
 function EditorSceneMgr:getScene()
-	local key = RenderContextMgr:getCurrentContext()
+	local key = RenderContextMgr:getCurrentContextKey()
 	if key == self.currentKey then
 		return self.currentScene
 	end
@@ -59,10 +58,12 @@ function EditorSceneMgr:newScene()
 end
 
 function EditCanvasContext:resize( w, h )
-	-- self.viewport:setSize(w,h)
-	-- self.viewport:setScale(w,h)
+	self.viewport:setSize(w,h)
+	self.viewport:setScale(w,h)
 
 	self.viewWidth, self.viewHeight = w, h
+
+	print("resize viewport:", w, h)
 end
 
 return EditorSceneMgr

@@ -102,6 +102,7 @@ class Project(object):
 		self._affirmDirectories()
 		self.info = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_INFO_FILE ) )
 		self.config = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_CONFIG_FILE ) )
+		print("Project load")
 		if not self.config:
 			self.config = {}
 			self.saveConfig()
@@ -142,7 +143,9 @@ class Project(object):
 		return self.config
 
 	def getConfig( self, key, default = None ):
-		return self.config.get( key, default )
+		if self.config:
+			return self.config.get( key, default )
+		return default
 
 	def setConfig( self, key, value ):
 		self.config[ key ] = value

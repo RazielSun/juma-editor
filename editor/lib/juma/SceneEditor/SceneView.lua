@@ -8,7 +8,6 @@ function onLoad()
 	local prop = MOAIProp2D.new ()
 	prop:setDeck ( gfxQuad )
 	prop:setLoc ( 0, 0 )
-	prop:setScl( 10, 10, 10 )
 
 	scene.layer:insertProp ( prop )
 end

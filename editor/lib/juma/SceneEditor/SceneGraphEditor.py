@@ -50,7 +50,29 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
 
-		self.addTool( 'scene_graph/select_scene', label ='Select Scene', icon = 'macbook' )
+		self.addTool( 'scene_graph/create_group', label ='+ Group', icon = 'folder_plus' )
+		self.addTool( 'scene_graph/create_entity', label ='+ Entity', icon = 'plus_mint' )
+		self.addTool( 'scene_graph/destroy_item', label ='- Item', icon = 'minus' )
+
+	def createGroup(self):
+		pass
+
+	def createEntity(self):
+		pass
+
+	def destroyItem(self):
+		pass
+
+	def onTool( self, tool ):
+		name = tool.name
+		if name == 'create_group':
+			self.createGroup()
+
+		elif name == 'create_entity':
+			self.createEntity()
+
+		elif name == 'destroy_item':
+			self.destroyItem()
 
 ##----------------------------------------------------------------##
 

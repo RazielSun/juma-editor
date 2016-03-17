@@ -32,7 +32,16 @@ class SceneView( SceneEditorModule ):
 			)
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 
+		self.findMenu( 'main/scene' ).addChild([
+            dict( name = 'scene_show', label = 'Show Scene' ),
+        ], self )
+
 		self.window.show()
+
+	def onMenu( self, tool ):
+		name = tool.name
+		if name == 'scene_show':
+			self.window.show()
 
 ##----------------------------------------------------------------##
 

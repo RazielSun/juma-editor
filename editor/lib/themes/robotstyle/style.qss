@@ -618,8 +618,8 @@ QPushButton:checked{
 
 QComboBox:hover,QPushButton:hover,QAbstractSpinBox:hover,QLineEdit:hover,QTextEdit:hover,QPlainTextEdit:hover,QAbstractView:hover,QTreeView:hover
 {
-    border: 1px solid #78879b;
-    color: #f0f0f0;
+    border: 1px transparent #78879b;
+    color: #00af95;
 }
 
 QComboBox:on
@@ -871,6 +871,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
 }
 
 /* */
+
 QTreeView, QListView
 {
     border: 1px solid #444;
@@ -924,6 +925,16 @@ QListView::item:selected:hover, QListView::item:selected:hover, QTreeView::item:
     background: #5285a6;
     color: #FFFFFF;
 }
+
+/* */
+
+QTreeWidget
+{
+    border: 1px transparent #000;
+    background-color: #1e1e1e;
+}
+
+/* */
 
 QSlider::groove:horizontal {
     border: 1px solid #3A3939;
