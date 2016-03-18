@@ -50,7 +50,6 @@ class SceneView( SceneEditorModule ):
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
-		print("SceneView onSelectionChanged")
 		# self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
 
 ##----------------------------------------------------------------##

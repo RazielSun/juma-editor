@@ -30,8 +30,8 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.window = self.requestDockWindow( 'SceneGraphEditor',
 			title     = self.windowTitle,
 			dock      = 'left',
-			size      = (200,200),
-			minSize   = (200,200),
+			size      = (300,200),
+			minSize   = (300,200),
 			)
 		self.treeFilter = self.window.addWidget(
 				GenericTreeFilter(
@@ -105,7 +105,6 @@ class SceneGraphEditor( SceneEditorModule ):
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
-		print("SceneGraphEditor onSelectionChanged")
 		# if self.tree.syncSelection:
 		# 	self.tree.blockSignals( True )
 		# 	self.tree.selectNode( None )
@@ -114,7 +113,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		# 	self.tree.blockSignals( False )
 
 	def onSelectionHint( self, selection ):
-		print("SceneGraphEditor onSelectionHint")
+		pass
 		# if selection._entity:
 		# 	self.changeSelection( selection._entity )			
 		# else:

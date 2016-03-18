@@ -13,3 +13,4 @@
 # pyside-uic -o particlescriptdialog_ui.py particlescriptdialog.ui
 
 pyside-uic -o statsdock_ui.py statsdock.ui
+pyside-uic -o object_container_ui.py object_container.ui

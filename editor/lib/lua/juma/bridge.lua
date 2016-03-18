@@ -100,5 +100,21 @@ function updateStepSim( step )
 end
 
 --------------------------------------------------------------------
+-- MODEL
+--------------------------------------------------------------------
+local modelBridge = bridge.ModelBridge.get()
+
+function registerModelProvider( setting )
+	local name      		  = setting.name
+	local priority 			  = setting.priority or 10
+	local getTypeId           = assert( setting.getTypeId, 'getTypeId not provided' )
+	local getModel            = assert( setting.getModel,  'getModel not provided' )
+	local getModelFromTypeId  = assert( setting.getModelFromTypeId,  'getModelFromTypeId not provided' )
+	return modelBridge:buildLuaObjectModelProvider( 
+			name, priority, getTypeId, getModel, getModelFromTypeId
+		)
+end
+
+--------------------------------------------------------------------
 
 return Bridge

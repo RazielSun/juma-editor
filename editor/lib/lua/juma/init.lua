@@ -13,8 +13,10 @@ assert(Class, "No 'Class' constructor for Editor Lua Framework")
 
 --------------------------------------------------------------------
 -- Init Juma
-require("bridge")
 require("keymap")
+require("bridge")
+require("ModelProvider")
+require("MOAIModelProvider")
 
 MOAIApp = MOAIApp or require('MOAIApp')
 MOAINotificationsIOS = MOAINotifications or require('MOAINotifications')

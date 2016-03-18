@@ -7,8 +7,8 @@ import globalSignals
 
 ##----------------------------------------------------------------##
 from guid           import *
-from model 		    import *
-from res            import ResGuard
+from ModelManager 	import *
+from res         	import ResGuard
 from tool 			import startupTool
 
 ##----------------------------------------------------------------##

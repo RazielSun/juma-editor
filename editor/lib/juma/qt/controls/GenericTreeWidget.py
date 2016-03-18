@@ -131,7 +131,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			pitem.node = pnode
 			self.nodeDict[ pnode ] = pitem
 
-		item  = self.createItem()
+		item = self.createItem()
 		item.node = node
 
 		pnode.addChild( pnode, node )

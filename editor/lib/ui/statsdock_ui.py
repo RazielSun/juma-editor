@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'statsdock.ui'
 #
-# Created: Thu Feb  4 18:39:19 2016
-#      by: pyside-uic 0.2.15 running on PySide 1.2.1
+# Created: Fri Mar 18 16:21:34 2016
+#      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,11 +12,12 @@ from PySide import QtCore, QtGui
 class Ui_statsdock(object):
     def setupUi(self, statsdock):
         statsdock.setObjectName("statsdock")
-        statsdock.resize(374, 300)
+        statsdock.resize(280, 217)
         self.dockWidgetContents = QtGui.QWidget()
         self.dockWidgetContents.setObjectName("dockWidgetContents")
         self.formLayout = QtGui.QFormLayout(self.dockWidgetContents)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.FieldsStayAtSizeHint)
+        self.formLayout.setContentsMargins(5, 5, 5, 5)
         self.formLayout.setObjectName("formLayout")
         self.lblFps = QtGui.QLabel(self.dockWidgetContents)
         self.lblFps.setObjectName("lblFps")

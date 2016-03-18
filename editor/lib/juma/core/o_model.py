@@ -521,8 +521,8 @@ class ModelManager(object):
 		return obj
 
 ##----------------------------------------------------------------##
-ModelManager()
 
+ModelManager()
 
 ##----------------------------------------------------------------##
 def serializeObject( obj, **kw ):

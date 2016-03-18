@@ -1,15 +1,76 @@
 import os.path
 
 from PySide  import QtCore, QtGui, QtOpenGL
+from PySide.QtCore import Qt
 
-from juma.core 					import signals, app
-from SceneEditor             	import SceneEditorModule
-
+from juma.core 							import *
+from juma.qt.controls.PropertyEditor 	import PropertyEditor
+from SceneEditor             			import SceneEditorModule
+from ui.object_container_ui 			import Ui_ObjectContainer
 
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
+
+class ObjectContainer( QtGui.QWidget ):
+	def __init__( self, *args ):
+		super( ObjectContainer, self ).__init__( *args )
+		self.ui = Ui_ObjectContainer()
+		self.ui.setupUi( self )
+
+		# self.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
+		# self.setAttribute( Qt.WA_NoSystemBackground, True )
+
+		# self.verticalLayout = QtGui.QVBoxLayout(self)
+		# self.verticalLayout.setSpacing(0)
+		# self.verticalLayout.setContentsMargins(5, 5, 5, 0)
+		# self.verticalLayout.setObjectName("verticalLayout")
+
+		# self.container = QtGui.QWidget( self )
+		# sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+		# sizePolicy.setHorizontalStretch(0)
+		# sizePolicy.setVerticalStretch(0)
+		# sizePolicy.setHeightForWidth(self.container.sizePolicy().hasHeightForWidth())
+		# self.container.setSizePolicy(sizePolicy)
+		# self.container.setObjectName("container")
+		# self.verticalLayout.addWidget(self.container)
+
+		# self.innerContainer = QtGui.QWidget( self )
+		# innerSizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
+		# self.innerContainer.setSizePolicy(innerSizePolicy)
+
+		# self.mainLayout = QtGui.QVBoxLayout(self.getInnerContainer())
+		# self.mainLayout.setSpacing(0)
+		# self.mainLayout.setContentsMargins(0,0,0,0)
+
+		self.contextObject = None
+
+	def setContextObject( self, context ):
+		self.contextObject = context
+
+	def getBody( self ):
+		return self.ui.body
+
+##----------------------------------------------------------------##
+class IntrospectorObject( object ):
+	def __init__(self):
+		self.target = None
+
+	def setTarget(self, target):
+		self.target = target
+
+	def getTarget(self):
+		return self.target
+
+##----------------------------------------------------------------##
+class CommonIntrospectorObject( IntrospectorObject ):
+	def initWidget(self, container):
+		self.property = PropertyEditor( container )
+
+	def setTarget(self, target):
+		self.target = target
+		self.property.setTarget( target )
 
 ##----------------------------------------------------------------##
 class IntrospectorInstance(object):
@@ -22,20 +83,101 @@ class IntrospectorInstance(object):
 	def createWidget(self, container):
 		self.container = container
 		self.header = container.addWidget( QtGui.QLabel("QLabel Header Scene Introspector"), expanding=False )
+		# self.header.setStyleSheet('font-size:13px')
+		# self.header.hide()
 		self.scroll = scroll = container.addWidget( QtGui.QScrollArea( container ) )
-		self.body   = body   = QtGui.QWidget( container )
-		self.header.setStyleSheet('font-size:13px')
-		self.header.hide()
-		self.scroll.verticalScrollBar().setStyleSheet('width:4px')
+		scroll.verticalScrollBar().setStyleSheet('width:4px;')
 		scroll.setWidgetResizable( True )
+		self.body = body = container.addWidget( QtGui.QWidget( container ) )
 		body.mainLayout = layout = QtGui.QVBoxLayout( body )
-		layout.setSpacing(0)
-		layout.setContentsMargins(0, 0, 0, 0)
-		layout.addStretch()
-		scroll.setWidget( body )
+		# scroll.setWidget( body )
+		scroll.setStyleSheet("background-color:red;")
+		body.setStyleSheet("border:2px solid white;")
+		# layout.setSpacing(0)
+		# layout.setContentsMargins(0, 0, 0, 0)
+		# layout.addStretch()
+
+		blabel = QtGui.QLabel( "Hello BODY", body )
+
+		widget = container.addWidget( QtGui.QWidget( container ) )
+		widget.setStyleSheet("background-color:green;")
+
+		obj = ObjectContainer( widget )
+
+		self.body = body
 
 		self.updateTimer = self.container.startTimer( 10, self.onUpdateTimer )
 		self.updatePending = False
+
+	def getTarget(self):
+		return self.target
+
+	def setTarget(self, t, forceRefresh = False ):
+		if self.target == t and not forceRefresh: return
+
+		if self.target:
+			self.clear()
+		
+		if not t: 
+			self.target=None
+			return
+
+		if len(t)>1:
+			self.header.setText('Multiple object selected...')
+			self.header.show()
+			self.target = t[0] #TODO: use a multiple selection proxy as target
+		else:
+			self.target = t[0]
+
+		self.addObjectEditor( self.target )
+
+	def addObjectEditor( self, target, **option ):
+		# self.scroll.hide()
+		typeId = ModelManager.get().getTypeId( target )
+		if not typeId:
+			# self.scroll.show()
+			return
+
+		# editorClass = CommonIntrospectorObject
+		# editor = editorClass()
+		# editor.targetTypeId = typeId
+		# self.editors.append( editor )
+		print("init object container", self, self.body)
+		container = ObjectContainer( self.body )
+		self.body.mainLayout.insertWidget( 0, container )
+		# editor.container = container
+		# widget = editor.initWidget( container.getBody() )
+		# container.setContextObject( target )
+
+		# editor.parentIntrospector = self
+		# editor.setTarget( target )
+		# size = self.body.sizeHint()
+		# size.setWidth( self.scroll.width() )
+		# self.body.resize( size )
+		# self.scroll.show()
+		# return editor
+
+	def clear(self):
+		for editor in self.editors:
+			editor.container.setContextObject( None )
+			# cached = False
+			# if editor.needCache():
+			# 	cached = pushObjectEditorToCache( editor.targetTypeId, editor )
+			# if not cached:
+			# 	editor.unload()
+			editor.target = None
+
+		layout = self.body.mainLayout
+		for count in reversed( range(layout.count()) ):
+			child = layout.takeAt( count )
+			w = child.widget()
+			if w:
+				w.setParent( None )
+		layout.addStretch()
+		
+		self.target = None
+		self.header.hide()
+		self.editors = []
 
 	def onUpdateTimer(self):
 		pass
@@ -56,7 +198,7 @@ class SceneIntrospector( SceneEditorModule ):
 		self.container = self.requestDockWindow('SceneIntrospector',
 				title   = 'Introspector',
 				dock    = 'left',
-				minSize = (200,200)
+				minSize = (300,200)
 		)
 		self.requestInstance()
 
@@ -71,17 +213,20 @@ class SceneIntrospector( SceneEditorModule ):
 			self.activeInstance = instance
 		return instance
 
+	def getInstances(self):
+		return self.instances
+
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
-		# if not self.activeInstance: return
-		# target = None
-		# if isinstance( selection, list ):
-		# 	target = selection
-		# elif isinstance( selection, tuple ):
-		# 	(target) = selection
-		# else:
-		# 	target=selection
-		# self.activeInstance.setTarget(target) #first selection only?
+		if not self.activeInstance: return
+		target = None
+		if isinstance( selection, list ):
+			target = selection
+		elif isinstance( selection, tuple ):
+			(target) = selection
+		else:
+			target=selection
+		self.activeInstance.setTarget(target) #first selection only?
 
 ##----------------------------------------------------------------##
 
