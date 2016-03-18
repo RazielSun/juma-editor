@@ -18,32 +18,8 @@ class ObjectContainer( QtGui.QWidget ):
 		super( ObjectContainer, self ).__init__( *args )
 		self.ui = Ui_ObjectContainer()
 		self.ui.setupUi( self )
-
-		# self.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
-		# self.setAttribute( Qt.WA_NoSystemBackground, True )
-
-		# self.verticalLayout = QtGui.QVBoxLayout(self)
-		# self.verticalLayout.setSpacing(0)
-		# self.verticalLayout.setContentsMargins(5, 5, 5, 0)
-		# self.verticalLayout.setObjectName("verticalLayout")
-
-		# self.container = QtGui.QWidget( self )
-		# sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
-		# sizePolicy.setHorizontalStretch(0)
-		# sizePolicy.setVerticalStretch(0)
-		# sizePolicy.setHeightForWidth(self.container.sizePolicy().hasHeightForWidth())
-		# self.container.setSizePolicy(sizePolicy)
-		# self.container.setObjectName("container")
-		# self.verticalLayout.addWidget(self.container)
-
-		# self.innerContainer = QtGui.QWidget( self )
-		# innerSizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
-		# self.innerContainer.setSizePolicy(innerSizePolicy)
-
-		# self.mainLayout = QtGui.QVBoxLayout(self.getInnerContainer())
-		# self.mainLayout.setSpacing(0)
-		# self.mainLayout.setContentsMargins(0,0,0,0)
-
+		self.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
+		self.setAttribute( Qt.WA_NoSystemBackground, True )
 		self.contextObject = None
 
 	def setContextObject( self, context ):
@@ -51,6 +27,28 @@ class ObjectContainer( QtGui.QWidget ):
 
 	def getBody( self ):
 		return self.ui.body
+
+	def getBodyLayout( self ):
+		return self.ui.verticalLayout
+
+	def addWidget(self, widget, **layoutOption):
+		if isinstance( widget, list):
+			for w in widget:
+				self.addWidget( w, **layoutOption )
+			return
+
+		if layoutOption.get('fixed', False):
+			widget.setSizePolicy(
+				QtGui.QSizePolicy.Fixed,
+				QtGui.QSizePolicy.Fixed
+				)
+		elif layoutOption.get('expanding', True):
+			widget.setSizePolicy(
+				QtGui.QSizePolicy.Expanding,
+				QtGui.QSizePolicy.Expanding
+				)		
+		self.getBodyLayout().addWidget(widget)
+		return widget
 
 ##----------------------------------------------------------------##
 class IntrospectorObject( object ):
@@ -67,6 +65,7 @@ class IntrospectorObject( object ):
 class CommonIntrospectorObject( IntrospectorObject ):
 	def initWidget(self, container):
 		self.property = PropertyEditor( container )
+		return self.property
 
 	def setTarget(self, target):
 		self.target = target
@@ -83,28 +82,17 @@ class IntrospectorInstance(object):
 	def createWidget(self, container):
 		self.container = container
 		self.header = container.addWidget( QtGui.QLabel("QLabel Header Scene Introspector"), expanding=False )
-		# self.header.setStyleSheet('font-size:13px')
-		# self.header.hide()
+		self.header.setStyleSheet('font-size:13px')
+		self.header.hide()
 		self.scroll = scroll = container.addWidget( QtGui.QScrollArea( container ) )
 		scroll.verticalScrollBar().setStyleSheet('width:4px;')
 		scroll.setWidgetResizable( True )
-		self.body = body = container.addWidget( QtGui.QWidget( container ) )
+		self.body = body = QtGui.QWidget( container )
 		body.mainLayout = layout = QtGui.QVBoxLayout( body )
-		# scroll.setWidget( body )
-		scroll.setStyleSheet("background-color:red;")
-		body.setStyleSheet("border:2px solid white;")
-		# layout.setSpacing(0)
-		# layout.setContentsMargins(0, 0, 0, 0)
-		# layout.addStretch()
-
-		blabel = QtGui.QLabel( "Hello BODY", body )
-
-		widget = container.addWidget( QtGui.QWidget( container ) )
-		widget.setStyleSheet("background-color:green;")
-
-		obj = ObjectContainer( widget )
-
-		self.body = body
+		scroll.setWidget( body )
+		layout.setSpacing(0)
+		layout.setContentsMargins(0, 0, 0, 0)
+		layout.addStretch()
 
 		self.updateTimer = self.container.startTimer( 10, self.onUpdateTimer )
 		self.updatePending = False
@@ -132,30 +120,38 @@ class IntrospectorInstance(object):
 		self.addObjectEditor( self.target )
 
 	def addObjectEditor( self, target, **option ):
-		# self.scroll.hide()
+		self.scroll.hide()
 		typeId = ModelManager.get().getTypeId( target )
 		if not typeId:
-			# self.scroll.show()
+			self.scroll.show()
 			return
 
-		# editorClass = CommonIntrospectorObject
-		# editor = editorClass()
-		# editor.targetTypeId = typeId
-		# self.editors.append( editor )
-		print("init object container", self, self.body)
+		editorClass = CommonIntrospectorObject
+		editor = editorClass()
+		editor.targetTypeId = typeId
+		self.editors.append( editor )
 		container = ObjectContainer( self.body )
-		self.body.mainLayout.insertWidget( 0, container )
-		# editor.container = container
-		# widget = editor.initWidget( container.getBody() )
-		# container.setContextObject( target )
+		
+		editor.container = container
+		widget = editor.initWidget( container.getBody() )
+		container.setContextObject( target )
 
-		# editor.parentIntrospector = self
-		# editor.setTarget( target )
-		# size = self.body.sizeHint()
-		# size.setWidth( self.scroll.width() )
-		# self.body.resize( size )
-		# self.scroll.show()
-		# return editor
+		if widget:
+			container.addWidget( widget )
+
+			count = self.body.mainLayout.count()
+			assert count > 0
+			self.body.mainLayout.insertWidget( count - 1, container )
+		else:
+			container.hide()
+
+		editor.parentIntrospector = self
+		editor.setTarget( target )
+		size = self.body.sizeHint()
+		size.setWidth( self.scroll.width() )
+		self.body.resize( size )
+		self.scroll.show()
+		return editor
 
 	def clear(self):
 		for editor in self.editors:

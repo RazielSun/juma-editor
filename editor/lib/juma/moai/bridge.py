@@ -76,7 +76,7 @@ class ModelBridge(object):
 		signals.connect( 'moai.clean', self.cleanLuaBridgeReference )
 
 	def newLuaObjectModel(self, name):
-		return LuaObjectModel("LuaObjectModel_".format(name))
+		return LuaObjectModel("LuaObjectModel_{}".format(name))
 
 	def buildLuaObjectModelProvider( self, name, priority, getTypeId, getModel, getModelFromTypeId ):
 		provider = LuaObjectModelProvider( name, priority, getTypeId, getModel, getModelFromTypeId )
