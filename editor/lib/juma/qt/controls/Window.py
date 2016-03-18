@@ -6,7 +6,7 @@ from PySide import QtCore, QtGui
 from PySide.QtGui import QApplication, QMainWindow
 from PySide.QtCore import Qt, QSettings, QCoreApplication, QLocale
 
-from juma.qt.helpers.helper import restrainWidgetToScreen
+from juma.qt.helpers import restrainWidgetToScreen
 
 from juma.core import signals
 from juma.qt.controls.Menu import MenuManager

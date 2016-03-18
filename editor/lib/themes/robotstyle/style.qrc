@@ -39,6 +39,10 @@
     <file>rc/radio_unchecked_disabled.png</file>
     <file>rc/radio_unchecked_focus.png</file>
     <file>rc/radio_unchecked.png</file>
+    <file>rc/vline.png</file>
+    <file>rc/branch_more.png</file>
+    <file>rc/branch_end.png</file>
+    <file>rc/filter.png</file>
   </qresource>
   <qresource prefix="darkskin">
       <file>style.qss</file>

@@ -18,3 +18,8 @@ def restrainWidgetToScreen( widget ):
 		pos.setY( pos.y() + screenRect.bottom() - widgetRect.bottom() )
 
 	widget.move( pos )
+
+def repolishWidget( widget ):
+	style = widget.style()
+	style.unpolish( widget )
+	style.polish( widget )

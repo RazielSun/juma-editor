@@ -9,6 +9,20 @@ local modelBridge = bridge.ModelBridge.get()
 --
 local function createPyModel( model )
 	local pmodel = modelBridge:newLuaObjectModel( model.__name )
+
+	local fields = model:getFieldList( true )
+	for i, f in ipairs( fields ) do
+		local option = {
+			get   = f.__getter,
+			set   = f.__setter,
+			label = f.__label,
+			-- meta  = f.__meta
+		}
+		local id     = f.__id
+		local typeid = f.__type
+		pmodel:addLuaFieldInfo( id, typeid, option )
+	end
+
 	model.__py_model = pmodel
 	return pmodel
 end

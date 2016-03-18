@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'object_container.ui'
 #
-# Created: Fri Mar 18 16:21:34 2016
+# Created: Fri Mar 18 17:28:19 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,25 +12,35 @@ from PySide import QtCore, QtGui
 class Ui_ObjectContainer(object):
     def setupUi(self, ObjectContainer):
         ObjectContainer.setObjectName("ObjectContainer")
-        ObjectContainer.resize(357, 184)
+        ObjectContainer.resize(210, 100)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ObjectContainer.sizePolicy().hasHeightForWidth())
         ObjectContainer.setSizePolicy(sizePolicy)
-        self.verticalLayout_2 = QtGui.QVBoxLayout(ObjectContainer)
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.mainLayout = QtGui.QVBoxLayout(ObjectContainer)
+        self.mainLayout.setContentsMargins(5, 5, 5, 0)
+        self.mainLayout.setObjectName("mainLayout")
         self.header = QtGui.QWidget(ObjectContainer)
         self.header.setObjectName("header")
-        self.horizontalLayout = QtGui.QHBoxLayout(self.header)
-        self.horizontalLayout.setSpacing(1)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout.setObjectName("horizontalLayout")
-        self.pushButton = QtGui.QPushButton(self.header)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout.addWidget(self.pushButton)
-        self.verticalLayout_2.addWidget(self.header)
+        self.headerLayout = QtGui.QHBoxLayout(self.header)
+        self.headerLayout.setSpacing(0)
+        self.headerLayout.setContentsMargins(0, 0, 0, 0)
+        self.headerLayout.setContentsMargins(0, 0, 0, 0)
+        self.headerLayout.setObjectName("headerLayout")
+        self.foldBtn = QtGui.QToolButton(self.header)
+        self.foldBtn.setMaximumSize(QtCore.QSize(20, 20))
+        self.foldBtn.setObjectName("foldBtn")
+        self.headerLayout.addWidget(self.foldBtn)
+        self.nameBtn = QtGui.QToolButton(self.header)
+        self.nameBtn.setMaximumSize(QtCore.QSize(99999, 20))
+        self.nameBtn.setObjectName("nameBtn")
+        self.headerLayout.addWidget(self.nameBtn)
+        self.menuBtn = QtGui.QToolButton(self.header)
+        self.menuBtn.setMaximumSize(QtCore.QSize(20, 20))
+        self.menuBtn.setObjectName("menuBtn")
+        self.headerLayout.addWidget(self.menuBtn)
+        self.mainLayout.addWidget(self.header)
         self.body = QtGui.QWidget(ObjectContainer)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -38,16 +48,19 @@ class Ui_ObjectContainer(object):
         sizePolicy.setHeightForWidth(self.body.sizePolicy().hasHeightForWidth())
         self.body.setSizePolicy(sizePolicy)
         self.body.setObjectName("body")
-        self.verticalLayout = QtGui.QVBoxLayout(self.body)
-        self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout.setObjectName("verticalLayout")
-        self.verticalLayout_2.addWidget(self.body)
+        self.bodyLayout = QtGui.QVBoxLayout(self.body)
+        self.bodyLayout.setSpacing(0)
+        self.bodyLayout.setContentsMargins(0, 0, 0, 0)
+        self.bodyLayout.setContentsMargins(0, 0, 0, 0)
+        self.bodyLayout.setObjectName("bodyLayout")
+        self.mainLayout.addWidget(self.body)
 
         self.retranslateUi(ObjectContainer)
         QtCore.QMetaObject.connectSlotsByName(ObjectContainer)
 
     def retranslateUi(self, ObjectContainer):
         ObjectContainer.setWindowTitle(QtGui.QApplication.translate("ObjectContainer", "Form", None, QtGui.QApplication.UnicodeUTF8))
-        self.pushButton.setText(QtGui.QApplication.translate("ObjectContainer", "Push", None, QtGui.QApplication.UnicodeUTF8))
+        self.foldBtn.setText(QtGui.QApplication.translate("ObjectContainer", "+", None, QtGui.QApplication.UnicodeUTF8))
+        self.nameBtn.setText(QtGui.QApplication.translate("ObjectContainer", "+", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuBtn.setText(QtGui.QApplication.translate("ObjectContainer", "+", None, QtGui.QApplication.UnicodeUTF8))
 

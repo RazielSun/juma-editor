@@ -3,7 +3,7 @@ local Entity = require("core.Entity")
 local SceneGraphEditor = Class("SceneGraphEditor")
 
 function SceneGraphEditor:init()
-	self.counts = 0
+	self.items = {}
 end
 
 function SceneGraphEditor:getScene()
@@ -11,9 +11,8 @@ function SceneGraphEditor:getScene()
 end
 
 function SceneGraphEditor:createEntity()
-	self.counts = self.counts + 1
 	local entity = Entity()
-	entity.name = string.format("entity %d", self.counts)
+	table.push( self.items, entity )
 	return entity
 end
 

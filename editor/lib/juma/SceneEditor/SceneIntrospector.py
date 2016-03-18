@@ -1,11 +1,13 @@
 import os.path
 
 from PySide  import QtCore, QtGui, QtOpenGL
-from PySide.QtCore import Qt
+from PySide.QtCore import Qt, QSize
 
 from juma.core 							import *
 from juma.qt.controls.PropertyEditor 	import PropertyEditor
 from SceneEditor             			import SceneEditorModule
+from juma.qt.IconCache         			import getIcon
+
 from ui.object_container_ui 			import Ui_ObjectContainer
 
 
@@ -22,6 +24,16 @@ class ObjectContainer( QtGui.QWidget ):
 		self.setAttribute( Qt.WA_NoSystemBackground, True )
 		self.contextObject = None
 
+		self.ui.nameBtn.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
+		
+		self.ui.nameBtn.setIcon( getIcon( 'grid' ) )
+		self.ui.menuBtn.setIcon( getIcon( 'list' ) )
+		self.ui.foldBtn.setIcon( getIcon( 'arrow_down' ) )
+
+		self.ui.nameBtn.setIconSize( QSize( 16, 16 ) )
+		self.ui.menuBtn.setIconSize( QSize( 16, 16 ) )
+		self.ui.foldBtn.setIconSize( QSize( 16, 16 ) )
+
 	def setContextObject( self, context ):
 		self.contextObject = context
 
@@ -29,7 +41,7 @@ class ObjectContainer( QtGui.QWidget ):
 		return self.ui.body
 
 	def getBodyLayout( self ):
-		return self.ui.verticalLayout
+		return self.ui.bodyLayout
 
 	def addWidget(self, widget, **layoutOption):
 		if isinstance( widget, list):
@@ -50,6 +62,9 @@ class ObjectContainer( QtGui.QWidget ):
 		self.getBodyLayout().addWidget(widget)
 		return widget
 
+	def setTitle( self, title ):
+		self.ui.nameBtn.setText( title )
+
 ##----------------------------------------------------------------##
 class IntrospectorObject( object ):
 	def __init__(self):
@@ -65,11 +80,22 @@ class IntrospectorObject( object ):
 class CommonIntrospectorObject( IntrospectorObject ):
 	def initWidget(self, container):
 		self.property = PropertyEditor( container )
+		self.property.propertyChanged.connect( self.onPropertyChanged )
 		return self.property
 
 	def setTarget(self, target):
 		self.target = target
 		self.property.setTarget( target )
+		
+	def refresh( self ):
+		self.property.refreshAll()
+
+	def unload( self ):
+		self.property.clear()
+		self.target = None
+
+	def onPropertyChanged( self, obj, id, value ):
+		pass
 
 ##----------------------------------------------------------------##
 class IntrospectorInstance(object):
@@ -138,6 +164,11 @@ class IntrospectorInstance(object):
 
 		if widget:
 			container.addWidget( widget )
+
+			model = ModelManager.get().getModel( target ) # FIXME
+			# model = ModelManager.get().getModelFromTypeId( typeId )
+			if model:
+				container.setTitle( model.name )
 
 			count = self.body.mainLayout.count()
 			assert count > 0

@@ -1,7 +1,10 @@
+import re, fnmatch
 
 from PySide                 import QtCore, QtGui, QtOpenGL
 from PySide.QtCore 			import Qt
 
+from juma.qt.helpers 		import repolishWidget
+from juma.qt.IconCache 		import getIcon
 
 
 ##----------------------------------------------------------------##
@@ -142,7 +145,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		item.setExpanded( self.getOption( 'expanded', True ) )
 
 		item.setText( 0, node.name or '<unnamed>' )
-		# item.setIcon( 0, getIcon('entity_group') )
+		item.setIcon( 0, getIcon('dot') )
 
 		return item
 
