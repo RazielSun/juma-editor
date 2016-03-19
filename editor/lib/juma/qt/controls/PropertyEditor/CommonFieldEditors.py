@@ -24,7 +24,6 @@ class StringFieldEditor( FieldEditor ):
 	def setReadonly( self, readonly ):
 		self.lineEdit.setReadOnly( readonly )
 
-
 ##----------------------------------------------------------------##
 class NumberFieldEditor( FieldEditor ):
 	def get( self ):

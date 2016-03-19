@@ -16,3 +16,11 @@ end
 Editor = require("core.Editor")
 RenderContextMgr = require("core.RenderContextMgr")
 EditorSceneMgr = require("core.EditorSceneMgr")
+
+--------------------------------------------------------------------------------
+-- Resources
+
+if ResourceMgr then
+	ResourceMgr:addResourceDirectory( ASSET_EDITOR_PATH )
+	ResourceMgr:cacheSpriteFrames( "editor_asset.lua" )
+end

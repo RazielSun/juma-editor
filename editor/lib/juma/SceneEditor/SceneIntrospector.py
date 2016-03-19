@@ -76,6 +76,18 @@ class IntrospectorObject( object ):
 	def getTarget(self):
 		return self.target
 
+	def initWidget( self, container, objectContainer ):
+		pass
+
+	def unload( self ):
+		pass
+
+	def needCache( self ):
+		return True
+
+	def setFocus( self ):
+		pass
+
 ##----------------------------------------------------------------##
 class CommonIntrospectorObject( IntrospectorObject ):
 	def initWidget(self, container, objectContainer):
@@ -152,9 +164,8 @@ class IntrospectorInstance(object):
 			self.scroll.show()
 			return
 
-		parent = app.getModule('introspector')
-
 		defaultEditorClass = option.get("editor_class", None)
+		parent = app.getModule('introspector')
 		editorBuilder = parent.getEditorBuilderByTypeId( typeId, defaultEditorClass )
 		editor = editorBuilder()
 		editor.targetTypeId = typeId

@@ -61,6 +61,7 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
 		self.luaMgrId = 'graphMgr'
 
+		self.addTool( 'scene_graph/scene_settings', label ='Scene Settings', icon = 'cog' )
 		self.addTool( 'scene_graph/create_group', label ='+ Group', icon = 'folder_plus' )
 		self.addTool( 'scene_graph/create_entity', label ='+ Entity', icon = 'plus_mint' )
 		self.addTool( 'scene_graph/destroy_item', label ='- Item', icon = 'minus' )
@@ -92,6 +93,9 @@ class SceneGraphEditor( SceneEditorModule ):
 			self.dirty = dirty
 
 ##----------------------------------------------------------------##
+	def openSceneSettings(self):
+		pass
+
 	def createGroup(self):
 		pass
 
@@ -105,7 +109,10 @@ class SceneGraphEditor( SceneEditorModule ):
 ##----------------------------------------------------------------##
 	def onTool( self, tool ):
 		name = tool.name
-		if name == 'create_group':
+		if name == 'scene_settings':
+			self.openSceneSettings()
+
+		elif name == 'create_group':
 			self.createGroup()
 
 		elif name == 'create_entity':

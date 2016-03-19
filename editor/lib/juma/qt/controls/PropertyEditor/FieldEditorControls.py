@@ -1,5 +1,5 @@
 from PySide import QtGui, QtCore
-from PySide.QtCore import Qt #, pyqtSignal
+from PySide.QtCore import Qt, Signal
 
 ##----------------------------------------------------------------##
 class FieldEditorLabel( QtGui.QLabel ):
@@ -87,7 +87,7 @@ class FieldEditorDoubleSpinBox(QtGui.QDoubleSpinBox):
 
 ##----------------------------------------------------------------##
 class DraggableLabel( FieldEditorLabel ):
-	# dragged = QtCore.pyqtSignal( int )
+	dragged = QtCore.Signal( int )
 
 	def __init__( self, *args ):
 		super( DraggableLabel, self ).__init__( *args )
@@ -115,7 +115,7 @@ class DraggableLabel( FieldEditorLabel ):
 		if self.dragging:
 			delta = ev.x() - self.x0
 			self.x0 = ev.x()
-			# self.dragged.emit( delta )
+			self.dragged.emit( delta )
 
 ##----------------------------------------------------------------##
 class FieldEditorSlider(QtGui.QSlider):
@@ -135,7 +135,7 @@ class FieldEditorSlider(QtGui.QSlider):
 
 # ##----------------------------------------------------------------##
 class FieldEditorSliderBox(QtGui.QWidget):
-	# valueChanged = QtCore.pyqtSignal( float )
+	valueChanged = QtCore.Signal( float )
 
 	def __init__( self, *args ):
 		super( FieldEditorSliderBox, self ).__init__( *args )
@@ -151,7 +151,7 @@ class FieldEditorSliderBox(QtGui.QWidget):
 		layout.addWidget( self.slider )
 		layout.setStretchFactor( self.text, 1 )
 		layout.setStretchFactor( self.slider, 2 )
-		# self.slider.valueChanged.connect( self.onSliderChanged )
+		self.slider.valueChanged.connect( self.onSliderChanged )
 		self.numberType = int
 		self.text.editingFinished.connect( self.onTextEditingFinished )
 		self.refreshing = False
@@ -189,7 +189,7 @@ class FieldEditorSliderBox(QtGui.QWidget):
 		if self.numberType == int:
 			v = int( v )
 		self._value = v
-		# self.valueChanged.emit( self._value )
+		self.valueChanged.emit( self._value )
 		self.refreshing = True
 		self.slider.setValue( int( (v - self.minValue)/self.sliderUnit ) )
 		if self.numberType == int:

@@ -85,7 +85,7 @@ class ObjectModel(DataType):
 		return f.getValue(obj)
 
 	def setFieldValue(self, obj, id, value):
-		f=self.getFieldInfo(id)
+		f = self.getFieldInfo(id)
 		f.setValue(obj, value)
 
 	def isFieldOverrided( self, obj, id ):
