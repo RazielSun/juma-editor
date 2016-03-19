@@ -9,16 +9,16 @@ from juma.core import app, signals
 from juma.qt.TopEditorModule    import TopEditorModule, QtMainWindow, SubEditorModule
 
 ##----------------------------------------------------------------##
-class SceneEditor( TopEditorModule ):
-    _name       = 'scene_editor'
+class MainEditor( TopEditorModule ):
+    _name       = 'main_editor'
     _dependency = [ 'qt', 'moai' ]
 
     def __init__(self):
-        super(SceneEditor, self).__init__()
+        super(MainEditor, self).__init__()
         self.runtime        = None
 
     def getWindowTitle( self ):
-        return 'Scene Editor'
+        return 'Main Editor'
 
     def getSelectionGroup( self ):
         return 'scene'
@@ -65,9 +65,9 @@ class SceneEditor( TopEditorModule ):
         name = node.name
 
 ##----------------------------------------------------------------##
-class SceneEditorModule( SubEditorModule ):
+class MainEditorModule( SubEditorModule ):
     def getParentModuleId( self ):
-        return 'scene_editor'
+        return 'main_editor'
 
     def getSceneEditor( self ):
         return self.getParentModule()
@@ -83,9 +83,9 @@ class SceneEditorModule( SubEditorModule ):
 
 ##----------------------------------------------------------------##
 def getSceneSelectionManager():
-    return app.getModule('scene_editor').selectionManager
+    return app.getModule('main_editor').selectionManager
 
 ##----------------------------------------------------------------##
 
-SceneEditor().register()
+MainEditor().register()
         

@@ -1,23 +1,25 @@
+#!/usr/bin/env python
+
 import os.path
 import time
 import logging
 
-from PySide                   import QtCore, QtGui, QtOpenGL
-from PySide.QtCore            import Qt
+from PySide                   	import QtCore, QtGui, QtOpenGL
+from PySide.QtCore            	import Qt
 
-from juma.core                import signals, app
+from juma.core                	import signals, app
 
 from juma.moai.MOAICanvasBase 	import MOAICanvasBase
 from juma.qt.controls.GLWidget 	import GLWidget
 
-from SceneEditor             	import SceneEditorModule
-from SceneEditorHelpers         import SceneSizeComboBox
+from MainEditor             	import MainEditorModule
+from MainEditorHelpers         	import SizeComboBox
 
 ##----------------------------------------------------------------##
-class GamePreview( SceneEditorModule ):
+class GamePreview( MainEditorModule ):
 	"""docstring for GamePreview"""
 	_name = 'game_preview'
-	_dependency = [ 'qt', 'moai', 'scene_editor' ]
+	_dependency = [ 'qt', 'moai', 'main_editor' ]
 
 	def __init__(self):
 		super(GamePreview, self).__init__()
@@ -91,8 +93,8 @@ class GamePreview( SceneEditorModule ):
 		self.canvas.startRefreshTimer( self.nonActiveFPS )
 		self.canvas.module = self
 
-		self.sceneSizeWidget = SceneSizeComboBox( None )
-		self.sceneSizeWidget.owner = self
+		self.sizeWidget = SizeComboBox( None )
+		self.sizeWidget.owner = self
 		
 		self.updateViewValues()
 
@@ -108,7 +110,7 @@ class GamePreview( SceneEditorModule ):
 		signals.connect( 'moai.reset',     		self.onMoaiReset )
 		signals.connect( 'moai.open_window', 	self.openWindow )
 		# signals.connect('moai.set_sim_step', self.setSimStep)
-		signals.connect( 'scene.change_size', self.onSceneSizeChanged )
+		signals.connect( 'scene.change_size', self.onGameSizeChanged )
 		
 		self.menu = self.findMenu( 'main/preview' )
 
@@ -118,7 +120,7 @@ class GamePreview( SceneEditorModule ):
 				{'name':'stop_game',  'label':'Stop'}, #,   'shortcut':'meta+['
 			], self)
 
-		self.addTool( 'game_preview/size_scene', widget = self.sceneSizeWidget )
+		self.addTool( 'game_preview/size_scene', widget = self.sizeWidget )
 		self.addTool( 'game_preview/collect_garbage', label = 'Collect Garbage', icon = 'bin' )
 		self.addTool( 'game_preview/take_screenshot', label = 'Take Screenshot', icon = 'camera' )
 
@@ -158,7 +160,7 @@ class GamePreview( SceneEditorModule ):
 	def updateViewValues( self ):
 		self.viewWidth = self.getProject().getConfig( "preview_width", 320 )
 		self.viewHeight = self.getProject().getConfig( "preview_height", 480 )
-		self.sceneSizeWidget.findSize( self.viewWidth, self.viewHeight )
+		self.sizeWidget.findSize( self.viewWidth, self.viewHeight )
 
 	# Update AKU
 	def makeCurrent(self):
@@ -368,12 +370,11 @@ class GamePreview( SceneEditorModule ):
 	# 	elif name == 'run_game_external':
 	# 		self.runGameExternal()
 
-	def onSceneSizeChanged(self, size):
+	def onGameSizeChanged(self, size):
 		if self.canvas:
 			self.viewWidth = int(size['width'])
 			self.viewHeight = int(size['height'])
 			self.canvas.resize(self.viewWidth, self.viewHeight)
-		print('GamePreview Canvas size changed: {} x {}'.format(size['width'], size['height']))
 
 ##----------------------------------------------------------------##
 class GamePreviewCanvas(MOAICanvasBase):

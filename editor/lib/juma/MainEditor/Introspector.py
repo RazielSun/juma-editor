@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os.path
 
 from PySide  import QtCore, QtGui, QtOpenGL
@@ -5,11 +7,10 @@ from PySide.QtCore import Qt, QSize
 
 from juma.core 							import *
 from juma.qt.controls.PropertyEditor 	import PropertyEditor
-from SceneEditor             			import SceneEditorModule
+from MainEditor             			import MainEditorModule
 from juma.qt.IconCache         			import getIcon
 
 from ui.object_container_ui 			import Ui_ObjectContainer
-
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -228,20 +229,20 @@ def registerEditorBuilder( typeId, editorBuilder ):
 	app.getModule('introspector').registerEditorBuilder( typeId, editorBuilder )
 
 ##----------------------------------------------------------------##
-class SceneIntrospector( SceneEditorModule ):
+class Introspector( MainEditorModule ):
 	_name       = 'introspector'
-	_dependency = [ 'qt', 'scene_editor' ]
+	_dependency = [ 'qt', 'main_editor' ]
 
 	def __init__(self):
-		super( SceneIntrospector, self ).__init__()
+		super( Introspector, self ).__init__()
 		self.instances      = []
 		# self.instanceCache  = []
 		self.activeInstance = None
 		self.editorBuilderRegistry = {}
 
 	def onLoad( self ):
-		self.container = self.requestDockWindow('SceneIntrospector',
-				title   = 'Introspector',
+		self.container = self.requestDockWindow('Introspector',
+				title   = 'Inspector',
 				dock    = 'left',
 				minSize = (300,200)
 		)
@@ -292,4 +293,4 @@ class SceneIntrospector( SceneEditorModule ):
 
 ##----------------------------------------------------------------##
 
-SceneIntrospector().register()
+Introspector().register()

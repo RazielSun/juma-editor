@@ -1,21 +1,21 @@
+#!/usr/bin/env python
+
 import os.path
 
 from PySide  import QtCore, QtGui, QtOpenGL
 
 from juma.core 					import signals, app
-from juma.moai.MOAIEditCanvas 	import  MOAIEditCanvas
-from SceneEditor             	import SceneEditorModule
-
-
+from juma.moai.MOAIEditCanvas 	import MOAIEditCanvas
+from MainEditor             	import MainEditorModule
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 ##----------------------------------------------------------------##
-class SceneView( SceneEditorModule ):
+class SceneView( MainEditorModule ):
 	_name       = 'scene_view'
-	_dependency = [ 'scene_editor', 'scenegraph_editor' ]
+	_dependency = [ 'main_editor', 'graph_editor' ]
 
 	def __init__(self):
 		super( SceneView, self ).__init__()

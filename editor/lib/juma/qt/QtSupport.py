@@ -49,7 +49,7 @@ class QtSupport( QtEditorModule ):
 		self.menu.addChild('&File').addChild([
 			'Open Project',
 			'----',
-			'Scene Editor|F2',
+			'Main Editor|F2',
 			'----',
 			'E&xit',
 			]
@@ -68,7 +68,7 @@ class QtSupport( QtEditorModule ):
 		self.menu.addChild('&Window').addChild([
 			'----',
 			'Game Preview',
-			'Scenegraph',
+			'Hierarchy',
 			'Introspector',
 			'Stats Viewer',
 			'----',
@@ -183,8 +183,8 @@ class QtSupport( QtEditorModule ):
 		# 	self.showSystemStatusWindow()
 		# elif name == 'asset_editor':
 		# 	self.getModule('asset_editor').setFocus()
-		elif name == 'scene_editor':
-			self.getModule('scene_editor').setFocus()
+		elif name == 'main_editor':
+			self.getModule('main_editor').setFocus()
 
 		elif name == 'game_preview':
 			self.getModule('game_preview').show()
@@ -192,8 +192,8 @@ class QtSupport( QtEditorModule ):
 		elif name == 'stats_viewer':
 			self.getModule('stats_viewer').show()
 
-		elif name == 'scenegraph':
-			self.getModule('scenegraph_editor').show()
+		elif name == 'hierarchy':
+			self.getModule('graph_editor').show()
 
 		elif name == 'introspector':
 			self.getModule('introspector').show()

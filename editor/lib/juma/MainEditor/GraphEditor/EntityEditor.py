@@ -1,15 +1,15 @@
+#!/usr/bin/env python
+
 import os.path
 
 from PySide import QtGui, QtCore
 from PySide.QtCore import Qt
 
 from juma.core import  *
-from juma.SceneEditor.SceneIntrospector import IntrospectorObject, CommonIntrospectorObject, registerEditorBuilder
+from juma.MainEditor.Introspector 		import IntrospectorObject, CommonIntrospectorObject, registerEditorBuilder
 from juma.qt.controls.PropertyEditor 	import PropertyEditor
 from juma.qt.helpers 					import addWidgetWithLayout, repolishWidget
 from juma.qt.IconCache               	import getIcon
-
-
 
 ##----------------------------------------------------------------##
 def getModulePath( path ):
@@ -50,7 +50,7 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 		# self.property = PropertyEditor( self.header )
 		self.property = PropertyEditor( container )
 		# self.header.layout().addWidget( self.grid )
-		self.property.setContext( 'scene_editor' )		
+		self.property.setContext( 'main_editor' )		
 
 		self.property.propertyChanged.connect( self.onPropertyChanged )		
 		# self.header.buttonEdit   .clicked .connect ( self.onEditProto )

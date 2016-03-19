@@ -10,7 +10,7 @@ from PySide.QtGui import QDockWidget
 
 from juma.core 				import app, signals
 from juma.moai.MOAIRuntime	import MOAILuaDelegate
-from SceneEditor  			import SceneEditorModule
+from MainEditor  			import MainEditorModule
 from ui.statsdock_ui 		import Ui_statsdock as Ui
 
 ##----------------------------------------------------------------##
@@ -19,10 +19,10 @@ def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 ##----------------------------------------------------------------##
-class StatsViewer( SceneEditorModule ):
+class StatsViewer( MainEditorModule ):
 	"""docstring for StatsViewer"""
 	_name       = 'stats_viewer'
-	_dependency = ['qt', 'moai', 'scene_editor']
+	_dependency = ['qt', 'moai', 'main_editor']
 
 	def __init__(self):
 		super(StatsViewer, self).__init__()

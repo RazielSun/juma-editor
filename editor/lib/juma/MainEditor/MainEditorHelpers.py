@@ -5,10 +5,10 @@ import os
 
 from PySide import QtCore, QtGui
 
-from juma.core import app, signals
-from juma.qt.IconCache import getIcon
+from juma.core 			import app, signals
+from juma.qt.IconCache 	import getIcon
 
-class SceneSizeComboBox( QtGui.QComboBox ):
+class SizeComboBox( QtGui.QComboBox ):
 	sizes = [
 	dict( icon = 'macbook', name = 'Custom' ),
 	dict( icon = 'iphone', width = 320, height = 480 ),
@@ -19,7 +19,7 @@ class SceneSizeComboBox( QtGui.QComboBox ):
 	]
 
 	def __init__( self, parent ):
-		super( SceneSizeComboBox, self ).__init__( parent )
+		super( SizeComboBox, self ).__init__( parent )
 
 		self.setIconSize(QtCore.QSize(16,16))
 		# self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Expanding)

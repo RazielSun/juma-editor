@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import os.path
 
 from PySide             import QtCore, QtGui, QtOpenGL
@@ -8,9 +10,7 @@ from juma.core                			import signals, app
 from juma.moai.MOAIRuntime 				import MOAILuaDelegate
 from juma.qt.IconCache 					import getIcon
 from juma.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
-from juma.SceneEditor.SceneEditor       import SceneEditorModule
-
-
+from juma.MainEditor.MainEditor       	import MainEditorModule
 
 ##----------------------------------------------------------------##
 def getModulePath( path ):
@@ -18,19 +18,19 @@ def getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 ##----------------------------------------------------------------##
-class SceneGraphEditor( SceneEditorModule ):
-	_name = 'scenegraph_editor'
-	_dependency = [ 'qt', 'moai', 'scene_editor' ]
+class GraphEditor( MainEditorModule ):
+	_name = 'graph_editor'
+	_dependency = [ 'qt', 'moai', 'main_editor' ]
 
 	def __init__(self):
-		super( SceneGraphEditor, self ).__init__()
+		super( GraphEditor, self ).__init__()
 		self.delegate = None
 		self.dirty = False
 		self.previewing = False
 
 	def onLoad( self ):
-		self.windowTitle = 'Scenegraph'
-		self.window = self.requestDockWindow( 'SceneGraphEditor',
+		self.windowTitle = 'Hierarchy'
+		self.window = self.requestDockWindow( 'GraphEditor',
 			title     = self.windowTitle,
 			dock      = 'left',
 			size      = (300,200),
@@ -43,7 +43,7 @@ class SceneGraphEditor( SceneEditorModule ):
 				expanding = False
 			)
 		self.tree = self.window.addWidget( 
-				SceneGraphTreeWidget( 
+				GraphTreeWidget( 
 					self.window,
 					sorting  = True,
 					editable = True,
@@ -55,16 +55,16 @@ class SceneGraphEditor( SceneEditorModule ):
 		self.treeFilter.setTargetTree( self.tree )
 		self.tree.module = self
 
-		self.tool = self.addToolBar( 'scene_graph', self.window.addToolBar() )
+		self.tool = self.addToolBar( 'hierarchy', self.window.addToolBar() )
 
 		self.delegate = MOAILuaDelegate( self )
-		self.delegate.load( getModulePath( 'SceneGraphEditor.lua' ) )
+		self.delegate.load( getModulePath( 'GraphEditor.lua' ) )
 		self.luaMgrId = 'graphMgr'
 
-		self.addTool( 'scene_graph/scene_settings', label ='Scene Settings', icon = 'cog' )
-		self.addTool( 'scene_graph/create_group', label ='+ Group', icon = 'folder_plus' )
-		self.addTool( 'scene_graph/create_entity', label ='+ Entity', icon = 'plus_mint' )
-		self.addTool( 'scene_graph/destroy_item', label ='- Item', icon = 'minus' )
+		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
+		self.addTool( 'hierarchy/create_group', label ='+ Group', icon = 'folder_plus' )
+		self.addTool( 'hierarchy/create_entity', label ='+ Entity', icon = 'plus_mint' )
+		self.addTool( 'hierarchy/destroy_item', label ='- Item', icon = 'minus' )
 
 		#SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
@@ -172,10 +172,10 @@ class SceneGraphEditor( SceneEditorModule ):
 
 ##----------------------------------------------------------------##
 
-SceneGraphEditor().register()
+GraphEditor().register()
 
 ##----------------------------------------------------------------##
-class SceneGraphTreeItemDelegate(QtGui.QStyledItemDelegate):
+class GraphTreeItemDelegate(QtGui.QStyledItemDelegate):
 	_textBrush      = QBrush( QColor( '#dd5200' ) )
 	_textPen        = QPen( QColor( '#dddddd' ) )
 	_textPenGroup   = QPen( QColor( '#ada993' ) )
@@ -190,11 +190,11 @@ class SceneGraphTreeItemDelegate(QtGui.QStyledItemDelegate):
 		# # set background color
 		if option.state & QStyle.State_Selected:
 			painter.setPen  ( Qt.NoPen )
-			painter.setBrush( SceneGraphTreeItemDelegate._backgroundBrushSelected )
+			painter.setBrush( GraphTreeItemDelegate._backgroundBrushSelected )
 			painter.drawRect(option.rect)
 		elif option.state & QStyle.State_MouseOver:
 			painter.setPen  ( Qt.NoPen )
-			painter.setBrush( SceneGraphTreeItemDelegate._backgroundBrushHovered )
+			painter.setBrush( GraphTreeItemDelegate._backgroundBrushHovered )
 			painter.drawRect(option.rect)
 
 		rect = option.rect
@@ -205,20 +205,20 @@ class SceneGraphTreeItemDelegate(QtGui.QStyledItemDelegate):
 			rect.adjust( 22, 0, 0, 0 )
 		text = index.data(Qt.DisplayRole)
 		if utype == 1: #GROUP
-			painter.setPen( SceneGraphTreeItemDelegate._textPenGroup )
+			painter.setPen( GraphTreeItemDelegate._textPenGroup )
 		else:
-			painter.setPen( SceneGraphTreeItemDelegate._textPen )
+			painter.setPen( GraphTreeItemDelegate._textPen )
 		painter.drawText( rect, Qt.AlignLeft | Qt.AlignVCenter, text )
 		painter.restore()
 
-class ReadonlySceneGraphTreeItemDelegate( SceneGraphTreeItemDelegate ):
+class ReadonlyGraphTreeItemDelegate( GraphTreeItemDelegate ):
 	def createEditor( *args ):
 		return None
 
 ##----------------------------------------------------------------##
-class SceneGraphTreeWidget( GenericTreeWidget ):
+class GraphTreeWidget( GenericTreeWidget ):
 	def __init__( self, *args, **kwargs ):
-		super( SceneGraphTreeWidget, self ).__init__( *args, **kwargs )
+		super( GraphTreeWidget, self ).__init__( *args, **kwargs )
 		self.syncSelection = True
 		# self.adjustingRange = False
 		# self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )
@@ -228,10 +228,10 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 		return [('Name',160), ('V',32 ), ('L',32 ), ( 'Layer', 50 ), ('', -1) ]
 
 	def getReadonlyItemDelegate( self ):
-		return ReadonlySceneGraphTreeItemDelegate( self )
+		return ReadonlyGraphTreeItemDelegate( self )
 
 	def getDefaultItemDelegate( self ):
-		return SceneGraphTreeItemDelegate( self )
+		return GraphTreeItemDelegate( self )
 
 	def getRootNode( self ):
 		return self.module.getActiveSceneRootGroup()
