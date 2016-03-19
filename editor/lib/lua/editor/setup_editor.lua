@@ -22,5 +22,4 @@ EditorSceneMgr = require("core.EditorSceneMgr")
 
 if ResourceMgr then
 	ResourceMgr:addResourceDirectory( ASSET_EDITOR_PATH )
-	ResourceMgr:cacheSpriteFrames( "editor_asset.lua" )
 end
