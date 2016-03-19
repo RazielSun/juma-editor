@@ -4,7 +4,6 @@ from PySide                 import QtCore, QtGui, QtOpenGL
 from PySide.QtCore 			import Qt
 
 from juma.qt.helpers 		import repolishWidget
-from juma.qt.IconCache 		import getIcon
 
 
 ##----------------------------------------------------------------##
@@ -144,13 +143,64 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		item.setExpanded( self.getOption( 'expanded', True ) )
 
-		item.setText( 0, node.name or '<unnamed>' )
-		item.setIcon( 0, getIcon('dot') )
+		self.updateItem( node )
+		if addChildren:
+			children = self.getNodeChildren( node )
+			# if children:
+			# 	for child in children:
+			# 		self.addNode( child, True, **option )
 
 		return item
 
 	def getParentNode( self, node ):
 		return None
+
+	def refreshNodeContent( self, node, **option ):
+		prevRefreshing = self.refreshing
+		self.refreshing = True
+		item = self.getItemByNode( node )
+		if item:
+			self.updateItemContent( item, node, **option )
+			if option.get('updateChildren', False):
+				children = self.getNodeChildren( node )
+				if children:
+					for child in children:
+						self.refreshNodeContent( child , **option )
+		self.refreshing = prevRefreshing
+
+	def updateItemContent( self, item, node, **option ):
+		pass
+
+	def updateItem(self, node, **option ):
+		return self._updateItem( node, None, **option )
+
+	def getNodeChildren( self, node ):
+		return []
+
+	##----------------------------------------------------------------##
+	def _updateItem(self, node, updateLog=None, **option):
+		item = self.getItemByNode(node)
+		if not item:
+			return False
+		if not updateLog: # for avoiding duplicated updates
+			updateLog={}
+		if updateLog.has_key(node):
+			return False
+		updateLog[node]=True
+
+		self.refreshing = True
+		self.updateItemContent( item, node, **option )
+		# flags = self._calcItemFlags( node )
+		# item.setFlags( flags )
+		self.refreshing = False
+
+		if option.get('updateChildren',False):
+			children = self.getNodeChildren( node )
+			if children:
+				for child in children:
+					self._updateItem(child, updateLog, **option)
+
+		return True
 
 	##----------------------------------------------------------------##
 	# Event Callback

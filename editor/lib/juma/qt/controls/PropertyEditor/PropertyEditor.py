@@ -133,6 +133,9 @@ class PropertyEditor( QtGui.QFrame ):
 		self.refreshAll()
 		self.show()
 
+	def setContext( self, context ):
+		self.context = context
+
 	def refreshAll( self ):
 		target = self.target
 		if not target: return

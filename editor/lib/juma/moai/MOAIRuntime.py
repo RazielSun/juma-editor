@@ -22,6 +22,7 @@ signals.register( 'moai.prepare_clean' )
 signals.register( 'moai.clean' )
 signals.register( 'moai.reset' )
 signals.register( 'moai.ready' )
+signals.register( 'framework.init' )
 
 signals.register( 'moai.open_window' )
 signals.register( 'moai.set_sim_step' )
@@ -306,6 +307,9 @@ class MOAIRuntime( EditorModule ):
 	def onLoad(self):
 		self.AKUReady = False
 		self.setup()
+
+	def onAppReady(self):
+		signals.emitNow( 'framework.init' )
 
 	def onUnload(self):
 		self.AKUReady   = False

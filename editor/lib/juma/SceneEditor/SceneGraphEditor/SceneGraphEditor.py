@@ -4,10 +4,11 @@ from PySide             import QtCore, QtGui, QtOpenGL
 from PySide.QtCore      import Qt
 from PySide.QtGui     	import QApplication, QStyle, QBrush, QColor, QPen, QIcon, QPalette
 
-from juma.core                	import signals, app
-from juma.moai.MOAIRuntime import MOAILuaDelegate
+from juma.core                			import signals, app
+from juma.moai.MOAIRuntime 				import MOAILuaDelegate
+from juma.qt.IconCache 					import getIcon
 from juma.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
-from SceneEditor             	import SceneEditorModule
+from juma.SceneEditor.SceneEditor       import SceneEditorModule
 
 
 
@@ -24,6 +25,8 @@ class SceneGraphEditor( SceneEditorModule ):
 	def __init__(self):
 		super( SceneGraphEditor, self ).__init__()
 		self.delegate = None
+		self.dirty = False
+		self.previewing = False
 
 	def onLoad( self ):
 		self.windowTitle = 'Scenegraph'
@@ -68,6 +71,13 @@ class SceneGraphEditor( SceneEditorModule ):
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 		signals.connect( 'selection.hint',    self.onSelectionHint    )
 
+		signals.connect( 'entity.added',      self.onEntityAdded      )
+		signals.connect( 'entity.removed',    self.onEntityRemoved    )
+		signals.connect( 'entity.renamed',    self.onEntityRenamed    )
+		signals.connect( 'entity.modified',   self.onEntityModified    )
+		signals.connect( 'entity.visible_changed',    self.onEntityVisibleChanged )
+		signals.connect( 'entity.pickable_changed',   self.onEntityPickableChanged )
+
 	def getActiveScene( self ):
 		return self.delegate.safeCallMethod( self.luaMgrId, 'getScene' )
 
@@ -76,6 +86,10 @@ class SceneGraphEditor( SceneEditorModule ):
 		if scene:
 			return scene.rootNode
 		return None
+
+	def markDirty( self, dirty = True ):
+		if not self.previewing:
+			self.dirty = dirty
 
 ##----------------------------------------------------------------##
 	def createGroup(self):
@@ -118,6 +132,36 @@ class SceneGraphEditor( SceneEditorModule ):
 		# 	self.changeSelection( selection._entity )			
 		# else:
 		# 	self.changeSelection( selection )
+
+	##----------------------------------------------------------------##
+	def onEntityAdded( self, entity, context = None ):
+		if context == 'new':
+			self.setFocus()
+			pnode = entity.parent
+			if pnode:
+				self.tree.setNodeExpanded( pnode, True )
+			self.tree.setFocus()
+			# self.tree.editNode( entity )
+			# self.tree.selectNode( entity )
+		signals.emit( 'scene.update' )
+		self.markDirty()
+
+	def onEntityRemoved( self, entity ):
+		signals.emit( 'scene.update' )
+		self.markDirty()
+
+	def onEntityRenamed( self, entity, newname ):
+		self.tree.refreshNodeContent( entity )
+		self.markDirty()
+
+	def onEntityModified( self, entity, context = None ):
+		self.markDirty()
+
+	def onEntityVisibleChanged( self, entity ):
+		self.tree.refreshNodeContent( entity )
+
+	def onEntityPickableChanged( self, entity ):
+		self.tree.refreshNodeContent( entity )
 
 ##----------------------------------------------------------------##
 
@@ -187,6 +231,57 @@ class SceneGraphTreeWidget( GenericTreeWidget ):
 
 	def getNodeParent( self, node ):
 		return self.getRootNode()
+
+	def updateItemContent( self, item, node, **option ):
+		name = None
+		item.setData( 0, Qt.UserRole, 0 )
+
+		item.setText( 0, node.name or '<unnamed>' )
+		item.setIcon( 0, getIcon('dot') )
+
+		# if isMockInstance( node, 'EntityGroup' ):
+		# 	item.setText( 0, node.name or '<unnamed>' )
+		# 	item.setIcon( 0, getIcon('entity_group') )
+		# 	if node.isLocalVisible( node ):
+		# 		item.setIcon( 1, getIcon( 'entity_vis' ) )
+		# 	else:
+		# 		item.setIcon( 1, getIcon( 'entity_invis' ) )
+
+		# 	if node.isLocalEditLocked( node ):
+		# 		item.setIcon( 2, getIcon( 'entity_lock' ) )
+		# 	else:
+		# 		item.setIcon( 2, getIcon( 'entity_nolock' ) )
+		# 	item.setData( 0, Qt.UserRole, 1 )
+
+		# elif isMockInstance( node, 'Entity' ):
+		# 	if node['FLAG_PROTO_SOURCE']:
+		# 		item.setIcon( 0, getIcon('proto') )
+		# 	elif node['PROTO_INSTANCE_STATE']:
+		# 		item.setIcon( 0, getIcon('instance') )
+		# 	elif node['__proto_history']:
+		# 		item.setIcon( 0, getIcon('instance-sub') )
+		# 	elif isMockInstance( node, 'ProtoContainer' ):
+		# 		item.setIcon( 0, getIcon('instance-container') )
+		# 	else:
+		# 		item.setIcon( 0, getIcon('obj') )
+		# 	item.setText( 0, node.name or '<unnamed>' )
+	
+		# 	layerName = node.getLayer( node )
+		# 	if isinstance( layerName, tuple ):
+		# 		item.setText( 3, '????' )
+		# 	else:
+		# 		item.setText( 3, layerName )
+		# 	# item.setText( 2, node.getClassName( node ) )
+		# 	# item.setFont( 0, _fontAnimatable )
+		# 	if node.isLocalVisible( node ):
+		# 		item.setIcon( 1, getIcon( 'entity_vis' ) )
+		# 	else:
+		# 		item.setIcon( 1, getIcon( 'entity_invis' ) )
+
+		# 	if node.isLocalEditLocked( node ):
+		# 		item.setIcon( 2, getIcon( 'entity_lock' ) )
+		# 	else:
+		# 		item.setIcon( 2, getIcon( 'entity_nolock' ) )
 
 	##----------------------------------------------------------------##
 	# Event Callback

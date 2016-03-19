@@ -78,7 +78,7 @@ class IntrospectorObject( object ):
 
 ##----------------------------------------------------------------##
 class CommonIntrospectorObject( IntrospectorObject ):
-	def initWidget(self, container):
+	def initWidget(self, container, objectContainer):
 		self.property = PropertyEditor( container )
 		self.property.propertyChanged.connect( self.onPropertyChanged )
 		return self.property
@@ -86,7 +86,7 @@ class CommonIntrospectorObject( IntrospectorObject ):
 	def setTarget(self, target):
 		self.target = target
 		self.property.setTarget( target )
-		
+
 	def refresh( self ):
 		self.property.refreshAll()
 
@@ -152,14 +152,17 @@ class IntrospectorInstance(object):
 			self.scroll.show()
 			return
 
-		editorClass = CommonIntrospectorObject
-		editor = editorClass()
+		parent = app.getModule('introspector')
+
+		defaultEditorClass = option.get("editor_class", None)
+		editorBuilder = parent.getEditorBuilderByTypeId( typeId, defaultEditorClass )
+		editor = editorBuilder()
 		editor.targetTypeId = typeId
 		self.editors.append( editor )
 		container = ObjectContainer( self.body )
 		
 		editor.container = container
-		widget = editor.initWidget( container.getBody() )
+		widget = editor.initWidget( container.getBody(), container )
 		container.setContextObject( target )
 
 		if widget:
@@ -210,6 +213,10 @@ class IntrospectorInstance(object):
 		pass
 
 ##----------------------------------------------------------------##
+def registerEditorBuilder( typeId, editorBuilder ):
+	app.getModule('introspector').registerEditorBuilder( typeId, editorBuilder )
+
+##----------------------------------------------------------------##
 class SceneIntrospector( SceneEditorModule ):
 	_name       = 'introspector'
 	_dependency = [ 'qt', 'scene_editor' ]
@@ -219,7 +226,7 @@ class SceneIntrospector( SceneEditorModule ):
 		self.instances      = []
 		# self.instanceCache  = []
 		self.activeInstance = None
-		self.objectEditorRegistry = {}
+		self.editorBuilderRegistry = {}
 
 	def onLoad( self ):
 		self.container = self.requestDockWindow('SceneIntrospector',
@@ -228,7 +235,6 @@ class SceneIntrospector( SceneEditorModule ):
 				minSize = (300,200)
 		)
 		self.requestInstance()
-
 		# SIGNALS
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 
@@ -243,6 +249,24 @@ class SceneIntrospector( SceneEditorModule ):
 	def getInstances(self):
 		return self.instances
 
+	# REGISTER CUSTOME EDITORS #
+	def registerEditorBuilder( self, typeId, editorBuilder ):
+		assert typeId, 'null typeid'
+		self.editorBuilderRegistry[ typeId ] = editorBuilder
+
+	def getEditorBuilderByTypeId( self, typeId, defaultClass = None ):
+		while True:
+			editorBuilder = self.editorBuilderRegistry.get( typeId, None )
+			if editorBuilder: 
+				return editorBuilder
+			typeId = getSuperType( typeId )
+			if not typeId:
+				break
+		if defaultClass:
+			return defaultClass
+		return CommonIntrospectorObject
+
+	# CALLBACKS #
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
 		if not self.activeInstance: return

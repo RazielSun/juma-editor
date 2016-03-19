@@ -23,3 +23,18 @@ def repolishWidget( widget ):
 	style = widget.style()
 	style.unpolish( widget )
 	style.polish( widget )
+
+def addWidgetWithLayout( child, parent = None, **option ):
+	direction = option.get('direction', 'vertical')
+	layout    = None
+	if   direction == 'vertical':
+		layout = QtGui.QVBoxLayout()
+	elif direction == 'horizontoal':
+		layout = QtGui.QHBoxLayout()
+	if not parent:
+		parent = child.parent()
+	parent.setLayout( layout )
+	layout.addWidget( child )
+	layout.setSpacing(0)
+	layout.setContentsMargins(0,0,0,0)
+	return child
