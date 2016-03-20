@@ -1,3 +1,5 @@
+local Serpent = require("util.Serpent")
+
 local Layout = require("core.Layout")
 local EntityGroup = require("core.EntityGroup")
 
@@ -67,10 +69,11 @@ end
 ---------------------------------------------------------------------------------
 
 function EditorScene:save()
-	return serialize( self )
+	local data = Serpent.pretty( serialize( self ), {comment=false} )
+	return data
 end
 
-function EditorScene:load( data )
+function EditorScene:load( path )
 	deserialize( self, data )
 end
 

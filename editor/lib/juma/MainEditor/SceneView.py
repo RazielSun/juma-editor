@@ -2,9 +2,11 @@
 
 import os.path
 
-from PySide  import QtCore, QtGui, QtOpenGL
+from PySide  		import QtCore, QtGui, QtOpenGL
+from PySide.QtGui 	import QFileDialog
 
 from juma.core 					import signals, app
+from juma.core.layout 			import _saveLayoutToFile
 from juma.moai.MOAIEditCanvas 	import MOAIEditCanvas
 from MainEditor             	import MainEditorModule
 from SceneToolManager			import SceneToolButton, SceneTool
@@ -72,6 +74,8 @@ class SceneView( MainEditorModule ):
 
 		self.findMenu( 'main/scene' ).addChild([
             dict( name = 'scene_show', label = 'Show Scene' ),
+            dict( name = 'scene_open', label = 'Open Scene' ),
+            dict( name = 'scene_save', label = 'Save Scene' ),
         ], self )
 
 		self.window.show()
@@ -113,11 +117,28 @@ class SceneView( MainEditorModule ):
 				)
 			)
 
+	def openScene(self): #(parent, caption = "Open file", directory = None, filter = None):
+		fileName, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene", self.getProject().path or "~", "Layout file (*.layout )")
+		# fileName, filt = QtGui.QFileDialog.getOpenFileName(parent, caption, directory, filter)
+		print(" openScene fileName, filt", fileName, filt)
+		# return fileName
+
+	def saveScene(self):
+		fileName, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene", self.getProject().path or "~", "Layout file (*.layout )")
+		data = self.canvas.safeCallMethod( 'scene', 'save' )
+		_saveLayoutToFile( fileName, data )
+
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
 		if name == 'scene_show':
 			self.window.show()
+
+		elif name == 'scene_open':
+			self.openScene()
+
+		elif name == 'scene_save':
+			self.saveScene()
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
@@ -127,6 +148,8 @@ class SceneView( MainEditorModule ):
 		self.canvas.makeCurrent()
 		print("SceneView changeEditTool", name)
 		# self.canvas.safeCallMethod( 'view', 'changeEditTool', name )
+
+
 
 ##----------------------------------------------------------------##
 

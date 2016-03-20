@@ -208,6 +208,14 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.viewWidth  = width
 		self.viewHeight = height
 
+	def safeCallMethod(self, objId, method, *args):		 
+		self.makeCurrent()
+		return self.delegate.safeCallMethod(objId, method, *args)
+
+	def callMethod(self, objId, method, *args):		 
+		self.makeCurrent()
+		return self.delegate.callMethod(objId, method, *args)
+
 
 
 ##----------------------------------------------------------------##

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import logging
 import sys
 import imp
@@ -31,8 +32,6 @@ _PROJECT_GAME_DIR			= 'lua'
 
 _PROJECT_INFO_FILE          = 'project.json'
 _PROJECT_CONFIG_FILE        = 'config.json'
-
-
 
 ##----------------------------------------------------------------##
 def _affirmPath( path ):

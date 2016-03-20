@@ -9,3 +9,10 @@ function onResize( width, height )
 		scene:resize( width, height )
 	end
 end
+
+function loadScene( path )
+	if scene then
+		return EditorLayoutMgr:loadScene( scene, path )
+	end
+	return nil
+end
