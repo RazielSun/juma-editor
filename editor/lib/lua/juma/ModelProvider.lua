@@ -31,10 +31,9 @@ end
 local function typeIdGetter( obj )
 	local tt = type(obj)
 	if tt == 'table' then
-		-- local mt = getmetatable(obj)
-		-- if not mt then return nil end
-		-- return mt
-		return tostring(obj)
+		if isClass(obj) then
+			return obj:className()
+		end
 	elseif tt == 'userdata' then
 		local getClass = obj.getClass
 		if getClass then

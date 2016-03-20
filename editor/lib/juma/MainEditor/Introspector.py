@@ -16,6 +16,32 @@ from ui.object_container_ui 			import Ui_ObjectContainer
 def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
+
+##----------------------------------------------------------------##
+_OBJECT_EDITOR_CACHE = {} 
+
+def pushObjectEditorToCache( typeId, editor ):
+	pool = _OBJECT_EDITOR_CACHE.get( typeId, None )
+	if not pool:
+		pool = []
+		_OBJECT_EDITOR_CACHE[ typeId ] = pool
+	editor.container.setUpdatesEnabled( False )
+	pool.append( editor )
+	return True
+
+def popObjectEditorFromCache( typeId ):
+	pool = _OBJECT_EDITOR_CACHE.get( typeId, None )
+	if pool:
+		editor = pool.pop()
+		if editor:
+			editor.container.setUpdatesEnabled( True )
+		return editor
+
+def clearObjectEditorCache( typeId ):
+	if _OBJECT_EDITOR_CACHE.has_key( typeId ):
+		del _OBJECT_EDITOR_CACHE[ typeId ]
+
+##----------------------------------------------------------------##
 class ObjectContainer( QtGui.QWidget ):
 	def __init__( self, *args ):
 		super( ObjectContainer, self ).__init__( *args )
@@ -91,6 +117,9 @@ class IntrospectorObject( object ):
 
 ##----------------------------------------------------------------##
 class CommonIntrospectorObject( IntrospectorObject ):
+	def __init__(self):
+		super(CommonIntrospectorObject, self).__init__()
+
 	def initWidget(self, container, objectContainer):
 		self.property = PropertyEditor( container )
 		self.property.propertyChanged.connect( self.onPropertyChanged )
@@ -165,31 +194,38 @@ class IntrospectorInstance(object):
 			self.scroll.show()
 			return
 
-		defaultEditorClass = option.get("editor_class", None)
-		parent = app.getModule('introspector')
-		editorBuilder = parent.getEditorBuilderByTypeId( typeId, defaultEditorClass )
-		editor = editorBuilder()
-		editor.targetTypeId = typeId
-		self.editors.append( editor )
-		container = ObjectContainer( self.body )
-		
-		editor.container = container
-		widget = editor.initWidget( container.getBody(), container )
-		container.setContextObject( target )
-
-		if widget:
-			container.addWidget( widget )
-
-			model = ModelManager.get().getModel( target ) # FIXME
-			# model = ModelManager.get().getModelFromTypeId( typeId )
-			if model:
-				container.setTitle( model.name )
-
+		cachedEditor = popObjectEditorFromCache( typeId )
+		if cachedEditor:
+			editor = cachedEditor
+			self.editors.append( editor )
+			container = editor.container
 			count = self.body.mainLayout.count()
-			assert count > 0
+			assert count>0
 			self.body.mainLayout.insertWidget( count - 1, container )
+			container.setContextObject( target )
+			container.show()
 		else:
-			container.hide()
+			defaultEditorClass = option.get("editor_class", None)
+			parent = app.getModule('introspector')
+			editorBuilder = parent.getEditorBuilderByTypeId( typeId, defaultEditorClass )
+			editor = editorBuilder()
+			self.editors.append( editor )
+			editor.targetTypeId = typeId
+			container = ObjectContainer( self.body )
+			editor.container = container
+			container.setContextObject( target )
+			widget = editor.initWidget( container.getBody(), container )
+			if widget:
+				container.addWidget( widget )
+				model = ModelManager.get().getModel( target ) # FIXME
+				# model = ModelManager.get().getModelFromTypeId( typeId )
+				if model:
+					container.setTitle( model.name )
+				count = self.body.mainLayout.count()
+				assert count > 0
+				self.body.mainLayout.insertWidget( count - 1, container )
+			else:
+				container.hide()
 
 		editor.parentIntrospector = self
 		editor.setTarget( target )
@@ -202,11 +238,11 @@ class IntrospectorInstance(object):
 	def clear(self):
 		for editor in self.editors:
 			editor.container.setContextObject( None )
-			# cached = False
-			# if editor.needCache():
-			# 	cached = pushObjectEditorToCache( editor.targetTypeId, editor )
-			# if not cached:
-			# 	editor.unload()
+			cached = False
+			if editor.needCache():
+				cached = pushObjectEditorToCache( editor.targetTypeId, editor )
+			if not cached:
+				editor.unload()
 			editor.target = None
 
 		layout = self.body.mainLayout
@@ -269,13 +305,16 @@ class Introspector( MainEditorModule ):
 	def getEditorBuilderByTypeId( self, typeId, defaultClass = None ):
 		while True:
 			editorBuilder = self.editorBuilderRegistry.get( typeId, None )
+			print( "editorBuilder", editorBuilder, typeId )
 			if editorBuilder: 
 				return editorBuilder
 			typeId = getSuperType( typeId )
 			if not typeId:
 				break
+
 		if defaultClass:
 			return defaultClass
+
 		return CommonIntrospectorObject
 
 	# CALLBACKS #

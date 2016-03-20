@@ -61,7 +61,7 @@ function EditorScene:setRootNode( rootNode )
 	end
 
 	if rootNode then
-		rootNode:setLayer( layer )
+		rootNode:setLayer( self.layer )
 		self.rootNode = rootNode
 	end
 end
@@ -69,12 +69,21 @@ end
 ---------------------------------------------------------------------------------
 
 function EditorScene:save()
-	local data = Serpent.pretty( serialize( self ), {comment=false} )
+	local data = Serpent.pretty( serialize( self.rootNode ), { comment = false } )
 	return data
 end
 
 function EditorScene:load( path )
-	deserialize( self, data )
+	if path then
+		data = dofile(path)
+		if data then
+			node = deserialize( nil, data )
+
+			if node then
+				self:setRootNode( node )
+			end
+		end
+	end
 end
 
 ---------------------------------------------------------------------------------

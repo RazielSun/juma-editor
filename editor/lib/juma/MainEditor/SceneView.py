@@ -62,7 +62,7 @@ class SceneView( MainEditorModule ):
 
 	def onLoad( self ):
 		self.window = self.requestDocumentWindow(
-				title = 'Scene'
+				title = 'new.layout'
 			)
 
 		self.tool = self.addToolBar( 'scene_view_config', self.window.addToolBar() )
@@ -117,16 +117,19 @@ class SceneView( MainEditorModule ):
 				)
 			)
 
-	def openScene(self): #(parent, caption = "Open file", directory = None, filter = None):
-		fileName, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene", self.getProject().path or "~", "Layout file (*.layout )")
-		# fileName, filt = QtGui.QFileDialog.getOpenFileName(parent, caption, directory, filter)
-		print(" openScene fileName, filt", fileName, filt)
-		# return fileName
+	def updateSceneTitle(self, title):
+		self.window.setWindowTitle( title )
+
+	def openScene(self):
+		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene", self.getProject().path or "~", "Layout file (*.layout )")
+		self.canvas.safeCallMethod( 'scene', 'load', filePath )
+		self.updateSceneTitle( os.path.basename( filePath ) )
 
 	def saveScene(self):
-		fileName, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene", self.getProject().path or "~", "Layout file (*.layout )")
+		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene", self.getProject().path or "~", "Layout file (*.layout )")
 		data = self.canvas.safeCallMethod( 'scene', 'save' )
-		_saveLayoutToFile( fileName, data )
+		_saveLayoutToFile( filePath, data )
+		self.updateSceneTitle( os.path.basename( filePath ) )
 
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):

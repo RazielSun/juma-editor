@@ -45,7 +45,7 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 	def __init__(self):
 		super(EntityEditorObject, self).__init__()
 
-	def initWidget( self, container, objectContainer ):
+	def initWidget(self, container, objectContainer):
 		# self.header = EntityHeader( container )
 		# self.property = PropertyEditor( self.header )
 		self.property = PropertyEditor( container )
