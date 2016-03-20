@@ -83,20 +83,19 @@ class LuaObjectModelProvider(ModelProvider):
 class LuaObjectField( Field ):
 	def __init__( self, model, id, _type, **option ):
 		super( LuaObjectField, self ).__init__( model, id, _type, **option )
-		#init getter/setter
-		# if self.getter == False:
-		# 	self.getValue = self._getValueNone
-		# elif self.getter == True: 
-		# 	self.getValue = self._getValueRaw
-		# else:
-		# 	self.getValue = self._getValueGetter
+		if self.getter == False:
+			self.getValue = self._getValueNone
+		elif self.getter == True: 
+			self.getValue = self._getValueRaw
+		else:
+			self.getValue = self._getValueGetter
 
-		# if self.readonly:
-		# 	self.setValue = self._setValueNone
-		# elif self.setter == True:
-		# 	self.setValue = self._setValueRaw
-		# else:
-		# 	self.setValue = self._setValueSetter
+		if self.readonly:
+			self.setValue = self._setValueNone
+		elif self.setter == True:
+			self.setValue = self._setValueRaw
+		else:
+			self.setValue = self._setValueSetter
 	
 	def _getValueNone( self, obj, defaultValue = None ):
 		return None
@@ -105,7 +104,6 @@ class LuaObjectField( Field ):
 		return getattr( obj, self.id, defaultValue )
 
 	def _getValueGetter( self, obj, defaultValue = None ):
-		#caller
 		v = self.getter( obj, self.id )
 		if v is None: return defaultValue
 		return v
@@ -117,7 +115,10 @@ class LuaObjectField( Field ):
 		setattr( obj, self.id, value )
 
 	def _setValueSetter( self, obj, value ):
-		self.setter(obj, value)
+		if isinstance(value, tuple):
+			self.setter(obj, *value)
+		else:
+			self.setter(obj, value)
 
 ##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):

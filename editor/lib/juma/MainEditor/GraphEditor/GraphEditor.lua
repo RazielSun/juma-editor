@@ -7,7 +7,12 @@ function GraphEditor:init()
 end
 
 function GraphEditor:getScene()
-	return EditorSceneMgr:getScene()
+	return EditorLayoutMgr:getCurrentScene()
+end
+
+function GraphEditor:getSceneRootNode()
+	local scene = EditorLayoutMgr:getCurrentScene()
+	return scene:getRootNode()
 end
 
 function GraphEditor:createEntity()
@@ -16,4 +21,4 @@ function GraphEditor:createEntity()
 	return entity
 end
 
-graphMgr = GraphEditor()
+graphEditor = GraphEditor()

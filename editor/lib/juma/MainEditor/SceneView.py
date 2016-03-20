@@ -7,10 +7,48 @@ from PySide  import QtCore, QtGui, QtOpenGL
 from juma.core 					import signals, app
 from juma.moai.MOAIEditCanvas 	import MOAIEditCanvas
 from MainEditor             	import MainEditorModule
+from SceneToolManager			import SceneToolButton, SceneTool
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
+
+##----------------------------------------------------------------##
+class SceneViewTool( SceneTool ):
+	def getSceneViewToolId( self ):
+		toolId = getattr( self.__class__, 'tool' )
+		if not toolId:
+			raise Exception( 'no scene view tool Id specified' )
+		return toolId
+
+	def onStart( self, **context ):
+		canvasToolId = self.getSceneViewToolId()
+		app.getModule( 'scene_view' ).changeEditTool( canvasToolId )
+
+
+##----------------------------------------------------------------##
+class SceneViewToolDragCamera( SceneViewTool ):
+	name     = 'scene_view_drag_camera'
+	shortcut = 'Q'
+	tool     = 'drag_camera'
+
+##----------------------------------------------------------------##
+class SceneViewToolMoveObject( SceneViewTool ):
+	name     = 'scene_view_move_object'
+	shortcut = 'W'
+	tool     = 'move_object'
+
+##----------------------------------------------------------------##
+class SceneViewToolRotateObject( SceneViewTool ):
+	name     = 'scene_view_rotate_object'
+	shortcut = 'E'
+	tool     = 'rotate_object'
+
+##----------------------------------------------------------------##
+class SceneViewToolScaleObject( SceneViewTool ):
+	name     = 'scene_view_scale_object'
+	shortcut = 'R'
+	tool     = 'scale_object'
 
 ##----------------------------------------------------------------##
 class SceneView( MainEditorModule ):
@@ -42,6 +80,39 @@ class SceneView( MainEditorModule ):
 
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 
+		##----------------------------------------------------------------##
+		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
+			self.getMainWindow().requestToolBar( 'view_tools' )
+			)
+
+		self.addTool(	'scene_view_tools/tool_drag_camera',
+			widget = SceneToolButton( 'scene_view_drag_camera',
+				icon = 'tools/moustache',
+				label = 'Drag camera'
+				)
+			)
+
+		self.addTool(	'scene_view_tools/tool_move_object',
+			widget = SceneToolButton( 'scene_view_move_object',
+				icon = 'tools/arrows',
+				label = 'Move object'
+				)
+			)
+
+		self.addTool(	'scene_view_tools/tool_rotate_object',
+			widget = SceneToolButton( 'scene_view_rotate_object',
+				icon = 'tools/rotate',
+				label = 'Rotate object'
+				)
+			)
+
+		self.addTool(	'scene_view_tools/tool_scale_object',
+			widget = SceneToolButton( 'scene_view_scale_object',
+				icon = 'tools/resize',
+				label = 'Scale object'
+				)
+			)
+
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
@@ -51,6 +122,11 @@ class SceneView( MainEditorModule ):
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
 		# self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
+
+	def changeEditTool( self, name ):
+		self.canvas.makeCurrent()
+		print("SceneView changeEditTool", name)
+		# self.canvas.safeCallMethod( 'view', 'changeEditTool', name )
 
 ##----------------------------------------------------------------##
 

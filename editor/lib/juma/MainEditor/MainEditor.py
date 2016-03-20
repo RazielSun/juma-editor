@@ -72,11 +72,11 @@ class MainEditorModule( SubEditorModule ):
     def getSceneEditor( self ):
         return self.getParentModule()
 
-    # def getSceneToolManager( self ):
-    #     return self.getModule( 'scene_tool_manager' )
+    def getSceneToolManager( self ):
+        return self.getModule( 'scene_tool_manager' )
 
-    # def changeSceneTool( self, toolId ):
-    #     self.getSceneToolManager().changeTool( toolId )
+    def changeSceneTool( self, toolId ):
+        self.getSceneToolManager().changeTool( toolId )
 
     # def getAssetSelection( self ):
     #     return getSelectionManager( 'asset' ).getSelection()

@@ -59,7 +59,7 @@ class GraphEditor( MainEditorModule ):
 
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'GraphEditor.lua' ) )
-		self.luaMgrId = 'graphMgr'
+		self.luaMgrId = 'graphEditor'
 
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_group', label ='+ Group', icon = 'folder_plus' )
@@ -83,9 +83,9 @@ class GraphEditor( MainEditorModule ):
 		return self.delegate.safeCallMethod( self.luaMgrId, 'getScene' )
 
 	def getActiveSceneRootGroup( self ):
-		scene = self.getActiveScene()
-		if scene:
-			return scene.rootNode
+		rootNode = self.delegate.safeCallMethod( self.luaMgrId, 'getSceneRootNode' )
+		if rootNode:
+			return rootNode
 		return None
 
 	def markDirty( self, dirty = True ):

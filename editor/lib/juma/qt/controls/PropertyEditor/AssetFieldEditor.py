@@ -9,9 +9,9 @@ from juma.qt.IconCache import getIcon
 
 
 ##----------------------------------------------------------------##
-class SpriteEditorWidget( QtGui.QWidget ):
+class BasicAssetEditorWidget( QtGui.QWidget ):
 	def __init__( self, parent ):
-		super(SpriteEditorWidget, self).__init__( parent )
+		super(BasicAssetEditorWidget, self).__init__( parent )
 		self.layout = layout = QtGui.QHBoxLayout( self )
 		layout.setSpacing(0)
 		layout.setContentsMargins(0,0,0,0)
@@ -27,7 +27,7 @@ class SpriteEditorWidget( QtGui.QWidget ):
 		layout.addWidget( self.btn )
 
 ##----------------------------------------------------------------##
-class SpriteFieldEditor( FieldEditor ):
+class BasicAssetFieldEditor( FieldEditor ):
 	def get( self ):
 		return self.assetEdit.line.text()
 
@@ -35,7 +35,7 @@ class SpriteFieldEditor( FieldEditor ):
 		self.assetEdit.line.setText( value or '' )
 
 	def initEditor( self, container ):
-		self.assetEdit = SpriteEditorWidget( container )
+		self.assetEdit = BasicAssetEditorWidget( container )
 		self.assetEdit.btn.clicked.connect( self.doAction )
 		return self.assetEdit
 
@@ -47,4 +47,4 @@ class SpriteFieldEditor( FieldEditor ):
 
 ##----------------------------------------------------------------##
 
-registerSimpleFieldEditorFactory( 'sprite', SpriteFieldEditor )
+registerSimpleFieldEditorFactory( '@asset', BasicAssetFieldEditor )

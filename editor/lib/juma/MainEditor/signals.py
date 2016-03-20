@@ -9,7 +9,6 @@ register( 'scene.change_size' )
 
 register( 'scene.update' )
 # register( 'scene.pre_open' )
-# 
 # register( 'scene.clear' )
 # register( 'scene.save' )
 # register( 'scene.saved' )
@@ -21,3 +20,5 @@ register( 'entity.modified' )
 register( 'entity.renamed' )
 register( 'entity.visible_changed' )
 register( 'entity.pickable_changed' )
+
+register( 'scene_tool.change' )

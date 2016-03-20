@@ -1,9 +1,10 @@
+scene = nil
+
 function onLoad()
-	local scene = EditorSceneMgr:setupScene()
+	scene = EditorLayoutMgr:setupScene()
 end
 
 function onResize( width, height )
-	local scene = EditorSceneMgr:getScene()
 	if scene then
 		scene:resize( width, height )
 	end
