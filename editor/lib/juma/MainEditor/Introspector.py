@@ -305,7 +305,6 @@ class Introspector( MainEditorModule ):
 	def getEditorBuilderByTypeId( self, typeId, defaultClass = None ):
 		while True:
 			editorBuilder = self.editorBuilderRegistry.get( typeId, None )
-			print( "editorBuilder", editorBuilder, typeId )
 			if editorBuilder: 
 				return editorBuilder
 			typeId = getSuperType( typeId )

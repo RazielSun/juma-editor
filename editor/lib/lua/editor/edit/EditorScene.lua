@@ -27,6 +27,7 @@ function EditorScene:init( params )
 
 	local rootNode = params.rootNode or EntityGroup()
 	rootNode:setLayer( layer )
+	self:setActiveGroup( rootNode )
 
 	self.layer = layer
 	self.rootNode = rootNode
@@ -52,25 +53,34 @@ function EditorScene:getRootNode()
 	return self.rootNode
 end
 
-function EditorScene:setRootNode( rootNode )
-	if self.rootNode == rootNode then return end
+function EditorScene:setRootNode( node )
+	if self.rootNode == node then return end
 
 	if self.rootNode then
+		self.rootNode:removeChildren()
 		self.rootNode:setLayer( nil )
 		self.rootNode = nil
 	end
 
-	if rootNode then
-		rootNode:setLayer( self.layer )
-		self.rootNode = rootNode
+	if node then
+		node:setLayer( self.layer )
+		self.rootNode = node
+		self:setActiveGroup( node )
 	end
+end
+
+function EditorScene:setActiveGroup( node )
+	self.activeGroup = node
+end
+
+function EditorScene:addNodeToActiveGroup( node )
+	self.activeGroup:addChild( node )
 end
 
 ---------------------------------------------------------------------------------
 
 function EditorScene:save()
-	local data = Serpent.pretty( serialize( self.rootNode ), { comment = false } )
-	return data
+	return Serpent.pretty( serialize( self.rootNode ), { comment = false } )
 end
 
 function EditorScene:load( path )

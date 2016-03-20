@@ -26,6 +26,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.refreshing = False
 		self.rebuilding = False
+		self.firstSetup = True
 
 		self.option = option
 		headerInfo = self.getHeaderInfo()
@@ -90,6 +91,32 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def updateHeaderItem( self, item, col, info ):
 		pass
 
+	def clear( self ):
+		self.setUpdatesEnabled( False )
+		for item in self.nodeDict.values():
+			item.node = None
+		self.nodeDict = {}
+		super( GenericTreeWidget, self ).clear()
+		self.initRootItem()
+		self.rootItem.node = None
+		self.setUpdatesEnabled( True )
+
+	def rebuild( self, **option ):
+		self.rebuilding = True
+		self.hide()
+		self.setUpdatesEnabled( False )
+		self.clear()
+		rootNode = self.getRootNode()
+		if rootNode:
+			self.addNode( rootNode )
+			self.loadTreeStates()
+		self.setUpdatesEnabled( True )
+		self.show()
+		self.rebuilding = False
+		if self.firstSetup: # workaround: avoid unexpected column resizing
+			self.resetHeader()
+			self.firstSetup = False
+
 	def resetHeader( self ):
 		headerInfo = self.getHeaderInfo()
 		headerItem = self.headerItem()
@@ -127,17 +154,18 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		pnode = self.getNodeParent( node )
 		assert pnode != node, 'parent is item itself'
 
-		pitem = self.getItemByNode( pnode )
-		if not pitem:
-			pitem = self.rootItem
-			pitem.node = pnode
-			self.nodeDict[ pnode ] = pitem
-
-		item = self.createItem()
-		item.node = node
-
-		pnode.addChild( pnode, node )
-		pitem.addChild( item )
+		if not pnode :
+			item = self.rootItem
+			item.node = node
+		else:
+			pitem = self.getItemByNode( pnode )
+			if not pitem:
+				pitem = self.rootItem
+				pitem.node = pnode
+				self.nodeDict[ pnode ] = pitem
+			item = self.createItem()
+			item.node = node
+			pitem.addChild( item )
 
 		self.nodeDict[ node ] = item
 
@@ -146,14 +174,18 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		self.updateItem( node )
 		if addChildren:
 			children = self.getNodeChildren( node )
-			# if children:
-			# 	for child in children:
-			# 		self.addNode( child, True, **option )
+			if children:
+				for child in children:
+					self.addNode( child, True, **option )
 
 		return item
 
-	def getParentNode( self, node ):
+	def getNodeParent( self, node ):
 		return None
+		
+	def refreshAllContent( self ):
+		for node in self.nodeDict.keys():
+			self.refreshNodeContent( node )
 
 	def refreshNodeContent( self, node, **option ):
 		prevRefreshing = self.refreshing
@@ -201,6 +233,10 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 					self._updateItem(child, updateLog, **option)
 
 		return True
+
+	##----------------------------------------------------------------##
+	def loadTreeStates( self ):
+		pass
 
 	##----------------------------------------------------------------##
 	# Event Callback

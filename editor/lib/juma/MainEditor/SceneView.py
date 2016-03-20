@@ -3,10 +3,8 @@
 import os.path
 
 from PySide  		import QtCore, QtGui, QtOpenGL
-from PySide.QtGui 	import QFileDialog
 
 from juma.core 					import signals, app
-from juma.core.layout 			import _saveLayoutToFile
 from juma.moai.MOAIEditCanvas 	import MOAIEditCanvas
 from MainEditor             	import MainEditorModule
 from SceneToolManager			import SceneToolButton, SceneTool
@@ -72,17 +70,15 @@ class SceneView( MainEditorModule ):
 			)
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 
-		self.findMenu( 'main/scene' ).addChild([
-            dict( name = 'scene_show', label = 'Show Scene' ),
-            dict( name = 'scene_open', label = 'Open Scene' ),
-            dict( name = 'scene_save', label = 'Save Scene' ),
+		self.findMenu( 'main/window' ).addChild([
+            dict( name = 'scene_show', label = 'Scene View' ),
         ], self )
 
 		self.window.show()
 
 		# SIGNALS
-
 		signals.connect( 'selection.changed', self.onSelectionChanged )
+		signals.connect( 'scene.open',        self.onSceneOpen        )
 
 		##----------------------------------------------------------------##
 		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
@@ -117,31 +113,11 @@ class SceneView( MainEditorModule ):
 				)
 			)
 
-	def updateSceneTitle(self, title):
-		self.window.setWindowTitle( title )
-
-	def openScene(self):
-		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene", self.getProject().path or "~", "Layout file (*.layout )")
-		self.canvas.safeCallMethod( 'scene', 'load', filePath )
-		self.updateSceneTitle( os.path.basename( filePath ) )
-
-	def saveScene(self):
-		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene", self.getProject().path or "~", "Layout file (*.layout )")
-		data = self.canvas.safeCallMethod( 'scene', 'save' )
-		_saveLayoutToFile( filePath, data )
-		self.updateSceneTitle( os.path.basename( filePath ) )
-
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
 		if name == 'scene_show':
 			self.window.show()
-
-		elif name == 'scene_open':
-			self.openScene()
-
-		elif name == 'scene_save':
-			self.saveScene()
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
@@ -152,7 +128,9 @@ class SceneView( MainEditorModule ):
 		print("SceneView changeEditTool", name)
 		# self.canvas.safeCallMethod( 'view', 'changeEditTool', name )
 
-
+	def onSceneOpen( self, title ):
+		self.canvas.makeCurrent()
+		self.window.setWindowTitle( title )
 
 ##----------------------------------------------------------------##
 

@@ -4,9 +4,10 @@ import os.path
 
 from PySide             import QtCore, QtGui, QtOpenGL
 from PySide.QtCore      import Qt
-from PySide.QtGui     	import QApplication, QStyle, QBrush, QColor, QPen, QIcon, QPalette
+from PySide.QtGui     	import QFileDialog, QStyle, QBrush, QColor, QPen, QIcon, QPalette
 
 from juma.core                			import signals, app
+from juma.core.layout 					import _saveLayoutToFile
 from juma.moai.MOAIRuntime 				import MOAILuaDelegate
 from juma.qt.IconCache 					import getIcon
 from juma.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
@@ -61,6 +62,11 @@ class GraphEditor( MainEditorModule ):
 		self.delegate.load( getModulePath( 'GraphEditor.lua' ) )
 		self.luaMgrId = 'graphEditor'
 
+		self.findMenu( 'main/scene' ).addChild([
+            dict( name = 'scene_open', label = 'Open Scene' ),
+            dict( name = 'scene_save', label = 'Save Scene' ),
+        ], self )
+
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_group', label ='+ Group', icon = 'folder_plus' )
 		self.addTool( 'hierarchy/create_entity', label ='+ Entity', icon = 'plus_mint' )
@@ -79,6 +85,9 @@ class GraphEditor( MainEditorModule ):
 		signals.connect( 'entity.visible_changed',    self.onEntityVisibleChanged )
 		signals.connect( 'entity.pickable_changed',   self.onEntityPickableChanged )
 
+	def onStart(self): # FIXME
+		self.tree.rebuild()
+
 	def getActiveScene( self ):
 		return self.delegate.safeCallMethod( self.luaMgrId, 'getScene' )
 
@@ -92,7 +101,31 @@ class GraphEditor( MainEditorModule ):
 		if not self.previewing:
 			self.dirty = dirty
 
+	def onSceneChange(self):
+		self.tree.hide()
+		self.tree.rebuild()
+		# self.restoreWorkspaceState()
+		self.tree.refreshAllContent()
+		self.tree.verticalScrollBar().setValue( 0 )
+		self.tree.show()
+
 ##----------------------------------------------------------------##
+	def openScene(self):
+		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene", self.getProject().path or "~", "Layout file (*.layout )")
+		if filePath:
+			sceneName = os.path.basename( filePath )
+			signals.emitNow( 'scene.open', sceneName )
+			node = self.delegate.safeCallMethod( self.luaMgrId, 'loadScene', filePath )
+			self.onSceneChange()
+
+	def saveScene(self):
+		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene", self.getProject().path or "~", "Layout file (*.layout )")
+		if filePath:
+			data = self.delegate.safeCallMethod( self.luaMgrId, 'saveScene' )
+			_saveLayoutToFile( filePath, data )
+			sceneName = os.path.basename( filePath )
+			signals.emitNow( 'scene.open', sceneName )
+
 	def openSceneSettings(self):
 		pass
 
@@ -107,6 +140,14 @@ class GraphEditor( MainEditorModule ):
 		pass
 
 ##----------------------------------------------------------------##
+	def onMenu( self, tool ):
+		name = tool.name
+		if name == 'scene_open':
+			self.openScene()
+
+		elif name == 'scene_save':
+			self.saveScene()
+
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'scene_settings':
@@ -237,7 +278,21 @@ class GraphTreeWidget( GenericTreeWidget ):
 		return self.module.getActiveSceneRootGroup()
 
 	def getNodeParent( self, node ):
-		return self.getRootNode()
+		p = node.getParentOrGroup( node )
+		if p:
+			return p
+		return None
+
+	def getNodeChildren( self, node ):
+		className = node.className(node)
+		output = []
+		if className == 'EntityGroup': # GROUP
+			children = node.children
+			for index in children:
+				output.append( children[index] )
+		else: # ENTITY
+			pass
+		return output
 
 	def updateItemContent( self, item, node, **option ):
 		name = None

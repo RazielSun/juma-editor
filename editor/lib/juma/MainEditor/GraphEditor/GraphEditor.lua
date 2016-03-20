@@ -3,7 +3,7 @@ local Entity = require("core.Entity")
 local GraphEditor = Class("GraphEditor")
 
 function GraphEditor:init()
-	self.items = {}
+	-- print("GraphEditor inited")
 end
 
 function GraphEditor:getScene()
@@ -16,9 +16,27 @@ function GraphEditor:getSceneRootNode()
 end
 
 function GraphEditor:createEntity()
-	local entity = Entity()
-	table.push( self.items, entity )
-	return entity
+	local node = Entity()
+	local scene = self:getScene()
+	scene:addNodeToActiveGroup( node )
+	return node
+end
+
+function GraphEditor:saveScene()
+	local scene = self:getScene()
+	if scene then
+		return scene:save()
+	end
+	return nil
+end
+
+function GraphEditor:loadScene( path )
+	local scene = self:getScene()
+	if scene then
+		scene:load( path )
+		return scene.rootNode
+	end
+	return nil
 end
 
 graphEditor = GraphEditor()
