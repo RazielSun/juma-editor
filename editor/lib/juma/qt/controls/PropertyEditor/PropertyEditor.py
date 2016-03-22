@@ -4,8 +4,6 @@ from PySide.QtCore import Qt
 from juma.core.ModelManager import *
 from FieldEditorControls import *
 
-
-
 ##----------------------------------------------------------------##
 		
 _FieldEditorFactories = []

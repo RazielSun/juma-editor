@@ -9,3 +9,4 @@ from CommonFieldEditors import \
 ##----------------------------------------------------------------##
 import VecFieldEditor
 import AssetRefFieldEditor
+import ColorFieldEditor

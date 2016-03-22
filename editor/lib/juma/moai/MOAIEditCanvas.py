@@ -223,3 +223,174 @@ class MOAIEditCanvas( MOAIEditCanvasBase ):
 	def __init__( self, *args, **kwargs ):
 		super( MOAIEditCanvas, self ).__init__( *args, **kwargs )
 		# self.keyGrabbingCount = 0
+
+	def mousePressEvent(self, event):
+		button=event.button()		
+		x,y=event.x(), event.y()
+		btn=None
+		if button==Qt.LeftButton:
+			btn='left'
+		elif button==Qt.RightButton:
+			btn='right'
+		elif button==Qt.MiddleButton:
+			btn='middle'
+		self.makeCurrent()
+		self.delegate.onMouseDown(btn, x,y)
+
+	def mouseReleaseEvent(self, event):
+		button=event.button()		
+		x,y=event.x(), event.y()
+		btn=None
+		if button==Qt.LeftButton:
+			btn='left'
+		elif button==Qt.RightButton:
+			btn='right'
+		elif button==Qt.MiddleButton:
+			btn='middle'
+		self.makeCurrent()
+		self.delegate.onMouseUp(btn, x,y)
+
+	def mouseMoveEvent(self, event):
+		x,y=event.x(), event.y()
+		self.makeCurrent()
+		self.delegate.onMouseMove(x,y)
+
+	def wheelEvent(self, event):
+		steps = event.delta() / 120.0;
+		dx = 0
+		dy = 0
+		if event.orientation() == Qt.Horizontal : 
+			dx = steps
+		else:
+			dy = steps
+		x,y=event.x(), event.y()
+		self.makeCurrent()
+		self.delegate.onMouseScroll( dx, dy, x, y )
+
+	def enterEvent(self, event):
+		self.makeCurrent()
+		self.delegate.onMouseEnter()
+
+	def leaveEvent(self, event):
+		self.makeCurrent()
+		self.delegate.onMouseLeave()
+
+	def clearModifierKeyState( self ): # workaround for canvas focus loss without give keyrelease event
+		self.makeCurrent()
+		self.delegate.onKeyUp( 'lshift' )
+		self.delegate.onKeyUp( 'lctrl'  )
+		self.delegate.onKeyUp( 'lalt'   )
+		self.delegate.onKeyUp( 'meta'   )
+
+	def keyPressEvent(self, event):
+		if event.isAutoRepeat(): return
+		# if self.keyGrabbingCount == 0:
+		# 	self.grabKeyboard()
+		# self.keyGrabbingCount += 1
+		key=event.key()
+		self.makeCurrent()
+		self.delegate.onKeyDown(convertKeyCode(key))
+
+	def keyReleaseEvent(self, event):
+		# self.keyGrabbingCount -= 1
+		# if self.keyGrabbingCount == 0:
+		# 	self.releaseKeyboard()
+		key=event.key()
+		self.makeCurrent()
+		self.delegate.onKeyUp(convertKeyCode(key))
+
+##----------------------------------------------------------------##
+
+QTKeymap={
+	205 : "lalt" ,
+	178 : "pause" ,
+	255 : "menu" ,
+	44  : "," ,
+	48  : "0" ,
+	52  : "4" ,
+	56  : "8" ,
+	180 : "sysreq" ,
+	64  : "@" ,
+	174 : "return" ,
+	55  : "7" ,
+	92  : "\\" ,
+	176 : "insert" ,
+	68  : "d" ,
+	72  : "h" ,
+	76  : "l" ,
+	80  : "p" ,
+	84  : "t" ,
+	88  : "x" ,
+	190 : "right" ,
+	204 : "meta" ,
+	170 : "escape" ,
+	186 : "home" ,
+	96  : "'" ,
+	32  : "space" ,
+	51  : "3" ,
+	173 : "backspace" ,
+	193 : "pagedown" ,
+	47  : "slash" ,
+	59  : ";" ,
+	208 : "scrolllock" ,
+	91  : "[" ,
+	67  : "c" ,
+	90  : "z" ,
+	71  : "g" ,
+	202 : "lshift" ,
+	75  : "k" ,
+	79  : "o" ,
+	83  : "s" ,
+	87  : "w" ,
+	177 : "delete" ,
+	191 : "down" ,
+	46  : "." ,
+	50  : "2" ,
+	54  : "6" ,
+	58  : ":" ,
+	66  : "b" ,
+	70  : "f" ,
+	74  : "j" ,
+	192 : "pageup" ,
+	189 : "up" ,
+	78  : "n" ,
+	82  : "r" ,
+	86  : "v" ,
+	229 : "f12" ,
+	230 : "f13" ,
+	227 : "f10" ,
+	228 : "f11" ,
+	231 : "f14" ,
+	232 : "f15" ,
+	203 : "lctrl" ,
+	218 : "f1" ,
+	219 : "f2" ,
+	220 : "f3" ,
+	221 : "f4" ,
+	222 : "f5" ,
+	223 : "f6" ,
+	224 : "f7" ,
+	225 : "f8" ,
+	226 : "f9" ,
+	171 : "tab" ,
+	207 : "numlock" ,
+	187 : "end" ,
+	45  : "-" ,
+	49  : "1" ,
+	53  : "5" ,
+	57  : "9" ,
+	61  : "=" ,
+	93  : "]" ,
+	65  : "a" ,
+	69  : "e" ,
+	73  : "i" ,
+	77  : "m" ,
+	81  : "q" ,
+	85  : "u" ,
+	89  : "y" ,
+	188 : "left" ,
+}
+
+def convertKeyCode(k):
+	if k>1000: k = (k&0xff)+(255 - 0x55)
+	return QTKeymap.get(k, k)

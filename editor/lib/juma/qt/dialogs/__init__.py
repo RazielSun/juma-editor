@@ -1,0 +1,1 @@
+from ColorPickerDialog import ColorPickerDialog, requestColorDialog

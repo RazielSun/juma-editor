@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from PySide import QtGui, QtCore
+from PySide.QtCore import QPoint
 
 def restrainWidgetToScreen( widget ):
 	screenRect = QtGui.QApplication.desktop().availableGeometry(widget.mapToGlobal( QPoint(0,0) ));
