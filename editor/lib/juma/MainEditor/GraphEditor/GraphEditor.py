@@ -285,7 +285,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		self.setIndentation( 13 )
 
 	def getHeaderInfo( self ):
-		return [('Name',160), ('V',32 ), ('L',32 ), ( 'Layer', 50 ), ('', -1) ]
+		return [('Name',160), ('V',32 ), ('L',32 ), ('', -1) ] #( 'Layer', 50 ), ('', -1) ]
 
 	def getReadonlyItemDelegate( self ):
 		return ReadonlyGraphTreeItemDelegate( self )
@@ -305,7 +305,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 	def getNodeChildren( self, node ):
 		className = node.className(node)
 		output = []
-		if className == 'EntityGroup': # GROUP
+		if className == 'Group': # GROUP
 			children = node.children
 			for index in children:
 				output.append( children[index] )
@@ -316,53 +316,23 @@ class GraphTreeWidget( GenericTreeWidget ):
 	def updateItemContent( self, item, node, **option ):
 		name = None
 		item.setData( 0, Qt.UserRole, 0 )
+		className = node.className(node)
 
-		item.setText( 0, node.name or '<unnamed>' )
-		item.setIcon( 0, getIcon('dot') )
+		if className == 'Group': # GROUP
+			item.setText( 0, node.name or '<group>' )
+			item.setIcon( 0, getIcon('folder') )
+		else: # SPRITE LABEL BUTTON
+			item.setText( 0, node.name or '<widget>' )
+			item.setIcon( 0, getIcon('dot') )
 
-		# if isMockInstance( node, 'EntityGroup' ):
-		# 	item.setText( 0, node.name or '<unnamed>' )
-		# 	item.setIcon( 0, getIcon('entity_group') )
-		# 	if node.isLocalVisible( node ):
-		# 		item.setIcon( 1, getIcon( 'entity_vis' ) )
-		# 	else:
-		# 		item.setIcon( 1, getIcon( 'entity_invis' ) )
-
-		# 	if node.isLocalEditLocked( node ):
-		# 		item.setIcon( 2, getIcon( 'entity_lock' ) )
-		# 	else:
-		# 		item.setIcon( 2, getIcon( 'entity_nolock' ) )
-		# 	item.setData( 0, Qt.UserRole, 1 )
-
-		# elif isMockInstance( node, 'Entity' ):
-		# 	if node['FLAG_PROTO_SOURCE']:
-		# 		item.setIcon( 0, getIcon('proto') )
-		# 	elif node['PROTO_INSTANCE_STATE']:
-		# 		item.setIcon( 0, getIcon('instance') )
-		# 	elif node['__proto_history']:
-		# 		item.setIcon( 0, getIcon('instance-sub') )
-		# 	elif isMockInstance( node, 'ProtoContainer' ):
-		# 		item.setIcon( 0, getIcon('instance-container') )
-		# 	else:
-		# 		item.setIcon( 0, getIcon('obj') )
-		# 	item.setText( 0, node.name or '<unnamed>' )
-	
-		# 	layerName = node.getLayer( node )
-		# 	if isinstance( layerName, tuple ):
-		# 		item.setText( 3, '????' )
-		# 	else:
-		# 		item.setText( 3, layerName )
-		# 	# item.setText( 2, node.getClassName( node ) )
-		# 	# item.setFont( 0, _fontAnimatable )
-		# 	if node.isLocalVisible( node ):
-		# 		item.setIcon( 1, getIcon( 'entity_vis' ) )
-		# 	else:
-		# 		item.setIcon( 1, getIcon( 'entity_invis' ) )
-
-		# 	if node.isLocalEditLocked( node ):
-		# 		item.setIcon( 2, getIcon( 'entity_lock' ) )
-		# 	else:
-		# 		item.setIcon( 2, getIcon( 'entity_nolock' ) )
+	def getItemFlags( self, node ):
+		flagNames = {}
+		className = node.className(node)
+		if className == 'Group': # GROUP
+			pass
+		else: # SPRITE LABEL BUTTON
+			flagNames['droppable'] = False
+		return flagNames
 
 	##----------------------------------------------------------------##
 	# Event Callback

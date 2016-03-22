@@ -219,6 +219,16 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		return []
 
 	##----------------------------------------------------------------##
+	def _calcItemFlags( self, node ):
+		flags = Qt.ItemIsEnabled 
+		flagNames = self.getItemFlags( node )
+		if flagNames.get( 'selectable', True ): flags |= Qt.ItemIsSelectable
+		if flagNames.get( 'draggable',  True ): flags |= Qt.ItemIsDragEnabled
+		if flagNames.get( 'droppable',  True ): flags |= Qt.ItemIsDropEnabled
+		if self.getOption( 'editable', False ):
+			if flagNames.get( 'editable',   True ): flags |= Qt.ItemIsEditable
+		return flags
+
 	def _updateItem(self, node, updateLog=None, **option):
 		item = self.getItemByNode(node)
 		if not item:
@@ -231,8 +241,8 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.refreshing = True
 		self.updateItemContent( item, node, **option )
-		# flags = self._calcItemFlags( node )
-		# item.setFlags( flags )
+		flags = self._calcItemFlags( node )
+		item.setFlags( flags )
 		self.refreshing = False
 
 		if option.get('updateChildren',False):
@@ -280,6 +290,9 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self._removeItem( item )
 			return True
 		return False
+
+	def getItemFlags( self, node ):
+		return {}
 
 	##----------------------------------------------------------------##
 	def loadTreeStates( self ):
