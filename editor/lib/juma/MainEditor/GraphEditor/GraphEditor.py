@@ -74,6 +74,7 @@ class GraphEditor( MainEditorModule ):
 		self.contextMenu = self.addMenu( 'widget_context', dict( label = 'Widgets' ) )
 		self.addMenuItem( 'widget_context/create_sprite', dict( label = 'Sprite' ) )
 		self.addMenuItem( 'widget_context/create_label', dict( label = 'Label' ) )
+		self.addMenuItem( 'widget_context/create_button_color', dict( label = 'ButtonColor' ) )
 		self.addMenuItem( 'widget_context/create_button', dict( label = 'Button' ) )
 		self.addMenuItem( 'widget_context/create_group', dict( label = 'Group' ) )
 
@@ -163,6 +164,9 @@ class GraphEditor( MainEditorModule ):
 
 		elif name == 'create_label':
 			self.createWidget( 'Label' )
+
+		elif name == 'create_button_color':
+			self.createWidget( 'ButtonColor' )
 
 		elif name == 'create_button':
 			self.createWidget( 'Button' )
@@ -283,6 +287,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		# self.adjustingRange = False
 		# self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )
 		self.setIndentation( 13 )
+		self.currentDragItem = None
 
 	def getHeaderInfo( self ):
 		return [('Name',160), ('V',32 ), ('L',32 ), ('', -1) ] #( 'Layer', 50 ), ('', -1) ]
@@ -313,6 +318,21 @@ class GraphTreeWidget( GenericTreeWidget ):
 			pass
 		return output
 
+	def reparentNode( self, target, pitem, **option ): # NEED ADD SUBLING
+		if target and pitem:
+			node = target.node
+			if node:
+				pnode = None
+				if pitem == 'root':
+					pnode = self.getRootNode()
+				else:
+					pnode = pitem.node
+				if pnode:
+					node.detach( node )
+					pnode.addChild( pnode, node )
+					return True			
+		return False
+
 	def updateItemContent( self, item, node, **option ):
 		name = None
 		item.setData( 0, Qt.UserRole, 0 )
@@ -335,9 +355,42 @@ class GraphTreeWidget( GenericTreeWidget ):
 		return flagNames
 
 	##----------------------------------------------------------------##
+	def dropEvent( self, event ):		
+		p = self.dropIndicatorPosition()
+		pos = False
+		if p == QtGui.QAbstractItemView.OnItem: # reparent
+			pos = 'on'
+		elif p == QtGui.QAbstractItemView.AboveItem:
+			pos = 'above'
+		elif p == QtGui.QAbstractItemView.BelowItem:
+			pos = 'below'
+		else:
+			pos = 'viewport'
+
+		target = self.itemAt( event.pos() )
+		item = self.currentDragItem
+		print("dropEvent pos: {} ::{} {} node:: ".format(pos, item, target))
+		ok = False
+		if pos == 'on':
+			ok = self.reparentNode( item, target )
+		# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
+		elif pos == 'viewport':
+			ok = self.reparentNode( item, 'root' )
+		# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
+		elif pos == 'above' or pos == 'below':
+			ok = self.reparentNode( item, target, mode = 'sibling' )
+		# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node, mode = 'sibling' )
+
+		if ok:
+			super( GenericTreeWidget, self ).dropEvent( event )
+		else:
+			event.setDropAction( Qt.IgnoreAction )
+
+	##----------------------------------------------------------------##
 	# Event Callback
 	##----------------------------------------------------------------##
 	def onClicked(self, item, col):
+		self.currentDragItem = item
 		print("onClicked", item, col)
 
 	def onDClicked(self, item, col):
@@ -350,6 +403,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 			selections=[item.node for item in items]
 			self.module.changeSelection(selections)
 		else:
+			self.currentDragItem = None
 			self.module.changeSelection(None)
 
 	def onItemActivated(self, item, col):

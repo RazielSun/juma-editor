@@ -97,5 +97,6 @@ class GroupEditorObject(EntityEditorObject):
 
 registerFrameworkEditorBuilder( "Sprite", SpriteEditorObject )
 registerFrameworkEditorBuilder( "Label", LabelEditorObject )
+registerFrameworkEditorBuilder( "ButtonColor", ButtonEditorObject )
 registerFrameworkEditorBuilder( "Button", ButtonEditorObject )
 registerFrameworkEditorBuilder( "Group", GroupEditorObject )

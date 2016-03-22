@@ -218,6 +218,11 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	def getNodeChildren( self, node ):
 		return []
 
+	def setFocusedItem(self, item ):
+		idx = self.indexFromItem( item )
+		if idx:
+			self.setCurrentIndex( idx )
+
 	##----------------------------------------------------------------##
 	def _calcItemFlags( self, node ):
 		flags = Qt.ItemIsEnabled 
@@ -297,6 +302,23 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 	##----------------------------------------------------------------##
 	def loadTreeStates( self ):
 		pass
+
+	##----------------------------------------------------------------##
+	def dropEvent( self, ev ):		
+		p = self.dropIndicatorPosition()
+		pos = False
+		if p == QtGui.QAbstractItemView.OnItem: # reparent
+			pos = 'on'
+		elif p == QtGui.QAbstractItemView.AboveItem:
+			pos = 'above'
+		elif p == QtGui.QAbstractItemView.BelowItem:
+			pos = 'below'
+		else:
+			pos = 'viewport'
+
+		targetItem = self.itemAt( ev.pos() )
+		if self.onDropEvent( targetItem.node, pos, ev ) != False:
+			super( GenericTreeWidget, self ).dropEvent( ev )
 
 	##----------------------------------------------------------------##
 	# Event Callback

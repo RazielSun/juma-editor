@@ -1,5 +1,6 @@
 local Sprite = require("ui.Sprite")
 local Label = require("ui.Label")
+local ButtonColor = require("ui.ButtonColor")
 local Button = require("ui.Button")
 local Group = require("ui.Group")
 
@@ -32,6 +33,8 @@ function GraphEditor:createWidget( widget_type )
 		widget = Sprite()
 	elseif widget_type == "Label" then
 		widget = Label()
+	elseif widget_type == "ButtonColor" then
+		widget = ButtonColor()
 	elseif widget_type == "Button" then
 		widget = Button()
 	elseif widget_type == "Group" then
