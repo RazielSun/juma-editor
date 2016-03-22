@@ -13,6 +13,14 @@ class ReadonlyItemDelegate( QtGui.QStyledItemDelegate ):
 		return None
 
 ##----------------------------------------------------------------##
+class GenericTreeWidgetItem( QtGui.QTreeWidgetItem ):
+	def __eq__(self, other):
+		return str(self) == str(other)
+
+	def __ne__(self, other):
+		return str(self) != str(other)
+
+##----------------------------------------------------------------##
 class GenericTreeWidget( QtGui.QTreeWidget ):
 	def __init__( self, *args, **option ):
 		super(GenericTreeWidget, self).__init__(*args)
@@ -31,7 +39,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		self.option = option
 		headerInfo = self.getHeaderInfo()
-		headerItem = QtGui.QTreeWidgetItem()
+		headerItem = GenericTreeWidgetItem()
 		self.setHeaderItem(headerItem)
 		self.setItemDelegate( self.defaultItemDelegate )
 		self.resetHeader()
@@ -140,7 +148,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.rootItem = self.invisibleRootItem()
 
 	def createItem( self ):
-		item  = QtGui.QTreeWidgetItem()
+		item  = GenericTreeWidgetItem()
 		return item
 
 	def getItemByNode(self, node):
@@ -255,6 +263,23 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		# 		item.setSelected( True )
 		# 		if kw.get('goto',True) : 
 		# 			self.gotoNode( node )
+
+	##----------------------------------------------------------------##
+	def _removeItem( self, item ):
+		for child in item.takeChildren():
+			self._removeItem( child )
+		node = item.node
+		item.node = None
+		del self.nodeDict[ node ]
+		( item.parent() or self.rootItem ).removeChild( item )
+		return True
+
+	def removeNode(self, node):		
+		item = self.getItemByNode( node )
+		if item and item != self.rootItem:
+			self._removeItem( item )
+			return True
+		return False
 
 	##----------------------------------------------------------------##
 	def loadTreeStates( self ):

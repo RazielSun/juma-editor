@@ -45,6 +45,17 @@ function GraphEditor:createWidget( widget_type )
 	return widget
 end
 
+function GraphEditor:removeWidget( widget )
+	local success = false
+
+	if widget then
+		local scene = self:getScene()
+		success = scene:removeWidgetToActiveGroup( widget )
+	end
+
+	return success
+end
+
 function GraphEditor:saveScene()
 	local scene = self:getScene()
 	if scene then

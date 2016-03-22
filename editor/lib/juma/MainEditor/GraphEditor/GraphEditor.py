@@ -138,8 +138,11 @@ class GraphEditor( MainEditorModule ):
 		node = self.delegate.safeCallMethod( self.luaMgrId, 'createWidget', widget )
 		self.tree.addNode( node, expanded = False )
 
-	def destroyItem(self):
-		pass
+	def removeWidget(self, item):
+		node = item.node
+		if node:
+			if self.tree.removeNode( node ):
+				self.delegate.safeCallMethod( self.luaMgrId, 'removeWidget', node )
 
 	##----------------------------------------------------------------##
 	def openContextMenu( self ):
@@ -226,8 +229,6 @@ class GraphEditor( MainEditorModule ):
 
 	def onEntityPickableChanged( self, entity ):
 		self.tree.refreshNodeContent( entity )
-
-
 
 ##----------------------------------------------------------------##
 
@@ -403,12 +404,12 @@ class GraphTreeWidget( GenericTreeWidget ):
 		print("onItemChanged", item, col)
 
 	def onDeletePressed( self ):
-		print("onDeletePressed")
-		# self.syncSelection = False
-		# item0 = self.currentItem()
-		# item1 = self.itemBelow( item0 )
+		self.syncSelection = False
+		item0 = self.currentItem()
+		item1 = self.itemBelow( item0 )
+		self.module.removeWidget( item0 ) # FIXME
 		# self.module.doCommand( 'scene_editor/remove_entity' )
-		# if item1:
-		# 	self.setFocusedItem( item1 )
-		# self.syncSelection = True
-		# self.onItemSelectionChanged()
+		if item1:
+			self.setFocusedItem( item1 )
+		self.syncSelection = True
+		self.onItemSelectionChanged()

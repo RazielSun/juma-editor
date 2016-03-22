@@ -77,6 +77,31 @@ function EditorScene:addWidgetToActiveGroup( widget )
 	self.activeGroup:addChild( widget )
 end
 
+function EditorScene:removeWidgetToActiveGroup( widget )
+	return self:removeWidget( widget, self.activeGroup )
+end
+
+function EditorScene:removeWidget( widget, group )
+	local success = false
+
+	for _, child in ipairs(group.children) do
+		if child == widget then
+			success = true
+		elseif child:className() == 'Group' then
+			success = self:removeWidget( widget, child )
+		end
+		if success then
+			break
+		end
+	end
+
+	if success then
+		group:removeChild( widget )
+	end
+
+	return success
+end
+
 ---------------------------------------------------------------------------------
 
 function EditorScene:save()
