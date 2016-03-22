@@ -142,8 +142,7 @@ class GamePreview( MainEditorModule ):
 		self.enableMenu( 'main/preview/stop_game',   False )
 
 	def onStop( self ):
-		self.getProject().setConfig( "preview_width", self.viewWidth )
-		self.getProject().setConfig( "preview_height", self.viewHeight )
+		self.saveViewSize()
 
 		if self.updateTimer:
 			self.updateTimer.stop()
@@ -157,6 +156,10 @@ class GamePreview( MainEditorModule ):
 	def refresh( self ):
 		self.canvas.updateGL()
 
+	def saveViewSize( self ):
+		self.getProject().setConfig( "preview_width", self.viewWidth )
+		self.getProject().setConfig( "preview_height", self.viewHeight )
+
 	def updateViewValues( self ):
 		self.viewWidth = self.getProject().getConfig( "preview_width", 320 )
 		self.viewHeight = self.getProject().getConfig( "preview_height", 480 )
@@ -167,8 +170,8 @@ class GamePreview( MainEditorModule ):
 		# GLWidget.getSharedWidget().makeCurrent()
 		self.getRuntime().changeRenderContext( 'game', self.viewWidth, self.viewHeight )
 
-	def updateView(self):
-		if self.paused: return
+	def updateView(self, force=False):
+		if self.paused and not force: return
 		self.makeCurrent()
 		if self.getRuntime().updateAKU():
 			self.canvas.forceUpdateGL()
@@ -187,11 +190,13 @@ class GamePreview( MainEditorModule ):
 		runtime.renderAKU()
 
 	def onMoaiReset( self ):
+		self.saveViewSize()
 		self.updateViewValues()
 		runtime = self.getRuntime()
 		runtime.createRenderContext( 'game' )
 		runtime.setLuaEnvResolution( self.viewWidth, self.viewHeight )
 		runtime.runGame()
+		self.updateView( True )
 
 	def openWindow(self, title, width, height):
 		# self.canvas.resize(width, height)

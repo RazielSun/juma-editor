@@ -122,9 +122,6 @@ class LuaObjectField( Field ):
 
 ##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
-	def __init__( self, name ):
-		self.name = name
-
 	def createField( self, id, t, **option ):
 		return LuaObjectField(self, id, t, **option)
 
@@ -133,6 +130,10 @@ class LuaObjectModel(ObjectModel):
 		typeId  = luaTypeToPyType( typeId ) # convert lua-typeId -> pythontype
 		setting = data and luaTableToDict(data) or {}
 		return self.addFieldInfo( name, typeId, **setting )
+
+	def addLuaAssetFieldInfo(self, name, assetType, data = None):
+		typeId = AssetRefType( assetType )
+		return self.addLuaFieldInfo( name, typeId, data )
 
 ##----------------------------------------------------------------##
 class ModelBridge(object):

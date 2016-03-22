@@ -2,6 +2,7 @@ import re, fnmatch
 
 from PySide                 import QtCore, QtGui, QtOpenGL
 from PySide.QtCore 			import Qt
+from PySide.QtGui 			import QApplication
 
 from juma.qt.helpers 		import repolishWidget
 
@@ -234,6 +235,27 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 		return True
 
+	def selectNode( self, node, **kw ):
+		pass
+		# if not kw.get( 'add', False ):
+		# 		self.selectionModel().clearSelection()
+		# if not node: return
+		# if isinstance( node, (tuple, list) ):
+		# 	for n in node:
+		# 		item = self.getItemByNode( n )
+		# 		if item:
+		# 			item.setSelected( True )
+		# 	if kw.get('goto',True) : 
+		# 		first = len( node ) > 0 and node[0]
+		# 		if first:
+		# 			self.gotoNode( first )
+		# else:
+		# 	item = self.getItemByNode( node )
+		# 	if item:
+		# 		item.setSelected( True )
+		# 		if kw.get('goto',True) : 
+		# 			self.gotoNode( node )
+
 	##----------------------------------------------------------------##
 	def loadTreeStates( self ):
 		pass
@@ -277,6 +299,16 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def onDeletePressed( self ):
 		pass
+
+	##----------------------------------------------------------------##
+	#custom control
+	def keyPressEvent( self, ev ):
+		modifiers = QApplication.keyboardModifiers()
+		key = ev.key()
+		if key in ( Qt.Key_Delete, Qt.Key_Backspace ):			
+			self.onDeletePressed()
+		elif key == Qt.Key_Escape: 
+			self.selectNode( [] ) # deselect all
 
 ##----------------------------------------------------------------##
 class GenericTreeFilter( QtGui.QWidget ):

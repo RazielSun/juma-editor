@@ -5,13 +5,12 @@ from PySide.QtCore import Qt
 from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
 from FieldEditorControls import *
 from juma.qt.IconCache import getIcon
-
-
+from juma.core.ModelManager import AssetRefType
 
 ##----------------------------------------------------------------##
-class BasicAssetEditorWidget( QtGui.QWidget ):
+class BasicAssetRefEditorWidget( QtGui.QWidget ):
 	def __init__( self, parent ):
-		super(BasicAssetEditorWidget, self).__init__( parent )
+		super(BasicAssetRefEditorWidget, self).__init__( parent )
 		self.layout = layout = QtGui.QHBoxLayout( self )
 		layout.setSpacing(0)
 		layout.setContentsMargins(0,0,0,0)
@@ -27,7 +26,7 @@ class BasicAssetEditorWidget( QtGui.QWidget ):
 		layout.addWidget( self.btn )
 
 ##----------------------------------------------------------------##
-class BasicAssetFieldEditor( FieldEditor ):
+class BasicAssetRefFieldEditor( FieldEditor ):
 	def get( self ):
 		return self.assetEdit.line.text()
 
@@ -35,7 +34,7 @@ class BasicAssetFieldEditor( FieldEditor ):
 		self.assetEdit.line.setText( value or '' )
 
 	def initEditor( self, container ):
-		self.assetEdit = BasicAssetEditorWidget( container )
+		self.assetEdit = BasicAssetRefEditorWidget( container )
 		self.assetEdit.btn.clicked.connect( self.doAction )
 		return self.assetEdit
 
@@ -47,4 +46,4 @@ class BasicAssetFieldEditor( FieldEditor ):
 
 ##----------------------------------------------------------------##
 
-registerSimpleFieldEditorFactory( '@asset', BasicAssetFieldEditor )
+registerSimpleFieldEditorFactory( AssetRefType, BasicAssetRefFieldEditor )

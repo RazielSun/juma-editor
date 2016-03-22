@@ -68,9 +68,14 @@ class GraphEditor( MainEditorModule ):
         ], self )
 
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
-		self.addTool( 'hierarchy/create_group', label ='+ Group', icon = 'folder_plus' )
-		self.addTool( 'hierarchy/create_entity', label ='+ Entity', icon = 'plus_mint' )
-		self.addTool( 'hierarchy/destroy_item', label ='- Item', icon = 'minus' )
+		self.addTool( 'hierarchy/create_widget', label ='+ Entity', icon = 'plus_mint' )
+		# self.addTool( 'hierarchy/destroy_item', label ='- Item', icon = 'minus' )
+
+		self.contextMenu = self.addMenu( 'widget_context', dict( label = 'Widgets' ) )
+		self.addMenuItem( 'widget_context/create_sprite', dict( label = 'Sprite' ) )
+		self.addMenuItem( 'widget_context/create_label', dict( label = 'Label' ) )
+		self.addMenuItem( 'widget_context/create_button', dict( label = 'Button' ) )
+		self.addMenuItem( 'widget_context/create_group', dict( label = 'Group' ) )
 
 		#SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
@@ -129,17 +134,19 @@ class GraphEditor( MainEditorModule ):
 	def openSceneSettings(self):
 		pass
 
-	def createGroup(self):
-		pass
-
-	def createEntity(self):
-		node = self.delegate.safeCallMethod( self.luaMgrId, 'createEntity' )
+	def createWidget(self, widget):
+		node = self.delegate.safeCallMethod( self.luaMgrId, 'createWidget', widget )
 		self.tree.addNode( node, expanded = False )
 
 	def destroyItem(self):
 		pass
 
-##----------------------------------------------------------------##
+	##----------------------------------------------------------------##
+	def openContextMenu( self ):
+		if self.contextMenu:
+			self.contextMenu.popUp()
+
+	##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
 		if name == 'scene_open':
@@ -148,16 +155,25 @@ class GraphEditor( MainEditorModule ):
 		elif name == 'scene_save':
 			self.saveScene()
 
+		elif name == 'create_sprite':
+			self.createWidget( 'Sprite' )
+
+		elif name == 'create_label':
+			self.createWidget( 'Label' )
+
+		elif name == 'create_button':
+			self.createWidget( 'Button' )
+
+		elif name == 'create_group':
+			self.createWidget( 'Group' )
+
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'scene_settings':
 			self.openSceneSettings()
 
-		elif name == 'create_group':
-			self.createGroup()
-
-		elif name == 'create_entity':
-			self.createEntity()
+		elif name == 'create_widget':
+			self.openContextMenu()
 
 		elif name == 'destroy_item':
 			self.destroyItem()
@@ -210,6 +226,8 @@ class GraphEditor( MainEditorModule ):
 
 	def onEntityPickableChanged( self, entity ):
 		self.tree.refreshNodeContent( entity )
+
+
 
 ##----------------------------------------------------------------##
 
@@ -278,7 +296,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		return self.module.getActiveSceneRootGroup()
 
 	def getNodeParent( self, node ):
-		p = node.getParentOrGroup( node )
+		p = node.getParent( node )
 		if p:
 			return p
 		return None
@@ -386,3 +404,11 @@ class GraphTreeWidget( GenericTreeWidget ):
 
 	def onDeletePressed( self ):
 		print("onDeletePressed")
+		# self.syncSelection = False
+		# item0 = self.currentItem()
+		# item1 = self.itemBelow( item0 )
+		# self.module.doCommand( 'scene_editor/remove_entity' )
+		# if item1:
+		# 	self.setFocusedItem( item1 )
+		# self.syncSelection = True
+		# self.onItemSelectionChanged()

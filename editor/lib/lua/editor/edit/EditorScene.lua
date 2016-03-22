@@ -1,7 +1,7 @@
 local Serpent = require("util.Serpent")
 
 local Layout = require("core.Layout")
-local EntityGroup = require("core.EntityGroup")
+local Group = require("ui.Group")
 
 ---------------------------------------------------------------------------------
 --
@@ -25,7 +25,7 @@ function EditorScene:init( params )
 	layer:setViewport(viewport)
 	layer:setCamera(camera)
 
-	local rootNode = params.rootNode or EntityGroup()
+	local rootNode = params.rootNode or Group()
 	rootNode:setLayer( layer )
 	self:setActiveGroup( rootNode )
 
@@ -73,8 +73,8 @@ function EditorScene:setActiveGroup( node )
 	self.activeGroup = node
 end
 
-function EditorScene:addNodeToActiveGroup( node )
-	self.activeGroup:addChild( node )
+function EditorScene:addWidgetToActiveGroup( widget )
+	self.activeGroup:addChild( widget )
 end
 
 ---------------------------------------------------------------------------------

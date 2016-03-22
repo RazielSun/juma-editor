@@ -1,11 +1,22 @@
-local Entity = require("core.Entity")
+local Sprite = require("ui.Sprite")
+local Label = require("ui.Label")
+local Button = require("ui.Button")
+local Group = require("ui.Group")
+
+---------------------------------------------------------------------------------
+--
+-- @type GraphEditor
+--
+---------------------------------------------------------------------------------
 
 local GraphEditor = Class("GraphEditor")
 
+---------------------------------------------------------------------------------
 function GraphEditor:init()
 	-- print("GraphEditor inited")
 end
 
+---------------------------------------------------------------------------------
 function GraphEditor:getScene()
 	return EditorLayoutMgr:getCurrentScene()
 end
@@ -15,11 +26,23 @@ function GraphEditor:getSceneRootNode()
 	return scene:getRootNode()
 end
 
-function GraphEditor:createEntity()
-	local node = Entity()
-	local scene = self:getScene()
-	scene:addNodeToActiveGroup( node )
-	return node
+function GraphEditor:createWidget( widget_type )
+	local widget = nil
+	if widget_type == "Sprite" then
+		widget = Sprite()
+	elseif widget_type == "Label" then
+		widget = Label()
+	elseif widget_type == "Button" then
+		widget = Button()
+	elseif widget_type == "Group" then
+		widget = Group()
+	end
+
+	if widget then
+		local scene = self:getScene()
+		scene:addWidgetToActiveGroup( widget )
+	end
+	return widget
 end
 
 function GraphEditor:saveScene()
@@ -38,5 +61,7 @@ function GraphEditor:loadScene( path )
 	end
 	return nil
 end
+
+---------------------------------------------------------------------------------
 
 graphEditor = GraphEditor()

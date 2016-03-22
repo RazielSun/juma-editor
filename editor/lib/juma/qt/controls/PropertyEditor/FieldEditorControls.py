@@ -5,7 +5,7 @@ from PySide.QtCore import Qt, Signal
 class FieldEditorLabel( QtGui.QLabel ):
 	def __init__(self, *arg):
 		super(FieldEditorLabel, self).__init__( *arg )
-		self.setMinimumSize( 50, 16 )
+		self.setMinimumSize( 30, 16 )
 		self.setSizePolicy(
 			QtGui.QSizePolicy.Expanding,
 			QtGui.QSizePolicy.Expanding

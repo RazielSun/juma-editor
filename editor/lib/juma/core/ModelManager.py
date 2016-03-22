@@ -31,7 +31,7 @@ class DataType(object):
 		raise 'not implemented'
 
 	def deserialize(self, data):
-		raise 'not implemented'
+		raise 'not implemlented'
 
 	def register( self ):
 		raise 'not implemented'
@@ -41,7 +41,7 @@ class PythonValueType(DataType):
 	def __init__(self ,t, defaultValue):
 		self._type = t
 		name = repr(t)
-		self._defaultValue=defaultValue
+		self._defaultValue = defaultValue
 
 	def getName(self):
 		return repr(self._type)
@@ -56,10 +56,28 @@ class PythonValueType(DataType):
 		return self
 
 ##----------------------------------------------------------------##
-class ObjectModel(DataType):
-	fieldMap = {}
-	fieldList = []
+class AssetRefType( DataType ):
+	def __init__( self, assetType ):
+		self.assetType = assetType
 
+	def getName( self ):
+		return self.assetType
+
+	def getAssetType( self, contextObject ):
+		atype = self.assetType
+		if isinstance( atype, ( str, unicode ) ):
+			return atype
+		else: #asset type getter function
+			return atype( contextObject )
+
+	def getSuperType( self ):
+		return AssetRefType
+
+	def repr( self, value ):
+		return '<%s> %s' % ( self.assetType, value )
+
+##----------------------------------------------------------------##
+class ObjectModel(DataType):
 	def __init__(self, name, superType = None, **option):
 		self.name      = name
 		self.fieldMap  = {}

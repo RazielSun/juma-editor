@@ -16,11 +16,23 @@ local function createPyModel( model )
 			get   = f.__getter,
 			set   = f.__setter,
 			label = f.__label,
-			-- meta  = f.__meta
+			meta  = f.__meta
 		}
 		local id     = f.__id
 		local typeid = f.__type
-		pmodel:addLuaFieldInfo( id, typeid, option )
+		local meta 	 = f.__meta
+
+		if meta then
+			for key, value in pairs(meta) do
+				option[key] = value
+			end
+		end
+
+		if typeid == "@asset" then
+			pmodel:addLuaAssetFieldInfo( id, f.__itemtype, option )
+		else
+			pmodel:addLuaFieldInfo( id, typeid, option )
+		end
 	end
 
 	model.__py_model = pmodel

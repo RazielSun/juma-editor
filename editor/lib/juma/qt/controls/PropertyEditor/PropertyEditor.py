@@ -74,8 +74,8 @@ class PropertyEditor( QtGui.QFrame ):
 		layout = QtGui.QFormLayout()
 		self.setLayout( layout )
 		self.layout = layout
-		self.layout.setHorizontalSpacing( 4 )
-		self.layout.setVerticalSpacing( 1 )
+		self.layout.setHorizontalSpacing( 5 )
+		self.layout.setVerticalSpacing( 5 )
 		self.layout.setContentsMargins(4,4,4,4)
 		self.layout.setLabelAlignment( Qt.AlignLeft )
 		self.layout.setFieldGrowthPolicy( QtGui.QFormLayout.ExpandingFieldsGrow )
@@ -124,6 +124,8 @@ class PropertyEditor( QtGui.QFrame ):
 			for field in model.fieldList:
 				lastId = currentId
 				currentId = field.id
+				if field.getOption('no_edit'):
+					continue
 				self.addFieldEditor( field )			
 			assert self.refreshing
 			self.refreshing = False
@@ -154,7 +156,7 @@ class PropertyEditor( QtGui.QFrame ):
 		if not target:
 			return
 		editor = self.editors.get( field, None )
-		if editor:			
+		if editor:
 			v = self.model.getFieldValue( target, field.id )
 			self.refreshing = True # avoid duplicated update
 			editor.refreshing = True

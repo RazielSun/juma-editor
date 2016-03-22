@@ -77,4 +77,25 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 
 ##----------------------------------------------------------------##
 
-registerFrameworkEditorBuilder( "Entity", EntityEditorObject )
+class SpriteEditorObject(EntityEditorObject):
+	def __init__(self):
+		super(SpriteEditorObject, self).__init__()
+
+class LabelEditorObject(EntityEditorObject):
+	def __init__(self):
+		super(LabelEditorObject, self).__init__()
+
+class ButtonEditorObject(EntityEditorObject):
+	def __init__(self):
+		super(ButtonEditorObject, self).__init__()
+
+class GroupEditorObject(EntityEditorObject):
+	def __init__(self):
+		super(GroupEditorObject, self).__init__()
+
+##----------------------------------------------------------------##
+
+registerFrameworkEditorBuilder( "Sprite", SpriteEditorObject )
+registerFrameworkEditorBuilder( "Label", LabelEditorObject )
+registerFrameworkEditorBuilder( "Button", ButtonEditorObject )
+registerFrameworkEditorBuilder( "Group", GroupEditorObject )

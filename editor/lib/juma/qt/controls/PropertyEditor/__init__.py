@@ -8,4 +8,4 @@ from CommonFieldEditors import \
 
 ##----------------------------------------------------------------##
 import VecFieldEditor
-import AssetFieldEditor
+import AssetRefFieldEditor
