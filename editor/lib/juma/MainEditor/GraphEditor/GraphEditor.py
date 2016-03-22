@@ -336,14 +336,15 @@ class GraphTreeWidget( GenericTreeWidget ):
 	def updateItemContent( self, item, node, **option ):
 		name = None
 		item.setData( 0, Qt.UserRole, 0 )
-		className = node.className(node)
 
-		if className == 'Group': # GROUP
-			item.setText( 0, node.name or '<group>' )
-			item.setIcon( 0, getIcon('folder') )
-		else: # SPRITE LABEL BUTTON
-			item.setText( 0, node.name or '<widget>' )
-			item.setIcon( 0, getIcon('dot') )
+		if node and (node is not None):
+			className = node.className(node)
+			if className == 'Group': # GROUP
+				item.setText( 0, node.name or '<group>' )
+				item.setIcon( 0, getIcon('folder') )
+			else: # SPRITE LABEL BUTTON
+				item.setText( 0, node.name or '<widget>' )
+				item.setIcon( 0, getIcon('dot') )
 
 	def getItemFlags( self, node ):
 		flagNames = {}
@@ -390,7 +391,6 @@ class GraphTreeWidget( GenericTreeWidget ):
 	# Event Callback
 	##----------------------------------------------------------------##
 	def onClicked(self, item, col):
-		self.currentDragItem = item
 		print("onClicked", item, col)
 
 	def onDClicked(self, item, col):
@@ -400,11 +400,13 @@ class GraphTreeWidget( GenericTreeWidget ):
 		if not self.syncSelection: return
 		items = self.selectedItems()
 		if items:
+			self.currentDragItem = items[0] # FIXME
 			selections=[item.node for item in items]
 			self.module.changeSelection(selections)
 		else:
-			self.currentDragItem = None
+			self.currentDragItem = None # FIXME
 			self.module.changeSelection(None)
+		print("onItemSelectionChanged", len(items), self.currentDragItem)
 
 	def onItemActivated(self, item, col):
 		print("onItemActivated", item, col)

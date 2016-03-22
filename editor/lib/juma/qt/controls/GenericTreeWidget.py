@@ -169,18 +169,17 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		else:
 			pitem = self.getItemByNode( pnode )
 			if not pitem:
-				pitem = self.rootItem
-				pitem.node = pnode
-				self.nodeDict[ pnode ] = pitem
+				pitem = self.addNode( pnode, False )
 			item = self.createItem()
 			item.node = node
 			pitem.addChild( item )
 
 		self.nodeDict[ node ] = item
 
-		item.setExpanded( self.getOption( 'expanded', True ) )
+		item.setExpanded( self.getOption( 'expanded', False ) )
 
 		self.updateItem( node )
+		
 		if addChildren:
 			children = self.getNodeChildren( node )
 			if children:
