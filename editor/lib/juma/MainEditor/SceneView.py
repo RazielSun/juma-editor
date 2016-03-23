@@ -121,12 +121,11 @@ class SceneView( MainEditorModule ):
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
-		# self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
+		self.canvas.safeCallMethod( 'scene', 'onSelectionChanged', selection )
 
 	def changeEditTool( self, name ):
 		self.canvas.makeCurrent()
-		print("SceneView changeEditTool", name)
-		# self.canvas.safeCallMethod( 'view', 'changeEditTool', name )
+		self.canvas.safeCallMethod( 'scene', 'changeEditTool', name )
 
 	def onSceneOpen( self, title ):
 		self.canvas.makeCurrent()

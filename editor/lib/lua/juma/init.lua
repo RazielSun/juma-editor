@@ -11,6 +11,10 @@ package.path = package.path
 require("include")
 assert(Class, "No 'Class' constructor for Editor Lua Framework")
 
+if ResourceMgr then
+	ResourceMgr:addResourceDirectory( ASSET_EDITOR_PATH )
+end
+
 --------------------------------------------------------------------
 -- Init Juma
 require("keymap")
@@ -18,9 +22,17 @@ require("bridge")
 require("ModelProvider")
 require("MOAIModelProvider")
 
+--------------------------------------------------------------------
+
 MOAIApp = MOAIApp or require('MOAIApp')
 MOAINotificationsIOS = MOAINotifications or require('MOAINotifications')
 
+function setGameResolution( width, height )
+	MOAIEnvironment.setValue('horizontalResolution', width)
+	MOAIEnvironment.setValue('verticalResolution', height)
+end
+
 --------------------------------------------------------------------
 -- Init Editor Framework
-require("setup_editor")
+require("include-editor")
+

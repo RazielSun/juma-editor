@@ -49,6 +49,9 @@ def luaTableToDict( luat, deepCopy = False ): #no deep conversion
 			res[k] = luat[k]
 	return res
 
+def sizeOfPythonObject(list):
+	return len(list)
+
 ##----------------------------------------------------------------##
 ## ModelBridge
 ##----------------------------------------------------------------##

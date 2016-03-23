@@ -1,5 +1,5 @@
 local EditorScene = require("edit.EditorScene")
-local InputDevice = require("core.InputDevice")
+local InputDevice = require("input.InputDevice")
 
 ---------------------------------------------------------------------------------
 --

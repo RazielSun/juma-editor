@@ -4,6 +4,8 @@
 
 local bridge = PYTHON_BRIDGE
 
+sizeOfPythonObject   = bridge.sizeOfPythonObject
+
 function dictToTablePlain( dict )
 	local t = {}
 	for k in python.iter( dict ) do
@@ -19,6 +21,16 @@ local decodeDict = bridge.decodeDict
 function tableToDict( table )
 	local json = MOAIJsonParser.encode(table)
 	return decodeDict( json )
+end
+
+local _sizeOf = sizeOfPythonObject
+function listToTable( list )
+	local c=_sizeOf( list )
+	local r={}
+	for i = 1, c do
+		r[i]=list[i-1]
+	end
+	return r
 end
 
 --------------------------------------------------------------------

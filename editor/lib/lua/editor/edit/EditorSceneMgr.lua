@@ -18,7 +18,7 @@ function EditorSceneMgr:addScene( scene )
 	local key = scene:getContextName()
 	self.scenes[key] = scene
 
-	RenderContextMgr:pushRenderTable( key, scene.renderTable )
+	RenderContextMgr:pushRenderTable( key, scene.layers )
 
 	self.currentScene = scene
 	self.currentKey = key
