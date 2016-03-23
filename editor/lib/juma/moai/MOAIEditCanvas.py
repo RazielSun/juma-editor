@@ -11,7 +11,15 @@ from juma.qt.controls.GLWidget 	import GLWidget
 from MOAIRuntime              	import MOAIRuntime, MOAILuaDelegate
 from MOAICanvasBase           	import MOAICanvasBase
 
+##----------------------------------------------------------------##
+def isBoundMethod( v ):
+	return hasattr(v,'__func__') and hasattr(v,'im_self')
 
+def boundToClosure( value ):
+	if isBoundMethod( value ):
+		func = value
+		value = lambda *args: func(*args)
+	return value
 
 ##----------------------------------------------------------------##
 class MOAIEditCanvasLuaDelegate( MOAILuaDelegate ):
@@ -143,6 +151,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		if self.scriptPath:
 			self.makeCurrent()
 			env = {
+				'contextName'      : boundToClosure( self.contextName )
 			}
 		# 		'updateCanvas'     : boundToClosure( self.updateCanvas ),
 		# 		'hideCursor'       : boundToClosure( self.hideCursor ),
@@ -152,7 +161,6 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		# 		'getCanvasSize'    : boundToClosure( self.getCanvasSize ),
 		# 		'startUpdateTimer' : boundToClosure( self.startUpdateTimer ),
 		# 		'stopUpdateTimer'  : boundToClosure( self.stopUpdateTimer ),
-		# 		'contextName'      : boundToClosure( self.contextName )				
 		# 	}
 			
 			if self.scriptEnv:

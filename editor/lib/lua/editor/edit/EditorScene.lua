@@ -9,30 +9,55 @@ local Group = require("ui.Group")
 --
 ---------------------------------------------------------------------------------
 
-local EditorScene = Class( Layout, "EditorScene" ):FIELDS{
-	Field("rootNode")	:object()	:getset("RootNode")	:label("RootNode");
-}
+local EditorScene = Class( Layout, "EditorScene" )
 
 ---------------------------------------------------------------------------------
+
+local function onDrawBack()
+	MOAIGfxDevice.setPenWidth( 1 )
+	MOAIGfxDevice.setPenColor( .2, .2, .2, .5 )
+
+	MOAIDraw.drawLine( 0, 1, 0, -1 )
+	MOAIDraw.drawLine( 1, 0, -1, 0 )
+end
 
 function EditorScene:init( params )
 	params = params or {}
 
 	local layer = MOAILayer.new()
-	local camera = MOAICamera2D.new()
-	local viewport = MOAIViewport.new()
+	local overlay = MOAILayer.new()
+	local backlayer = MOAILayer.new()
 
-	layer:setViewport(viewport)
-	layer:setCamera(camera)
+	backlayer:setUnderlayTable( { onDrawBack } )
+	self.renderTable = { backlayer, layer, overlay }
+	self:createViewport()
+	self:createCamera()
 
 	local rootNode = params.rootNode or Group()
 	rootNode:setLayer( layer )
 	self:setActiveGroup( rootNode )
 
 	self.layer = layer
+	self.overlay = overlay
+	self.backlayer = backlayer
 	self.rootNode = rootNode
+end
+
+function EditorScene:createCamera()
+	local camera = MOAICamera2D.new()
+	for _, layer in ipairs(self.renderTable) do
+		layer:setCamera(camera)
+	end
 	self.camera = camera
 	self.cameraScl = 1
+end
+
+function EditorScene:createViewport()
+	local viewport = MOAIViewport.new()
+	
+	for _, layer in ipairs(self.renderTable) do
+		layer:setViewport(viewport)
+	end
 	self.viewport = viewport
 	self.viewWidth = 0
 	self.viewHeight = 0

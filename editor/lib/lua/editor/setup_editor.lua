@@ -14,7 +14,8 @@ end
 -- Setups
 
 RenderContextMgr = require("edit.RenderContextMgr")
-EditorLayoutMgr = require("edit.EditorLayoutMgr")
+EditorSceneMgr = require("edit.EditorSceneMgr")
+require("edit.EditorCanvasScene")
 
 --------------------------------------------------------------------------------
 -- Resources

@@ -19,11 +19,11 @@ end
 
 ---------------------------------------------------------------------------------
 function GraphEditor:getScene()
-	return EditorLayoutMgr:getCurrentScene()
+	return EditorSceneMgr:getCurrentScene()
 end
 
 function GraphEditor:getSceneRootNode()
-	local scene = EditorLayoutMgr:getCurrentScene()
+	local scene = EditorSceneMgr:getCurrentScene()
 	return scene:getRootNode()
 end
 

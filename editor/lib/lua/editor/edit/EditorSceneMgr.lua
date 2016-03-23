@@ -2,28 +2,23 @@ local EditorScene = require("edit.EditorScene")
 
 ---------------------------------------------------------------------------------
 --
--- @type EditorLayoutMgr
+-- @type EditorSceneMgr
 --
 ---------------------------------------------------------------------------------
 
-local EditorLayoutMgr = {}
+local EditorSceneMgr = {}
 
-EditorLayoutMgr.scenes = {}
-EditorLayoutMgr.currentKey = nil
-EditorLayoutMgr.currentScene = nil
+EditorSceneMgr.scenes = {}
+EditorSceneMgr.currentKey = nil
+EditorSceneMgr.currentScene = nil
 
 ---------------------------------------------------------------------------------
 
-function EditorLayoutMgr:setupScene()
-	local key = RenderContextMgr:getCurrentContextKey()
+function EditorSceneMgr:addScene( scene )
+	local key = scene:getContextName()
+	self.scenes[key] = scene
 
-	local scene = self.scenes[key]
-	if not scene then
-		scene = EditorScene()
-		self.scenes[key] = scene
-	end
-
-	RenderContextMgr:pushRenderTable( key, { scene.layer } )
+	RenderContextMgr:pushRenderTable( key, scene.renderTable )
 
 	self.currentScene = scene
 	self.currentKey = key
@@ -31,7 +26,7 @@ function EditorLayoutMgr:setupScene()
 	return scene
 end
 
-function EditorLayoutMgr:getCurrentScene()
+function EditorSceneMgr:getCurrentScene()
 	local key = RenderContextMgr:getCurrentContextKey()
 	if key == self.currentKey then
 		return self.currentScene
@@ -44,4 +39,4 @@ end
 
 ---------------------------------------------------------------------------------
 
-return EditorLayoutMgr
+return EditorSceneMgr
