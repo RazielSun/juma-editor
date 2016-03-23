@@ -15,7 +15,7 @@ local EditorScene = Class( Layout, "EditorScene" )
 
 local function onDrawBack()
 	MOAIGfxDevice.setPenWidth( 1 )
-	MOAIGfxDevice.setPenColor( .2, .2, .2, .5 )
+	MOAIGfxDevice.setPenColor( .1, .1, .1, .5 )
 
 	MOAIDraw.drawLine( 0, 1, 0, -1 )
 	MOAIDraw.drawLine( 1, 0, -1, 0 )
@@ -24,12 +24,12 @@ end
 function EditorScene:init( params )
 	params = params or {}
 
-	local layer = MOAILayer.new()
-	local overlay = MOAILayer.new()
 	local backlayer = MOAILayer.new()
+	local layer = MOAILayer.new()
+	local forelayer = MOAILayer.new()
 
 	backlayer:setUnderlayTable( { onDrawBack } )
-	self.renderTable = { backlayer, layer, overlay }
+	self.renderTable = { backlayer, layer, forelayer }
 	self:createViewport()
 	self:createCamera()
 
@@ -38,7 +38,7 @@ function EditorScene:init( params )
 	self:setActiveGroup( rootNode )
 
 	self.layer = layer
-	self.overlay = overlay
+	self.forelayer = forelayer
 	self.backlayer = backlayer
 	self.rootNode = rootNode
 end
@@ -63,7 +63,56 @@ function EditorScene:createViewport()
 	self.viewHeight = 0
 end
 
+function EditorScene:setInputDevice( inputDevice )
+	self.inputDevice = inputDevice
+
+	local function inputHandler( event )
+		self:inputDeviceHandler( event )
+	end
+
+	inputDevice:addListener( inputHandler )
+end
+
 ---------------------------------------------------------------------------------
+
+function EditorScene:inputDeviceHandler( event )
+	if self.rootNode then
+		event.wx, event.wy = self:getSceneCoords( event.x, event.y )
+		self:notify( self.rootNode, event )
+	end
+end
+
+function EditorScene:getSceneCoords( ex, ey )
+	if not ex and not ey then return -99999, -99999 end
+	local cx, cy = self.camera:getLoc()
+	local vx, vy = self.viewWidth * 0.5, self.viewHeight * 0.5
+	local x, y = ex - vx + cx, ey - vy + cy
+	return x, y
+end
+
+function EditorScene:notify( group, event )
+	local canceled = false
+	if group.children then
+		local children = group.children
+		local child = nil
+		for i = #children, 1, -1 do
+			child = children[i]
+			if child:className() == 'Group' then
+				canceled = self:notify( child, event )
+			else
+				if child.onEvent then
+					child:onEvent( event )
+					canceled = event.canceled
+				end
+			end
+
+			if canceled then
+				break
+			end
+		end
+	end
+	return canceled
+end
 
 function EditorScene:resize( w, h )
 	self.viewport:setSize(w,h)

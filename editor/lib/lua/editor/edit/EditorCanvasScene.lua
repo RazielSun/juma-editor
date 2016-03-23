@@ -94,6 +94,6 @@ function createEditorCanvasScene()
 	-- 	return mock.InputScript{ device = inputDevice }
 	-- end
 
-	scene.inputDevice = inputDevice
+	scene:setInputDevice( inputDevice )
 	return scene
 end 
