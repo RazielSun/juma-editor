@@ -8,7 +8,26 @@ from exceptions import *
 from juma.core  import *
 from moaipy 	import *
 
+from juma.core.SelectionManager import getSelectionManager
+
 ##----------------------------------------------------------------##
+def emitPythonSignal(name, *args):	
+	signals.emit(name, *args)
+
+def emitPythonSignalNow(name, *args):	
+	signals.emitNow(name, *args)
+
+##----------------------------------------------------------------##
+
+def newPythonList(*arg):
+	return list(arg)
+
+def newPythonDict():
+	return {}
+
+def appendPythonList(list, data):
+	list.append(data)
+	
 def getDict( d, key, default=None ):
 	return d.get( key, default )
 
@@ -51,6 +70,12 @@ def luaTableToDict( luat, deepCopy = False ): #no deep conversion
 
 def sizeOfPythonObject(list):
 	return len(list)
+
+##----------------------------------------------------------------##
+def getSelection( key ):
+	selectionManager = getSelectionManager( key )
+	s = selectionManager.getSelection()
+	return s
 
 ##----------------------------------------------------------------##
 ## ModelBridge

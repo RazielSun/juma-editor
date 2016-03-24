@@ -4,8 +4,14 @@
 
 local bridge = PYTHON_BRIDGE
 
-sizeOfPythonObject   = bridge.sizeOfPythonObject
+sizeOfPythonObject  = bridge.sizeOfPythonObject
+appendPythonList 	= bridge.appendPythonList
+newPythonList 		= bridge.newPythonList
 
+emitPythonSignal   	= bridge.emitPythonSignal
+emitPythonSignalNow = bridge.emitPythonSignalNow
+
+--------------------------------------------------------------------
 function dictToTablePlain( dict )
 	local t = {}
 	for k in python.iter( dict ) do
@@ -23,6 +29,14 @@ function tableToDict( table )
 	return decodeDict( json )
 end
 
+function tableToList(table)
+	local list = newPythonList()
+	for i, v in ipairs(table) do
+		appendPythonList(list,v)
+	end
+	return list
+end
+
 local _sizeOf = sizeOfPythonObject
 function listToTable( list )
 	local c=_sizeOf( list )
@@ -31,6 +45,11 @@ function listToTable( list )
 		r[i]=list[i-1]
 	end
 	return r
+end
+
+function getSelection( key )
+	assert( type(key)=='string', 'selection key expected' )
+	return listToTable( bridge.getSelection( key ) )
 end
 
 --------------------------------------------------------------------

@@ -35,7 +35,6 @@ class MOAIEditCanvasLuaDelegate( MOAILuaDelegate ):
 		self._onKeyUp      = None
 
 		self._onResize     = None
-		self._postDraw     = None
 		self._onUpdate     = None
 
 	def load(self, scriptPath, scriptEnv = None ):
@@ -59,7 +58,6 @@ class MOAIEditCanvasLuaDelegate( MOAILuaDelegate ):
 		self._onKeyUp      = env.onKeyUp
 
 		self._onResize     = env.onResize
-		self._postDraw     = env.postDraw
 		self._onUpdate     = env.onUpdate
 
 	def onMouseDown(self, btn, x,y):
@@ -88,9 +86,6 @@ class MOAIEditCanvasLuaDelegate( MOAILuaDelegate ):
 	
 	def onUpdate(self, step):
 		if self._onUpdate: self._onUpdate(step)
-
-	def postDraw(self):
-		if self._postDraw: self._postDraw()
 
 	def onResize(self,w,h):
 		if self._onResize: self._onResize(w,h)
@@ -151,9 +146,10 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		if self.scriptPath:
 			self.makeCurrent()
 			env = {
-				'contextName'      : boundToClosure( self.contextName )
+				'contextName'      : boundToClosure( self.contextName ),
+				'updateCanvas'     : boundToClosure( self.updateCanvas ),
 			}
-		# 		'updateCanvas'     : boundToClosure( self.updateCanvas ),
+		# 		
 		# 		'hideCursor'       : boundToClosure( self.hideCursor ),
 		# 		'showCursor'       : boundToClosure( self.showCursor ),
 		# 		'setCursor'        : boundToClosure( self.setCursorById ),
@@ -188,7 +184,6 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.makeCurrent()
 		runtime.setBufferSize( self.viewWidth, self.viewHeight )
 		runtime.manualRender()
-		self.delegate.postDraw()
 
 	def updateCanvas( self, **option ):
 		currentTime = getTime()

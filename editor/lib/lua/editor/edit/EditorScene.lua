@@ -1,6 +1,6 @@
 local Serpent = require("util.Serpent")
 
-local Event = require("input.Event")
+local InputEvent = require("input.InputEvent")
 local Scene = require("ui.Scene")
 local Group = require("ui.Group")
 local CanvasToolManager = require("edit.tools.CanvasToolManager")
@@ -23,25 +23,15 @@ local function onDrawBack()
 	MOAIDraw.drawLine( 1, 0, -1, 0 )
 end
 
-local function onDrawFore()
-	MOAIGfxDevice.setPenWidth( 1 )
-	MOAIGfxDevice.setPenColor( .1, .1, .1, .5 )
-
-	applyColor 'handle-all'
-	MOAIDraw.fillRect( 0, 0, 1, 1 )
-end
-
 function EditorScene:init( params )
 	params = params or {}
 	Scene.init( self, params )
 
+	self.background = self:addLayer( MOAILayer.new() )
 	self.layer = self:addLayer( MOAILayer.new() )
-	self.fore = self:addLayer( MOAILayer.new() )
+	self.toolManager = self:add( CanvasToolManager() )
 
-	self.toolManager = CanvasToolManager()
-	self.toolManager:addLayer( self.fore )
-
-	self.layer:setUnderlayTable( { onDrawBack } )
+	self.background:setUnderlayTable( { onDrawBack } ) --# FIXME
 	self:createViewport()
 	self:createCamera()
 
@@ -53,16 +43,18 @@ end
 
 function EditorScene:createCamera()
 	local camera = MOAICamera2D.new()
-	self.layer:setCamera(camera)
-	self.fore:setCamera(camera)
+	for _, layer in ipairs(self.layers) do
+		layer:setCamera(camera)
+	end
 	self.camera = camera
 	self.cameraScl = 1
 end
 
 function EditorScene:createViewport()
 	local viewport = MOAIViewport.new()
-	self.layer:setViewport(viewport)
-	self.fore:setViewport(viewport)
+	for _, layer in ipairs(self.layers) do
+		layer:setViewport(viewport)
+	end
 	self.viewport = viewport
 	self.viewWidth = 0
 	self.viewHeight = 0
@@ -87,6 +79,10 @@ function EditorScene:resize( w, h )
 	self.viewport:setScale(w,h)
 
 	self.viewWidth, self.viewHeight = w, h
+end
+
+function EditorScene:updateCanvas()
+	self.env.updateCanvas()
 end
 
 ---------------------------------------------------------------------------------
@@ -170,6 +166,7 @@ end
 function EditorScene:onSelectionChanged( list )
 	selection = listToTable( list )
 	self.toolManager:onSelectionChanged( selection )
+	self:updateCanvas()
 end
 
 function EditorScene:changeEditTool( name )
@@ -177,65 +174,59 @@ function EditorScene:changeEditTool( name )
 end
 
 function EditorScene:mouseEventHandler( event )
-	if event.type == Event.MOUSE_ENTER or event.type == Event.MOUSE_LEAVE then return end
+	if event.type == InputEvent.MOUSE_ENTER or event.type == InputEvent.MOUSE_LEAVE then return end
 
-	local layer = nil
-	local prop = nil
-	local gameObject = nil
-	for i = #self.layers, 1, -1 do
-		layer = self.layers[i]
-		if layer then
-			local lx, ly = layer:wndToWorld( event.x, event.y )
-			local prop = self:getTouchableProp( layer, lx, ly )
-			if prop and prop.gameObject then
-				local breaked = self:handledObjectMouseEvent( prop.gameObject, event )
-				if breaked then
-					break
+	local intercept = self.toolManager:onMouseEvent( event )
+
+	if not intercept then
+		if event.type == InputEvent.MOUSE_UP and self.toolManager.toolId == 'select_object' then
+			local layer = nil
+			local prop = nil
+			local finded = false
+			for i = #self.layers, 1, -1 do
+				layer = self.layers[i]
+				if layer then
+					local lx, ly = layer:wndToWorld( event.x, event.y )
+					prop = self:getProp( layer, lx, ly, false )
+					if prop and prop.gameObject then
+						finded = true
+						emitPythonSignal( 'selection.target', tableToList( {prop.gameObject} ), 'scene' )
+						break
+					end
 				end
+			end
+
+			if not finded then
+				emitPythonSignal( 'selection.target', tableToList( {} ), 'scene' )
 			end
 		end
 	end
+
+	-- local layer = nil
+	-- local prop = nil
+	-- local gameObject = nil
+	-- for i = #self.layers, 1, -1 do
+	-- 	layer = self.layers[i]
+	-- 	if layer then
+	-- 		local lx, ly = layer:wndToWorld( event.x, event.y )
+	-- 		local prop = self:getTouchableProp( layer, lx, ly )
+	-- 		if prop and prop.gameObject then
+	-- 			local breaked = self:handledObjectMouseEvent( prop.gameObject, event )
+	-- 			if breaked then
+	-- 				break
+	-- 			end
+	-- 		end
+	-- 	end
+	-- end
 end
 
 function EditorScene:keyEventHandler( event )
-	print("keyEventHandler", event)
+	-- print("keyEventHandler", event)
 end
-
--- function EditorScene:getSceneCoords( ex, ey )
--- 	if not ex and not ey then return -99999, -99999 end
--- 	local cx, cy = self.camera:getLoc()
--- 	local vx, vy = self.viewWidth * 0.5, self.viewHeight * 0.5
--- 	local x, y = ex - vx + cx, ey - vy + cy
--- 	return x, y
--- end
-
--- function EditorScene:notify( group, event )
--- 	local canceled = false
--- 	if group.children then
--- 		local children = group.children
--- 		local child = nil
--- 		for i = #children, 1, -1 do
--- 			child = children[i]
--- 			if child:className() == 'Group' then
--- 				canceled = self:notify( child, event )
--- 			else
--- 				if child.onEvent then
--- 					child:onEvent( event )
--- 					canceled = event.canceled
--- 				end
--- 			end
-
--- 			if canceled then
--- 				break
--- 			end
--- 		end
--- 	end
--- 	return canceled
--- end
 
 function EditorScene:handledObjectMouseEvent( obj, event )
 	local breaked = true
-	print("handledObjectMouseEvent:", obj:className(), event.type, event.x, event.y)
+	-- print("handledObjectMouseEvent:", obj:className(), event.type, event.x, event.y)
 	return breaked
 end
 

@@ -82,6 +82,7 @@ class GraphEditor( MainEditorModule ):
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
 
 		signals.connect( 'selection.changed', self.onSelectionChanged )
+		signals.connect( 'selection.target', self.onSelectionTargered )
 		signals.connect( 'selection.hint',    self.onSelectionHint    )
 
 		signals.connect( 'entity.added',      self.onEntityAdded      )
@@ -190,12 +191,19 @@ class GraphEditor( MainEditorModule ):
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
-		# if self.tree.syncSelection:
-		# 	self.tree.blockSignals( True )
-		# 	self.tree.selectNode( None )
-		# 	for e in selection:
-		# 		self.tree.selectNode( e, add = True)
-		# 	self.tree.blockSignals( False )
+		if self.tree.syncSelection:
+			self.tree.blockSignals( True )
+			self.tree.selectNode( None )
+			for e in selection:
+				self.tree.selectNode( e, add = True)
+			self.tree.blockSignals( False )
+
+	def onSelectionTargered( self, selection, key ):
+		if key != 'scene': return
+		if len(selection) > 0:
+			self.changeSelection( selection )
+		else:
+			self.changeSelection(None)
 
 	def onSelectionHint( self, selection ):
 		pass
@@ -406,7 +414,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		else:
 			self.currentDragItem = None # FIXME
 			self.module.changeSelection(None)
-		print("onItemSelectionChanged", len(items), self.currentDragItem)
+		print("GraphEditor onItemSelectionChanged", len(items), self.currentDragItem)
 
 	def onItemActivated(self, item, col):
 		print("onItemActivated", item, col)

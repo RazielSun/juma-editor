@@ -162,7 +162,7 @@ class IntrospectorInstance(object):
 		layout.setContentsMargins(0, 0, 0, 0)
 		layout.addStretch()
 
-		self.updateTimer = self.container.startTimer( 10, self.onUpdateTimer )
+		self.updateTimer = self.container.startTimer( 0.1, self.onUpdateTimer )
 		self.updatePending = False
 
 	def getTarget(self):
@@ -186,6 +186,15 @@ class IntrospectorInstance(object):
 			self.target = t[0]
 
 		self.addObjectEditor( self.target )
+
+	def hasTarget( self, target ):
+		if self.getObjectEditor( target ): return True
+		return False
+
+	def getObjectEditor( self, targetObject ):
+		for editor in self.editors:
+			if editor.getTarget() == targetObject: return editor
+		return None
 
 	def addObjectEditor( self, target, **option ):
 		self.scroll.hide()
@@ -257,8 +266,18 @@ class IntrospectorInstance(object):
 		self.header.hide()
 		self.editors = []
 
+	def refresh(self, target = None):
+		for editor in self.editors:
+			if not target or editor.getTarget() == target:
+				editor.refresh()
+
 	def onUpdateTimer(self):
-		pass
+		if self.updatePending == True:
+			self.updatePending = False
+			self.refresh()
+
+	def scheduleUpdate( self ):
+		self.updatePending = True
 
 ##----------------------------------------------------------------##
 def registerEditorBuilder( typeId, editorBuilder ):
@@ -277,7 +296,7 @@ class Introspector( MainEditorModule ):
 		self.editorBuilderRegistry = {}
 
 	def onLoad( self ):
-		self.container = self.requestDockWindow('Introspector',
+		self.window = self.requestDockWindow('Introspector',
 				title   = 'Inspector',
 				dock    = 'left',
 				minSize = (300,200)
@@ -285,10 +304,11 @@ class Introspector( MainEditorModule ):
 		self.requestInstance()
 		# SIGNALS
 		signals.connect( 'selection.changed', self.onSelectionChanged )
+		signals.connect( 'entity.modified',   self.onEntityModified )
 
 	def requestInstance(self):
 		instance = IntrospectorInstance()
-		instance.createWidget( self.container )
+		instance.createWidget( self.window )
 		self.instances.append( instance )
 		if not self.activeInstance:
 			self.activeInstance = instance
@@ -318,6 +338,7 @@ class Introspector( MainEditorModule ):
 
 	# CALLBACKS #
 	def onSelectionChanged( self, selection, key ):
+		print("onSelectionChanged:", selection, key)
 		if key != 'scene': return
 		if not self.activeInstance: return
 		target = None
@@ -328,6 +349,15 @@ class Introspector( MainEditorModule ):
 		else:
 			target=selection
 		self.activeInstance.setTarget(target) #first selection only?
+
+	def onEntityModified( self, entity, context=None ):
+		if context != 'introspector' :
+			self.refresh( entity, context )
+
+	def refresh( self, target = None, context = None ):
+		for ins in self.instances:
+			if not target or ins.hasTarget( target ):
+				ins.scheduleUpdate()
 
 ##----------------------------------------------------------------##
 

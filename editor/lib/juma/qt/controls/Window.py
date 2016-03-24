@@ -208,9 +208,9 @@ class SubWindow( QtGui.QMainWindow ):
     def hideTitleBar(self):
         pass
 
-    def startTimer(self, fps, trigger):
+    def startTimer(self, step, trigger):
         assert(hasattr(trigger,'__call__'))
-        interval = 1000/fps
+        interval = 1000 * step
         timer=QtCore.QTimer(self)
         timer.timeout.connect(trigger)
         timer.start(interval)

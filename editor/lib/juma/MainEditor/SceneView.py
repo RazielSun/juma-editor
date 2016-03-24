@@ -33,21 +33,27 @@ class SceneViewToolDragCamera( SceneViewTool ):
 	tool     = 'drag_camera'
 
 ##----------------------------------------------------------------##
+class SceneViewToolSelectObject( SceneViewTool ):
+	name     = 'scene_view_select_object'
+	shortcut = 'W'
+	tool     = 'select_object'
+
+##----------------------------------------------------------------##
 class SceneViewToolMoveObject( SceneViewTool ):
 	name     = 'scene_view_move_object'
-	shortcut = 'W'
+	shortcut = 'E'
 	tool     = 'move_object'
 
 ##----------------------------------------------------------------##
 class SceneViewToolRotateObject( SceneViewTool ):
 	name     = 'scene_view_rotate_object'
-	shortcut = 'E'
+	shortcut = 'R'
 	tool     = 'rotate_object'
 
 ##----------------------------------------------------------------##
 class SceneViewToolScaleObject( SceneViewTool ):
 	name     = 'scene_view_scale_object'
-	shortcut = 'R'
+	shortcut = 'T'
 	tool     = 'scale_object'
 
 ##----------------------------------------------------------------##
@@ -87,8 +93,15 @@ class SceneView( MainEditorModule ):
 
 		self.addTool(	'scene_view_tools/tool_drag_camera',
 			widget = SceneToolButton( 'scene_view_drag_camera',
-				icon = 'tools/moustache',
+				icon = 'tools/view',
 				label = 'Drag camera'
+				)
+			)
+
+		self.addTool(	'scene_view_tools/tool_select_object',
+			widget = SceneToolButton( 'scene_view_select_object',
+				icon = 'tools/target',
+				label = 'Select object'
 				)
 			)
 

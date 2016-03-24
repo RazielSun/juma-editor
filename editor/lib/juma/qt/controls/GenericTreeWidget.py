@@ -258,25 +258,40 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 		return True
 
 	def selectNode( self, node, **kw ):
-		pass
-		# if not kw.get( 'add', False ):
-		# 		self.selectionModel().clearSelection()
-		# if not node: return
-		# if isinstance( node, (tuple, list) ):
-		# 	for n in node:
-		# 		item = self.getItemByNode( n )
-		# 		if item:
-		# 			item.setSelected( True )
-		# 	if kw.get('goto',True) : 
-		# 		first = len( node ) > 0 and node[0]
-		# 		if first:
-		# 			self.gotoNode( first )
-		# else:
-		# 	item = self.getItemByNode( node )
-		# 	if item:
-		# 		item.setSelected( True )
-		# 		if kw.get('goto',True) : 
-		# 			self.gotoNode( node )
+		if not kw.get( 'add', False ):
+				self.selectionModel().clearSelection()
+		if not node: return
+		if isinstance( node, (tuple, list) ):
+			for n in node:
+				item = self.getItemByNode( n )
+				if item:
+					item.setSelected( True )
+			if kw.get('goto',True) : 
+				first = len( node ) > 0 and node[0]
+				if first:
+					self.gotoNode( first )
+		else:
+			item = self.getItemByNode( node )
+			if item:
+				item.setSelected( True )
+				if kw.get('goto',True) : 
+					self.gotoNode( node )
+
+	def editNode( self, node, col = 0 ):
+		item = self.getItemByNode( node )
+		if item:
+			self.editItem( item, col )
+
+	def scrollToNode( self, node ):
+		item = self.getItemByNode( node )
+		if item:
+			self.scrollToItem( item )
+
+	def gotoNode( self, node, col = 0 ):
+		item = self.getItemByNode( node )
+		if item:
+			self.scrollToItem( item )
+			self.setCurrentItem( item, col, QtGui.QItemSelectionModel.Current )
 
 	##----------------------------------------------------------------##
 	def _removeItem( self, item ):
