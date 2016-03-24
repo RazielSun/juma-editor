@@ -66,14 +66,14 @@ function CanvasToolManager:onMouseEvent( event )
 	local tool = self.activeTool
 	
 	if tool and tool.target then
-		if tool:inside( event.x, event.y ) and event.type == InputEvent.MOUSE_DOWN then
+		if tool:inside( event.x, event.y ) and event.eventName == InputEvent.MOUSE_DOWN then
 			tool:onMouseDown( event.x, event.y, event.btn )
 			return true
 		end
 
-		if event.type == InputEvent.MOUSE_UP then
+		if event.eventName == InputEvent.MOUSE_UP then
 			tool:onMouseUp( event.x, event.y, event.btn )
-		elseif event.type == InputEvent.MOUSE_MOVE then
+		elseif event.eventName == InputEvent.MOUSE_MOVE then
 			tool:onDrag( event.x, event.y, event.btn )
 		end
 		return true

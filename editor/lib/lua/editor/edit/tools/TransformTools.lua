@@ -61,7 +61,7 @@ function CanvasTool:inside( x, y )
 end
 
 function CanvasTool:wndToWorld( wx, wy )
-	local x, y = self.layer:wndToWorld( wx, wy, 0 )
+	local x, y = self.layer:wndToWorld( wx or 0, wy or 0, 0 )
 	return x, y
 end
 

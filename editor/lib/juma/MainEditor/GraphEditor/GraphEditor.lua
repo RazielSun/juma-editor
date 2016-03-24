@@ -62,7 +62,7 @@ end
 function GraphEditor:saveScene()
 	local scene = self:getScene()
 	if scene then
-		return scene:save()
+		return LayoutManager:save( scene:getRootNode() )
 	end
 	return nil
 end
@@ -70,8 +70,9 @@ end
 function GraphEditor:loadScene( path )
 	local scene = self:getScene()
 	if scene then
-		scene:load( path )
-		return scene.rootNode
+		local node = LayoutManager:load( path )
+		self:setRootNode( node )
+		return scene.node
 	end
 	return nil
 end

@@ -1,7 +1,6 @@
-local Serpent = require("util.Serpent")
 
 local InputEvent = require("input.InputEvent")
-local Scene = require("ui.Scene")
+local Scene = require("scenes.Scene")
 local Group = require("ui.Group")
 local CanvasToolManager = require("edit.tools.CanvasToolManager")
 
@@ -27,8 +26,8 @@ function EditorScene:init( params )
 	params = params or {}
 	Scene.init( self, params )
 
-	self.background = self:addLayer( MOAILayer.new() )
-	self.layer = self:addLayer( MOAILayer.new() )
+	self.background = self:addLayer()
+	self.layer = self:addLayer()
 	self.toolManager = self:add( CanvasToolManager() )
 
 	self.background:setUnderlayTable( { onDrawBack } ) --# FIXME
@@ -141,25 +140,6 @@ function EditorScene:removeWidget( widget, group )
 end
 
 ---------------------------------------------------------------------------------
-
-function EditorScene:save()
-	return Serpent.pretty( serialize( self.rootNode ), { comment = false } )
-end
-
-function EditorScene:load( path )
-	if path then
-		data = dofile(path)
-		if data then
-			node = deserialize( nil, data )
-
-			if node then
-				self:setRootNode( node )
-			end
-		end
-	end
-end
-
----------------------------------------------------------------------------------
 -- Callbacks
 ---
 
@@ -201,23 +181,6 @@ function EditorScene:mouseEventHandler( event )
 			end
 		end
 	end
-
-	-- local layer = nil
-	-- local prop = nil
-	-- local gameObject = nil
-	-- for i = #self.layers, 1, -1 do
-	-- 	layer = self.layers[i]
-	-- 	if layer then
-	-- 		local lx, ly = layer:wndToWorld( event.x, event.y )
-	-- 		local prop = self:getTouchableProp( layer, lx, ly )
-	-- 		if prop and prop.gameObject then
-	-- 			local breaked = self:handledObjectMouseEvent( prop.gameObject, event )
-	-- 			if breaked then
-	-- 				break
-	-- 			end
-	-- 		end
-	-- 	end
-	-- end
 end
 
 function EditorScene:keyEventHandler( event )
