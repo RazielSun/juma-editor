@@ -163,6 +163,17 @@ function EditorScene:removeWidget( widget, group )
 	return success
 end
 
+
+---------------------------------------------------------------------------------
+-- function CanvasView:pickAndSelect( x, y, pad )
+-- 	local picked = self:pick( x, y, pad )
+-- 	gii.changeSelection( 'scene', unpack( picked ) )
+-- 	return picked
+-- end
+function EditorScene:changeSelection( picked )
+	changeSelection( 'scene', unpack(picked) )
+end
+
 ---------------------------------------------------------------------------------
 -- Callbacks
 ---
@@ -178,12 +189,12 @@ function EditorScene:changeEditTool( name )
 end
 
 function EditorScene:mouseEventHandler( event )
-	if event.type == InputEvent.MOUSE_ENTER or event.type == InputEvent.MOUSE_LEAVE then return end
+	if event.eventName == InputEvent.MOUSE_ENTER or event.eventName == InputEvent.MOUSE_LEAVE then return end
 
 	local intercept = self.toolManager:onMouseEvent( event )
 
 	if not intercept then
-		if event.type == InputEvent.MOUSE_UP and self.toolManager.toolId == 'select_object' then
+		if event.eventName == InputEvent.MOUSE_UP and self.toolManager.toolId == 'select_object' then
 			local layer = nil
 			local prop = nil
 			local finded = false
@@ -194,18 +205,19 @@ function EditorScene:mouseEventHandler( event )
 					prop = self:getProp( layer, lx, ly, false )
 					if prop and prop.gameObject then
 						finded = true
-						emitPythonSignal( 'selection.target', tableToList( {prop.gameObject} ), 'scene' )
+						self:changeSelection( { prop.gameObject } )
 						break
 					end
 				end
 			end
 
 			if not finded then
-				emitPythonSignal( 'selection.target', tableToList( {} ), 'scene' )
+				self:changeSelection( {} )
 			end
 		end
 	end
 end
+
 
 function EditorScene:keyEventHandler( event )
 	-- print("keyEventHandler", event)

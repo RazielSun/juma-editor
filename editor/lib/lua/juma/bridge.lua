@@ -47,9 +47,59 @@ function listToTable( list )
 	return r
 end
 
+--------------------------------------------------------------------
+-- EDITOR RELATED
+--------------------------------------------------------------------
+function changeSelection( key, obj, ... )
+	assert( type(key)=='string', 'selection key expected' )
+	if obj then
+		bridge.changeSelection( key, newPythonList(obj,...) )
+	else
+		bridge.changeSelection( key, nil )
+	end
+end
+
+function addSelection( key, obj, ... )
+	assert( type(key)=='string', 'selection key expected' )
+	if obj then
+		bridge.addSelection( key, newPythonList(obj,...) )
+	else
+		bridge.addSelection( key, nil )
+	end
+end
+
+function removeSelection( key, obj, ... )
+	assert( type(key)=='string', 'selection key expected' )
+	if obj then
+		bridge.removeSelection( key, newPythonList(obj,...) )
+	else
+		bridge.removeSelection( key, nil )
+	end
+end
+
+function toggleSelection( key, obj, ... )
+	assert( type(key)=='string', 'selection key expected' )
+	if obj then
+		bridge.toggleSelection( key, newPythonList(obj,...) )
+	else
+		bridge.toggleSelection( key, nil )
+	end
+end
+
+
 function getSelection( key )
 	assert( type(key)=='string', 'selection key expected' )
 	return listToTable( bridge.getSelection( key ) )
+end
+
+app = bridge.app
+
+function getProject()
+	return app:getProject()
+end
+
+function getApp()
+	return app
 end
 
 --------------------------------------------------------------------

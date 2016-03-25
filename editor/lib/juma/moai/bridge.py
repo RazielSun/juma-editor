@@ -77,6 +77,22 @@ def getSelection( key ):
 	s = selectionManager.getSelection()
 	return s
 
+def changeSelection( key, targets = None ):
+	selectionManager = getSelectionManager( key )
+	selectionManager.changeSelection( targets )
+
+def addSelection( key, targets = None ):
+	selectionManager = getSelectionManager( key )
+	selectionManager.addSelection( targets )
+
+def toggleSelection( key, targets = None ):
+	selectionManager = getSelectionManager( key )
+	selectionManager.toggleSelection( targets )
+
+def removeSelection( key, targets = None ):
+	selectionManager = getSelectionManager( key )
+	selectionManager.removeSelection( targets )
+
 ##----------------------------------------------------------------##
 ## ModelBridge
 ##----------------------------------------------------------------##

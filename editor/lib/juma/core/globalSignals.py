@@ -32,7 +32,6 @@ register('preview.stop')
 register('preview.pause')
 
 register('selection.changed')
-register('selection.target')
 register('selection.hint')
 
 # register('game.pause')

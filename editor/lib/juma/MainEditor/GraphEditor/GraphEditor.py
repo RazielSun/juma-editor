@@ -82,7 +82,6 @@ class GraphEditor( MainEditorModule ):
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
 
 		signals.connect( 'selection.changed', self.onSelectionChanged )
-		signals.connect( 'selection.target', self.onSelectionTargered )
 		signals.connect( 'selection.hint',    self.onSelectionHint    )
 
 		signals.connect( 'entity.added',      self.onEntityAdded      )
@@ -197,13 +196,6 @@ class GraphEditor( MainEditorModule ):
 			for e in selection:
 				self.tree.selectNode( e, add = True)
 			self.tree.blockSignals( False )
-
-	def onSelectionTargered( self, selection, key ):
-		if key != 'scene': return
-		if len(selection) > 0:
-			self.changeSelection( selection )
-		else:
-			self.changeSelection(None)
 
 	def onSelectionHint( self, selection ):
 		pass
