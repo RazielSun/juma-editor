@@ -13,6 +13,10 @@ function DragCameraTool:init( id, layer )
 	self.target = nil
 end
 
+function DragCameraTool:setTargetLayer( targetLayer )
+	self.targetLayer = targetLayer
+end
+
 ---------------------------------------------------------------------------------
 function DragCameraTool:start()
 	self:updateSelection()
@@ -31,7 +35,7 @@ function DragCameraTool:inside( x, y )
 end
 
 function DragCameraTool:updateSelection()
-	local target = self.layer:getCamera()
+	local target = self.targetLayer:getCamera()
 	if target ~= self.target then
 		self:setTarget( target )
 	end

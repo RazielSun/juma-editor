@@ -28,28 +28,32 @@ function EditorScene:init( params )
 
 	self.background = self:addLayer()
 	self.layer = self:addLayer()
-	self.toolManager = self:add( CanvasToolManager() )
+	self.foreground = self:addLayer()
+
+	self.toolManager = CanvasToolManager( self.foreground, self.layer )
 
 	self.background:setUnderlayTable( { onDrawBack } ) --# FIXME
 	self:createViewport()
-	self:createCamera()
+
+	local camera = MOAICamera2D.new()
+	self.layer:setCamera(camera)
+	self.camera = camera
+
+	local forecamera = MOAICamera2D.new()
+	self.foreground:setCamera(forecamera)
+	self.forecamera = forecamera
+
+	forecamera:setAttrLink ( MOAITransform.INHERIT_LOC, camera, MOAITransform.TRANSFORM_TRAIT )
+
+	self.cameraScl = 1
+	self.maxCameraScl = 3
+	self.minCameraScl = 0.1
+	self.cameraSclStep = 0.1
 
 	local node = params.rootNode or Widget()
 	node:setLayer( self.layer )
 	self:setActiveGroup( node )
 	self.rootNode = node
-end
-
-function EditorScene:createCamera()
-	local camera = MOAICamera2D.new()
-	for _, layer in ipairs(self.layers) do
-		layer:setCamera(camera)
-	end
-	self.camera = camera
-	self.cameraScl = 1
-	self.maxCameraScl = 3
-	self.minCameraScl = 0.1
-	self.cameraSclStep = 0.1
 end
 
 function EditorScene:createViewport()
@@ -67,12 +71,6 @@ function EditorScene:setInputDevice( inputDevice )
 
 	self.inputDevice:addMouseListener( self.mouseEventHandler, self )
 	self.inputDevice:addKeyListener( self.keyEventHandler, self )
-end
-
-function EditorScene:add( addon )
-	local layer = addon.layer
-	self:addLayer( layer )
-	return addon
 end
 
 ---------------------------------------------------------------------------------

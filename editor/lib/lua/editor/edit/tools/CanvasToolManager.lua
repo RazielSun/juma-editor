@@ -15,10 +15,11 @@ end
 
 local CanvasToolManager = Class( "CanvasToolManager" )
 
-function CanvasToolManager:init()
+function CanvasToolManager:init( layer, targetLayer )
 	self.tools = {}
 	self.toolId = nil
-	self.layer = MOAILayer.new()
+	self.layer = layer
+	self.targetLayer = targetLayer
 end
 
 ---------------------------------------------------------------------------------
@@ -44,6 +45,9 @@ function CanvasToolManager:setTool( id )
 	if not tool then
 		if toolClass then
 			tool = toolClass( id, self.layer )
+			if tool.setTargetLayer then
+				tool:setTargetLayer( self.targetLayer )
+			end
 		else
 			return
 		end
