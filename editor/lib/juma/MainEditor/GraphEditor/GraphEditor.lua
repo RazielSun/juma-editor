@@ -44,6 +44,7 @@ function GraphEditor:createWidget( widget_type )
 	if widget then
 		local scene = self:getScene()
 		scene:addWidgetToActiveGroup( widget )
+		widget:setLoc( scene.camera:getLoc() )
 	end
 	return widget
 end

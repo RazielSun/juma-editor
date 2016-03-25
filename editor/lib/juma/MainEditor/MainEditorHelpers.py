@@ -73,8 +73,17 @@ class ToolSizeWidget( QtGui.QWidget ):
 		self.valueX = 320
 		self.valueY = 480
 
+		intValidator = QtGui.QIntValidator()
+		# floatValidator.setRange(0.0, 100.0)
+		
 		self.xEdit = self.createEdit()
 		self.yEdit = self.createEdit()
+
+		self.xEdit.setValidator( intValidator )
+		self.yEdit.setValidator( intValidator )
+
+		self.xEdit.textChanged.connect( self.valueChangedX )
+		self.yEdit.textChanged.connect( self.valueChangedY )
 
 		self.setup()
 
@@ -87,6 +96,18 @@ class ToolSizeWidget( QtGui.QWidget ):
 	def setup( self ):
 		self.xEdit.setText( '{}'.format(self.valueX) )
 		self.yEdit.setText( '{}'.format(self.valueY) )
+
+	def valueChangedX( self, text ):
+		if text =='':
+			text = '0'
+		self.valueX = int(text)
+		self.valuesChanged.emit( self.valueX, self.valueY )
+
+	def valueChangedY( self, text ):
+		if text =='':
+			text = '0'
+		self.valueY = int(text)
+		self.valuesChanged.emit( self.valueX, self.valueY )
 
 ##----------------------------------------------------------------##
 class ToolCoordWidget( ToolSizeWidget ):
@@ -104,5 +125,10 @@ class ToolCoordWidget( ToolSizeWidget ):
 		self.valueY = 0
 
 		self.setup()
+
+		btn.clicked.connect( self.btnClicked )
+
+	def btnClicked( self ):
+		self.gotoSignal.emit( self.valueX, self.valueY )
 
 	

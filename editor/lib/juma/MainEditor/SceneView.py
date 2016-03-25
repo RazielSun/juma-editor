@@ -69,9 +69,11 @@ class SceneView( MainEditorModule ):
 		self.window = self.requestDocumentWindow( title = 'new.layout' )
 
 		self.sizeWidget = ToolSizeWidget( None )
+		self.sizeWidget.valuesChanged.connect( self.onFrameResize )
 		self.sizeWidget.owner = self
 
 		self.coordWidget = ToolCoordWidget( None )
+		self.coordWidget.gotoSignal.connect( self.goToPoint )
 		self.coordWidget.owner = self
 
 		self.tool = self.addToolBar( 'scene_view_config', self.window.addToolBar() )
@@ -168,7 +170,7 @@ class SceneView( MainEditorModule ):
 		self.window.setWindowTitle( title )
 
 	def onFrameResize( self, width, height ):
-		pass
+		self.canvas.safeCallMethod( 'scene', 'resizeFrame', width, height )
 
 	def onZoom( self, zoom='normal' ):
 		maxed = self.canvas.safeCallMethod( 'scene', 'cameraZoom', zoom )
@@ -187,7 +189,7 @@ class SceneView( MainEditorModule ):
 			self.enableTool('scene_view_config/zoom_out', zoomO)
 
 	def goToPoint( self, x, y ):
-		pass
+		self.canvas.safeCallMethod( 'scene', 'goToPos', x, y )
 
 ##----------------------------------------------------------------##
 

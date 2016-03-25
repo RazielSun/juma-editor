@@ -101,6 +101,18 @@ function EditorScene:cameraZoom( zoom_type )
 	return maxed
 end
 
+function EditorScene:showGrid( show )
+	--
+end
+
+function EditorScene:resizeFrame( width, height )
+	self.frameScene:resize( width, height )
+end
+
+function EditorScene:goToPos( x, y )
+	self.camera:setLoc( x, y )
+end
+
 ---------------------------------------------------------------------------------
 
 function EditorScene:getRootNode()
