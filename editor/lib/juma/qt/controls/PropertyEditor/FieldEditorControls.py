@@ -25,6 +25,11 @@ class FieldEditorLabel( QtGui.QLabel ):
 class FieldEditorLineEdit(QtGui.QLineEdit):
 	def __init__(self, *arg):
 		super(FieldEditorLineEdit, self).__init__( *arg )
+		self.setMinimumSize( 20, 16 )
+		self.setSizePolicy(
+			QtGui.QSizePolicy.Expanding,
+			QtGui.QSizePolicy.Expanding
+			)
 		self.acceptPress = False
 
 	def focusOutEvent( self, ev ):

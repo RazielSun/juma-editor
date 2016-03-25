@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'object_container.ui'
 #
-# Created: Fri Mar 25 09:55:11 2016
+# Created: Fri Mar 25 15:47:55 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -12,13 +12,14 @@ from PySide import QtCore, QtGui
 class Ui_ObjectContainer(object):
     def setupUi(self, ObjectContainer):
         ObjectContainer.setObjectName("ObjectContainer")
-        ObjectContainer.resize(210, 100)
+        ObjectContainer.resize(249, 133)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(ObjectContainer.sizePolicy().hasHeightForWidth())
         ObjectContainer.setSizePolicy(sizePolicy)
         self.mainLayout = QtGui.QVBoxLayout(ObjectContainer)
+        self.mainLayout.setSpacing(0)
         self.mainLayout.setContentsMargins(5, 5, 5, 0)
         self.mainLayout.setObjectName("mainLayout")
         self.header = QtGui.QWidget(ObjectContainer)
@@ -33,6 +34,11 @@ class Ui_ObjectContainer(object):
         self.foldBtn.setObjectName("foldBtn")
         self.headerLayout.addWidget(self.foldBtn)
         self.nameBtn = QtGui.QToolButton(self.header)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.nameBtn.sizePolicy().hasHeightForWidth())
+        self.nameBtn.setSizePolicy(sizePolicy)
         self.nameBtn.setMaximumSize(QtCore.QSize(99999, 20))
         self.nameBtn.setObjectName("nameBtn")
         self.headerLayout.addWidget(self.nameBtn)

@@ -31,13 +31,8 @@ function EditorScene:init( params )
 	local camera = MOAICamera2D.new()
 	self.framelayer:setCamera(camera)
 	self.layer:setCamera(camera)
+	self.foreground:setCamera(camera)
 	self.camera = camera
-
-	local forecamera = MOAICamera2D.new()
-	self.foreground:setCamera(forecamera)
-	self.forecamera = forecamera
-
-	forecamera:setAttrLink ( MOAITransform.INHERIT_LOC, camera, MOAITransform.TRANSFORM_TRAIT )
 
 	self.cameraScl = 1
 	self.maxCameraScl = 3

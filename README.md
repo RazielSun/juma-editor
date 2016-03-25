@@ -42,7 +42,7 @@ export MOAI_ROOT=/Users/yourname/moai-dev/
 * Top Color - #323232
 * Widget Color - #282828
 * Dark Color - #1E1E1E
-* Label - #e5e5e5
+* Label - #d6d6d6
 * Disabled - #999999
 * Mint - #00af95
 * Yellow(select) - #eda900
