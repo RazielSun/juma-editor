@@ -80,9 +80,8 @@ class GamePreview( MainEditorModule ):
 		# self.window.hideTitleBar()
 		self.window.setFocusPolicy(Qt.StrongFocus)
 
-		toolbar = self.window.addToolBar()
-		self.toolbar = self.addToolBar( 'game_preview', toolbar )
-		
+		self.toolbar = self.addToolBar( 'game_preview', self.window.addToolBar() )
+
 		self.scrollArea = QtGui.QScrollArea( None )
 		self.scrollArea.setBackgroundRole(QtGui.QPalette.Dark)
 		self.scrollArea.setAlignment(QtCore.Qt.AlignCenter)
@@ -94,32 +93,21 @@ class GamePreview( MainEditorModule ):
 		self.canvas.module = self
 
 		self.sizeWidget = SizeComboBox( None )
+		self.sizeWidget.sizeChanged.connect( self.onGameSizeChanged )
 		self.sizeWidget.owner = self
 		
 		self.updateViewValues()
 
 		self.updateTimer = None
 		
-	# 	signals.connect( 'app.activate',   self.onAppActivate )
-	# 	signals.connect( 'app.deactivate', self.onAppDeactivate )
-		
-	# 	signals.connect( 'debug.enter',    self.onDebugEnter )
-	# 	signals.connect( 'debug.exit',     self.onDebugExit )
-	# 	signals.connect( 'debug.stop',     self.onDebugStop )
-		
-		signals.connect( 'moai.reset',     		self.onMoaiReset )
-		signals.connect( 'moai.open_window', 	self.openWindow )
-		# signals.connect('moai.set_sim_step', self.setSimStep)
-		signals.connect( 'scene.change_size', self.onGameSizeChanged )
-		
 		self.menu = self.findMenu( 'main/preview' )
-
 		self.menu.addChild([
 				{'name':'run_game',   'label':'Run'}, #, 'shortcut':'meta+]' 
 				{'name':'pause_game', 'label':'Pause' }, #,  'shortcut':'meta+shit+]'
 				{'name':'stop_game',  'label':'Stop'}, #,   'shortcut':'meta+['
 			], self)
 
+		
 		self.addTool( 'game_preview/size_scene', widget = self.sizeWidget )
 		self.addTool( 'game_preview/collect_garbage', label = 'Collect Garbage', icon = 'bin' )
 		self.addTool( 'game_preview/take_screenshot', label = 'Take Screenshot', icon = 'camera' )
@@ -140,6 +128,18 @@ class GamePreview( MainEditorModule ):
 
 		self.enableMenu( 'main/preview/pause_game',  False )
 		self.enableMenu( 'main/preview/stop_game',   False )
+
+		# CALLBACKS
+	# 	signals.connect( 'app.activate',   self.onAppActivate )
+	# 	signals.connect( 'app.deactivate', self.onAppDeactivate )
+		
+	# 	signals.connect( 'debug.enter',    self.onDebugEnter )
+	# 	signals.connect( 'debug.exit',     self.onDebugExit )
+	# 	signals.connect( 'debug.stop',     self.onDebugStop )
+		
+		signals.connect( 'moai.reset',     		self.onMoaiReset )
+		signals.connect( 'moai.open_window', 	self.openWindow )
+		# signals.connect('moai.set_sim_step', self.setSimStep)
 
 	def onStop( self ):
 		self.saveViewSize()
@@ -323,18 +323,6 @@ class GamePreview( MainEditorModule ):
 		elif name == 'stop_game':
 			self.stopPreview()
 
-		# if name == 'open_scene':
-		# 	self.openProject()
-	# 	if name=='size_double':
-	# 		if self.originalSize:
-	# 			w,h=self.originalSize
-	# 			self.tryResizeContainer(w*2,h*2)
-
-	# 	elif name=='size_original':
-	# 		if self.originalSize:
-	# 			w,h=self.originalSize
-	# 			self.tryResizeContainer(w,h)
-
 	# 	elif name=='pause_on_leave':
 	# 		self.setConfig( 'pause_on_leave', node.getValue())
 
@@ -349,25 +337,20 @@ class GamePreview( MainEditorModule ):
 	# 	elif name=='orient_landscape':
 	# 		self.setOrientationLandscape()
 
-	# 	elif name == 'start_game':
-	# 		self.startPreview()
-
-	# 	elif name == 'stop_game':
-	# 		self.stopPreview()
-
-	# 	elif name == 'pause_game':
-	# 		self.pausePreview()
-
 	# 	elif name == 'start_external_scene':
 	# 		self.runSceneExternal()
 			
 	# 	elif name == 'start_external_game':
 	# 		self.runGameExternal()
 
-	# def onTool( self, tool ):
-	# 	name = tool.name
-	# 	if name == 'switch_screen_profile':
-	# 		pass
+	def onTool( self, tool ):
+		name = tool.name
+
+		if name == 'take_screenshot':
+			self.getRuntime().takeScreenshot()
+
+		elif name == 'collect_garbage':
+			self.getRuntime().garbageCollect()
 			
 	# 	elif name == 'run_external':
 	# 		self.runSceneExternal()
@@ -375,10 +358,10 @@ class GamePreview( MainEditorModule ):
 	# 	elif name == 'run_game_external':
 	# 		self.runGameExternal()
 
-	def onGameSizeChanged(self, size):
+	def onGameSizeChanged(self, width, height):
 		if self.canvas:
-			self.viewWidth = int(size['width'])
-			self.viewHeight = int(size['height'])
+			self.viewWidth = width
+			self.viewHeight = height
 			self.canvas.resize(self.viewWidth, self.viewHeight)
 
 ##----------------------------------------------------------------##

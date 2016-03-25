@@ -8,4 +8,6 @@ from GraphEditor 		import GraphEditor, EntityEditor
 from SceneView 			import SceneView
 from SceneToolManager 	import SceneToolManager
 from GamePreview 		import GamePreview
-from StatsViewer 		import StatsViewer
+
+from DebugEditors.StatsViewer 		import StatsViewer
+from DebugEditors.DebugDrawDock 	import DebugDrawDock

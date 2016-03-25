@@ -8,6 +8,7 @@ from juma.core 					import signals, app
 from juma.moai.MOAIEditCanvas 	import MOAIEditCanvas
 from MainEditor             	import MainEditorModule
 from SceneToolManager			import SceneToolButton, SceneTool
+from MainEditorHelpers         	import ToolSizeWidget, ToolCoordWidget
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -65,26 +66,28 @@ class SceneView( MainEditorModule ):
 		super( SceneView, self ).__init__()
 
 	def onLoad( self ):
-		self.window = self.requestDocumentWindow(
-				title = 'new.layout'
-			)
+		self.window = self.requestDocumentWindow( title = 'new.layout' )
+
+		self.sizeWidget = ToolSizeWidget( None )
+		self.sizeWidget.owner = self
+
+		self.coordWidget = ToolCoordWidget( None )
+		self.coordWidget.owner = self
 
 		self.tool = self.addToolBar( 'scene_view_config', self.window.addToolBar() )
+		self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
+		self.addTool( 'scene_view_config/size_background', widget = self.sizeWidget )
+		self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
+		self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
+		self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
+		self.addTool( 'scene_view_config/goto_point', widget = self.coordWidget )
 
-		self.canvas = self.window.addWidget(
-				SceneViewCanvas()
-			)
+		self.canvas = self.window.addWidget( SceneViewCanvas() )
 		self.canvas.loadScript( _getModulePath('SceneView.lua') )
 
 		self.findMenu( 'main/window' ).addChild([
             dict( name = 'scene_show', label = 'Scene View' ),
         ], self )
-
-		self.window.show()
-
-		# SIGNALS
-		signals.connect( 'selection.changed', self.onSelectionChanged )
-		signals.connect( 'scene.open',        self.onSceneOpen        )
 
 		##----------------------------------------------------------------##
 		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
@@ -126,11 +129,27 @@ class SceneView( MainEditorModule ):
 				)
 			)
 
+		# SIGNALS
+		signals.connect( 'selection.changed', self.onSelectionChanged )
+		signals.connect( 'scene.open',        self.onSceneOpen        )
+
+		#
+		self.window.show()
+
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
 		if name == 'scene_show':
 			self.window.show()
+
+	def onTool( self, tool ):
+		name = tool.menu
+		if name == 'zoom_out':
+			pass
+		elif name == 'zoom_normal':
+			pass
+		elif name == 'zoom_in':
+			pass
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return

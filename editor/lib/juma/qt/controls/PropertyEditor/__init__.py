@@ -8,5 +8,6 @@ from CommonFieldEditors import \
 
 ##----------------------------------------------------------------##
 import VecFieldEditor
+import EnumFieldEditor
 import AssetRefFieldEditor
 import ColorFieldEditor

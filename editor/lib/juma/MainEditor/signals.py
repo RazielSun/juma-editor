@@ -5,7 +5,6 @@ register( 'scene.pause' )
 register( 'scene.stop' )
 register( 'scene.pre_open_source' )
 register( 'scene.open_source' )
-register( 'scene.change_size' )
 
 register( 'scene.open' )
 register( 'scene.update' )

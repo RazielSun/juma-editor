@@ -71,6 +71,7 @@ class QtSupport( QtEditorModule ):
 			'Hierarchy',
 			'Introspector',
 			'Stats Viewer',
+			'Debug Draw',
 			'----',
 			]
 		)
@@ -172,25 +173,16 @@ class QtSupport( QtEditorModule ):
 
 		elif name == 'default_theme':
 			self.useStyle()
-
 		elif name == 'dark_theme':
 			self.useStyle( 'darkstyle' )
-
 		elif name == 'robot_theme':
 			self.useStyle( 'robotstyle' )
 
-		# elif name == 'system_status':
-		# 	self.showSystemStatusWindow()
-		# elif name == 'asset_editor':
-		# 	self.getModule('asset_editor').setFocus()
 		elif name == 'main_editor':
 			self.getModule('main_editor').setFocus()
 
 		elif name == 'game_preview':
 			self.getModule('game_preview').show()
-
-		elif name == 'stats_viewer':
-			self.getModule('stats_viewer').show()
 
 		elif name == 'hierarchy':
 			self.getModule('graph_editor').show()
@@ -198,10 +190,12 @@ class QtSupport( QtEditorModule ):
 		elif name == 'introspector':
 			self.getModule('introspector').show()
 
-		# elif name == 'debug_view':
-		# 	self.getModule('debug_view').setFocus()
-		# elif name == 'refresh_theme':
-		# 	self.setupStyle()
+		elif name == 'stats_viewer':
+			self.getModule('stats_viewer').show()
+
+		elif name == 'debug_draw':
+			self.getModule('debug_draw_dock').show()
+
 		# elif name == 'copy':
 		# 	print 'copy'
 		# elif name == 'paste':
@@ -217,7 +211,7 @@ class QtSupport( QtEditorModule ):
 		# 	stack = EditorCommandRegistry.get().getCommandStack( 'scene_editor' )
 		# 	stack.redoCommand()
 
-	
+##----------------------------------------------------------------##
 
 QtSupport().register()
 

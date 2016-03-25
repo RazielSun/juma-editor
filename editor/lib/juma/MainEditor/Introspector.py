@@ -43,6 +43,8 @@ def clearObjectEditorCache( typeId ):
 
 ##----------------------------------------------------------------##
 class ObjectContainer( QtGui.QWidget ):
+	foldChanged  = QtCore.Signal( bool )
+
 	def __init__( self, *args ):
 		super( ObjectContainer, self ).__init__( *args )
 		self.ui = Ui_ObjectContainer()
@@ -50,16 +52,23 @@ class ObjectContainer( QtGui.QWidget ):
 		self.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
 		self.setAttribute( Qt.WA_NoSystemBackground, True )
 		self.contextObject = None
+		self.folded = False
+		self.toggleFold( False, True )
 
 		self.ui.nameBtn.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
+		self.ui.menuBtn.setVisible( False )
 		
-		self.ui.nameBtn.setIcon( getIcon( 'grid' ) )
+		# self.ui.nameBtn.setIcon( getIcon( 'grid' ) )
 		self.ui.menuBtn.setIcon( getIcon( 'list' ) )
 		self.ui.foldBtn.setIcon( getIcon( 'arrow_down' ) )
 
 		self.ui.nameBtn.setIconSize( QSize( 16, 16 ) )
 		self.ui.menuBtn.setIconSize( QSize( 16, 16 ) )
 		self.ui.foldBtn.setIconSize( QSize( 16, 16 ) )
+
+		self.ui.foldBtn.clicked.connect( lambda: self.toggleFold( None ) )
+		self.ui.menuBtn.clicked.connect( lambda: self.openContextMenu() )
+		self.ui.nameBtn.clicked.connect( lambda: self.toggleFold( None ) )
 
 	def setContextObject( self, context ):
 		self.contextObject = context
@@ -92,10 +101,33 @@ class ObjectContainer( QtGui.QWidget ):
 	def setTitle( self, title ):
 		self.ui.nameBtn.setText( title )
 
+	def toggleFold( self, folded = None, notify = True ):
+		if folded == None:
+			folded = not self.folded
+		self.folded = folded
+		if folded:
+			self.ui.foldBtn.setIcon( getIcon( 'arrow_right' ) )
+			self.ui.body.hide()
+		else:
+			self.ui.foldBtn.setIcon( getIcon( 'arrow_down' ) )
+			self.ui.body.show()
+		if notify:
+			self.foldChanged.emit( self.folded )
+
+	def openContextMenu( self ):
+		if self.contextMenu:
+			self.contextMenu.popUp( context = self.contextObject )
+
 ##----------------------------------------------------------------##
 class IntrospectorObject( object ):
 	def __init__(self):
 		self.target = None
+
+	def getContainer( self ):
+		return self.container
+
+	def getInnerContainer( self ):
+		return self.container.getBody()
 
 	def setTarget(self, target):
 		self.target = target

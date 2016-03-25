@@ -5,6 +5,14 @@
 ### Based on
 [Vavius IDE](https://github.com/Vavius/moai-ide)
 [Tommo IDE](https://github.com/pixpil/gii)
+
+### Dependencies
+
+```
+pip install python-levenshtein
+```
+
+### Resources
 [Icons](https://www.behance.net/gallery/12268595/IKONS)
 
 ### Features
@@ -34,7 +42,7 @@ export MOAI_ROOT=/Users/yourname/moai-dev/
 * Top Color - #323232
 * Widget Color - #282828
 * Dark Color - #1E1E1E
-* Label - #f0f0f0
+* Label - #e5e5e5
 * Disabled - #999999
 * Mint - #00af95
 * Yellow(select) - #eda900

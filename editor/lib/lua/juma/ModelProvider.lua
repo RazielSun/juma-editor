@@ -28,7 +28,13 @@ local function createPyModel( model )
 			end
 		end
 
-		if typeid == "@asset" then
+		if typeid == '@enum' then
+			if type(f.__itemtype) == 'table' then
+				pmodel:addLuaEnumFieldInfo( id, f.__itemtype, option )
+			else
+				_error('invalid enum type')
+			end
+		elseif typeid == "@asset" then
 			pmodel:addLuaAssetFieldInfo( id, f.__itemtype, option )
 		else
 			pmodel:addLuaFieldInfo( id, typeid, option )

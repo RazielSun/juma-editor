@@ -68,7 +68,7 @@ class GraphEditor( MainEditorModule ):
         ], self )
 
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
-		self.addTool( 'hierarchy/create_widget', label ='+ Entity', icon = 'plus_mint' )
+		self.addTool( 'hierarchy/create_widget', label ='Create widget', icon = 'plus_mint' )
 		# self.addTool( 'hierarchy/destroy_item', label ='- Item', icon = 'minus' )
 
 		self.contextMenu = self.addMenu( 'widget_context', dict( label = 'Widgets' ) )
@@ -76,7 +76,7 @@ class GraphEditor( MainEditorModule ):
 		self.addMenuItem( 'widget_context/create_label', dict( label = 'Label' ) )
 		self.addMenuItem( 'widget_context/create_button_color', dict( label = 'ButtonColor' ) )
 		self.addMenuItem( 'widget_context/create_button', dict( label = 'Button' ) )
-		self.addMenuItem( 'widget_context/create_group', dict( label = 'Group' ) )
+		self.addMenuItem( 'widget_context/create_widget', dict( label = 'Widget' ) )
 
 		#SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
@@ -172,8 +172,8 @@ class GraphEditor( MainEditorModule ):
 		elif name == 'create_button':
 			self.createWidget( 'Button' )
 
-		elif name == 'create_group':
-			self.createWidget( 'Group' )
+		elif name == 'create_widget':
+			self.createWidget( 'Widget' )
 
 	def onTool( self, tool ):
 		name = tool.name
@@ -318,7 +318,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 	def getNodeChildren( self, node ):
 		className = node.className(node)
 		output = []
-		if className == 'Group': # GROUP
+		if className == 'Widget': # GROUP
 			children = node.children
 			for index in children:
 				output.append( children[index] )
@@ -347,7 +347,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 
 		if node and (node is not None):
 			className = node.className(node)
-			if className == 'Group': # GROUP
+			if className == 'Widget': # GROUP
 				item.setText( 0, node.name or '<group>' )
 				item.setIcon( 0, getIcon('folder') )
 			else: # SPRITE LABEL BUTTON
@@ -357,7 +357,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 	def getItemFlags( self, node ):
 		flagNames = {}
 		className = node.className(node)
-		if className == 'Group': # GROUP
+		if className == 'Widget': # GROUP
 			pass
 		else: # SPRITE LABEL BUTTON
 			flagNames['droppable'] = False
@@ -408,13 +408,12 @@ class GraphTreeWidget( GenericTreeWidget ):
 		if not self.syncSelection: return
 		items = self.selectedItems()
 		if items:
-			self.currentDragItem = items[0] # FIXME
+			self.currentDragItem = items[0]
 			selections=[item.node for item in items]
 			self.module.changeSelection(selections)
 		else:
-			self.currentDragItem = None # FIXME
+			self.currentDragItem = None
 			self.module.changeSelection(None)
-		print("GraphEditor onItemSelectionChanged", len(items), self.currentDragItem)
 
 	def onItemActivated(self, item, col):
 		print("onItemActivated", item, col)

@@ -41,6 +41,12 @@ class FrameworkEditorObjectMixin(object):
 	def __init__(self):
 		super(FrameworkEditorObjectMixin, self).__init__()
 
+	def initFoldState( self ):
+		self.getContainer().foldChanged.connect( self.onFoldChanged )
+
+	def onFoldChanged( self, folded ):
+		self.getTarget()['__foldState'] = folded
+
 class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 	def __init__(self):
 		super(EntityEditorObject, self).__init__()
@@ -58,7 +64,7 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 		# self.header.buttonUnlink .clicked .connect ( self.onUnlinkProto )
 		
 		# self.initFieldContextMenu( self.grid )
-		# self.initFoldState()
+		self.initFoldState()
 		# self.initAnimatorButton()
 
 		return self.property
@@ -76,27 +82,30 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 		signals.emit( 'entity.modified', obj, 'introspector' )
 
 ##----------------------------------------------------------------##
-
 class SpriteEditorObject(EntityEditorObject):
 	def __init__(self):
 		super(SpriteEditorObject, self).__init__()
 
+registerFrameworkEditorBuilder( "Sprite", SpriteEditorObject )
+
+##----------------------------------------------------------------##
 class LabelEditorObject(EntityEditorObject):
 	def __init__(self):
 		super(LabelEditorObject, self).__init__()
 
+registerFrameworkEditorBuilder( "Label", LabelEditorObject )
+
+##----------------------------------------------------------------##
 class ButtonEditorObject(EntityEditorObject):
 	def __init__(self):
 		super(ButtonEditorObject, self).__init__()
 
-class GroupEditorObject(EntityEditorObject):
-	def __init__(self):
-		super(GroupEditorObject, self).__init__()
-
-##----------------------------------------------------------------##
-
-registerFrameworkEditorBuilder( "Sprite", SpriteEditorObject )
-registerFrameworkEditorBuilder( "Label", LabelEditorObject )
 registerFrameworkEditorBuilder( "ButtonColor", ButtonEditorObject )
 registerFrameworkEditorBuilder( "Button", ButtonEditorObject )
-registerFrameworkEditorBuilder( "Group", GroupEditorObject )
+
+##----------------------------------------------------------------##
+class WidgetEditorObject(EntityEditorObject):
+	def __init__(self):
+		super(WidgetEditorObject, self).__init__()
+
+registerFrameworkEditorBuilder( "Widget", WidgetEditorObject )

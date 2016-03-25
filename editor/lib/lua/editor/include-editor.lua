@@ -1,5 +1,6 @@
 require("edit.common")
 require("edit.defaults")
+require("edit.helpers")
 
 --------------------------------------------------------------------------------
 -- Setups

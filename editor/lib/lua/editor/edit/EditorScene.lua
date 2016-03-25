@@ -1,7 +1,7 @@
 
 local InputEvent = require("input.InputEvent")
 local Scene = require("scenes.Scene")
-local Group = require("ui.Group")
+local Widget = require("ui.Widget")
 local CanvasToolManager = require("edit.tools.CanvasToolManager")
 
 ---------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ function EditorScene:init( params )
 	self:createViewport()
 	self:createCamera()
 
-	local node = params.rootNode or Group()
+	local node = params.rootNode or Widget()
 	node:setLayer( self.layer )
 	self:setActiveGroup( node )
 	self.rootNode = node
@@ -124,15 +124,15 @@ function EditorScene:removeWidget( widget, group )
 	for _, child in ipairs(group.children) do
 		if child == widget then
 			success = true
-		elseif child:className() == 'Group' then
-			success = self:removeWidget( widget, child )
 		end
+		
 		if success then
 			break
 		end
 	end
 
 	if success then
+		widget:removeChildren()
 		group:removeChild( widget )
 	end
 

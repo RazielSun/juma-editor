@@ -2,7 +2,7 @@ local Sprite = require("ui.Sprite")
 local Label = require("ui.Label")
 local ButtonColor = require("ui.ButtonColor")
 local Button = require("ui.Button")
-local Group = require("ui.Group")
+local Widget = require("ui.Widget")
 
 ---------------------------------------------------------------------------------
 --
@@ -37,8 +37,8 @@ function GraphEditor:createWidget( widget_type )
 		widget = ButtonColor()
 	elseif widget_type == "Button" then
 		widget = Button()
-	elseif widget_type == "Group" then
-		widget = Group()
+	elseif widget_type == "Widget" then
+		widget = Widget()
 	end
 
 	if widget then

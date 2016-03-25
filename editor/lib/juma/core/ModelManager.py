@@ -56,6 +56,43 @@ class PythonValueType(DataType):
 		return self
 
 ##----------------------------------------------------------------##
+class EnumType( DataType ):
+	def __init__( self, name, enum, defaultValue = None ):
+		self.name = name
+		itemDict = {}
+
+		self.itemDict = itemDict
+		for item in enum:
+			( name, value ) = item
+			itemDict[ name ] = value
+		self._defaultValue = defaultValue
+		self.itemList = enum[:]
+
+	def getName( self ):
+		return self.name
+
+	def getSuperType( self ):
+		return EnumType
+
+	def repr( self, value ):
+		return '<%s> %s' %( self.name, repr( value ) )
+
+	def fromIndex( self, idx ):
+		if idx < 0 or idx >= len( self.itemList ):
+			return None
+		( name, value ) = self.itemList[ idx ]
+		return value
+
+	def toIndex( self, value ):
+		for i, item in enumerate( self.itemList ):
+			( k, v ) = item
+			if value == v: return i
+		return None
+
+	def getItemList( self, contextObject ):
+		return self.itemList
+
+##----------------------------------------------------------------##
 class AssetRefType( DataType ):
 	def __init__( self, assetType ):
 		self.assetType = assetType

@@ -8,9 +8,10 @@ from time import strftime
 from PySide import QtCore, QtGui
 from PySide.QtGui import QDockWidget
 
-from juma.core 				import app, signals
-from juma.moai.MOAIRuntime	import MOAILuaDelegate
-from MainEditor  			import MainEditorModule
+from juma.core 					import app, signals
+from juma.moai.MOAIRuntime		import MOAILuaDelegate
+from juma.MainEditor.MainEditor import MainEditorModule
+
 from ui.statsdock_ui 		import Ui_statsdock as Ui
 
 ##----------------------------------------------------------------##

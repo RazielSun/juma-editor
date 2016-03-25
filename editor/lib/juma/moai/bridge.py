@@ -150,6 +150,8 @@ class LuaObjectField( Field ):
 
 ##----------------------------------------------------------------##
 class LuaObjectModel(ObjectModel):
+	_EnumCache = weakref.WeakValueDictionary()
+	
 	def createField( self, id, t, **option ):
 		return LuaObjectField(self, id, t, **option)
 
@@ -158,6 +160,18 @@ class LuaObjectModel(ObjectModel):
 		typeId  = luaTypeToPyType( typeId ) # convert lua-typeId -> pythontype
 		setting = data and luaTableToDict(data) or {}
 		return self.addFieldInfo( name, typeId, **setting )
+
+	def addLuaEnumFieldInfo(self, name, enumItems, data = None):
+		enumType = LuaObjectModel._EnumCache.get( enumItems, None )
+		if not enumType:
+			tuples = []
+			for item in enumItems.values():
+				itemName  = item[1]
+				itemValue = item[2]
+				tuples.append ( ( itemName, itemValue ) )
+			enumType = EnumType( '_LUAENUM_', tuples )
+			LuaObjectModel._EnumCache[ enumItems ] = enumType
+		return self.addLuaFieldInfo( name, enumType, data )
 
 	def addLuaAssetFieldInfo(self, name, assetType, data = None):
 		typeId = AssetRefType( assetType )

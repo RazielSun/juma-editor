@@ -286,6 +286,18 @@ class MOAIRuntime( EditorModule ):
 		except Exception, e:
 			logging.error( 'error loading lua:\n' + str(e) )
 
+	def takeScreenshot( self ):
+		try:
+			_G.takeScreenshot()
+		except Exception, e:
+			logging.error( 'error loading lua:\n' + str(e) )
+
+	def garbageCollect( self ):
+		try:
+			_G.garbageCollect()
+		except Exception, e:
+			logging.error( 'error loading lua:\n' + str(e) )
+
 	def setLuaEnvResolution( self, width, height ):
 		try:
 			_G.setGameResolution( width, height )

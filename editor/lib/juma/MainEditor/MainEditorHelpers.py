@@ -8,7 +8,10 @@ from PySide import QtCore, QtGui
 from juma.core 			import app, signals
 from juma.qt.IconCache 	import getIcon
 
+##----------------------------------------------------------------##
 class SizeComboBox( QtGui.QComboBox ):
+	sizeChanged = QtCore.Signal( int, int )
+
 	sizes = [
 	dict( icon = 'macbook', name = 'Custom' ),
 	dict( icon = 'iphone', width = 320, height = 480 ),
@@ -53,4 +56,53 @@ class SizeComboBox( QtGui.QComboBox ):
 	def onSizeChanged(self, index):
 		size = self.sizes[index]
 		if 'width' in size and 'height' in size:
-			signals.emitNow( 'scene.change_size', size )
+			self.sizeChanged.emit( int(size['width']), int(size['height']) )
+
+##----------------------------------------------------------------##
+class ToolSizeWidget( QtGui.QWidget ):
+	valuesChanged = QtCore.Signal( int, int )
+
+	def __init__( self, parent ):
+		super( ToolSizeWidget, self ).__init__( parent )
+		self.setMaximumSize(80, 30)
+		self.mainLayout = layout = QtGui.QHBoxLayout( self )
+		layout.setSpacing(3)
+		layout.setContentsMargins(0, 0, 0, 0)
+		layout.addStretch()
+
+		self.valueX = 320
+		self.valueY = 480
+
+		self.xEdit = self.createEdit()
+		self.yEdit = self.createEdit()
+
+		self.setup()
+
+	def createEdit( self ):
+		edit = QtGui.QLineEdit( self )
+		edit.setMaximumSize( 40, 20 )
+		self.mainLayout.addWidget( edit )
+		return edit
+
+	def setup( self ):
+		self.xEdit.setText( '{}'.format(self.valueX) )
+		self.yEdit.setText( '{}'.format(self.valueY) )
+
+##----------------------------------------------------------------##
+class ToolCoordWidget( ToolSizeWidget ):
+	gotoSignal = QtCore.Signal( int, int )
+
+	def __init__( self, parent ):
+		super( ToolCoordWidget, self ).__init__( parent )
+		self.setMaximumSize(100, 30)
+		self.button = btn = QtGui.QToolButton( self )
+		btn.setIcon( getIcon('gotopoint') )
+		btn.setMaximumSize( 20, 20 )
+		self.mainLayout.addWidget( btn )
+
+		self.valueX = 0
+		self.valueY = 0
+
+		self.setup()
+
+	
