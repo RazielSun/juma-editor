@@ -134,6 +134,7 @@ class SceneView( MainEditorModule ):
 		signals.connect( 'scene.open',        self.onSceneOpen        )
 
 		#
+		self.onZoom()
 		self.window.show()
 
 ##----------------------------------------------------------------##
@@ -143,12 +144,15 @@ class SceneView( MainEditorModule ):
 			self.window.show()
 
 	def onTool( self, tool ):
-		name = tool.menu
+		name = tool.name
 		if name == 'zoom_out':
-			pass
+			self.onZoom( 'out' )
 		elif name == 'zoom_normal':
-			pass
+			self.onZoom( 'normal' )
 		elif name == 'zoom_in':
+			self.onZoom( 'in' )
+
+		elif name == 'grid_view':
 			pass
 
 	def onSelectionChanged( self, selection, key ):
@@ -162,6 +166,28 @@ class SceneView( MainEditorModule ):
 	def onSceneOpen( self, title ):
 		self.canvas.makeCurrent()
 		self.window.setWindowTitle( title )
+
+	def onFrameResize( self, width, height ):
+		pass
+
+	def onZoom( self, zoom='normal' ):
+		maxed = self.canvas.safeCallMethod( 'scene', 'cameraZoom', zoom )
+		if zoom:
+			zoomN = True
+			zoomI = True
+			zoomO = True
+			if zoom == 'normal':
+				zoomN = False
+			elif zoom == 'in':
+				zoomI = not maxed
+			elif zoom == 'out':
+				zoomO = not maxed
+			self.enableTool('scene_view_config/zoom_normal', zoomN)
+			self.enableTool('scene_view_config/zoom_in', zoomI)
+			self.enableTool('scene_view_config/zoom_out', zoomO)
+
+	def goToPoint( self, x, y ):
+		pass
 
 ##----------------------------------------------------------------##
 

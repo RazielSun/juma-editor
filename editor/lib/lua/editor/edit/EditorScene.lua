@@ -47,6 +47,9 @@ function EditorScene:createCamera()
 	end
 	self.camera = camera
 	self.cameraScl = 1
+	self.maxCameraScl = 3
+	self.minCameraScl = 0.1
+	self.cameraSclStep = 0.1
 end
 
 function EditorScene:createViewport()
@@ -82,6 +85,28 @@ end
 
 function EditorScene:updateCanvas()
 	self.env.updateCanvas()
+end
+
+function EditorScene:cameraZoom( zoom_type )
+	local maxed = false
+	if zoom_type then
+		local scl = self.cameraScl
+		if zoom_type == 'normal' then
+			scl = 1
+		elseif zoom_type == 'in' then
+			scl = scl - self.cameraSclStep
+			maxed = scl <= self.minCameraScl
+		elseif zoom_type == 'out' then
+			scl = scl + self.cameraSclStep
+			maxed = scl >= self.maxCameraScl
+		end
+
+		scl = math.clamp( scl, self.minCameraScl, self.maxCameraScl)
+		self.cameraScl = scl
+
+		self.camera:setScl( scl, scl, scl )
+	end
+	return maxed
 end
 
 ---------------------------------------------------------------------------------
@@ -125,7 +150,7 @@ function EditorScene:removeWidget( widget, group )
 		if child == widget then
 			success = true
 		end
-		
+
 		if success then
 			break
 		end
