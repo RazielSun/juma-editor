@@ -194,7 +194,8 @@ function EditorScene:mouseEventHandler( event )
 	local intercept = self.toolManager:onMouseEvent( event )
 
 	if not intercept then
-		if event.eventName == InputEvent.MOUSE_UP and self.toolManager.toolId == 'select_object' then
+		-- FIXME this is self.toolManager.toolId == 'select_object'
+		if event.eventName == InputEvent.MOUSE_UP then
 			local layer = nil
 			local prop = nil
 			local finded = false

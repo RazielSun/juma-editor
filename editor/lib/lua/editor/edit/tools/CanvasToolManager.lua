@@ -72,7 +72,6 @@ function CanvasToolManager:onMouseEvent( event )
 	if tool and tool.target then
 		if tool:inside( event.x, event.y ) and event.eventName == InputEvent.MOUSE_DOWN then
 			tool:onMouseDown( event.x, event.y, event.btn )
-			return true
 		end
 
 		if event.eventName == InputEvent.MOUSE_UP then

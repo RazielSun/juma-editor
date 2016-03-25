@@ -613,9 +613,13 @@ QPushButton:checked{
     border-color: #6A6969;
 }
 
-QComboBox:hover,QPushButton:hover,QAbstractSpinBox:hover,QLineEdit:hover,QTextEdit:hover,QPlainTextEdit:hover,QAbstractView:hover,QTreeView:hover
+QComboBox:hover,QPushButton:hover,QAbstractSpinBox:hover,QLineEdit:hover,QTextEdit:hover,QPlainTextEdit:hover,QAbstractView:hover
 {
     border: 1px solid #d6d6d6;
+    color: #d8de66;
+}
+QTreeView:hover
+{
     color: #d8de66;
 }
 
