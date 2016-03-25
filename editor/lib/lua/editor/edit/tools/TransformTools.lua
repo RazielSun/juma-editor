@@ -10,8 +10,8 @@ local CanvasTool = Class( "CanvasTool" )
 function CanvasTool:init( id, layer )
 	self.id = id
 	self.layer = layer
-	self.size = 60
-	self.arrowSize = 12
+	self.size = 80
+	self.arrowSize = 16
 	self.pad = 15
 	self.lineWidth = 1
 	self.target = nil
