@@ -3,6 +3,8 @@ local InputEvent = require("input.InputEvent")
 local Scene = require("scenes.Scene")
 local Widget = require("ui.Widget")
 local CanvasToolManager = require("edit.tools.CanvasToolManager")
+local FrameScene = require("edit.tools.FrameScene")
+local CanvasGrid = require("edit.tools.CanvasGrid")
 
 ---------------------------------------------------------------------------------
 --
@@ -12,30 +14,22 @@ local CanvasToolManager = require("edit.tools.CanvasToolManager")
 
 local EditorScene = Class( Scene, "EditorScene" )
 
----------------------------------------------------------------------------------
-
-local function onDrawBack()
-	MOAIGfxDevice.setPenWidth( 1 )
-	MOAIGfxDevice.setPenColor( .1, .1, .1, .5 )
-
-	MOAIDraw.drawLine( 0, 1, 0, -1 )
-	MOAIDraw.drawLine( 1, 0, -1, 0 )
-end
-
 function EditorScene:init( params )
 	params = params or {}
 	Scene.init( self, params )
 
-	self.background = self:addLayer()
+	self.framelayer = self:addLayer()
+	-- self.gridlayer = self:addLayer()
 	self.layer = self:addLayer()
 	self.foreground = self:addLayer()
 
 	self.toolManager = CanvasToolManager( self.foreground, self.layer )
-
-	self.background:setUnderlayTable( { onDrawBack } ) --# FIXME
+	self.frameScene = FrameScene( self.framelayer )
+	-- self.grid = CanvasGrid( self.gridlayer )
 	self:createViewport()
 
 	local camera = MOAICamera2D.new()
+	self.framelayer:setCamera(camera)
 	self.layer:setCamera(camera)
 	self.camera = camera
 

@@ -1,3 +1,4 @@
+local ScriptProp = require("ui.ScriptProp")
 
 ---------------------------------------------------------------------------------
 --
@@ -5,7 +6,7 @@
 --
 ---------------------------------------------------------------------------------
 
-local CanvasTool = Class( "CanvasTool" )
+local CanvasTool = Class( ScriptProp, "CanvasTool" )
 
 function CanvasTool:init( id, layer )
 	self.id = id
@@ -16,13 +17,7 @@ function CanvasTool:init( id, layer )
 	self.lineWidth = 1
 	self.target = nil
 
-	local _deck = MOAIScriptDeck.new ()
-	_deck:setRect ( -64, -64, 64, 64 )
-	self._deck = _deck
-
-	local _prop = MOAIProp2D.new ()
-	_prop:setDeck ( _deck )
-	self._prop = _prop
+	ScriptProp.init(self)
 end
 
 function CanvasTool:start()
@@ -33,17 +28,6 @@ end
 function CanvasTool:stop()
 	self.layer:removeProp( self._prop )
 	self:setTarget( nil )
-end
-
-function CanvasTool:attach()
-	local drawOwner, onDraw
-	if self.onDraw then
-		drawOwner = self
-		onDraw = self.onDraw
-	end
-	if onDraw then
-		self._deck:setDrawCallback ( function(...) onDraw(drawOwner, ...) end )
-	end
 end
 
 function CanvasTool:setTarget( target )
