@@ -10,59 +10,80 @@ local AssetsGrabber = {}
 -- # HARDCODE
 
 function AssetsGrabber.grabFromResourceMgr()
-	local workDir = PROJECT_GAME_PATH
-	if not workDir then return end
-	print()
-	print()
-	workDir = workDir .. "/assets"
-	print('WORKING DIR:', workDir, MOAIFileSystem.getWorkingDirectory() )
-	local dirs = MOAIFileSystem.listDirectories( workDir )
-	local files = MOAIFileSystem.listFiles( workDir )
+	AssetsGrabber.grabSprites()
+	AssetsGrabber.grabFonts()
+end
 
-	for i, v in ipairs(dirs) do
-		print("DIRS:",i,v)
+function AssetsGrabber.grabSprites()
+	local sprites = {}
+	local atlasses = {}
+	AssetsGrabber.findAtlases( sprites, atlasses )
+
+	for _, atlas in ipairs(atlasses) do
+		sprites[atlas.texture] = false
+		for _, sprite in ipairs(atlas.frames) do
+			sprites[sprite.name] = true
+		end
 	end
-	print()
-	for i, v in ipairs(files) do
-		print("FILES:",i,v)
+
+	for name, valid in pairs(sprites) do
+		if valid then
+			-- print("register: sprite: ", name)
+			registerAssetNodeInLibrary( name, "sprite" )
+		end
 	end
-	print()
+end
 
-	local fileName = ''
-
-    local scaleFactor = App:getContentScale() or 1
+function AssetsGrabber.findAtlases( sprites, atlasses )
+	local scaleFactor = App:getContentScale() or 1
     for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
         if pathInfo.threshold <= scaleFactor then
-            local filePath = string.pathJoin(pathInfo.path, fileName)
-            print("filePath:", scaleFactor, filePath)
+        	local files = MOAIFileSystem.listFiles( pathInfo.path )
+            for i, file in ipairs(files) do
+            	if string.find(file, ".lua") then
+					AssetsGrabber.setupAtlas( string.pathJoin(pathInfo.path, file), atlasses )
+				elseif string.find(file, ".png") then
+					sprites[file] = true
+				end
+			end
+        end
+    end
+end
+
+function AssetsGrabber.setupAtlas( path, atlasses )
+	local tbl = assert(loadfile(path))
+    setfenv(tbl, {})
+    local atlas = tbl()
+    table.insert( atlasses, atlas )
+end
+
+function AssetsGrabber.grabFonts()
+	local folders = { '', 'fonts/' }
+	local fonts = {}
+
+	local scaleFactor = App:getContentScale() or 1
+    for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
+        if pathInfo.threshold <= scaleFactor then
+        	for _, folder in ipairs(folders) do
+        		local filePath = string.pathJoin(pathInfo.path, folder)
+        		local files = MOAIFileSystem.listFiles( filePath )
+        		if files then
+		            for i, file in ipairs(files) do
+		            	if string.find(file, ".ttf") then
+		            		table.insert( fonts, string.pathJoin(folder, file) )
+						end
+					end
+				end
+        	end
         end
     end
 
-	registerAssetNodeInLibrary( "moai.png", "sprite" )
-	registerAssetNodeInLibrary( "arialbd.ttf", "font" )
+    for _, font in ipairs(fonts) do
+    	-- print("register: font: ", font)
+    	registerAssetNodeInLibrary( font, "font" )
+    end
 end
 
 ---------------------------------------------------------------------------------
 
 return AssetsGrabber
-
-
--- function ResourceMgr:getResourceFilePath(fileName)
---     local cache = self.filepathCache
---     if cache[fileName] then
---         if cache[fileName] == NOT_FOUND then
---             return nil
---         else
---             return unpack(cache[fileName])
---         end
---     end
-
---     if MOAIFileSystem.checkFileExists(fileName) then
---         cache[fileName] = {fileName, 1} 
---         return fileName, 1
---     end
-
-
---     cache[fileName] = NOT_FOUND
---     return nil
--- end
