@@ -311,19 +311,19 @@ class GraphTreeWidget( GenericTreeWidget ):
 			output.append( children[index] )
 		return output
 
-	def reparentNode( self, target, pitem, **option ): # todo NEED ADD SUBLING
-		if target and pitem:
-			node = target.node
-			if node:
-				pnode = None
-				if pitem == 'root':
-					pnode = self.getRootNode()
-				else:
-					pnode = pitem.node
-				if pnode:
-					node.detach( node )
-					pnode.addChild( pnode, node )
-					return True			
+	def reparentNode( self, node, pitem, **option ): # todo NEED ADD SUBLING
+		print("reparentNode:", node, pitem )
+		if node and pitem:
+			pnode = None
+			if pitem == 'root':
+				pnode = self.getRootNode()
+			else:
+				pnode = pitem.node
+			print("reparent:", pnode, node, pitem)
+			if pnode:
+				node.detach( node )
+				pnode.addChild( pnode, node )
+				return True			
 		return False
 
 	def updateItemContent( self, item, node, **option ):

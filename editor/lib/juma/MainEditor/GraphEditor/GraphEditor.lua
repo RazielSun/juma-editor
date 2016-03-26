@@ -35,6 +35,7 @@ function GraphEditor:addEntity( entity )
 			local scene = self:getScene()
 			scene:addEntity( entity )
 			_owner.addEntityNode( _owner, entity )
+			emitPythonSignal( 'entity.added', entity, 'new' )
 		end
 	end
 end
