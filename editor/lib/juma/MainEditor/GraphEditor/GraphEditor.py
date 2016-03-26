@@ -60,7 +60,6 @@ class GraphEditor( MainEditorModule ):
 
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'GraphEditor.lua' ) )
-		self.luaMgrId = 'graphEditor'
 
 		self.findMenu( 'main/scene' ).addChild([
             dict( name = 'scene_open', label = 'Open Scene' ),
@@ -95,10 +94,10 @@ class GraphEditor( MainEditorModule ):
 		self.tree.rebuild()
 
 	def getActiveScene( self ):
-		return self.delegate.safeCallMethod( self.luaMgrId, 'getScene' )
+		return self.delegate.safeCallMethod( 'editor', 'getScene' )
 
 	def getActiveSceneRootGroup( self ):
-		rootNode = self.delegate.safeCallMethod( self.luaMgrId, 'getSceneRootNode' )
+		rootNode = self.delegate.safeCallMethod( 'editor', 'getSceneRootNode' )
 		if rootNode:
 			return rootNode
 		return None
@@ -121,13 +120,13 @@ class GraphEditor( MainEditorModule ):
 		if filePath:
 			sceneName = os.path.basename( filePath )
 			signals.emitNow( 'scene.open', sceneName )
-			node = self.delegate.safeCallMethod( self.luaMgrId, 'loadScene', filePath )
+			node = self.delegate.safeCallMethod( 'editor', 'loadScene', filePath )
 			self.onSceneChange()
 
 	def saveScene(self):
 		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene", self.getProject().path or "~", "Layout file (*.layout )")
 		if filePath:
-			data = self.delegate.safeCallMethod( self.luaMgrId, 'saveScene' )
+			data = self.delegate.safeCallMethod( 'editor', 'saveScene' )
 			_saveLayoutToFile( filePath, data )
 			sceneName = os.path.basename( filePath )
 			signals.emitNow( 'scene.open', sceneName )
@@ -136,14 +135,18 @@ class GraphEditor( MainEditorModule ):
 		pass
 
 	def createWidget(self, widget):
-		node = self.delegate.safeCallMethod( self.luaMgrId, 'createWidget', widget )
-		self.tree.addNode( node, expanded = False )
+		# self.doCommand( 'main_editor/create_entity', name = widget )
+		self.delegate.safeCallMethod( 'editor', 'addEntityByName', widget )
 
 	def removeWidget(self, item):
 		node = item.node
 		if node:
 			if self.tree.removeNode( node ):
-				self.delegate.safeCallMethod( self.luaMgrId, 'removeWidget', node )
+				self.delegate.safeCallMethod( 'editor', 'removeWidget', node )
+
+	def addEntityNode( self, entity ):
+		self.tree.addNode( entity, expanded = False )
+		self.tree.setNodeExpanded( entity, False )
 
 	##----------------------------------------------------------------##
 	def openContextMenu( self ):
@@ -155,22 +158,17 @@ class GraphEditor( MainEditorModule ):
 		name = tool.name
 		if name == 'scene_open':
 			self.openScene()
-
 		elif name == 'scene_save':
 			self.saveScene()
 
 		elif name == 'create_sprite':
 			self.createWidget( 'Sprite' )
-
 		elif name == 'create_label':
 			self.createWidget( 'Label' )
-
 		elif name == 'create_button_color':
 			self.createWidget( 'ButtonColor' )
-
 		elif name == 'create_button':
 			self.createWidget( 'Button' )
-
 		elif name == 'create_widget':
 			self.createWidget( 'Widget' )
 
@@ -213,7 +211,7 @@ class GraphEditor( MainEditorModule ):
 				self.tree.setNodeExpanded( pnode, True )
 			self.tree.setFocus()
 			# self.tree.editNode( entity )
-			# self.tree.selectNode( entity )
+			self.tree.selectNode( entity )
 		signals.emit( 'scene.update' )
 		self.markDirty()
 
@@ -307,17 +305,13 @@ class GraphTreeWidget( GenericTreeWidget ):
 		return None
 
 	def getNodeChildren( self, node ):
-		className = node.className(node)
 		output = []
-		if className == 'Widget': # GROUP
-			children = node.children
-			for index in children:
-				output.append( children[index] )
-		else: # ENTITY
-			pass
+		children = node.children
+		for index in children:
+			output.append( children[index] )
 		return output
 
-	def reparentNode( self, target, pitem, **option ): # NEED ADD SUBLING
+	def reparentNode( self, target, pitem, **option ): # todo NEED ADD SUBLING
 		if target and pitem:
 			node = target.node
 			if node:

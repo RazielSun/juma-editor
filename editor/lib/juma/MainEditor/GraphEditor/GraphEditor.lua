@@ -1,8 +1,3 @@
-local Sprite = require("ui.Sprite")
-local Label = require("ui.Label")
-local ButtonColor = require("ui.ButtonColor")
-local Button = require("ui.Button")
-local Widget = require("ui.Widget")
 
 ---------------------------------------------------------------------------------
 --
@@ -27,37 +22,21 @@ function GraphEditor:getSceneRootNode()
 	return scene:getRootNode()
 end
 
-function GraphEditor:createWidget( widget_type )
-	local widget = nil
-	if widget_type == "Sprite" then
-		widget = Sprite()
-	elseif widget_type == "Label" then
-		widget = Label()
-	elseif widget_type == "ButtonColor" then
-		widget = ButtonColor()
-	elseif widget_type == "Button" then
-		widget = Button()
-	elseif widget_type == "Widget" then
-		widget = Widget()
-	end
-
-	if widget then
-		local scene = self:getScene()
-		scene:addWidgetToActiveGroup( widget )
-		widget:setLoc( scene.camera:getLoc() )
-	end
-	return widget
+function GraphEditor:addEntityByName( entityName )
+	local builder = getEntityType( entityName )
+	assert( builder )
+	local entity = builder()
+	self:addEntity( entity )
 end
 
-function GraphEditor:removeWidget( widget )
-	local success = false
-
-	if widget then
-		local scene = self:getScene()
-		success = scene:removeWidgetToActiveGroup( widget )
+function GraphEditor:addEntity( entity )
+	if entity then
+		if _owner then
+			local scene = self:getScene()
+			scene:addEntity( entity )
+			_owner.addEntityNode( _owner, entity )
+		end
 	end
-
-	return success
 end
 
 function GraphEditor:saveScene()
@@ -82,4 +61,69 @@ end
 
 ---------------------------------------------------------------------------------
 
-graphEditor = GraphEditor()
+editor = GraphEditor()
+
+local EditorCommand = require("edit.Command.EditorCommand")
+
+---------------------------------------------------------------------------------
+--
+-- @type CmdCreateEntityBase
+--
+---------------------------------------------------------------------------------
+
+local CmdCreateEntityBase = Class( EditorCommand, "CmdCreateEntityBase" )
+
+function CmdCreateEntityBase:setup( option )
+	self.parentEntity = false
+end
+
+function CmdCreateEntityBase:redo()
+	local entity = self:createEntity()
+	if not entity then return false end
+	self.created = entity
+
+	if self.parentEntity then
+		self.parentEntity:addChild( entity )
+	else
+		editor:addEntity( entity )
+	end
+	emitPythonSignal( 'entity.added', self.created, 'new' )
+end
+
+function CmdCreateEntityBase:undo()
+	self.created:destroy()
+	emitPythonSignal( 'entity.removed', self.created )
+end
+
+function CmdCreateEntityBase:createEntity()
+	return nil
+end
+
+function CmdCreateEntityBase:getResult()
+	return self.created
+end
+
+---------------------------------------------------------------------------------
+--
+-- @type CmdCreateEntityBase
+--
+---------------------------------------------------------------------------------
+
+local CmdCreateEntity = Class( CmdCreateEntityBase, "CmdCreateEntity" )
+
+function CmdCreateEntity:setup( option )
+	CmdCreateEntityBase.setup(self, option)
+	self.entityName = option.name
+end
+
+function CmdCreateEntity:createEntity()
+	local builder = getEntityType( self.entityName )
+	assert( builder )
+	local e = builder()
+	if not e.name then
+		e.name = self.entityName
+	end
+	return e
+end
+
+-- EditorCommand.register( CmdCreateEntity, 'main_editor/create_entity' )

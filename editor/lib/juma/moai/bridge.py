@@ -224,7 +224,7 @@ class ModelBridge(object):
 
 	def cleanLuaBridgeReference(self):
 		for provider in self.modelProviders:
-			# provider.clear()
+			provider.clear()
 			ModelManager.get().unregisterModelProvider( provider )
 		self.modelProviders = []
 
@@ -233,15 +233,36 @@ class ModelBridge(object):
 ModelBridge()
 
 ##----------------------------------------------------------------##
+class SafeDict(object):
+	def __init__( self, dict ):
+		self.__dict = dict
+
+	def __setitem__( self, key, value ):
+		self.__dict[key] = value
+
+	def __getitem__( self, key ):
+		return self.__dict.get( key, None )
+
+	def __iter__( self ):
+		return self.__dict
+
+	def values( self ):
+		return self.__dict.values()
+
+##----------------------------------------------------------------##
 def registerLuaEditorCommand( fullname, cmdCreator ):
 	class LuaEditorCommand( EditorCommand ):	
 		name = fullname
 		def __init__( self ):
 			self.luaCmd = cmdCreator()
 
+		def __repr__( self ):
+			cmd = self.luaCmd
+			return cmd.toString( cmd )
+
 		def init( self, **kwargs ):
 			cmd = self.luaCmd
-			return cmd.init( cmd, SafeDict( kwargs ) )
+			return cmd.setup( cmd, SafeDict( kwargs ) )
 
 		def redo( self ):
 			cmd = self.luaCmd
@@ -265,10 +286,6 @@ def registerLuaEditorCommand( fullname, cmdCreator ):
 
 		def getLuaCommand( self ):
 			return self.luaCmd
-
-		def __repr__( self ):
-			cmd = self.luaCmd
-			return cmd.toString( cmd )
 			
 	return LuaEditorCommand
 

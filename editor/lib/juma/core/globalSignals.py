@@ -34,13 +34,13 @@ register('preview.pause')
 register('selection.changed')
 register('selection.hint')
 
+register('command.new')
+register('command.undo')
+register('command.redo')
+register('command.clear')
+
 # register('game.pause')
 # register('game.resume')
-
-# register('command.new')
-# register('command.undo')
-# register('command.redo')
-# register('command.clear')
 
 # register('debug.enter')
 # register('debug.exit')
@@ -70,6 +70,3 @@ register('selection.hint')
 
 # register('asset.register')
 # register('asset.unregister')
-
-
-

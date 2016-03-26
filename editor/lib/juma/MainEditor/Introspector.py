@@ -258,8 +258,7 @@ class IntrospectorInstance(object):
 			widget = editor.initWidget( container.getBody(), container )
 			if widget:
 				container.addWidget( widget )
-				model = ModelManager.get().getModel( target ) # FIXME
-				# model = ModelManager.get().getModelFromTypeId( typeId )
+				model = ModelManager.get().getModelFromTypeId( typeId )
 				if model:
 					container.setTitle( model.name )
 				count = self.body.mainLayout.count()
@@ -370,7 +369,6 @@ class Introspector( MainEditorModule ):
 
 	# CALLBACKS #
 	def onSelectionChanged( self, selection, key ):
-		print("onSelectionChanged:", selection, key)
 		if key != 'scene': return
 		if not self.activeInstance: return
 		target = None

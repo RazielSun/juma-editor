@@ -94,7 +94,8 @@ end
 
 ----
 local function modelFromType( t )
-	local model = Model.fromClass( t )
+	local clazz = getClassByName( t )
+	local model = Model.fromClass( clazz )
 	if not model then
 		return nil
 	end	

@@ -7,8 +7,6 @@
 
 local AssetsGrabber = {}
 
--- # HARDCODE
-
 function AssetsGrabber.grabFromResourceMgr()
 	AssetsGrabber.grabSprites()
 	AssetsGrabber.grabFonts()

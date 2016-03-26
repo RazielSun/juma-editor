@@ -76,7 +76,6 @@ class EditorCommandStack( object ):
 		if cmd.redo() == False: #failed
 			self.undoStack.pop()
 			return False
-
 		if not redo:
 			signals.emit( 'command.new', cmd, self )
 			self.redoStack = []

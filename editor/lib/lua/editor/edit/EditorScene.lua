@@ -134,12 +134,13 @@ function EditorScene:setActiveGroup( node )
 	self.activeGroup = node
 end
 
-function EditorScene:addWidgetToActiveGroup( widget )
-	self.activeGroup:addChild( widget )
+function EditorScene:addEntity( entity )
+	entity:setLoc( self.camera:getLoc() )
+	self.activeGroup:addChild( entity )
 end
 
-function EditorScene:removeWidgetToActiveGroup( widget )
-	return self:removeWidget( widget, self.activeGroup )
+function EditorScene:removeEntity( entity )
+	return self:removeWidget( entity, self.activeGroup )
 end
 
 function EditorScene:removeWidget( widget, group )

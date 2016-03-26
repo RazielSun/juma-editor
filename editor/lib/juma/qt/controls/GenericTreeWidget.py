@@ -190,6 +190,12 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 
 	def getNodeParent( self, node ):
 		return None
+
+	def setNodeExpanded( self, node, expanded = True ):
+		item = self.getItemByNode( node )
+		if not item: return False
+		item.setExpanded( expanded )
+		return True
 		
 	def refreshAllContent( self ):
 		for node in self.nodeDict.keys():
