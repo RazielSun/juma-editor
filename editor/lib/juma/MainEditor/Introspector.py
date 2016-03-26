@@ -47,28 +47,28 @@ class ObjectContainer( QtGui.QWidget ):
 
 	def __init__( self, *args ):
 		super( ObjectContainer, self ).__init__( *args )
-		self.ui = Ui_ObjectContainer()
-		self.ui.setupUi( self )
+		self.ui = ui = Ui_ObjectContainer()
+		ui.setupUi( self )
 		self.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed )
 		self.setAttribute( Qt.WA_NoSystemBackground, True )
 		self.contextObject = None
 		self.folded = False
 		self.toggleFold( False, True )
 
-		self.ui.nameBtn.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
-		self.ui.menuBtn.setVisible( False )
+		ui.nameBtn.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
+		ui.menuBtn.setVisible( False )
 		
-		# self.ui.nameBtn.setIcon( getIcon( 'grid' ) )
-		self.ui.menuBtn.setIcon( getIcon( 'list' ) )
-		self.ui.foldBtn.setIcon( getIcon( 'arrow_down' ) )
+		# ui.nameBtn.setIcon( getIcon( 'grid' ) )
+		ui.menuBtn.setIcon( getIcon( 'list' ) )
+		ui.foldBtn.setIcon( getIcon( 'arrow_down' ) )
 
-		self.ui.nameBtn.setIconSize( QSize( 16, 16 ) )
-		self.ui.menuBtn.setIconSize( QSize( 16, 16 ) )
-		self.ui.foldBtn.setIconSize( QSize( 16, 16 ) )
+		ui.nameBtn.setIconSize( QSize( 16, 16 ) )
+		ui.menuBtn.setIconSize( QSize( 16, 16 ) )
+		ui.foldBtn.setIconSize( QSize( 16, 16 ) )
 
-		self.ui.foldBtn.clicked.connect( lambda: self.toggleFold( None ) )
-		self.ui.menuBtn.clicked.connect( lambda: self.openContextMenu() )
-		self.ui.nameBtn.clicked.connect( lambda: self.toggleFold( None ) )
+		ui.foldBtn.clicked.connect( lambda: self.toggleFold( None ) )
+		ui.menuBtn.clicked.connect( lambda: self.openContextMenu() )
+		ui.nameBtn.clicked.connect( lambda: self.toggleFold( None ) )
 
 	def setContextObject( self, context ):
 		self.contextObject = context

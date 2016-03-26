@@ -13,6 +13,9 @@ import time
 import signals
 import jsonHelper
 
+from cache   import CacheManager
+from asset   import AssetLibrary
+
 # _GII_ENV_DIR            = 'env'
 # _GII_GAME_DIR           = 'game'
 # _GII_HOST_DIR           = 'host'
@@ -52,6 +55,9 @@ class Project(object):
 		assert not Project._singleton
 		Project._singleton = self
 
+		self.cacheManager = CacheManager() 
+		self.assetLibrary = AssetLibrary()
+
 		self.path      	= None
 		self.gamePath 	= None
 
@@ -72,6 +78,8 @@ class Project(object):
 	def init(self, path):
 		signals.emitNow('project.init', self)
 
+		# self.assetLibrary.load( _GII_ASSET_DIR, self.assetPath, self.path, self.envConfigPath )
+
 	def load(self, path):
 		if not path:
 			path = self.path
@@ -87,6 +95,9 @@ class Project(object):
 			self.config = {}
 			self.saveConfig()
 
+		# self.cacheManager.load( _GII_ENV_CONFIG_DIR, self.envConfigPath )
+		# self.assetLibrary.load( _GII_ASSET_DIR, self.assetPath, self.path, self.envConfigPath )
+
 		self.loaded = True
 		signals.emitNow( 'project.preload', self )
 		signals.emitNow( 'project.load', self )
@@ -95,7 +106,14 @@ class Project(object):
 
 	def save(self):
 		signals.emitNow('project.presave', self)
+
 		jsonHelper.trySaveJSON( self.info, self.getBasePath( _PROJECT_INFO_FILE ) )
+
+		#save asset & cache
+		self.assetLibrary.save()
+		self.cacheManager.clearFreeCacheFiles()
+		self.cacheManager.save()
+
 		signals.emitNow( 'project.save', self )
 		return True
 
@@ -122,6 +140,14 @@ class Project(object):
 
 	def setConfig( self, key, value ):
 		self.config[ key ] = value
+
+##----------------------------------------------------------------##
+	def getAssetLibrary( self ):
+		return self.assetLibrary
+
+	def loadAssetLibrary( self ):
+		#load cache & assetlib
+		self.assetLibrary.loadAssetTable()
 
 ##----------------------------------------------------------------##
 

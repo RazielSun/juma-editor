@@ -287,7 +287,6 @@ class GraphTreeWidget( GenericTreeWidget ):
 		# self.adjustingRange = False
 		# self.verticalScrollBar().rangeChanged.connect( self.onScrollRangeChanged )
 		self.setIndentation( 13 )
-		self.currentDragItem = None
 
 	def getHeaderInfo( self ):
 		return [('Name',160), ('V',32 ), ('L',32 ), ('', -1) ] #( 'Layer', 50 ), ('', -1) ]
@@ -338,21 +337,11 @@ class GraphTreeWidget( GenericTreeWidget ):
 		item.setData( 0, Qt.UserRole, 0 )
 
 		if node and (node is not None):
-			className = node.className(node)
-			if className == 'Widget': # GROUP
-				item.setText( 0, node.name or '<group>' )
-				item.setIcon( 0, getIcon('folder') )
-			else: # SPRITE LABEL BUTTON
-				item.setText( 0, node.name or '<widget>' )
-				item.setIcon( 0, getIcon('dot') )
+			item.setText( 0, node.name or '<widget>' )
+			item.setIcon( 0, getIcon('dot') )				
 
 	def getItemFlags( self, node ):
 		flagNames = {}
-		className = node.className(node)
-		if className == 'Widget': # GROUP
-			pass
-		else: # SPRITE LABEL BUTTON
-			flagNames['droppable'] = False
 		return flagNames
 
 	##----------------------------------------------------------------##
@@ -369,18 +358,20 @@ class GraphTreeWidget( GenericTreeWidget ):
 			pos = 'viewport'
 
 		target = self.itemAt( event.pos() )
-		item = self.currentDragItem
-		print("dropEvent pos: {} ::{} {} node:: ".format(pos, item, target))
+		items = self.module.getSelection()
+		
 		ok = False
-		if pos == 'on':
-			ok = self.reparentNode( item, target )
-		# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
-		elif pos == 'viewport':
-			ok = self.reparentNode( item, 'root' )
-		# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
-		elif pos == 'above' or pos == 'below':
-			ok = self.reparentNode( item, target, mode = 'sibling' )
-		# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node, mode = 'sibling' )
+		for item in items: # FIXME not working
+			print("dropEvent pos: {} ::{} {} node:: ".format(pos, item, target))
+			if pos == 'on':
+				ok = self.reparentNode( item, target )
+			# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node )
+			elif pos == 'viewport':
+				ok = self.reparentNode( item, 'root' )
+			# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
+			elif pos == 'above' or pos == 'below':
+				ok = self.reparentNode( item, target, mode = 'sibling' )
+			# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node, mode = 'sibling' )
 
 		if ok:
 			super( GenericTreeWidget, self ).dropEvent( event )
@@ -400,11 +391,9 @@ class GraphTreeWidget( GenericTreeWidget ):
 		if not self.syncSelection: return
 		items = self.selectedItems()
 		if items:
-			self.currentDragItem = items[0]
 			selections=[item.node for item in items]
 			self.module.changeSelection(selections)
 		else:
-			self.currentDragItem = None
 			self.module.changeSelection(None)
 
 	def onItemActivated(self, item, col):

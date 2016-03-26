@@ -1,49 +1,106 @@
 
+import json
+import os.path
+
 from PySide import QtGui, QtCore
 from PySide.QtCore import Qt
 
+from juma.core import *
+from juma.core.ModelManager import *
 from PropertyEditor import FieldEditor, registerSimpleFieldEditorFactory
-from FieldEditorControls import *
 from juma.qt.IconCache import getIcon
-from juma.core.ModelManager import AssetRefType
+from juma.qt.helpers import repolishWidget
+
+from SearchFieldEditor import SearchFieldEditorBase
 
 ##----------------------------------------------------------------##
-class BasicAssetRefEditorWidget( QtGui.QWidget ):
-	def __init__( self, parent ):
-		super(BasicAssetRefEditorWidget, self).__init__( parent )
-		self.layout = layout = QtGui.QHBoxLayout( self )
-		layout.setSpacing(0)
-		layout.setContentsMargins(0,0,0,0)
+class AssetRefFieldEditor( SearchFieldEditorBase ):	
+	def getValueRepr( self, value ):
+		lib = AssetLibrary.get()
+		if value:
+			node = lib.getAssetNode( value )
+			if node:
+				icon = lib.getAssetIcon( node.getType() )
+				return ( value, icon )
+		return value #str
 
-		self.line = FieldEditorLineEdit( self )
-		self.line.setMinimumSize( 50, 16 )
-		self.line.setSizePolicy( QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding )
-		layout.addWidget( self.line )
+	def getSearchType( self ):
+		t = self.field.getType()
+		return t.getAssetType( self.getTarget() )
 
-		self.btn = QtGui.QToolButton( self )
-		self.btn.setMaximumSize( 20, 20 )
-		self.btn.setIcon( getIcon("tick_mint") )
-		layout.addWidget( self.btn )
+	def getSearchContext( self ):
+		return "asset"
+
+	def getSearchInitial( self ):
+		return self.target and AssetLibrary.get().getAssetNode( self.target ) or None
+
+	def setValue( self, node ):
+		if node:
+			value = node.getNodePath()
+		else:
+			value = None
+		super( AssetRefFieldEditor, self ).setValue( value )
+
+	def gotoObject( self ):
+		assetBrowser = app.getModule( 'asset_browser' )
+		if assetBrowser:
+			assetBrowser.locateAsset( self.target )
+	
+	def formatRefName( self, name )	:
+		if isinstance( name, ( str, unicode ) ):
+			baseName, ext = os.path.splitext( os.path.basename( name ) )
+			return baseName
+		else:
+			return name
+
+	def findMatchedAssetFromMime( self, mime ):
+		if not mime.hasFormat( GII_MIME_ASSET_LIST ): return None
+		assetList = json.loads( str(mime.data( GII_MIME_ASSET_LIST )), 'utf-8' )
+		matched = False
+		assetLib = AssetLibrary.get()
+
+		assets = []
+		for path in assetList:			
+			asset = assetLib.getAssetNode( path )
+			if asset:
+				assets.append( asset )
+
+		result = assetLib.enumerateAsset( self.getSearchType(), subset = assets )
+		if result:
+			return result[0]
+		else:
+			return None
+
+	def dragEnterEvent( self, ev ):
+		mime = ev.mimeData()
+		asset = self.findMatchedAssetFromMime( mime )
+		button = self.getRefButton()
+		if asset:
+			button.setProperty( 'dragover', 'ok' )
+		else:			
+			button.setProperty( 'dragover', 'bad' )
+		repolishWidget( button )
+		ev.acceptProposedAction()
+
+	def dropEvent( self, ev ):
+		button = self.getRefButton()
+		button.setProperty( 'dragover', False )
+		repolishWidget( button )
+		mime = ev.mimeData()
+		asset = self.findMatchedAssetFromMime( mime )		
+		if not asset: return False
+		self.setValue( asset )
+		ev.acceptProposedAction()
+
+	def dragLeaveEvent( self, ev ):
+		button = self.getRefButton()
+		button.setProperty( 'dragover', False )
+		repolishWidget( button )
+
+	def isDropAllowed( self ):
+		return True
 
 ##----------------------------------------------------------------##
-class BasicAssetRefFieldEditor( FieldEditor ):
-	def get( self ):
-		return self.assetEdit.line.text()
 
-	def set( self, value ):
-		self.assetEdit.line.setText( value or '' )
+registerSimpleFieldEditorFactory( AssetRefType, AssetRefFieldEditor )
 
-	def initEditor( self, container ):
-		self.assetEdit = BasicAssetRefEditorWidget( container )
-		self.assetEdit.btn.clicked.connect( self.doAction )
-		return self.assetEdit
-
-	def setReadonly( self, readonly ):
-		self.assetEdit.line.setReadOnly( readonly )
-
-	def doAction( self ):
-		self.notifyChanged( self.get() )
-
-##----------------------------------------------------------------##
-
-registerSimpleFieldEditorFactory( AssetRefType, BasicAssetRefFieldEditor )

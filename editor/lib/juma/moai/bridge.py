@@ -94,6 +94,11 @@ def removeSelection( key, targets = None ):
 	selectionManager.removeSelection( targets )
 
 ##----------------------------------------------------------------##
+def registerAssetNodeInLibrary( nodePath, assetType ):
+	node = AssetNode( nodePath, assetType )
+	AssetLibrary.get().registerAssetNode( node )
+
+##----------------------------------------------------------------##
 ## ModelBridge
 ##----------------------------------------------------------------##
 class LuaObjectModelProvider(ModelProvider):
@@ -228,3 +233,49 @@ class ModelBridge(object):
 ModelBridge()
 
 ##----------------------------------------------------------------##
+def registerLuaEditorCommand( fullname, cmdCreator ):
+	class LuaEditorCommand( EditorCommand ):	
+		name = fullname
+		def __init__( self ):
+			self.luaCmd = cmdCreator()
+
+		def init( self, **kwargs ):
+			cmd = self.luaCmd
+			return cmd.init( cmd, SafeDict( kwargs ) )
+
+		def redo( self ):
+			cmd = self.luaCmd
+			return cmd.redo( cmd )
+
+		def undo( self ):
+			cmd = self.luaCmd
+			return cmd.undo( cmd )
+
+		def canUndo( self ):
+			cmd = self.luaCmd
+			return cmd.canUndo( cmd )
+
+		def hasHistory( self ):
+			cmd = self.luaCmd
+			return cmd.hasHistory( cmd )
+
+		def getResult( self ):
+			cmd = self.luaCmd
+			return cmd.getResult( cmd )
+
+		def getLuaCommand( self ):
+			return self.luaCmd
+
+		def __repr__( self ):
+			cmd = self.luaCmd
+			return cmd.toString( cmd )
+			
+	return LuaEditorCommand
+
+##----------------------------------------------------------------##
+def doCommand( cmdId, argTable ):
+	pyArgTable = luaTableToDict( argTable )
+	return app.doCommand( cmdId, **pyArgTable )
+
+def undoCommand( popOnly = False ):
+	return app.undoCommand( popOnly )

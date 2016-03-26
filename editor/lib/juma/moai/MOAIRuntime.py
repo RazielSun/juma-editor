@@ -89,10 +89,11 @@ class MOAIRuntime( EditorModule ):
 		_G._setTarget( self.lua.globals() )
 
 		_G['PYTHON_BRIDGE']            	= bridge
-		_G['LIB_JUMA_LUA_PATH'] 			= self.getApp().getPath('lib/lua/juma')
-		_G['LIB_EDITOR_LUA_PATH'] 			= self.getApp().getPath('lib/lua/editor')
-		_G['LIB_FRAMEWORK_LUA_PATH'] 		= self.getApp().getPath('lib/lua/framework/src')
+		_G['LIB_JUMA_LUA_PATH'] 		= self.getApp().getPath('lib/lua/juma')
+		_G['LIB_EDITOR_LUA_PATH'] 		= self.getApp().getPath('lib/lua/editor')
+		_G['LIB_FRAMEWORK_LUA_PATH'] 	= self.getApp().getPath('lib/lua/framework/src')
 		_G['ASSET_EDITOR_PATH'] 		= self.getApp().getPath('data/assets')
+		_G['PROJECT_GAME_PATH'] 		= self.getProject().gamePath
 
 		self.addDefaultInputDevice( 'device' )
 		self.runScript( self.getApp().getPath( 'lib/lua/juma/init.lua' ) )
@@ -275,10 +276,13 @@ class MOAIRuntime( EditorModule ):
 	def setBufferSize( self, width, height ):
 		_Render.setBufferSize( width, height )
 
-	def manualRender( self):
+	def manualRender( self ):
 		if not self.GLContextReady:
 			return
 		_Render.manualRender()
+
+	def refreshAssets( self ):
+		_G.refreshAssets()
 
 	def updateStepSim( self, step ):
 		try:

@@ -495,6 +495,7 @@ class SearchView( EditorModule ):
 			self.onCancel()
 		self.window.hide() 
 
+	##--- format [  ( obj,  objName, objTypeName, objIcon ), ...  ] or None
 	def registerSearchEnumerator( self, enumerator ):
 		self.enumerators.append( enumerator )
 

@@ -11,6 +11,7 @@ from layout 		import *
 from ModelManager 	import *
 from res         	import ResGuard
 from tool 			import startupTool
+from asset          import AssetLibrary, AssetNode #, AssetException, AssetNode, AssetManager, AssetCreator
 
 ##----------------------------------------------------------------##
 from Command        import EditorCommand, EditorCommandStack, EditorCommandRegistry

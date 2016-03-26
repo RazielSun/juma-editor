@@ -6,6 +6,7 @@ from PySide.QtCore import QEventLoop, QEvent, QObject
 from PropertyEditor import FieldEditor,registerSimpleFieldEditorFactory
 
 from juma.qt.dialogs import requestColorDialog
+from juma.qt.helpers import QColorF, unpackQColor
 
 ##----------------------------------------------------------------##
 class DialogAutoAcceptEventFilter(QObject):
@@ -16,13 +17,6 @@ class DialogAutoAcceptEventFilter(QObject):
 		return QObject.eventFilter( self, obj, event )
 
 ##----------------------------------------------------------------##
-
-def unpackQColor( c ):
-	return ( c.redF(), c.greenF(), c.blueF(), c.alphaF() )
-
-def QColorF( r, g, b, a =1 ):
-	return QtGui.QColor( r*255, g*255, b*255, a*255)
-
 class ColorBlock( QtGui.QToolButton ):
 	colorChanged = QtCore.Signal( QtGui.QColor )
 

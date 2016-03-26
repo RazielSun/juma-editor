@@ -14,10 +14,8 @@ from Project        import Project
 # from package        import PackageManager
 from MainModulePath import getMainModulePath
 from Command        import EditorCommandRegistry
-# from RemoteCommand  import RemoteCommandRegistry, RemoteCommand
 
 # from InstanceHelper import checkSingleInstance, setRemoteArgumentCallback, sendRemoteMsg
-
 
 # _GII_BUILTIN_PACKAGES_PATH = 'packages'
 # _GII_APP_CONFIG_FILE = 'config.json'
@@ -47,7 +45,6 @@ class EditorApp(object):
 		# self.packageManager   = PackageManager()
 
 		self.commandRegistry       = EditorCommandRegistry.get()
-		# self.remoteCommandRegistry = RemoteCommandRegistry.get()
 		
 		self.registerDataPath( self.getPath('data') )
 
@@ -261,7 +258,6 @@ class EditorApp(object):
 		proj = Project.get()
 		if proj.load( basePath ):
 			self.projectLoaded = True
-
 	# 	if self.projectLoaded: return Project.get()
 	# 	info = Project.findProject( basePath )
 	# 	if not info:
@@ -272,24 +268,18 @@ class EditorApp(object):
 	# 	self.registerDataPath( proj.getEnvPath('data') )
 	# 	return proj
 
-	# def getAssetLibrary( self ):
-	# 	return self.getProject().getAssetLibrary()
+	def getAssetLibrary( self ):
+		return self.getProject().getAssetLibrary()
 	
-	# def isDebugging( self ):
-	# 	return False
-
-	# def getPlatformName( self ):
-	# 	name = platform.system()
-	# 	if name == 'Linux':
-	# 		return 'linux'
-	# 	elif name == 'Darwin':
-	# 		return 'osx'
-	# 	elif name == 'Windows':
-	# 		return 'win'
-	# 	else:
-	# 		raise Exception( 'what platform?' + name )
-
-	# def onRemote( self, data, output ):
-	# 	self.remoteCommandRegistry.doCommand( data, output )
+	def getPlatformName( self ):
+		name = platform.system()
+		if name == 'Linux':
+			return 'linux'
+		elif name == 'Darwin':
+			return 'osx'
+		elif name == 'Windows':
+			return 'win'
+		else:
+			raise Exception( 'what platform?' + name )
 
 app = EditorApp()

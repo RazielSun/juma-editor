@@ -54,7 +54,13 @@ class QtSupport( QtEditorModule ):
 			'E&xit',
 			]
 		)
-		self.menu.addChild('&Edit')
+		self.menu.addChild('&Edit').addChild( [
+			'Undo|Ctrl+Z',
+			'Redo|Ctrl+Shift+Z',
+			'----',
+			]
+		)
+		self.menu.addChild('&Asset')
 		self.menu.addChild( dict( name = 'preview', label = 'Game' ) )
 		self.menu.addChild('&Scene')
 		self.menu.addChild('&View').addChild([
@@ -81,18 +87,7 @@ class QtSupport( QtEditorModule ):
 		return self.sharedMenuBar
 
 	def showSystemStatusWindow( self ):
-		pass
-		# if not self.statusWindow:
-		# 	self.statusWindow = self.requestSubWindow( 'SystemStatus',
-		# 			title     = 'System Status',
-		# 			size      = (200,200),
-		# 			minSize   = (200,200)
-		# 		)
-		# 	self.statusWindow.body = self.statusWindow.addWidgetFromFile(
-		# 			self.getApp().getPath( 'data/ui/SystemStatus.ui' )
-		# 		)
-		# self.statusWindow.show()
-		# self.statusWindow.raise_()
+		pass # this method use gii
 
 	def setActiveWindow(self, window):
 		self.qtApp.setActiveWindow(window)
@@ -196,20 +191,20 @@ class QtSupport( QtEditorModule ):
 		elif name == 'debug_draw':
 			self.getModule('debug_draw_dock').show()
 
-		# elif name == 'copy':
-		# 	print 'copy'
-		# elif name == 'paste':
-		# 	print 'paste'
-		# elif name == 'cut':
-		# 	print 'cut'
+		elif name == 'copy':
+			print 'copy'
+		elif name == 'paste':
+			print 'paste'
+		elif name == 'cut':
+			print 'cut'
 
-		# elif name == 'undo':
-		# 	stack = EditorCommandRegistry.get().getCommandStack( 'scene_editor' )
-		# 	stack.undoCommand()
+		elif name == 'undo':
+			stack = EditorCommandRegistry.get().getCommandStack( 'main_editor' )
+			stack.undoCommand()
 
-		# elif name == 'redo':
-		# 	stack = EditorCommandRegistry.get().getCommandStack( 'scene_editor' )
-		# 	stack.redoCommand()
+		elif name == 'redo':
+			stack = EditorCommandRegistry.get().getCommandStack( 'main_editor' )
+			stack.redoCommand()
 
 ##----------------------------------------------------------------##
 

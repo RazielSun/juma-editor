@@ -11,6 +11,8 @@ newPythonList 		= bridge.newPythonList
 emitPythonSignal   	= bridge.emitPythonSignal
 emitPythonSignalNow = bridge.emitPythonSignalNow
 
+registerAssetNodeInLibrary = bridge.registerAssetNodeInLibrary --# FIXME
+
 --------------------------------------------------------------------
 function dictToTablePlain( dict )
 	local t = {}
@@ -85,7 +87,6 @@ function toggleSelection( key, obj, ... )
 		bridge.toggleSelection( key, nil )
 	end
 end
-
 
 function getSelection( key )
 	assert( type(key)=='string', 'selection key expected' )
@@ -195,6 +196,13 @@ function registerModelProvider( setting )
 			name, priority, getTypeId, getModel, getModelFromTypeId
 		)
 end
+
+--------------------------------------------------------------------
+-- Editor Command
+--------------------------------------------------------------------
+registerLuaEditorCommand = bridge.registerLuaEditorCommand
+doCommand = bridge.doCommand
+undoCommand = bridge.undoCommand
 
 --------------------------------------------------------------------
 

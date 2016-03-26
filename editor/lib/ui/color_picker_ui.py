@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'color_picker.ui'
 #
-# Created: Fri Mar 25 15:47:55 2016
+# Created: Fri Mar 25 23:23:22 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!

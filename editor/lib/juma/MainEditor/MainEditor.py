@@ -33,6 +33,10 @@ class MainEditor( TopEditorModule ):
 
         self.containers  = {}
 
+        self.findMenu( 'main/asset' ).addChild([
+            dict( name = 'refresh_assets', label = 'Refresh Assets' ),
+        ], self )
+
         self.findMenu( 'main/edit' ).addChild([
             dict( name = 'reload_project', label = 'Reload Project', shortcut = 'ctrl+R' ),
         ], self )
@@ -60,6 +64,10 @@ class MainEditor( TopEditorModule ):
         name = node.name
         if name == 'reload_project':
             self.reloadProject()
+
+        elif name == 'refresh_assets':
+            runtime = self.getRuntime()
+            runtime.refreshAssets()
 
     def onTool(self, node):
         name = node.name

@@ -105,7 +105,7 @@ class SceneView( MainEditorModule ):
 
 		self.addTool(	'scene_view_tools/tool_select_object',
 			widget = SceneToolButton( 'scene_view_select_object',
-				icon = 'tools/target',
+				icon = 'tools/dashed',
 				label = 'Select object'
 				)
 			)
