@@ -22,6 +22,8 @@ function CanvasItemManager:onLoad()
 	assert( self.layer )
 	local inputDevice = self:getView():getInputDevice()
 	inputDevice:addMouseListener( self.onMouseEvent, self )
+	inputDevice:addKeyListener( self.onKeyEvent, self )
+	self.inputDevice = inputDevice
 end
 
 function CanvasItemManager:getView()
@@ -101,7 +103,15 @@ function CanvasItemManager:onMouseMove( x, y )
 	-- end
 end
 
-	
+function CanvasItemManager:onKeyEvent( event )
+	local k = event.key
+	if k=="down" or k=="up" or k=="left" or k=="right" then
+		local topItem = self.items[1]
+		if topItem and topItem.onArrowsPressed then
+			topItem:onArrowsPressed( k, self.inputDevice:isShiftDown() )
+		end
+	end
+end
 
 
 ---------------------------------------------------------------------------------

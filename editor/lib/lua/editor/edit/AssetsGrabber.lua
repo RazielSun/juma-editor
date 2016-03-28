@@ -10,6 +10,7 @@ local AssetsGrabber = {}
 function AssetsGrabber.grabFromResourceMgr()
 	AssetsGrabber.grabSprites()
 	AssetsGrabber.grabFonts()
+	AssetsGrabber.grabLayout()
 end
 
 function AssetsGrabber.grabSprites()
@@ -79,6 +80,29 @@ function AssetsGrabber.grabFonts()
     for _, font in ipairs(fonts) do
     	-- print("register: font: ", font)
     	registerAssetNodeInLibrary( font, "font" )
+    end
+end
+
+function AssetsGrabber.grabLayout()
+	local folders = { '', 'layouts/' }
+	local layouts = {}
+
+    for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
+    	for _, folder in ipairs(folders) do
+    		local filePath = string.pathJoin(pathInfo.path, folder)
+    		local files = MOAIFileSystem.listFiles( filePath )
+    		if files then
+	            for i, file in ipairs(files) do
+	            	if string.find(file, ".layout") then
+	            		table.insert( layouts, string.pathJoin(filePath, file) )
+					end
+				end
+			end
+    	end
+    end
+
+    for _, layout in ipairs(layouts) do
+    	registerAssetNodeInLibrary( layout, "layout" )
     end
 end
 

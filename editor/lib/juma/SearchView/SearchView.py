@@ -65,7 +65,7 @@ class SearchViewWidget( QtGui.QWidget ):
 
 		self.treeResult.browser = self
 		self.entries = None
-		self.setMinimumSize( 400, 300  )
+		self.setMinimumSize( 600, 400  )
 		self.setMaximumSize( 800, 600  )
 		self.multipleSelection = False
 

@@ -33,8 +33,8 @@ end
 
 function GraphEditor:addEntity( entity )
 	if entity then
-		local rootGroup = self.scene.rootGroup
-		rootGroup:addChild( entity )
+		local root = self.scene:getRootGroup()
+		root:addChild( entity )
 		if _owner then
 			_owner.addEntityNode( _owner, entity )
 		end
@@ -46,22 +46,34 @@ function GraphEditor:removeEntity( entity )
 	self.scene:removeEntity( entity )
 end
 
-function GraphEditor:saveScene()
-	local scene = self:getScene()
+function GraphEditor:saveSceneAs( path )
+	local scene = self.scene
 	if scene then
-		return LayoutManager:layoutToString( scene:getRootNode() )
+		return EntityManager:save( path, scene:getRootGroup() )
 	end
 	return nil
 end
 
-function GraphEditor:loadScene( path )
+function GraphEditor:openScene( path )
 	local scene = self:getScene()
 	if scene then
-		local node = LayoutManager:loadByPath( path )
-		if node then
-			scene:setRootNode( node )
-			return node
+		local group = EntityManager:load( path )
+		if group then
+			scene:setRootGroup( group )
 		end
+		return scene
+	end
+	return nil
+end
+
+function GraphEditor:openSceneAs( path )
+	local scene = self:getScene()
+	if scene then
+		local group = EntityManager:loadByPath( path )
+		if group then
+			scene:setRootGroup( group )
+		end
+		return scene
 	end
 	return nil
 end

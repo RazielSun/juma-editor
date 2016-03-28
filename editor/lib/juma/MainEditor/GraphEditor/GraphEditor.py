@@ -6,12 +6,13 @@ from PySide             import QtCore, QtGui, QtOpenGL
 from PySide.QtCore      import Qt
 from PySide.QtGui     	import QFileDialog, QStyle, QBrush, QColor, QPen, QIcon, QPalette
 
-from juma.core                			import signals, app
+from juma.core                			import signals, app, AssetRefType
 from juma.core.layout 					import _saveLayoutToFile
 from juma.moai.MOAIRuntime 				import MOAILuaDelegate
 from juma.qt.IconCache 					import getIcon
 from juma.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from juma.MainEditor.MainEditor       	import MainEditorModule
+from juma.SearchView 					import requestSearchView
 
 ##----------------------------------------------------------------##
 def getModulePath( path ):
@@ -62,8 +63,9 @@ class GraphEditor( MainEditorModule ):
 		self.delegate.load( getModulePath( 'GraphEditor.lua' ) )
 
 		self.findMenu( 'main/scene' ).addChild([
-            dict( name = 'scene_open', label = 'Open Scene' ),
-            dict( name = 'scene_save', label = 'Save Scene' ),
+			dict( name = 'scene_open', label = 'Open Scene', shortcut = 'ctrl+O' ),
+            dict( name = 'scene_open_as', label = 'Open Scene As...' ),
+            dict( name = 'scene_save_as', label = 'Save Scene As...' ),
         ], self )
 
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
@@ -120,21 +122,26 @@ class GraphEditor( MainEditorModule ):
 		signals.emitNow( 'scene.open', scene )
 
 ##----------------------------------------------------------------##
-	# def openScene(self):
-	# 	filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene", self.getProject().path or "~", "Layout file (*.layout )")
-	# 	if filePath:
-	# 		sceneName = os.path.basename( filePath )
-	# 		signals.emitNow( 'scene.open', sceneName )
-	# 		node = self.delegate.safeCallMethod( 'editor', 'loadScene', filePath )
-	# 		self.onSceneChange()
+	def openScene(self):
+		requestSearchView( 
+			context      = 'asset',
+			type         = 'layout',
+			multiple_selection = False,
+			on_selection = self.onSceneSearchSelection,
+			on_cancel    = self.onSceneSearchCancel,
+			# on_search    = self.onSceneSearch,
+			)
 
-	# def saveScene(self):
-	# 	filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene", self.getProject().path or "~", "Layout file (*.layout )")
-	# 	if filePath:
-	# 		data = self.delegate.safeCallMethod( 'editor', 'saveScene' )
-	# 		_saveLayoutToFile( filePath, data )
-	# 		sceneName = os.path.basename( filePath )
-	# 		signals.emitNow( 'scene.open', sceneName )
+	def openSceneAs(self):
+		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene As", self.getProject().path or "~", "Layout file (*.layout )")
+		if filePath:
+			scene = self.delegate.safeCallMethod( 'editor', 'openSceneAs', filePath )
+			signals.emitNow( 'scene.change', scene )
+
+	def saveSceneAs(self):
+		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene As", self.getProject().path or "~", "Layout file (*.layout )")
+		if filePath:
+			data = self.delegate.safeCallMethod( 'editor', 'saveSceneAs', filePath )
 
 	def openSceneSettings(self):
 		pass
@@ -163,8 +170,10 @@ class GraphEditor( MainEditorModule ):
 		name = tool.name
 		if name == 'scene_open':
 			self.openScene()
-		elif name == 'scene_save':
-			self.saveScene()
+		elif name == 'scene_open_as':
+			self.openSceneAs()
+		elif name == 'scene_save_as':
+			self.saveSceneAs()
 
 		elif name == 'create_sprite':
 			self.createNodeUI( 'Sprite' )
@@ -206,6 +215,16 @@ class GraphEditor( MainEditorModule ):
 		# 	self.changeSelection( selection._entity )			
 		# else:
 		# 	self.changeSelection( selection )
+
+	def onSceneSearchSelection( self, target ):
+		scene = self.delegate.safeCallMethod( 'editor', 'openScene', target.getNodePath() )
+		signals.emitNow( 'scene.change', scene )
+
+	def onSceneSearchCancel( self ):
+		pass
+
+	def onSceneSearch( self, typeId, context, option ):
+		pass
 
 	##----------------------------------------------------------------##
 	def onEntityAdded( self, entity, context = None ):

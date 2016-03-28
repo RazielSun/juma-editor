@@ -107,6 +107,29 @@ function TranslationItem:onMouseMove( x, y )
 	return true
 end
 
+function TranslationItem:onArrowsPressed( key, shift )
+	local target = self.target
+
+	local x, y, z = 0, 0, 0
+	local step = shift and 10 or 1
+	if key == "down" then
+		y = -step
+	elseif key == "up" then
+		y = step
+	elseif key == "left" then
+		x = -step
+	elseif key == "right" then
+		x = step
+	end
+
+	target:forceUpdate()
+	self:forceUpdate()
+
+	local tx, ty, tz = target:getLoc()
+	target:setLoc( tx+x, ty+y, tz+z )
+	self.tool:updateCanvas()
+end
+
 ---------------------------------------------------------------------------------
 --
 -- @type RotateItem
