@@ -24,6 +24,10 @@ function CanvasItem:setTarget( target )
 	self:getProp():setAttrLink ( MOAITransform.INHERIT_TRANSFORM, target:getProp(), MOAITransform.TRANSFORM_TRAIT )
 end
 
+function CanvasItem:inside( x, y, z, pad )
+	return true
+end
+
 ---------------------------------------------------------------------------------
 function CanvasItem:wndToWorld( wx, wy )
 	local x, y = self.layer:wndToWorld( wx or 0, wy or 0, 0 )
