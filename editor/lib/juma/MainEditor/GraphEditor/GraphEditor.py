@@ -7,7 +7,6 @@ from PySide.QtCore      import Qt
 from PySide.QtGui     	import QFileDialog, QStyle, QBrush, QColor, QPen, QIcon, QPalette
 
 from juma.core                			import signals, app, AssetRefType
-from juma.core.layout 					import _saveLayoutToFile
 from juma.moai.MOAIRuntime 				import MOAILuaDelegate
 from juma.qt.IconCache 					import getIcon
 from juma.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter

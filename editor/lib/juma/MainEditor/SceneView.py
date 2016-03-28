@@ -69,7 +69,7 @@ class SceneView( MainEditorModule ):
 		self.coordWidget.gotoSignal.connect( self.goToPoint )
 		self.coordWidget.owner = self
 
-		# self.tool = self.addToolBar( 'scene_view_config', self.window.addToolBar() )
+		self.tool = self.addToolBar( 'scene_view_config', self.window.addToolBar() )
 		# self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
 		# self.addTool( 'scene_view_config/size_background', widget = self.sizeWidget )
 		# self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
