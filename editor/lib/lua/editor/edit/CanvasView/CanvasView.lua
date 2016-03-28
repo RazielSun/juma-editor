@@ -1,5 +1,6 @@
 
 local EditorEntity = require("edit.EditorEntity")
+local CanvasGrid = require("edit.CanvasView.CanvasGrid")
 local CanvasFrame = require("edit.CanvasView.CanvasFrame")
 local CanvasNavigate = require("edit.CanvasView.CanvasNavigate")
 local CanvasToolManager = require("edit.CanvasView.CanvasToolManager")
@@ -35,7 +36,8 @@ function CanvasView:initContext()
 end
 
 function CanvasView:initAddons()
-	self.frame = self:addChild( CanvasFrame() )
+	self.grid = self:addChild( CanvasGrid() )
+	-- self.frame = self:addChild( CanvasFrame() )
 	self.nav = self:addChild( CanvasNavigate { inputDevice = self.inputDevice, camera = self.layer:getCamera() } )
 	self.toolMgr = self:addChild( CanvasToolManager() )
 	self.itemMgr = self:addChild( CanvasItemManager { inputDevice = self.inputDevice } )

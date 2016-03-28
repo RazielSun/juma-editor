@@ -204,7 +204,6 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 			self.delegate.safeCall( 'onLoad' )
 			self.resizeGL(self.width(), self.height())
 			self.startRefreshTimer()
-			self.startUpdateTimer() # FIXME
 			self.updateCanvas()
 
 	def makeCurrent( self ):

@@ -24,7 +24,8 @@ end
 function PickingManager:pickPoint( x, y, pad )
 	for i, layer in ipairs( self:getVisibleLayers() ) do
 		local partition = layer:getPartition()
-		local result = { partition:propListForRay( x, y, -1000, 0, 0, 1, defaultSortMode ) }
+		local sortMode = layer:getSortMode()
+		local result = { partition:propListForPoint( x, y, 0, sortMode ) } --propListForRay  -1000, 0, 0, 1,
 		for i, prop in ipairs( result ) do
 			local ent = prop.entity
 			if ent and not ent.FLAG_EDITOR_OBJECT then

@@ -57,6 +57,10 @@ class SceneView( MainEditorModule ):
 
 	def __init__(self):
 		super( SceneView, self ).__init__()
+		self.updateTimer        = None
+		self.updatePending      = False
+		self.previewing         = False
+		self.previewUpdateTimer = False
 
 	def onLoad( self ):
 		self.window = self.requestDocumentWindow( title = 'new.layout' )
@@ -123,9 +127,21 @@ class SceneView( MainEditorModule ):
 		signals.connect( 'scene.open',        self.onSceneOpen        )
 
 	def onStart( self ):
+		self.scheduleUpdate()
+		self.updateTimer = self.window.startTimer( 0.016, self.onUpdateTimer )
+		self.updateTimer.stop()
+		# FIXME
 		scene = self.canvas.safeCall( 'createScene' )
 		signals.emitNow( 'scene.change', scene )
 		self.window.show()
+		# ----
+
+	def scheduleUpdate( self ):
+		self.updatePending = True
+
+	def forceUpdate( self ):
+		self.scheduleUpdate()
+		self.onUpdateTimer()
 
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):
@@ -145,21 +161,38 @@ class SceneView( MainEditorModule ):
 		elif name == 'grid_view':
 			pass
 
+	def onUpdateTimer( self ):
+		if self.updatePending == True:
+			self.updatePending = False
+			self.canvas.updateCanvas( no_sim = self.previewing, forced = True )
+			if not self.previewing:
+				self.getModule( 'game_preview' ).refresh()
+
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
+		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
 
 	def changeEditTool( self, name ):
+		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'view', 'changeEditTool', name )
 
 	def onSceneOpen( self, scene ):
-		self.canvas.safeCall( 'onSceneOpen', scene )
 		# self.window.setWindowTitle( title )
+		self.canvas.makeCurrent()
+		self.canvas.safeCall( 'onSceneOpen', scene )
+		self.setFocus()
+		self.changeEditTool( 'translation' )
+		self.updateTimer.start()
+		self.forceUpdate()
+		self.scheduleUpdate()
 
 	def onFrameResize( self, width, height ):
+		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'scene', 'resizeFrame', width, height )
 
 	def onZoom( self, zoom='normal' ):
+		self.canvas.makeCurrent()
 		maxed = self.canvas.safeCallMethod( 'scene', 'cameraZoom', zoom )
 		if zoom:
 			zoomN = True
@@ -176,6 +209,7 @@ class SceneView( MainEditorModule ):
 			self.enableTool('scene_view_config/zoom_out', zoomO)
 
 	def goToPoint( self, x, y ):
+		self.canvas.makeCurrent()
 		self.canvas.safeCallMethod( 'scene', 'goToPos', x, y )
 
 ##----------------------------------------------------------------##

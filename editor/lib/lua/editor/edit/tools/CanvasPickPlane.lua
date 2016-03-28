@@ -10,6 +10,7 @@ local CanvasItem = require("edit.tools.CanvasItem")
 local CanvasPickPlane = Class( CanvasItem, "CanvasPickPlane" )
 
 function CanvasPickPlane:init()
+	self.deckSize = { 20000, 20000 }
 	CanvasItem.init(self)
 	self.x0 = 0
 	self.y0 = 0

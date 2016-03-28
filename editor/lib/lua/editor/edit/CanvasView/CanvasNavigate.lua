@@ -33,14 +33,12 @@ function CanvasNavigate:startDrag( btn, x, y )
 	self.dragFrom = { x, y }
 	self.cameraFrom = { self.targetCamera:getLoc() }
 	self.dragging = btn
-	self.parent:getScene():setCursor( 'closed-hand' ) -- FIXME
-	-- self.targetCamera:com():setCursor( 'closed-hand' )
+	self.parent:getScene():setCursor( 'closed-hand' )
 end
 
 function CanvasNavigate:stopDrag()
 	self.dragging = false
-	self.parent:getScene():setCursor( 'arrow' ) -- FIXME
-	-- self.targetCamera:com():setCursor( 'arrow' )
+	self.parent:getScene():setCursor( 'arrow' )
 end
 
 ---------------------------------------------------------------------------------

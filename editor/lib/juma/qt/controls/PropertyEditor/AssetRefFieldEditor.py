@@ -26,7 +26,6 @@ class AssetRefFieldEditor( SearchFieldEditorBase ):
 
 	def getSearchType( self ):
 		t = self.field.getType()
-		print("{} {} {}".format(t, self.getTarget(), t.getAssetType( self.getTarget() )))
 		return t.getAssetType( self.getTarget() )
 
 	def getSearchContext( self ):
