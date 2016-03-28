@@ -90,7 +90,28 @@ class MOAIEditCanvasLuaDelegate( MOAILuaDelegate ):
 	def onResize(self,w,h):
 		if self._onResize: self._onResize(w,h)
 
-
+##----------------------------------------------------------------##
+_NameToCursor = {
+	'arrow'           : Qt.ArrowCursor,
+	'up-arrow'        : Qt.UpArrowCursor,
+	'cross'           : Qt.CrossCursor,
+	'wait'            : Qt.WaitCursor,
+	'i-beam'          : Qt.IBeamCursor,
+	'size-vertical'   : Qt.SizeVerCursor,
+	'size-horizontal' : Qt.SizeHorCursor,
+	'size-bd'         : Qt.SizeBDiagCursor,
+	'size-fd'         : Qt.SizeFDiagCursor,
+	'size-all'        : Qt.SizeAllCursor,
+	'blank'           : Qt.BlankCursor,
+	'split-v'         : Qt.SplitVCursor,
+	'split-h'         : Qt.SplitHCursor,
+	'pointing-hand'   : Qt.PointingHandCursor,
+	'forbidden'       : Qt.ForbiddenCursor,
+	'open-hand'       : Qt.OpenHandCursor,
+	'closed-hand'     : Qt.ClosedHandCursor,
+	'whats-this'      : Qt.WhatsThisCursor,
+	'busy'            : Qt.BusyCursor,
+}
 
 ##----------------------------------------------------------------##
 class MOAIEditCanvasBase( MOAICanvasBase ):
@@ -116,13 +137,32 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.updateStep  = 0
 		self.alwaysForcedUpdate = False
 
-		# self.currentCursorId = 'arrow'
-		# self.cursorHidden = False
+		self.currentCursorId = 'arrow'
+		self.cursorHidden = False
 
 		self.updateTimer.timeout.connect( self.updateCanvas )
 
 		signals.connect('moai.reset', self.onMoaiReset)
 		signals.connect('moai.clean', self.onMoaiClean)
+
+	def showCursor(self):
+		self.cursorHidden = False
+		self.setCursorById( self.currentCursorId )
+
+	def hideCursor(self):
+		self.cursorHidden = True
+		self.setCursor(QtCore.Qt.BlankCursor)
+
+	def setCursorById( self, id ):
+		self.currentCursorId = id
+		if self.cursorHidden: return
+		self.setCursor( _NameToCursor.get( self.currentCursorId, QtCore.Qt.ArrowCursor ) )
+
+	def setCursorPos(self,x,y):
+		self.cursor().setPos(self.mapToGlobal(QtCore.QPoint(x,y)))
+
+	def getCanvasSize(self):
+		return self.width(), self.height()
 
 	def startUpdateTimer( self, fps = 60 ):
 		self.enabled = True
@@ -148,16 +188,14 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 			env = {
 				'contextName'      : boundToClosure( self.contextName ),
 				'updateCanvas'     : boundToClosure( self.updateCanvas ),
+				'hideCursor'       : boundToClosure( self.hideCursor ),
+				'showCursor'       : boundToClosure( self.showCursor ),
+				'setCursor'        : boundToClosure( self.setCursorById ),
+				'setCursorPos'     : boundToClosure( self.setCursorPos ),
+				'getCanvasSize'    : boundToClosure( self.getCanvasSize ),
+				'startUpdateTimer' : boundToClosure( self.startUpdateTimer ),
+				'stopUpdateTimer'  : boundToClosure( self.stopUpdateTimer ),
 			}
-		# 		
-		# 		'hideCursor'       : boundToClosure( self.hideCursor ),
-		# 		'showCursor'       : boundToClosure( self.showCursor ),
-		# 		'setCursor'        : boundToClosure( self.setCursorById ),
-		# 		'setCursorPos'     : boundToClosure( self.setCursorPos ),
-		# 		'getCanvasSize'    : boundToClosure( self.getCanvasSize ),
-		# 		'startUpdateTimer' : boundToClosure( self.startUpdateTimer ),
-		# 		'stopUpdateTimer'  : boundToClosure( self.stopUpdateTimer ),
-		# 	}
 			
 			if self.scriptEnv:
 				env.update( self.scriptEnv )
@@ -205,11 +243,13 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		else:
 			self.updateGL()
 
-	# change
-	def resizeGL(self, width, height):
-		self.delegate.onResize( width, height )
-		self.viewWidth  = width
-		self.viewHeight = height
+	def safeCall(self, method, *args):		 
+		self.makeCurrent()
+		return self.delegate.safeCall(method, *args)
+
+	def call(self, method, *args):		 
+		self.makeCurrent()
+		return self.delegate.call(method, *args)
 
 	def safeCallMethod(self, objId, method, *args):		 
 		self.makeCurrent()
@@ -219,7 +259,11 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 		self.makeCurrent()
 		return self.delegate.callMethod(objId, method, *args)
 
-
+	# change
+	def resizeGL(self, width, height):
+		self.delegate.onResize( width, height )
+		self.viewWidth  = width
+		self.viewHeight = height
 
 ##----------------------------------------------------------------##
 class MOAIEditCanvas( MOAIEditCanvasBase ):

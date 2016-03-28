@@ -6,9 +6,11 @@ register( 'scene.stop' )
 register( 'scene.pre_open_source' )
 register( 'scene.open_source' )
 
+register( 'scene.pre_open' )
 register( 'scene.open' )
 register( 'scene.update' )
-# register( 'scene.pre_open' )
+register( 'scene.change' )
+
 # register( 'scene.clear' )
 # register( 'scene.save' )
 # register( 'scene.saved' )

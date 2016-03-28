@@ -1,4 +1,4 @@
-local EditorScene = require("edit.EditorScene")
+local Scene = require("scenes.Scene")
 local InputDevice = require("input.InputDevice")
 
 ---------------------------------------------------------------------------------
@@ -7,10 +7,10 @@ local InputDevice = require("input.InputDevice")
 --
 ---------------------------------------------------------------------------------
 
-local EditorCanvasScene = Class( EditorScene, "EditorCanvasScene" )
+local EditorCanvasScene = Class( Scene, "EditorCanvasScene" )
 
-function EditorCanvasScene:init( params )
-	EditorScene.init(self, params)
+function EditorCanvasScene:init( option )
+	Scene.init(self, option)
 end
 
 function EditorCanvasScene:setEnv( env )
@@ -24,6 +24,35 @@ end
 
 function EditorCanvasScene:getContextName()
 	return self.contextName
+end
+
+function EditorCanvasScene:getCanvasSize()
+	local s = self.env.getCanvasSize()
+	return s[0], s[1]
+end
+
+function EditorCanvasScene:hideCursor()
+	return self.env.hideCursor()
+end
+
+function EditorCanvasScene:setCursor( id )
+	return self.env.setCursor( id )
+end
+
+function EditorCanvasScene:showCursor()
+	return self.env.showCursor()
+end
+
+function EditorCanvasScene:setCursorPos( x, y )
+	return self.env.setCursorPos( x, y )
+end
+
+function EditorCanvasScene:startUpdateTimer( fps )
+	return self.env.startUpdateTimer( fps )
+end
+
+function EditorCanvasScene:stopUpdateTimer()
+	return self.env.stopUpdateTimer()
 end
 
 ---------------------------------------------------------------------------------
@@ -68,7 +97,7 @@ function createEditorCanvasInputDevice( env )
 		inputDevice:sendKeyEvent( key, false )
 	end
 
-	-- env._delegate:updateHooks()
+	env._delegate:updateHooks()
 	return inputDevice
 end
 
@@ -78,22 +107,22 @@ function createEditorCanvasScene()
 	local scene = EditorCanvasScene()
 	scene:setEnv( env )
 
-	EditorSceneMgr:addScene( scene )
-
-	function env.onResize( w, h )
-		scene:resize( w, h )
+	-- FIXME
+	-- function env.onResize( w, h )
+		-- scene:resize( w, h )
 		-- scene.cameraCom:setScreenSize( w, h )
-	end
+	-- end
 
 	function env.onLoad()
 	end
 
 	local inputDevice = createEditorCanvasInputDevice( env )
 
+	scene.inputDevice = inputDevice
+
 	-- function env.EditorInputScript()
 	-- 	return mock.InputScript{ device = inputDevice }
 	-- end
 
-	scene:setInputDevice( inputDevice )
 	return scene
 end 

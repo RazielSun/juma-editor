@@ -7,19 +7,21 @@
 
 local GraphEditor = Class("GraphEditor")
 
----------------------------------------------------------------------------------
 function GraphEditor:init()
-	-- print("GraphEditor inited")
+	self.currentScene = nil
 end
 
 ---------------------------------------------------------------------------------
+function GraphEditor:changeScene( scene )
+	self.scene = scene
+end
+
 function GraphEditor:getScene()
-	return EditorSceneMgr:getCurrentScene()
+	return self.scene
 end
 
 function GraphEditor:getSceneRootNode()
-	local scene = EditorSceneMgr:getCurrentScene()
-	return scene:getRootNode()
+	return self.scene:getRootGroup()
 end
 
 function GraphEditor:addEntityByName( entityName )
@@ -31,13 +33,17 @@ end
 
 function GraphEditor:addEntity( entity )
 	if entity then
+		local rootGroup = self.scene.rootGroup
+		rootGroup:addChild( entity )
 		if _owner then
-			local scene = self:getScene()
-			scene:addEntity( entity )
 			_owner.addEntityNode( _owner, entity )
-			emitPythonSignal( 'entity.added', entity, 'new' )
 		end
+		emitPythonSignal( 'entity.added', entity, 'new' )
 	end
+end
+
+function GraphEditor:removeEntity( entity )
+	self.scene:removeEntity( entity )
 end
 
 function GraphEditor:saveScene()

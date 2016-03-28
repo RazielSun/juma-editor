@@ -26,36 +26,29 @@ class SceneViewTool( SceneTool ):
 		canvasToolId = self.getSceneViewToolId()
 		app.getModule( 'scene_view' ).changeEditTool( canvasToolId )
 
-
-##----------------------------------------------------------------##
-class SceneViewToolDragCamera( SceneViewTool ):
-	name     = 'scene_view_drag_camera'
-	shortcut = 'Q'
-	tool     = 'drag_camera'
-
 ##----------------------------------------------------------------##
 class SceneViewToolSelectObject( SceneViewTool ):
-	name     = 'scene_view_select_object'
-	shortcut = 'W'
-	tool     = 'select_object'
+	name     = 'scene_view_selection'
+	shortcut = 'Q'
+	tool     = 'selection'
 
 ##----------------------------------------------------------------##
 class SceneViewToolMoveObject( SceneViewTool ):
-	name     = 'scene_view_move_object'
-	shortcut = 'E'
-	tool     = 'move_object'
+	name     = 'scene_view_translation'
+	shortcut = 'W'
+	tool     = 'translation'
 
 ##----------------------------------------------------------------##
 class SceneViewToolRotateObject( SceneViewTool ):
-	name     = 'scene_view_rotate_object'
-	shortcut = 'R'
-	tool     = 'rotate_object'
+	name     = 'scene_view_rotation'
+	shortcut = 'E'
+	tool     = 'rotation'
 
 ##----------------------------------------------------------------##
 class SceneViewToolScaleObject( SceneViewTool ):
-	name     = 'scene_view_scale_object'
-	shortcut = 'T'
-	tool     = 'scale_object'
+	name     = 'scene_view_scale'
+	shortcut = 'R'
+	tool     = 'scale'
 
 ##----------------------------------------------------------------##
 class SceneView( MainEditorModule ):
@@ -96,36 +89,29 @@ class SceneView( MainEditorModule ):
 			self.getMainWindow().requestToolBar( 'view_tools' )
 			)
 
-		self.addTool(	'scene_view_tools/tool_drag_camera',
-			widget = SceneToolButton( 'scene_view_drag_camera',
-				icon = 'tools/view',
-				label = 'Drag camera'
-				)
-			)
-
-		self.addTool(	'scene_view_tools/tool_select_object',
-			widget = SceneToolButton( 'scene_view_select_object',
+		self.addTool(	'scene_view_tools/tool_selection',
+			widget = SceneToolButton( 'scene_view_selection',
 				icon = 'tools/dashed',
-				label = 'Select object'
+				label = 'Selection'
 				)
 			)
 
-		self.addTool(	'scene_view_tools/tool_move_object',
-			widget = SceneToolButton( 'scene_view_move_object',
+		self.addTool(	'scene_view_tools/tool_translation',
+			widget = SceneToolButton( 'scene_view_translation',
 				icon = 'tools/arrows',
 				label = 'Move object'
 				)
 			)
 
-		self.addTool(	'scene_view_tools/tool_rotate_object',
-			widget = SceneToolButton( 'scene_view_rotate_object',
+		self.addTool(	'scene_view_tools/tool_rotation',
+			widget = SceneToolButton( 'scene_view_rotation',
 				icon = 'tools/rotate',
 				label = 'Rotate object'
 				)
 			)
 
-		self.addTool(	'scene_view_tools/tool_scale_object',
-			widget = SceneToolButton( 'scene_view_scale_object',
+		self.addTool(	'scene_view_tools/tool_scale',
+			widget = SceneToolButton( 'scene_view_scale',
 				icon = 'tools/resize',
 				label = 'Scale object'
 				)
@@ -133,10 +119,12 @@ class SceneView( MainEditorModule ):
 
 		# SIGNALS
 		signals.connect( 'selection.changed', self.onSelectionChanged )
+
 		signals.connect( 'scene.open',        self.onSceneOpen        )
 
-		#
-		self.onZoom()
+	def onStart( self ):
+		scene = self.canvas.safeCall( 'createScene' )
+		signals.emitNow( 'scene.change', scene )
 		self.window.show()
 
 ##----------------------------------------------------------------##
@@ -159,15 +147,14 @@ class SceneView( MainEditorModule ):
 
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
-		self.canvas.safeCallMethod( 'scene', 'onSelectionChanged', selection )
+		self.canvas.safeCallMethod( 'view', 'onSelectionChanged', selection )
 
 	def changeEditTool( self, name ):
-		self.canvas.makeCurrent()
-		self.canvas.safeCallMethod( 'scene', 'changeEditTool', name )
+		self.canvas.safeCallMethod( 'view', 'changeEditTool', name )
 
-	def onSceneOpen( self, title ):
-		self.canvas.makeCurrent()
-		self.window.setWindowTitle( title )
+	def onSceneOpen( self, scene ):
+		self.canvas.safeCall( 'onSceneOpen', scene )
+		# self.window.setWindowTitle( title )
 
 	def onFrameResize( self, width, height ):
 		self.canvas.safeCallMethod( 'scene', 'resizeFrame', width, height )

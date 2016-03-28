@@ -6,16 +6,14 @@ require("edit.helpers")
 -- Setups
 
 RenderContextMgr = require("edit.RenderContextMgr")
-EditorSceneMgr = require("edit.EditorSceneMgr")
 
 require("edit.EditorCanvasScene")
-require("edit.tools.CanvasToolManager")
-require("edit.tools.TransformTools")
-require("edit.tools.DragCameraTool")
-require("edit.tools.TargetTool")
+require("edit.CanvasView.CanvasToolManager")
+require("edit.tools.common")
 
---# FIXME
-AssetsGrabber = require("edit.AssetsGrabber")
+AssetsGrabber = require("edit.AssetsGrabber") --# FIXME
+
+require("edit.EditorCanvas.SceneView")
 
 function refreshAssets()
 	AssetsGrabber.grabFromResourceMgr()

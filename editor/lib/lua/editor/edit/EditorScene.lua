@@ -140,14 +140,10 @@ function EditorScene:addEntity( entity )
 end
 
 function EditorScene:removeEntity( entity )
-	return self:removeWidget( entity, self.activeGroup )
-end
-
-function EditorScene:removeWidget( widget, group )
 	local success = false
 
 	for _, child in ipairs(group.children) do
-		if child == widget then
+		if child == entity then
 			success = true
 		end
 
@@ -157,8 +153,8 @@ function EditorScene:removeWidget( widget, group )
 	end
 
 	if success then
-		widget:removeChildren()
-		group:removeChild( widget )
+		entity:removeChildren()
+		group:removeChild( entity )
 	end
 
 	return success
@@ -222,7 +218,8 @@ end
 
 
 function EditorScene:keyEventHandler( event )
-	-- print("keyEventHandler", event)
+	-- print("keyEventHandler", event.key, event.down)
+	-- lshift, down, up, left, right
 end
 
 function EditorScene:handledObjectMouseEvent( obj, event )

@@ -182,7 +182,7 @@ class IntrospectorInstance(object):
 	def createWidget(self, container):
 		self.container = container
 		self.header = container.addWidget( QtGui.QLabel("QLabel Header Scene Introspector"), expanding=False )
-		self.header.setStyleSheet('font-size:13px')
+		self.header.setStyleSheet('font-size:15px;padding: 5px; color:#eda900;')
 		self.header.hide()
 		self.scroll = scroll = container.addWidget( QtGui.QScrollArea( container ) )
 		scroll.verticalScrollBar().setStyleSheet('width:4px;')

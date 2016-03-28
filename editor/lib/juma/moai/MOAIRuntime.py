@@ -176,19 +176,18 @@ class MOAIRuntime( EditorModule ):
 	# clean holded lua object(this is CRITICAL!!!)
 	def cleanLuaReferences(self):
 		signals.emitNow( 'moai.prepare_clean' )
-		# for m in self.luaModules:
-		# 	unregisterModule(m)
+		for m in self.luaModules:
+			unregisterModule(m)
 
-		# bridge.clearSignalConnections()
-		# bridge.clearLuaRegisteredSignals()
+		bridge.clearSignalConnections()
+		bridge.clearLuaRegisteredSignals()
 
 		introspector = self.getModule('introspector')
 		if introspector:
 			instances = introspector.getInstances()
 			for ins in instances:
-				pass
-		# 		if isinstance(ins.target,(_LuaTable, _LuaObject, _LuaThread, _LuaFunction)):
-		# 			ins.clear()
+				if isinstance(ins.target,(moaipy._LuaTable, moaipy._LuaObject, moaipy._LuaThread, moaipy._LuaFunction)):
+					ins.clear()
 
 		signals.emitNow( 'moai.clean' )
 

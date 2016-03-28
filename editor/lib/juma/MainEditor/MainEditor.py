@@ -34,7 +34,7 @@ class MainEditor( TopEditorModule ):
         self.containers  = {}
 
         self.findMenu( 'main/asset' ).addChild([
-            dict( name = 'refresh_assets', label = 'Refresh Assets' ),
+            dict( name = 'refresh_assets', label = 'Refresh Assets', shortcut = 'ctrl+T' ),
         ], self )
 
         self.findMenu( 'main/edit' ).addChild([

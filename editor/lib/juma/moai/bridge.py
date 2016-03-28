@@ -11,11 +11,39 @@ from moaipy 	import *
 from juma.core.SelectionManager import getSelectionManager
 
 ##----------------------------------------------------------------##
+_luaSignalConnections=[]
+_luaSignalRegistration=[]
+
 def emitPythonSignal(name, *args):	
 	signals.emit(name, *args)
 
 def emitPythonSignalNow(name, *args):	
 	signals.emitNow(name, *args)
+
+def connectPythonSignal(name, func):
+	caller=wrapLuaCaller(func)
+	signals.connect(name, caller)
+	sig=signals.affirm(name)
+	_luaSignalConnections.append((sig, caller))
+
+def clearSignalConnections():
+	global _luaSignalConnections
+	for m in _luaSignalConnections:
+		(sig , handler) = m
+		sig.disconnect(handler)
+	_luaSignalConnections=[]
+
+def registerPythonSignal(name):
+	signals.register(name)
+	_luaSignalRegistration.append(name)
+
+def clearLuaRegisteredSignals():
+	global _luaSignalRegistration
+	for name in _luaSignalRegistration:
+		signals.unregister(name)
+
+def throwPythonException(name, data=None):
+	raise MOAIException(name)
 
 ##----------------------------------------------------------------##
 

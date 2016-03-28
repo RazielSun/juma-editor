@@ -70,12 +70,13 @@ class GraphEditor( MainEditorModule ):
 		self.addTool( 'hierarchy/create_widget', label ='Create widget', icon = 'plus_mint' )
 		# self.addTool( 'hierarchy/destroy_item', label ='- Item', icon = 'minus' )
 
-		self.contextMenu = self.addMenu( 'widget_context', dict( label = 'Widgets' ) )
-		self.addMenuItem( 'widget_context/create_sprite', dict( label = 'Sprite' ) )
-		self.addMenuItem( 'widget_context/create_label', dict( label = 'Label' ) )
-		self.addMenuItem( 'widget_context/create_button_color', dict( label = 'ButtonColor' ) )
-		self.addMenuItem( 'widget_context/create_button', dict( label = 'Button' ) )
-		self.addMenuItem( 'widget_context/create_widget', dict( label = 'Widget' ) )
+		self.contextMenu = self.addMenu( 'ui_context', dict( label = 'UI' ) )
+		self.addMenuItem( 'ui_context/create_entity', dict( label = 'Entity' ) )
+		self.addMenuItem( 'ui_context/create_button_color', dict( label = 'ButtonColor' ) )
+		self.addMenuItem( 'ui_context/create_button', dict( label = 'Button' ) )
+		self.addMenuItem( 'ui_context/create_label', dict( label = 'Label' ) )
+		self.addMenuItem( 'ui_context/create_sprite', dict( label = 'Sprite' ) )
+		
 
 		#SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
@@ -83,15 +84,14 @@ class GraphEditor( MainEditorModule ):
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 		signals.connect( 'selection.hint',    self.onSelectionHint    )
 
+		signals.connect( 'scene.change',    self.onSceneChange		  )
+
 		signals.connect( 'entity.added',      self.onEntityAdded      )
 		signals.connect( 'entity.removed',    self.onEntityRemoved    )
 		signals.connect( 'entity.renamed',    self.onEntityRenamed    )
-		signals.connect( 'entity.modified',   self.onEntityModified    )
+		signals.connect( 'entity.modified',   self.onEntityModified   )
 		signals.connect( 'entity.visible_changed',    self.onEntityVisibleChanged )
 		signals.connect( 'entity.pickable_changed',   self.onEntityPickableChanged )
-
-	def onStart(self): # FIXME
-		self.tree.rebuild()
 
 	def getActiveScene( self ):
 		return self.delegate.safeCallMethod( 'editor', 'getScene' )
@@ -106,43 +106,48 @@ class GraphEditor( MainEditorModule ):
 		if not self.previewing:
 			self.dirty = dirty
 
-	def onSceneChange(self):
+	def onSceneChange(self, scene):
 		self.tree.hide()
+
+		self.delegate.safeCallMethod( 'editor', 'changeScene', scene )
+
 		self.tree.rebuild()
 		# self.restoreWorkspaceState()
 		self.tree.refreshAllContent()
 		self.tree.verticalScrollBar().setValue( 0 )
 		self.tree.show()
 
-##----------------------------------------------------------------##
-	def openScene(self):
-		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene", self.getProject().path or "~", "Layout file (*.layout )")
-		if filePath:
-			sceneName = os.path.basename( filePath )
-			signals.emitNow( 'scene.open', sceneName )
-			node = self.delegate.safeCallMethod( 'editor', 'loadScene', filePath )
-			self.onSceneChange()
+		signals.emitNow( 'scene.open', scene )
 
-	def saveScene(self):
-		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene", self.getProject().path or "~", "Layout file (*.layout )")
-		if filePath:
-			data = self.delegate.safeCallMethod( 'editor', 'saveScene' )
-			_saveLayoutToFile( filePath, data )
-			sceneName = os.path.basename( filePath )
-			signals.emitNow( 'scene.open', sceneName )
+##----------------------------------------------------------------##
+	# def openScene(self):
+	# 	filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene", self.getProject().path or "~", "Layout file (*.layout )")
+	# 	if filePath:
+	# 		sceneName = os.path.basename( filePath )
+	# 		signals.emitNow( 'scene.open', sceneName )
+	# 		node = self.delegate.safeCallMethod( 'editor', 'loadScene', filePath )
+	# 		self.onSceneChange()
+
+	# def saveScene(self):
+	# 	filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene", self.getProject().path or "~", "Layout file (*.layout )")
+	# 	if filePath:
+	# 		data = self.delegate.safeCallMethod( 'editor', 'saveScene' )
+	# 		_saveLayoutToFile( filePath, data )
+	# 		sceneName = os.path.basename( filePath )
+	# 		signals.emitNow( 'scene.open', sceneName )
 
 	def openSceneSettings(self):
 		pass
 
-	def createWidget(self, widget):
+	def createNodeUI(self, widget):
 		# self.doCommand( 'main_editor/create_entity', name = widget )
 		self.delegate.safeCallMethod( 'editor', 'addEntityByName', widget )
 
-	def removeWidget(self, item):
+	def removeEntity(self, item):
 		node = item.node
 		if node:
 			if self.tree.removeNode( node ):
-				self.delegate.safeCallMethod( 'editor', 'removeWidget', node )
+				self.delegate.safeCallMethod( 'editor', 'removeEntity', node )
 
 	def addEntityNode( self, entity ):
 		self.tree.addNode( entity, expanded = False )
@@ -162,15 +167,15 @@ class GraphEditor( MainEditorModule ):
 			self.saveScene()
 
 		elif name == 'create_sprite':
-			self.createWidget( 'Sprite' )
+			self.createNodeUI( 'Sprite' )
 		elif name == 'create_label':
-			self.createWidget( 'Label' )
+			self.createNodeUI( 'Label' )
 		elif name == 'create_button_color':
-			self.createWidget( 'ButtonColor' )
+			self.createNodeUI( 'ButtonColor' )
 		elif name == 'create_button':
-			self.createWidget( 'Button' )
-		elif name == 'create_widget':
-			self.createWidget( 'Widget' )
+			self.createNodeUI( 'Button' )
+		elif name == 'create_entity':
+			self.createNodeUI( 'Entity' )
 
 	def onTool( self, tool ):
 		name = tool.name
@@ -415,7 +420,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		self.syncSelection = False
 		item0 = self.currentItem()
 		item1 = self.itemBelow( item0 )
-		self.module.removeWidget( item0 ) # FIXME
+		self.module.removeEntity( item0 ) # FIXME
 		# self.module.doCommand( 'scene_editor/remove_entity' )
 		if item1:
 			self.setFocusedItem( item1 )
