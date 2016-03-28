@@ -107,8 +107,8 @@ function TranslationItem:onMouseMove( x, y )
 	return true
 end
 
-function TranslationItem:onArrowsPressed( key, shift )
-	local target = self.target
+function TranslationItem:onArrowsPressed( key, down, shift )
+	if not down then return end
 
 	local x, y, z = 0, 0, 0
 	local step = shift and 10 or 1
@@ -122,6 +122,7 @@ function TranslationItem:onArrowsPressed( key, shift )
 		x = step
 	end
 
+	local target = self.target
 	target:forceUpdate()
 	self:forceUpdate()
 

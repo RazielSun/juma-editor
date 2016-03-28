@@ -108,7 +108,7 @@ function CanvasItemManager:onKeyEvent( event )
 	if k=="down" or k=="up" or k=="left" or k=="right" then
 		local topItem = self.items[1]
 		if topItem and topItem.onArrowsPressed then
-			topItem:onArrowsPressed( k, self.inputDevice:isShiftDown() )
+			topItem:onArrowsPressed( k, event.down, self.inputDevice:isShiftDown() )
 		end
 	end
 end
