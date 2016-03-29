@@ -41,6 +41,10 @@ function CanvasNavigate:stopDrag()
 	self.parent:getScene():setCursor( 'arrow' )
 end
 
+function CanvasNavigate:updateCanvas()
+	self.parent:updateCanvas()
+end
+
 ---------------------------------------------------------------------------------
 function CanvasNavigate:onMouseEvent( event )
 	if event.eventName == InputEvent.DOWN then
@@ -53,7 +57,11 @@ function CanvasNavigate:onMouseEvent( event )
 end
 
 function CanvasNavigate:onMouseDown( btn, x, y )
-	if btn == 'left' then
+	if btn == 'right' then
+		if self.dragging then return end
+		self:startDrag( btn, x, y )
+
+	elseif btn == 'left' then
 		if self.dragging then return end
 		if self.inputDevice:isKeyDown( 'space' ) then
 			self:startDrag( btn, x, y )
@@ -76,6 +84,7 @@ function CanvasNavigate:onMouseMove( x, y )
 	-- local z0 = self.targetCamera:getLocZ()
 	-- self.targetCamera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom, z0 )
 	self.targetCamera:setLoc( cx0 - dx, cy0 + dy, 0 )
+	self:updateCanvas()
 end
 
 ---------------------------------------------------------------------------------

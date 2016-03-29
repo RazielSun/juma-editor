@@ -10,14 +10,11 @@ local defaultSortMode = MOAILayer.SORT_Z_ASCENDING
 local PickingManager = Class( "PickingManager" )
 
 function PickingManager:init()
-	self:clear()
+	--
 end
 
 function PickingManager:setTargetScene( scene )
 	self.targetScene = scene
-end
-
-function PickingManager:clear()
 end
 
 ---------------------------------------------------------------------------------
@@ -40,7 +37,8 @@ function PickingManager:pickRect( x0, y0, x1, y1, pad )
 	local picked = {}
 	for i, layer in ipairs( self:getVisibleLayers() ) do
 		local partition = layer:getPartition()
-		local result = { partition:propListForRect( x0, y0, x1, y1, defaultSortMode ) }
+		local sortMode = layer:getSortMode()
+		local result = { partition:propListForRect( x0, y0, x1, y1, sortMode ) }
 		for i, prop in ipairs( result ) do
 			local ent = prop.entity
 			if ent and not ent.FLAG_EDITOR_OBJECT then
