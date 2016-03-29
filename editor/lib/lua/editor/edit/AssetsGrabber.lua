@@ -38,11 +38,14 @@ function AssetsGrabber.findAtlases( sprites, atlasses )
     for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
         if pathInfo.threshold <= scaleFactor then
         	local files = MOAIFileSystem.listFiles( pathInfo.path )
-            for i, file in ipairs(files) do
-            	if string.find(file, ".lua") then
-					AssetsGrabber.setupAtlas( string.pathJoin(pathInfo.path, file), atlasses )
-				elseif string.find(file, ".png") then
-					sprites[file] = true
+        	
+        	if files then
+	            for i, file in ipairs(files) do
+	            	if string.find(file, ".lua") then
+						AssetsGrabber.setupAtlas( string.pathJoin(pathInfo.path, file), atlasses )
+					elseif string.find(file, ".png") then
+						sprites[file] = true
+					end
 				end
 			end
         end
@@ -66,6 +69,7 @@ function AssetsGrabber.grabFonts()
         	for _, folder in ipairs(folders) do
         		local filePath = string.pathJoin(pathInfo.path, folder)
         		local files = MOAIFileSystem.listFiles( filePath )
+
         		if files then
 		            for i, file in ipairs(files) do
 		            	if string.find(file, ".ttf") then
@@ -91,6 +95,7 @@ function AssetsGrabber.grabLayout()
     	for _, folder in ipairs(folders) do
     		local filePath = string.pathJoin(pathInfo.path, folder)
     		local files = MOAIFileSystem.listFiles( filePath )
+
     		if files then
 	            for i, file in ipairs(files) do
 	            	if string.find(file, ".layout") then
