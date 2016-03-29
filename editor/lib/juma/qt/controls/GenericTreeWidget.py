@@ -63,7 +63,7 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			
 		self.setAlternatingRowColors( self.getOption('alternating_color', False) )
 		self.setExpandsOnDoubleClick( False )
-		self.sortByColumn( 0, Qt.AscendingOrder )
+		# self.sortByColumn( 0, Qt.AscendingOrder )
 
 		self.itemDoubleClicked    .connect( self.onDClicked )
 		self.itemClicked          .connect( self.onClicked )

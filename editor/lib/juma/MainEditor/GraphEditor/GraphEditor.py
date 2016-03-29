@@ -69,7 +69,6 @@ class GraphEditor( MainEditorModule ):
 
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_widget', label ='Create widget', icon = 'plus_mint' )
-		# self.addTool( 'hierarchy/destroy_item', label ='- Item', icon = 'minus' )
 
 		self.contextMenu = self.addMenu( 'ui_context', dict( label = 'UI' ) )
 		self.addMenuItem( 'ui_context/create_entity', dict( label = 'Entity' ) )
@@ -193,9 +192,6 @@ class GraphEditor( MainEditorModule ):
 		elif name == 'create_widget':
 			self.openContextMenu()
 
-		elif name == 'destroy_item':
-			self.destroyItem()
-
 	def onMoaiClean( self ):
 		self.tree.clear()
 
@@ -310,7 +306,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		self.setIndentation( 13 )
 
 	def getHeaderInfo( self ):
-		return [('Name',160), ('V',32 ), ('L',32 ), ('', -1) ] #( 'Layer', 50 ), ('', -1) ]
+		return [('Name',160), ('V',32 ), ('L',32 ), ('I',32 ), ('', -1) ] #( 'Layer', 50 ), ('', -1) ]
 
 	def getReadonlyItemDelegate( self ):
 		return ReadonlyGraphTreeItemDelegate( self )
@@ -334,18 +330,35 @@ class GraphTreeWidget( GenericTreeWidget ):
 			output.append( children[index] )
 		return output
 
-	def reparentNode( self, node, pitem, **option ): # todo NEED ADD SUBLING
-		print("reparentNode:", node, pitem )
+	def reparentNode( self, node, pitem, **option ):
+		mode = option.get("mode", None)
+
 		if node and pitem:
 			pnode = None
 			if pitem == 'root':
 				pnode = self.getRootNode()
 			else:
-				pnode = pitem.node
-			print("reparent:", pnode, node, pitem)
+				if mode:
+					pnode = pitem.node.parent # subling above below
+				else:
+					pnode = pitem.node
 			if pnode:
 				node.detach( node )
-				pnode.addChild( pnode, node )
+				if mode:
+					itemMode = None
+					item = self.getItemByNode(node)
+					indexPaste = 0
+					if mode == "above":
+						itemMode = self.itemAbove(item)
+						indexPaste = 1
+					elif mode == "below":
+						itemMode = self.itemBelow(item)
+						indexPaste = -1
+					nodeMode = itemMode.node
+					nodeIndex = pnode.getChildIndex( pnode, nodeMode )
+					pnode.addChild( pnode, node, nodeIndex + indexPaste )
+				else:
+					pnode.addChild( pnode, node )
 				return True			
 		return False
 
@@ -378,7 +391,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		items = self.module.getSelection()
 		
 		ok = False
-		for item in items: # FIXME not working
+		for item in items:
 			print("dropEvent pos: {} ::{} {} node:: ".format(pos, item, target))
 			if pos == 'on':
 				ok = self.reparentNode( item, target )
@@ -387,7 +400,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 				ok = self.reparentNode( item, 'root' )
 			# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = 'root' )
 			elif pos == 'above' or pos == 'below':
-				ok = self.reparentNode( item, target, mode = 'sibling' )
+				ok = self.reparentNode( item, target, mode = pos )
 			# 	ok = self.module.doCommand( 'scene_editor/reparent_entity', target = target.node, mode = 'sibling' )
 
 		if ok:
