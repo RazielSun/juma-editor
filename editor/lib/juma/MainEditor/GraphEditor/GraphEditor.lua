@@ -32,9 +32,15 @@ function GraphEditor:addEntityByName( entityName )
 end
 
 function GraphEditor:addEntity( entity )
+	local scene = self.scene
 	if entity then
-		local root = self.scene:getRootGroup()
+		local root = scene:getRootGroup()
 		root:addChild( entity )
+
+		if scene.camera then
+			entity:setLoc( scene.camera:getLoc() )
+		end
+
 		if _owner then
 			_owner.addEntityNode( _owner, entity )
 		end

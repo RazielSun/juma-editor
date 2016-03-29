@@ -29,11 +29,6 @@ function CanvasItem:inside( x, y, z, pad )
 end
 
 ---------------------------------------------------------------------------------
-function CanvasItem:wndToWorld( wx, wy )
-	local x, y = self.layer:wndToWorld( wx or 0, wy or 0, 0 )
-	return x, y
-end
-
 function CanvasItem:wndToModel( wx, wy )
 	local mx, my = self:worldToModel( self:wndToWorld( wx, wy ) )
 	return mx, my

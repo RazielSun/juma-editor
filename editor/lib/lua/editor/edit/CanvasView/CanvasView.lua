@@ -50,6 +50,7 @@ function CanvasView:resizeCanvas( w, h )
 	local viewport = self.layer:getViewport()
 	viewport:setSize(w,h)
 	viewport:setScale(w,h)
+	self.grid:resizeView( w, h )
 end
 
 ---------------------------------------------------------------------------------

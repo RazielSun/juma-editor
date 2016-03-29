@@ -41,8 +41,12 @@ function CanvasNavigate:stopDrag()
 	self.parent:getScene():setCursor( 'arrow' )
 end
 
+function CanvasNavigate:getView()
+	return self.parent
+end
+
 function CanvasNavigate:updateCanvas()
-	self.parent:updateCanvas()
+	self:getView():updateCanvas()
 end
 
 ---------------------------------------------------------------------------------

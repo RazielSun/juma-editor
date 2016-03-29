@@ -29,8 +29,8 @@ addColor( 'camera-bound', hexcolor( '#ffc900', alpha ) )
 
 addColor( 'background-frame', 0.1, 0.1, 0.1, alpha )
 
-addColor( 'grid-zero', 0.53, 0.0, 0.09, alpha )
-addColor( 'grid', 0.4, 0.4, 0.4, alpha )
+addColor( 'grid-zero', 0.53, 0.0, 0.09, 0.5 )
+addColor( 'grid', 0.4, 0.4, 0.4, 0.5 )
 
 --------------------------------------------------------------------------------
 --
