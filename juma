@@ -1,5 +1,5 @@
 #!/bin/bash
 
-# d=`dirname $0`
-# ${d}/
-python editor/juma_bin.py $@
+d=`dirname $0`
+
+python ${d}/editor/juma_bin.py $@
