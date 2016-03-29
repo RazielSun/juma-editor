@@ -95,16 +95,17 @@ class StatsViewer( MainEditorModule ):
 
 	def onUpdateStats(self):
 		if self.ready:
-			fps, drawcalls, luaCount, luaMem, textureMem, actionTree, nodeMgr, sim, render = self.delegate.safeCall( 'onStats' )
-			self.ui.valueFps.setText(str(fps))
-			self.ui.valueDrawCalls.setText(str(drawcalls))
-			self.ui.valueLuaCount.setText( '{:,}'.format(int(luaCount)) )
-			self.ui.valueLuaMemory.setText( '{:,}'.format(int(luaMem)) )
-			self.ui.valeuTextureMemory.setText( '{:,}'.format(int(textureMem)) )
-			self.ui.valueNodeMgr.setText(str(actionTree))
-			self.ui.valueActionTree.setText(str(nodeMgr))
-			self.ui.valueSim.setText(str(sim))
-			self.ui.valueRender.setText(str(render))
+			pass
+			# fps, drawcalls, luaCount, luaMem, textureMem, actionTree, nodeMgr, sim, render = self.delegate.safeCall( 'onStats' )
+			# self.ui.valueFps.setText(str(fps))
+			# self.ui.valueDrawCalls.setText(str(drawcalls))
+			# self.ui.valueLuaCount.setText( '{:,}'.format(int(luaCount)) )
+			# self.ui.valueLuaMemory.setText( '{:,}'.format(int(luaMem)) )
+			# self.ui.valeuTextureMemory.setText( '{:,}'.format(int(textureMem)) )
+			# self.ui.valueNodeMgr.setText(str(actionTree))
+			# self.ui.valueActionTree.setText(str(nodeMgr))
+			# self.ui.valueSim.setText(str(sim))
+			# self.ui.valueRender.setText(str(render))
 
 ##----------------------------------------------------------------##
 

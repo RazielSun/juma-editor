@@ -4,7 +4,7 @@ import os.path
 
 from PySide             import QtCore, QtGui, QtOpenGL
 from PySide.QtCore      import Qt
-from PySide.QtGui     	import QFileDialog, QStyle, QBrush, QColor, QPen, QIcon, QPalette
+from PySide.QtGui     	import QStyle, QBrush, QColor, QPen, QIcon, QPalette
 
 from juma.core                			import signals, app, AssetRefType
 from juma.moai.MOAIRuntime 				import MOAILuaDelegate
@@ -61,12 +61,6 @@ class GraphEditor( MainEditorModule ):
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( getModulePath( 'GraphEditor.lua' ) )
 
-		self.findMenu( 'main/scene' ).addChild([
-			dict( name = 'scene_open', label = 'Open Scene', shortcut = 'ctrl+O' ),
-            dict( name = 'scene_open_as', label = 'Open Scene As...' ),
-            dict( name = 'scene_save_as', label = 'Save Scene As...' ),
-        ], self )
-
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_widget', label ='Create widget', icon = 'plus_mint' )
 
@@ -76,7 +70,6 @@ class GraphEditor( MainEditorModule ):
 		self.addMenuItem( 'ui_context/create_button', dict( label = 'Button' ) )
 		self.addMenuItem( 'ui_context/create_label', dict( label = 'Label' ) )
 		self.addMenuItem( 'ui_context/create_sprite', dict( label = 'Sprite' ) )
-		
 
 		#SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
@@ -120,27 +113,6 @@ class GraphEditor( MainEditorModule ):
 		signals.emitNow( 'scene.open', scene )
 
 ##----------------------------------------------------------------##
-	def openScene(self):
-		requestSearchView( 
-			context      = 'asset',
-			type         = 'layout',
-			multiple_selection = False,
-			on_selection = self.onSceneSearchSelection,
-			on_cancel    = self.onSceneSearchCancel,
-			# on_search    = self.onSceneSearch,
-			)
-
-	def openSceneAs(self):
-		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene As", self.getProject().path or "~", "Layout file (*.layout )")
-		if filePath:
-			scene = self.delegate.safeCallMethod( 'editor', 'openSceneAs', filePath )
-			signals.emitNow( 'scene.change', scene )
-
-	def saveSceneAs(self):
-		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene As", self.getProject().path or "~", "Layout file (*.layout )")
-		if filePath:
-			data = self.delegate.safeCallMethod( 'editor', 'saveSceneAs', filePath )
-
 	def openSceneSettings(self):
 		pass
 
@@ -210,16 +182,6 @@ class GraphEditor( MainEditorModule ):
 		# 	self.changeSelection( selection._entity )			
 		# else:
 		# 	self.changeSelection( selection )
-
-	def onSceneSearchSelection( self, target ):
-		scene = self.delegate.safeCallMethod( 'editor', 'openScene', target.getNodePath() )
-		signals.emitNow( 'scene.change', scene )
-
-	def onSceneSearchCancel( self ):
-		pass
-
-	def onSceneSearch( self, typeId, context, option ):
-		pass
 
 	##----------------------------------------------------------------##
 	def onEntityAdded( self, entity, context = None ):

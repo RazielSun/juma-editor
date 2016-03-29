@@ -52,38 +52,6 @@ function GraphEditor:removeEntity( entity )
 	self.scene:removeEntity( entity )
 end
 
-function GraphEditor:saveSceneAs( path )
-	local scene = self.scene
-	if scene then
-		return EntityManager:save( path, scene:getRootGroup() )
-	end
-	return nil
-end
-
-function GraphEditor:openScene( path )
-	local scene = self:getScene()
-	if scene then
-		local group = EntityManager:load( path )
-		if group then
-			scene:setRootGroup( group )
-		end
-		return scene
-	end
-	return nil
-end
-
-function GraphEditor:openSceneAs( path )
-	local scene = self:getScene()
-	if scene then
-		local group = EntityManager:loadByPath( path )
-		if group then
-			scene:setRootGroup( group )
-		end
-		return scene
-	end
-	return nil
-end
-
 ---------------------------------------------------------------------------------
 
 editor = GraphEditor()

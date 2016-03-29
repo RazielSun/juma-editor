@@ -24,6 +24,9 @@ def moveWindowToCenter(window):
 
 ##----------------------------------------------------------------##
 class MainWindow( QMainWindow ):
+    tabChanged = QtCore.Signal( QtGui.QWidget )
+    tabRemoved = QtCore.Signal( QtGui.QWidget )
+
     def __init__(self, parent=None, script=None):
         super(MainWindow, self).__init__(parent)
 
@@ -180,11 +183,14 @@ class MainWindow( QMainWindow ):
     def onTabCloseRequested( self, idx ):
         subwindow = self.centerTabWidget.widget( idx )
         if subwindow.close():
+            self.tabRemoved.emit( subwindow )
             self.centerTabWidget.removeTab( idx )
         
     def onDocumentTabChanged( self, idx ):
         w = self.centerTabWidget.currentWidget()
-        if w: w.setFocus()
+        if w:
+            self.tabChanged.emit( w )
+            w.setFocus()
 
 ##----------------------------------------------------------------##
 class SubWindow( QtGui.QMainWindow ):
