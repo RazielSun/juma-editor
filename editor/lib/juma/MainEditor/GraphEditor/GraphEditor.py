@@ -7,11 +7,11 @@ from PySide.QtCore      import Qt
 from PySide.QtGui     	import QStyle, QBrush, QColor, QPen, QIcon, QPalette
 
 from juma.core                			import signals, app, AssetRefType
-from juma.moai.MOAIRuntime 				import MOAILuaDelegate
+from juma.moai.MOAIRuntime 				import MOAIRuntime, MOAILuaDelegate
 from juma.qt.IconCache 					import getIcon
 from juma.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from juma.MainEditor.MainEditor       	import MainEditorModule
-from juma.SearchView 					import requestSearchView
+from juma.SearchView 					import requestSearchView, registerSearchEnumerator
 
 ##----------------------------------------------------------------##
 def getModulePath( path ):
@@ -62,14 +62,7 @@ class GraphEditor( MainEditorModule ):
 		self.delegate.load( getModulePath( 'GraphEditor.lua' ) )
 
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
-		self.addTool( 'hierarchy/create_widget', label ='Create widget', icon = 'plus_mint' )
-
-		self.contextMenu = self.addMenu( 'ui_context', dict( label = 'UI' ) )
-		self.addMenuItem( 'ui_context/create_entity', dict( label = 'UIWidget' ) )
-		self.addMenuItem( 'ui_context/create_button_color', dict( label = 'UIButtonColor' ) )
-		self.addMenuItem( 'ui_context/create_button', dict( label = 'UIButton' ) )
-		self.addMenuItem( 'ui_context/create_label', dict( label = 'UILabel' ) )
-		self.addMenuItem( 'ui_context/create_sprite', dict( label = 'UISprite' ) )
+		self.addTool( 'hierarchy/create_entity', label ='Create', icon = 'plus_mint' )
 
 		#SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
@@ -85,6 +78,9 @@ class GraphEditor( MainEditorModule ):
 		signals.connect( 'entity.modified',   self.onEntityModified   )
 		signals.connect( 'entity.visible_changed',    self.onEntityVisibleChanged )
 		signals.connect( 'entity.pickable_changed',   self.onEntityPickableChanged )
+
+		# ENUMERATORS
+		registerSearchEnumerator( uiNameSearchEnumerator )
 
 	def getActiveScene( self ):
 		return self.delegate.safeCallMethod( 'editor', 'getScene' )
@@ -116,9 +112,9 @@ class GraphEditor( MainEditorModule ):
 	def openSceneSettings(self):
 		pass
 
-	def createNodeUI(self, widget):
+	def createEntity( self, name ):
 		# self.doCommand( 'main_editor/create_entity', name = widget )
-		self.delegate.safeCallMethod( 'editor', 'addEntityByName', widget )
+		self.delegate.safeCallMethod( 'editor', 'addEntityByName', name )
 
 	def removeEntity(self, item):
 		node = item.node
@@ -131,11 +127,6 @@ class GraphEditor( MainEditorModule ):
 		self.tree.setNodeExpanded( entity, False )
 
 	##----------------------------------------------------------------##
-	def openContextMenu( self ):
-		if self.contextMenu:
-			self.contextMenu.popUp()
-
-	##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
 		if name == 'scene_open':
@@ -145,24 +136,19 @@ class GraphEditor( MainEditorModule ):
 		elif name == 'scene_save_as':
 			self.saveSceneAs()
 
-		elif name == 'create_sprite':
-			self.createNodeUI( 'UISprite' )
-		elif name == 'create_label':
-			self.createNodeUI( 'UILabel' )
-		elif name == 'create_button_color':
-			self.createNodeUI( 'UIButtonColor' )
-		elif name == 'create_button':
-			self.createNodeUI( 'UIButton' )
-		elif name == 'create_entity':
-			self.createNodeUI( 'UIWidget' )
-
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'scene_settings':
 			self.openSceneSettings()
 
-		elif name == 'create_widget':
-			self.openContextMenu()
+		elif name == 'create_entity':
+			requestSearchView( 
+				info    = 'select entity type to create',
+				context = 'entity_creation',
+				on_selection = lambda obj: 
+					self.createEntity( obj )
+					# self.doCommand( 'scene_editor/create_entity', name = obj )
+				)
 
 	def onMoaiClean( self ):
 		self.tree.clear()
@@ -419,3 +405,14 @@ class GraphTreeWidget( GenericTreeWidget ):
 			self.setFocusedItem( item1 )
 		self.syncSelection = True
 		self.onItemSelectionChanged()
+
+##----------------------------------------------------------------##
+
+def uiNameSearchEnumerator( typeId, context, option ):
+	if not context in [ 'entity_creation' ] : return None
+	registry = MOAIRuntime.get().getUIRegistry()
+	result = []
+	for name in sorted( registry ):
+		entry = ( name, name, 'Entity', None )
+		result.append( entry )
+	return result

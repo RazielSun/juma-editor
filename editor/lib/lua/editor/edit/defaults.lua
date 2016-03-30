@@ -33,5 +33,11 @@ addColor( 'grid-zero', 0.53, 0.0, 0.09, 0.5 )
 addColor( 'grid', 0.4, 0.4, 0.4, 0.5 )
 
 --------------------------------------------------------------------------------
---
+-- UI Register
 --------------------------------------------------------------------------------
+
+editorRegistryClassType( "UISprite", "ui" )
+editorRegistryClassType( "UILabel", "ui" )
+editorRegistryClassType( "UIButton", "ui" )
+editorRegistryClassType( "UIButtonColor", "ui" )
+editorRegistryClassType( "UIWidget", "ui" )

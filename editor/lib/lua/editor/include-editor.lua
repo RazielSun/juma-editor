@@ -1,4 +1,5 @@
 require("edit.common")
+require("edit.registers")
 require("edit.defaults")
 require("edit.helpers")
 
