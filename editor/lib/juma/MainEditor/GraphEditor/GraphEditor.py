@@ -65,11 +65,11 @@ class GraphEditor( MainEditorModule ):
 		self.addTool( 'hierarchy/create_widget', label ='Create widget', icon = 'plus_mint' )
 
 		self.contextMenu = self.addMenu( 'ui_context', dict( label = 'UI' ) )
-		self.addMenuItem( 'ui_context/create_entity', dict( label = 'Entity' ) )
-		self.addMenuItem( 'ui_context/create_button_color', dict( label = 'ButtonColor' ) )
-		self.addMenuItem( 'ui_context/create_button', dict( label = 'Button' ) )
-		self.addMenuItem( 'ui_context/create_label', dict( label = 'Label' ) )
-		self.addMenuItem( 'ui_context/create_sprite', dict( label = 'Sprite' ) )
+		self.addMenuItem( 'ui_context/create_entity', dict( label = 'UIWidget' ) )
+		self.addMenuItem( 'ui_context/create_button_color', dict( label = 'UIButtonColor' ) )
+		self.addMenuItem( 'ui_context/create_button', dict( label = 'UIButton' ) )
+		self.addMenuItem( 'ui_context/create_label', dict( label = 'UILabel' ) )
+		self.addMenuItem( 'ui_context/create_sprite', dict( label = 'UISprite' ) )
 
 		#SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
@@ -146,15 +146,15 @@ class GraphEditor( MainEditorModule ):
 			self.saveSceneAs()
 
 		elif name == 'create_sprite':
-			self.createNodeUI( 'Sprite' )
+			self.createNodeUI( 'UISprite' )
 		elif name == 'create_label':
-			self.createNodeUI( 'Label' )
+			self.createNodeUI( 'UILabel' )
 		elif name == 'create_button_color':
-			self.createNodeUI( 'ButtonColor' )
+			self.createNodeUI( 'UIButtonColor' )
 		elif name == 'create_button':
-			self.createNodeUI( 'Button' )
+			self.createNodeUI( 'UIButton' )
 		elif name == 'create_entity':
-			self.createNodeUI( 'Entity' )
+			self.createNodeUI( 'UIWidget' )
 
 	def onTool( self, tool ):
 		name = tool.name

@@ -24,6 +24,7 @@ end
 ---------------------------------------------------------------------------------
 function CanvasView:onLoad()
 	self:initContext()
+	self:initCamera()
 	self:initAddons()
 end
 
@@ -35,10 +36,14 @@ function CanvasView:initContext()
  --    inputDevice:addKeyListener( self.keyEventHandler, self )
 end
 
+function CanvasView:initCamera()
+	self.camera = self:getScene():setCamera()
+end
+
 function CanvasView:initAddons()
 	self.grid = self:addChild( CanvasGrid() )
 	-- self.frame = self:addChild( CanvasFrame() )
-	self.nav = self:addChild( CanvasNavigate { inputDevice = self.inputDevice, camera = self.layer:getCamera() } )
+	self.nav = self:addChild( CanvasNavigate { inputDevice = self.inputDevice, camera = self.camera } )
 	self.toolMgr = self:addChild( CanvasToolManager() )
 	self.itemMgr = self:addChild( CanvasItemManager { inputDevice = self.inputDevice } )
 	self.pickingManager = PickingManager()
@@ -48,8 +53,10 @@ end
 ---------------------------------------------------------------------------------
 function CanvasView:resizeCanvas( w, h )
 	local viewport = self.layer:getViewport()
-	viewport:setSize(w,h)
-	viewport:setScale(w,h)
+	if viewport then
+		viewport:setSize(w,h)
+		viewport:setScale(w,h)
+	end
 	self.grid:resizeView( w, h )
 end
 

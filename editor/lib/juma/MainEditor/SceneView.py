@@ -258,15 +258,15 @@ class SceneView( MainEditorModule ):
 
 	def onTool( self, tool ):
 		name = tool.name
-		if name == 'zoom_out':
-			self.onZoom( 'out' )
-		elif name == 'zoom_normal':
-			self.onZoom( 'normal' )
-		elif name == 'zoom_in':
-			self.onZoom( 'in' )
+		# if name == 'zoom_out':
+		# 	self.onZoom( 'out' )
+		# elif name == 'zoom_normal':
+		# 	self.onZoom( 'normal' )
+		# elif name == 'zoom_in':
+		# 	self.onZoom( 'in' )
 
-		elif name == 'grid_view':
-			pass
+		# elif name == 'grid_view':
+		# 	pass
 
 	def onTabChanged( self, window ):
 		if window and window in self.windows:
@@ -314,7 +314,6 @@ class SceneView( MainEditorModule ):
 			canvas.safeCallMethod( 'view', 'changeEditTool', name )
 
 	def onSceneOpen( self, scene ):
-		# self.window.setWindowTitle( title )
 		window = self.getCurrentWindow()
 		if window:
 			window.show()
@@ -334,30 +333,30 @@ class SceneView( MainEditorModule ):
 			self.scheduleUpdate()
 			# self.setFocus()
 
-	def onFrameResize( self, width, height ):
-		self.canvas.makeCurrent()
-		self.canvas.safeCallMethod( 'scene', 'resizeFrame', width, height )
+	# def onFrameResize( self, width, height ):
+	# 	self.canvas.makeCurrent()
+	# 	self.canvas.safeCallMethod( 'scene', 'resizeFrame', width, height )
 
-	def onZoom( self, zoom='normal' ):
-		self.canvas.makeCurrent()
-		maxed = self.canvas.safeCallMethod( 'scene', 'cameraZoom', zoom )
-		if zoom:
-			zoomN = True
-			zoomI = True
-			zoomO = True
-			if zoom == 'normal':
-				zoomN = False
-			elif zoom == 'in':
-				zoomI = not maxed
-			elif zoom == 'out':
-				zoomO = not maxed
-			self.enableTool('scene_view_config/zoom_normal', zoomN)
-			self.enableTool('scene_view_config/zoom_in', zoomI)
-			self.enableTool('scene_view_config/zoom_out', zoomO)
+	# def onZoom( self, zoom='normal' ):
+	# 	self.canvas.makeCurrent()
+	# 	maxed = self.canvas.safeCallMethod( 'scene', 'cameraZoom', zoom )
+	# 	if zoom:
+	# 		zoomN = True
+	# 		zoomI = True
+	# 		zoomO = True
+	# 		if zoom == 'normal':
+	# 			zoomN = False
+	# 		elif zoom == 'in':
+	# 			zoomI = not maxed
+	# 		elif zoom == 'out':
+	# 			zoomO = not maxed
+	# 		self.enableTool('scene_view_config/zoom_normal', zoomN)
+	# 		self.enableTool('scene_view_config/zoom_in', zoomI)
+	# 		self.enableTool('scene_view_config/zoom_out', zoomO)
 
-	def goToPoint( self, x, y ):
-		self.canvas.makeCurrent()
-		self.canvas.safeCallMethod( 'scene', 'goToPos', x, y )
+	# def goToPoint( self, x, y ):
+	# 	self.canvas.makeCurrent()
+	# 	self.canvas.safeCallMethod( 'scene', 'goToPos', x, y )
 
 ##----------------------------------------------------------------##
 

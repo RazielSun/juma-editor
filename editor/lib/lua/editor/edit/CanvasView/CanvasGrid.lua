@@ -19,7 +19,7 @@ end
 
 ---------------------------------------------------------------------------------
 function CanvasGrid:onLoad()
-	self.layer:insertProp( self._prop )
+	self.layer:insertProp( self:getProp() )
 	self:attach()
 end
 
