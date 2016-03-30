@@ -104,13 +104,13 @@ end
 ---------------------------------------------------------------------
 function createEditorCanvasScene()
 	local env = getfenv( 2 )
-	local scene = EditorCanvasScene()
+	local scene = EditorCanvasScene( { viewport = MOAIViewport.new() } )
 	scene:setEnv( env )
 
 	-- FIXME
 	-- function env.onResize( w, h )
-		-- scene:resize( w, h )
-		-- scene.cameraCom:setScreenSize( w, h )
+	-- 	scene:resize( w, h )
+	-- 	-- scene.cameraCom:setScreenSize( w, h )
 	-- end
 
 	function env.onLoad()
