@@ -32,8 +32,6 @@ function CanvasView:initContext()
 	self:setName( '__scene_view__' )
 	local inputDevice = createEditorCanvasInputDevice( self.canvasEnv )
 	self.inputDevice = inputDevice
-	-- inputDevice:addMouseListener( self.mouseEventHandler, self )
- --    inputDevice:addKeyListener( self.keyEventHandler, self )
 end
 
 function CanvasView:initCamera()
@@ -42,7 +40,9 @@ end
 
 function CanvasView:initAddons()
 	self.grid = self:addChild( CanvasGrid() )
-	-- self.frame = self:addChild( CanvasFrame() )
+	if self.EDITOR_TYPE == "ui" then
+		self.frame = self:addChild( CanvasFrame( { ui = self:getScene().rootUI } ) )
+	end
 	self.nav = self:addChild( CanvasNavigate { inputDevice = self.inputDevice, camera = self.camera } )
 	self.toolMgr = self:addChild( CanvasToolManager() )
 	self.itemMgr = self:addChild( CanvasItemManager { inputDevice = self.inputDevice } )
@@ -58,6 +58,13 @@ function CanvasView:resizeCanvas( w, h )
 		viewport:setScale(w,h)
 	end
 	self.grid:resizeView( w, h )
+end
+
+function CanvasView:resizeFrame( w, h )
+	if self.frame then
+		self.frame:resize( w, h )
+		self:updateCanvas()
+	end
 end
 
 ---------------------------------------------------------------------------------

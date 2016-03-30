@@ -20,7 +20,7 @@ function GraphEditor:getScene()
 	return self.scene
 end
 
-function GraphEditor:getSceneRootNode()
+function GraphEditor:getSceneRootGroup()
 	return self.scene:getRootGroup()
 end
 
@@ -32,8 +32,8 @@ function GraphEditor:addEntityByName( entityName )
 end
 
 function GraphEditor:addEntity( entity )
-	local scene = self.scene
 	if entity then
+		local scene = self.scene
 		local root = scene:getRootGroup()
 		root:addChild( entity )
 

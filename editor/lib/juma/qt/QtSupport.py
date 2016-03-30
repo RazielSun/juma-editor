@@ -63,6 +63,7 @@ class QtSupport( QtEditorModule ):
 		self.menu.addChild('&Asset')
 		self.menu.addChild( dict( name = 'preview', label = 'Game' ) )
 		self.menu.addChild('&Scene')
+		self.menu.addChild('&UI')
 		self.menu.addChild('&View').addChild([
 			'----',
 			'Default Theme',

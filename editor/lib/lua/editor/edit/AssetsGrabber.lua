@@ -11,6 +11,7 @@ function AssetsGrabber.grabFromResourceMgr()
 	AssetsGrabber.grabSprites()
 	AssetsGrabber.grabFonts()
 	AssetsGrabber.grabLayout()
+	AssetsGrabber.grabUI()
 end
 
 function AssetsGrabber.grabSprites()
@@ -41,9 +42,9 @@ function AssetsGrabber.findAtlases( sprites, atlasses )
         	
         	if files then
 	            for i, file in ipairs(files) do
-	            	if string.find(file, ".lua") then
+	            	if string.find(file, "%.lua") then
 						AssetsGrabber.setupAtlas( string.pathJoin(pathInfo.path, file), atlasses )
-					elseif string.find(file, ".png") then
+					elseif string.find(file, "%.png") then
 						sprites[file] = true
 					end
 				end
@@ -72,7 +73,7 @@ function AssetsGrabber.grabFonts()
 
         		if files then
 		            for i, file in ipairs(files) do
-		            	if string.find(file, ".ttf") then
+		            	if string.find(file, "%.ttf") then
 		            		table.insert( fonts, string.pathJoin(folder, file) )
 						end
 					end
@@ -98,7 +99,7 @@ function AssetsGrabber.grabLayout()
 
     		if files then
 	            for i, file in ipairs(files) do
-	            	if string.find(file, ".layout") then
+	            	if string.find(file, "%.layout") then
 	            		table.insert( layouts, string.pathJoin(filePath, file) )
 					end
 				end
@@ -108,6 +109,30 @@ function AssetsGrabber.grabLayout()
 
     for _, layout in ipairs(layouts) do
     	registerAssetNodeInLibrary( layout, "layout" )
+    end
+end
+
+function AssetsGrabber.grabUI()
+	local folders = { '', 'ui/' }
+	local layouts = {}
+
+    for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
+    	for _, folder in ipairs(folders) do
+    		local filePath = string.pathJoin(pathInfo.path, folder)
+    		local files = MOAIFileSystem.listFiles( filePath )
+
+    		if files then
+	            for i, file in ipairs(files) do
+	            	if string.find(file, "%.ui") then
+	            		table.insert( layouts, string.pathJoin(filePath, file) )
+					end
+				end
+			end
+    	end
+    end
+
+    for _, layout in ipairs(layouts) do
+    	registerAssetNodeInLibrary( layout, "ui" )
     end
 end
 

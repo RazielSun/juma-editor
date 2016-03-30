@@ -1,8 +1,9 @@
 
 view = false
 
-function createScene( path )
-	local scene = createEditorCanvasScene()
+function createScene( path, stype )
+	local scene = createEditorCanvasScene( stype )
+	
 	if path then
 		local group = EntityManager:load( path )
 		if group then

@@ -9,11 +9,15 @@ local ScriptProp = require("ui.ScriptProp")
 
 local CanvasFrame = Class( ScriptProp, "CanvasFrame" )
 
-function CanvasFrame:init()
+function CanvasFrame:init( option )
+	option = option or {}
 	self.FLAG_EDITOR_OBJECT = true
 	self.deckSize = { 1024, 1024 }
-	self.frameWidth = 320
-	self.frameHeight = 480
+	self.ui = option.ui
+
+	assert( self.ui )
+
+	self.frameWidth, self.frameHeight = self.ui:getSize()
 	ScriptProp.init(self)
 end
 
@@ -27,18 +31,15 @@ function CanvasFrame:onDraw()
 	applyColor 'background-frame'
 	local w, h = self.frameWidth, self.frameHeight
 
-	MOAIGfxDevice.setPenWidth( 2 )
+	MOAIGfxDevice.setPenWidth( 3 )
 	MOAIDraw.drawRect( -w*0.5, -h*0.5, w*0.5, h*0.5 )
-
-	MOAIGfxDevice.setPenWidth( 1 )
-	MOAIDraw.drawLine( 0, -h*0.5, 0, h*0.5 )
-	MOAIDraw.drawLine( -w*0.5, 0, w*0.5, 0 )
 end
 
 ---------------------------------------------------------------------------------
 function CanvasFrame:resize( width, height )
 	self.frameWidth = width or 320
 	self.frameHeight = height or 480
+	self.ui:setSize( width, height )
 end
 
 ---------------------------------------------------------------------------------

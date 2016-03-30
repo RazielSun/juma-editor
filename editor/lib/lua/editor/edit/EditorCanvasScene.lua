@@ -1,5 +1,8 @@
+
 local Scene = require("scenes.Scene")
 local InputDevice = require("input.InputDevice")
+local UICanvas = require("ui.UICanvas")
+local UIPanel = require("ui.UIPanel")
 
 ---------------------------------------------------------------------------------
 --
@@ -10,7 +13,28 @@ local InputDevice = require("input.InputDevice")
 local EditorCanvasScene = Class( Scene, "EditorCanvasScene" )
 
 function EditorCanvasScene:init( option )
+	self.EDITOR_TYPE = "layout"
 	Scene.init(self, option)
+end
+
+function EditorCanvasScene:getRootGroup()
+	if self.EDITOR_TYPE == "ui" then
+		return self.rootUI.panel
+	end
+    return self.rootGroup
+end
+
+function EditorCanvasScene:setRootGroup( group )
+	if self.EDITOR_TYPE == "ui" then
+		self.rootUI:removeChildren()
+		self.rootUI:addChild( group )
+		self.rootUI.panel = group
+		group.parent = nil
+
+		return
+	end
+
+	Scene.setRootGroup( self, group )
 end
 
 function EditorCanvasScene:setEnv( env )
@@ -102,10 +126,23 @@ function createEditorCanvasInputDevice( env )
 end
 
 ---------------------------------------------------------------------
-function createEditorCanvasScene()
+function createEditorCanvasScene( stype )
+	stype = stype or "layout"
 	local env = getfenv( 2 )
 	local scene = EditorCanvasScene( { viewport = MOAIViewport.new() } )
+	scene.EDITOR_TYPE = stype
+
 	scene:setEnv( env )
+
+	if stype == "ui" then
+		scene.rootUI = UICanvas()
+		scene:addLayer( "ui", scene.rootUI.layers )
+		scene.rootUI:setSize( 320, 480 )
+
+		local panel = scene.rootUI:addChild( UIPanel() )
+		scene.rootUI.panel = panel
+		panel.parent = nil
+	end
 
 	-- FIXME
 	-- function env.onResize( w, h )

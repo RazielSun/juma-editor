@@ -7,7 +7,7 @@ from PySide.QtGui 	import QFileDialog
 
 from juma.core 					import signals, app
 from juma.moai.MOAIEditCanvas 	import MOAIEditCanvas
-from MainEditor             	import MainEditorModule
+from MainEditor             	import MainEditorModule, getSceneSelectionManager
 from SceneToolManager			import SceneToolButton, SceneTool
 from MainEditorHelpers         	import ToolSizeWidget, ToolCoordWidget
 from juma.SearchView 			import requestSearchView
@@ -81,6 +81,14 @@ class SceneView( MainEditorModule ):
             dict( name = 'save_scene_as', label = 'Save Scene As...', shortcut = 'ctrl+shift+S' ),
         ], self )
 
+		self.findMenu( 'main/ui' ).addChild([
+			dict( name = 'new_ui', label = 'New UI' ),
+			dict( name = 'open_ui', label = 'Open UI' ),
+			dict( name = 'open_ui_as', label = 'Open UI As...' ),
+			dict( name = 'save_ui', label = 'Save UI' ),
+			dict( name = 'save_ui_as', label = 'Save UI As...' ),
+		], self )
+
 		##----------------------------------------------------------------##
 		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
 			self.getMainWindow().requestToolBar( 'view_tools' )
@@ -115,7 +123,10 @@ class SceneView( MainEditorModule ):
 			)
 
 		# SIGNALS
+		signals.connect( 'entity.modified',   self.onEntityModified   )
+
 		signals.connect( 'selection.changed', self.onSelectionChanged )
+
 		signals.connect( 'scene.open',        self.onSceneOpen        )
 
 	def onStart( self ):
@@ -161,8 +172,14 @@ class SceneView( MainEditorModule ):
 		timer.start(interval)
 		return timer
 
+	def newUI( self, path=None ):
+		self.newDock( path, "ui" )
+
 	def newScene( self, path=None ):
-		title = 'new.layout *'
+		self.newDock( path, "layout" )
+
+	def newDock( self, path=None, dtype="layout" ):
+		title = 'new.{} *'.format( dtype )
 		if path:
 			title = os.path.basename( path )
 			self.filePaths.append( path )
@@ -175,16 +192,16 @@ class SceneView( MainEditorModule ):
 		window.canvas = canvas = window.addWidget( SceneViewCanvas() )
 		canvas.loadScript( _getModulePath('SceneView.lua') )
 
-		# self.sizeWidget = ToolSizeWidget( None )
-		# self.sizeWidget.valuesChanged.connect( self.onFrameResize )
-		# self.sizeWidget.owner = self
+		window.framesize = framesize = ToolSizeWidget( None )
+		framesize.valuesChanged.connect( self.onFrameResize )
+		framesize.owner = self
 
 		# self.coordWidget = ToolCoordWidget( None )
 		# self.coordWidget.gotoSignal.connect( self.goToPoint )
 		# self.coordWidget.owner = self
 
 		# self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
-		# self.addTool( 'scene_view_config/size_background', widget = self.sizeWidget )
+		self.addTool( 'scene_view_config/canvas_frame', widget = framesize )
 		# self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
 		# self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
 		# self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
@@ -194,25 +211,25 @@ class SceneView( MainEditorModule ):
 
 		window.show()
 
-		scene = canvas.safeCall( 'createScene', path )
+		scene = canvas.safeCall( 'createScene', path, dtype )
 		signals.emitNow( 'scene.change', scene )
 
-	def openScene( self ):
+	def openScene( self, stype="layout" ):
 		requestSearchView( 
 			context      = 'asset',
-			type         = 'layout',
+			type         = stype,
 			multiple_selection = False,
 			on_selection = self.onSceneSearchSelection,
 			on_cancel    = self.onSceneSearchCancel,
 			# on_search    = self.onSceneSearch,
 			)
 
-	def openSceneAs(self):
-		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open Scene As", self.getProject().path or "~", "Layout file (*.layout )")
+	def openSceneAs( self, stype="layout" ):
+		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open As", self.getProject().path or "~", "File (*.{})".format(stype))
 		if filePath:
-			self.newScene( filePath )
+			self.newDock( filePath, stype )
 
-	def saveScene( self ):
+	def saveScene( self, stype="layout" ):
 		currentPath = None
 		windowIndex = self.getWindowIndex( self.getCurrentWindow() )
 		if windowIndex >= 0:
@@ -220,14 +237,14 @@ class SceneView( MainEditorModule ):
 		if currentPath:
 			self.saveSceneByPath( currentPath )
 		else:
-			self.saveSceneAs()
+			self.saveSceneAs( stype )
 
-	def saveSceneAs(self):
-		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save Scene As", self.getProject().path or "~", "Layout file (*.layout )")
+	def saveSceneAs( self, stype="layout" ):
+		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save As", self.getProject().path or "~", "File (*.{})".format(stype))
 		if filePath:
 			self.saveSceneByPath( filePath )
 
-	def saveSceneByPath(self, path):
+	def saveSceneByPath( self, path ):
 		canvas = self.getCanvas()
 		success = canvas.safeCall( 'saveScene', path )
 
@@ -256,6 +273,17 @@ class SceneView( MainEditorModule ):
 		elif name == 'save_scene_as':
 			self.saveSceneAs()
 
+		elif name == 'new_ui':
+			self.newUI()
+		elif name == 'open_ui':
+			self.openScene("ui")
+		elif name == 'open_ui_as':
+			self.openSceneAs("ui")
+		elif name == 'save_ui':
+			self.saveScene("ui")
+		elif name == 'save_ui_as':
+			self.saveSceneAs("ui")
+
 	def onTool( self, tool ):
 		name = tool.name
 		# if name == 'zoom_out':
@@ -274,16 +302,18 @@ class SceneView( MainEditorModule ):
 			scene = window.canvas.safeCall( 'getScene' )
 			if scene:
 				signals.emitNow( 'scene.change', scene )
+		getSceneSelectionManager().clearSelection()
 
 	def onTabRemoved( self, window ):
-		windowIndex = self.getWindowIndex( window )
-		if windowIndex >= 0:
-			self.windows.pop(index)
-			self.filePaths.pop(index)
+		if window and window in self.windows:
+			index = self.getWindowIndex( window )
+			if index >= 0:
+				self.windows.pop(index)
+				self.filePaths.pop(index)
 
 	def onSceneSearchSelection( self, target ):
 		if target:
-			self.newScene( target.getNodePath() )
+			self.newDock( target.getNodePath(), target.getType() )
 
 	def onSceneSearchCancel( self ):
 		pass
@@ -333,9 +363,17 @@ class SceneView( MainEditorModule ):
 			self.scheduleUpdate()
 			# self.setFocus()
 
-	# def onFrameResize( self, width, height ):
-	# 	self.canvas.makeCurrent()
-	# 	self.canvas.safeCallMethod( 'scene', 'resizeFrame', width, height )
+	def onEntityModified( self, entity, context=None ):
+		canvas = self.getCanvas()
+		if canvas:
+			canvas.makeCurrent()
+			self.forceUpdate()
+
+	def onFrameResize( self, width, height ):
+		canvas = self.getCanvas()
+		if canvas:
+			canvas.makeCurrent()
+			canvas.safeCallMethod( 'view', 'resizeFrame', width, height )
 
 	# def onZoom( self, zoom='normal' ):
 	# 	self.canvas.makeCurrent()

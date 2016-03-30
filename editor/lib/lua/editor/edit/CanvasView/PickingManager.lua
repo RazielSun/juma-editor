@@ -50,10 +50,19 @@ end
 
 function PickingManager:getVisibleLayers()
 	local layers = {}
-	for i, layer in ipairs( self.targetScene.layers ) do
-		table.insert( layers, layer )
-	end
+	self:collectLayers( self.targetScene.layers, layers )
 	return table.reverse( layers )
+end
+
+function PickingManager:collectLayers( source, layers )
+	for i, layer in ipairs( source ) do
+		if type(layer) == 'table' then
+			self:collectLayers( layer, layers )
+		else
+			table.insert( layers, layer )
+		end
+	end
+	return layers
 end
 ---------------------------------------------------------------------------------
 

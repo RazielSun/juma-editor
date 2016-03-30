@@ -82,30 +82,9 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 		signals.emit( 'entity.modified', obj, 'introspector' )
 
 ##----------------------------------------------------------------##
-class SpriteEditorObject(EntityEditorObject):
-	def __init__(self):
-		super(SpriteEditorObject, self).__init__()
 
-registerFrameworkEditorBuilder( "Sprite", SpriteEditorObject )
-
-##----------------------------------------------------------------##
-class LabelEditorObject(EntityEditorObject):
-	def __init__(self):
-		super(LabelEditorObject, self).__init__()
-
-registerFrameworkEditorBuilder( "Label", LabelEditorObject )
-
-##----------------------------------------------------------------##
-class ButtonEditorObject(EntityEditorObject):
-	def __init__(self):
-		super(ButtonEditorObject, self).__init__()
-
-registerFrameworkEditorBuilder( "ButtonColor", ButtonEditorObject )
-registerFrameworkEditorBuilder( "Button", ButtonEditorObject )
-
-##----------------------------------------------------------------##
-class WidgetEditorObject(EntityEditorObject):
-	def __init__(self):
-		super(WidgetEditorObject, self).__init__()
-
-registerFrameworkEditorBuilder( "Widget", WidgetEditorObject )
+registerFrameworkEditorBuilder( "UISprite", EntityEditorObject )
+registerFrameworkEditorBuilder( "UILabel", EntityEditorObject )
+registerFrameworkEditorBuilder( "UIButtonColor", EntityEditorObject )
+registerFrameworkEditorBuilder( "UIButton", EntityEditorObject )
+registerFrameworkEditorBuilder( "UIWidget", EntityEditorObject )

@@ -27,7 +27,7 @@ addColor( 'misc-transform',  hexcolor( '#b8ff00', 1 ) )
 
 addColor( 'camera-bound', hexcolor( '#ffc900', alpha ) )
 
-addColor( 'background-frame', 0.1, 0.1, 0.1, alpha )
+addColor( 'background-frame', 0.286, 0.11, 0.31, alpha )
 
 addColor( 'grid-zero', 0.53, 0.0, 0.09, 0.5 )
 addColor( 'grid', 0.4, 0.4, 0.4, 0.5 )

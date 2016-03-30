@@ -90,7 +90,7 @@ class GraphEditor( MainEditorModule ):
 		return self.delegate.safeCallMethod( 'editor', 'getScene' )
 
 	def getActiveSceneRootGroup( self ):
-		rootNode = self.delegate.safeCallMethod( 'editor', 'getSceneRootNode' )
+		rootNode = self.delegate.safeCallMethod( 'editor', 'getSceneRootGroup' )
 		if rootNode:
 			return rootNode
 		return None
