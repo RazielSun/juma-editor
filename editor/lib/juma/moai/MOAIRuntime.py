@@ -285,6 +285,9 @@ class MOAIRuntime( EditorModule ):
 	def getUIRegistry( self ):
 		return _G.getEditorRegistry( "ui" )
 
+	def getSceneRegistry( self ):
+		return _G.getEditorRegistry( "entity" )
+
 	def updateStepSim( self, step ):
 		try:
 			_G.updateStepSim( step )

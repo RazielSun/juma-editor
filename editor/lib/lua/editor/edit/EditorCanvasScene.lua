@@ -13,7 +13,7 @@ local UIPanel = require("ui.UIPanel")
 local EditorCanvasScene = Class( Scene, "EditorCanvasScene" )
 
 function EditorCanvasScene:init( option )
-	self.EDITOR_TYPE = "layout"
+	self.EDITOR_TYPE = "scene"
 	Scene.init(self, option)
 end
 

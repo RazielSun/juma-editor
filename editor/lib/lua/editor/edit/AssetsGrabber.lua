@@ -89,8 +89,8 @@ function AssetsGrabber.grabFonts()
 end
 
 function AssetsGrabber.grabLayout()
-	local folders = { '', 'layouts/' }
-	local layouts = {}
+	local folders = { '', 'scenes/' }
+	local scenes = {}
 
     for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
     	for _, folder in ipairs(folders) do
@@ -99,22 +99,22 @@ function AssetsGrabber.grabLayout()
 
     		if files then
 	            for i, file in ipairs(files) do
-	            	if string.find(file, "%.layout") then
-	            		table.insert( layouts, string.pathJoin(filePath, file) )
+	            	if string.find(file, "%.scene") then
+	            		table.insert( scenes, string.pathJoin(filePath, file) )
 					end
 				end
 			end
     	end
     end
 
-    for _, layout in ipairs(layouts) do
-    	registerAssetNodeInLibrary( layout, "layout" )
+    for _, layout in ipairs(scenes) do
+    	registerAssetNodeInLibrary( layout, "scene" )
     end
 end
 
 function AssetsGrabber.grabUI()
 	local folders = { '', 'ui/' }
-	local layouts = {}
+	local uis = {}
 
     for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
     	for _, folder in ipairs(folders) do
@@ -124,14 +124,14 @@ function AssetsGrabber.grabUI()
     		if files then
 	            for i, file in ipairs(files) do
 	            	if string.find(file, "%.ui") then
-	            		table.insert( layouts, string.pathJoin(filePath, file) )
+	            		table.insert( uis, string.pathJoin(filePath, file) )
 					end
 				end
 			end
     	end
     end
 
-    for _, layout in ipairs(layouts) do
+    for _, layout in ipairs(uis) do
     	registerAssetNodeInLibrary( layout, "ui" )
     end
 end

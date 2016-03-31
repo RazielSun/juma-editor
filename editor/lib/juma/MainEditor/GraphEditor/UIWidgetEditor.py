@@ -37,7 +37,7 @@ signals.connect( 'framework.init', onFrameworkInited )
 ##----------------------------------------------------------------##
 ## Framework Custom Inspector Builder
 ##----------------------------------------------------------------##
-class FrameworkEditorObjectMixin(object):
+class FrameworkObjectMixin(object):
 	def __init__(self):
 		super(FrameworkEditorObjectMixin, self).__init__()
 
@@ -47,32 +47,18 @@ class FrameworkEditorObjectMixin(object):
 	def onFoldChanged( self, folded ):
 		self.getTarget()['__foldState'] = folded
 
-class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
+class UIWidgetEditorObject(FrameworkObjectMixin, CommonIntrospectorObject):
 	def __init__(self):
-		super(EntityEditorObject, self).__init__()
+		super(UIWidgetEditorObject, self).__init__()
 
 	def initWidget(self, container, objectContainer):
-		# self.header = EntityHeader( container )
-		# self.property = PropertyEditor( self.header )
 		self.property = PropertyEditor( container )
-		# self.header.layout().addWidget( self.grid )
 		self.property.setContext( 'main_editor' )		
-
 		self.property.propertyChanged.connect( self.onPropertyChanged )		
-		# self.header.buttonEdit   .clicked .connect ( self.onEditProto )
-		# self.header.buttonGoto   .clicked .connect ( self.onGotoProto )
-		# self.header.buttonUnlink .clicked .connect ( self.onUnlinkProto )
-		
-		# self.initFieldContextMenu( self.grid )
 		self.initFoldState()
-		# self.initAnimatorButton()
-
 		return self.property
-		# return self.header
 
 	def onPropertyChanged( self, obj, id, value ):
-		# if _MOCK.markProtoInstanceOverrided( obj, id ):
-		# 	self.grid.refershFieldState( id )
 		if id == 'name':
 			signals.emit( 'entity.renamed', obj, value )
 		elif id == 'sprite':
@@ -87,8 +73,8 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 
 ##----------------------------------------------------------------##
 
-registerFrameworkEditorBuilder( "UISprite", EntityEditorObject )
-registerFrameworkEditorBuilder( "UILabel", EntityEditorObject )
-registerFrameworkEditorBuilder( "UIButtonColor", EntityEditorObject )
-registerFrameworkEditorBuilder( "UIButton", EntityEditorObject )
-registerFrameworkEditorBuilder( "UIWidget", EntityEditorObject )
+registerFrameworkEditorBuilder( "UISprite", UIWidgetEditorObject )
+registerFrameworkEditorBuilder( "UILabel", UIWidgetEditorObject )
+registerFrameworkEditorBuilder( "UIButtonColor", UIWidgetEditorObject )
+registerFrameworkEditorBuilder( "UIButton", UIWidgetEditorObject )
+registerFrameworkEditorBuilder( "UIWidget", UIWidgetEditorObject )

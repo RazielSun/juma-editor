@@ -37,6 +37,10 @@ function GraphEditor:addEntity( entity )
 		local root = scene:getRootGroup()
 		root:addChild( entity )
 
+		if scene.EDITOR_TYPE == "ui" then
+			_createNodeHelperForUI( entity )
+		end
+
 		if scene.camera then
 			entity:setLoc( scene.camera:getLoc() )
 		end

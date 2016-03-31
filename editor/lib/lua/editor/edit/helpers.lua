@@ -29,3 +29,10 @@ function garbageCollect()
 	print("Garbage collect ...")
 	MOAISim.forceGC()
 end
+
+--------------------------------------------------------------------------------
+function _createNodeHelperForUI( entity )
+	entity.updateNode = MOAIScriptNode.new()
+	entity.updateNode:setCallback( function() entity:updateAnchor() end )
+	entity.updateNode:setNodeLink( entity:getProp() )
+end

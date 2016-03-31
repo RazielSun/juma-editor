@@ -176,9 +176,9 @@ class SceneView( MainEditorModule ):
 		self.newDock( path, "ui" )
 
 	def newScene( self, path=None ):
-		self.newDock( path, "layout" )
+		self.newDock( path, "scene" )
 
-	def newDock( self, path=None, dtype="layout" ):
+	def newDock( self, path=None, dtype="scene" ):
 		title = 'new.{} *'.format( dtype )
 		if path:
 			title = os.path.basename( path )

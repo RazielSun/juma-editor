@@ -28,6 +28,7 @@ class GraphEditor( MainEditorModule ):
 		self.delegate = None
 		self.dirty = False
 		self.previewing = False
+		self.sceneType = "scene"
 
 	def onLoad( self ):
 		self.windowTitle = 'Hierarchy'
@@ -81,6 +82,7 @@ class GraphEditor( MainEditorModule ):
 
 		# ENUMERATORS
 		registerSearchEnumerator( uiNameSearchEnumerator )
+		registerSearchEnumerator( entityNameSearchEnumerator )
 
 	def getActiveScene( self ):
 		return self.delegate.safeCallMethod( 'editor', 'getScene' )
@@ -97,6 +99,8 @@ class GraphEditor( MainEditorModule ):
 
 	def onSceneChange(self, scene):
 		self.tree.hide()
+
+		self.sceneType = scene.EDITOR_TYPE
 
 		self.delegate.safeCallMethod( 'editor', 'changeScene', scene )
 
@@ -144,7 +148,7 @@ class GraphEditor( MainEditorModule ):
 		elif name == 'create_entity':
 			requestSearchView( 
 				info    = 'select entity type to create',
-				context = 'entity_creation',
+				context = '{}_creation'.format(self.sceneType),
 				on_selection = lambda obj: 
 					self.createEntity( obj )
 					# self.doCommand( 'scene_editor/create_entity', name = obj )
@@ -409,8 +413,17 @@ class GraphTreeWidget( GenericTreeWidget ):
 ##----------------------------------------------------------------##
 
 def uiNameSearchEnumerator( typeId, context, option ):
-	if not context in [ 'entity_creation' ] : return None
+	if not context in [ 'ui_creation' ] : return None
 	registry = MOAIRuntime.get().getUIRegistry()
+	result = []
+	for name in sorted( registry ):
+		entry = ( name, name, 'UI', None )
+		result.append( entry )
+	return result
+
+def entityNameSearchEnumerator( typeId, context, option ):
+	if not context in [ 'scene_creation' ] : return None
+	registry = MOAIRuntime.get().getSceneRegistry()
 	result = []
 	for name in sorted( registry ):
 		entry = ( name, name, 'Entity', None )

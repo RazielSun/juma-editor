@@ -41,3 +41,9 @@ editorRegistryClassType( "UILabel", "ui" )
 editorRegistryClassType( "UIButton", "ui" )
 editorRegistryClassType( "UIButtonColor", "ui" )
 editorRegistryClassType( "UIWidget", "ui" )
+
+--------------------------------------------------------------------------------
+-- UI Register
+--------------------------------------------------------------------------------
+
+editorRegistryClassType( "Entity", "entity" )
