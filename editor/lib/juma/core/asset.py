@@ -154,3 +154,6 @@ class AssetLibrary(object):
 			self.registerAssetNode(child)
 
 		return node
+
+	def clearAssets( self ):
+		self.assetTable.clear()

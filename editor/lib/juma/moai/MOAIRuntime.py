@@ -92,7 +92,6 @@ class MOAIRuntime( EditorModule ):
 		_G['LIB_JUMA_LUA_PATH'] 		= self.getApp().getPath('lib/lua/juma')
 		_G['LIB_EDITOR_LUA_PATH'] 		= self.getApp().getPath('lib/lua/editor')
 		_G['LIB_FRAMEWORK_LUA_PATH'] 	= self.getApp().getPath('lib/lua/framework/src')
-		_G['ASSET_EDITOR_PATH'] 		= self.getApp().getPath('data/assets')
 
 		self.addDefaultInputDevice( 'device' )
 		self.runScript( self.getApp().getPath( 'lib/lua/juma/init.lua' ) )

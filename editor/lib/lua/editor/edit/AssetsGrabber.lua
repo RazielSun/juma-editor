@@ -62,78 +62,63 @@ end
 
 function AssetsGrabber.grabFonts()
 	local folders = { '', 'fonts/' }
-	local fonts = {}
+	local cache = {}
 
-	local scaleFactor = App:getContentScale() or 1
+    AssetsGrabber.findInPath( '', folders, cache, "%.ttf" )
+
     for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
-        if pathInfo.threshold <= scaleFactor then
-        	for _, folder in ipairs(folders) do
-        		local filePath = string.pathJoin(pathInfo.path, folder)
-        		local files = MOAIFileSystem.listFiles( filePath )
-
-        		if files then
-		            for i, file in ipairs(files) do
-		            	if string.find(file, "%.ttf") then
-		            		table.insert( fonts, string.pathJoin(folder, file) )
-						end
-					end
-				end
-        	end
-        end
+    	AssetsGrabber.findInPath( pathInfo.path, folders, cache, "%.ttf" )
     end
 
-    for _, font in ipairs(fonts) do
-    	-- print("register: font: ", font)
-    	registerAssetNodeInLibrary( font, "font" )
+    for _, item in ipairs(cache) do
+    	registerAssetNodeInLibrary( item, "font" )
     end
 end
 
 function AssetsGrabber.grabLayout()
 	local folders = { '', 'scenes/' }
-	local scenes = {}
+	local cache = {}
+
+	AssetsGrabber.findInPath( '', folders, cache, "%.scene" )
 
     for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
-    	for _, folder in ipairs(folders) do
-    		local filePath = string.pathJoin(pathInfo.path, folder)
-    		local files = MOAIFileSystem.listFiles( filePath )
-
-    		if files then
-	            for i, file in ipairs(files) do
-	            	if string.find(file, "%.scene") then
-	            		table.insert( scenes, string.pathJoin(filePath, file) )
-					end
-				end
-			end
-    	end
+    	AssetsGrabber.findInPath( pathInfo.path, folders, cache, "%.scene" )
     end
 
-    for _, layout in ipairs(scenes) do
-    	registerAssetNodeInLibrary( layout, "scene" )
+    for _, item in ipairs(cache) do
+    	registerAssetNodeInLibrary( item, "scene" )
     end
 end
 
 function AssetsGrabber.grabUI()
 	local folders = { '', 'ui/' }
-	local uis = {}
+	local cache = {}
+
+	AssetsGrabber.findInPath( '', folders, cache, "%.ui" )
 
     for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
-    	for _, folder in ipairs(folders) do
-    		local filePath = string.pathJoin(pathInfo.path, folder)
-    		local files = MOAIFileSystem.listFiles( filePath )
+    	AssetsGrabber.findInPath( pathInfo.path, folders, cache, "%.ui" )
+    end
 
-    		if files then
-	            for i, file in ipairs(files) do
-	            	if string.find(file, "%.ui") then
-	            		table.insert( uis, string.pathJoin(filePath, file) )
-					end
+    for _, item in ipairs(cache) do
+    	registerAssetNodeInLibrary( item, "ui" )
+    end
+end
+
+---------------------------------------------------------------------------------
+function AssetsGrabber.findInPath( path, folders, cache, match )
+	for _, folder in ipairs(folders) do
+		local filePath = string.pathJoin(path, folder)
+		local files = MOAIFileSystem.listFiles( filePath )
+
+		if files then
+            for i, file in ipairs(files) do
+            	if string.find(file, match) then
+            		table.insert( cache, string.pathJoin(filePath, file) )
 				end
 			end
-    	end
-    end
-
-    for _, layout in ipairs(uis) do
-    	registerAssetNodeInLibrary( layout, "ui" )
-    end
+		end
+	end
 end
 
 ---------------------------------------------------------------------------------

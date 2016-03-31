@@ -5,7 +5,7 @@ function createScene( path, stype )
 	local scene = createEditorCanvasScene( stype )
 	
 	if path then
-		local group = EntityManager:load( path )
+		local group = Loader:load( path )
 		if group then
 			scene:setRootGroup( group )
 		end
@@ -16,7 +16,7 @@ end
 function saveScene( path )
 	scene = getScene()
 	if scene then
-		return EntityManager:save( path, scene:getRootGroup() )
+		return Loader:save( path, scene:getRootGroup() )
 	end
 	return false
 end

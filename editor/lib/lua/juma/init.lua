@@ -11,10 +11,6 @@ package.path = package.path
 require("include")
 assert(Class, "No 'Class' constructor for Editor Lua Framework")
 
-if ResourceMgr then
-	ResourceMgr:addResourceDirectory( ASSET_EDITOR_PATH )
-end
-
 --------------------------------------------------------------------
 -- Init Juma
 require("keymap")

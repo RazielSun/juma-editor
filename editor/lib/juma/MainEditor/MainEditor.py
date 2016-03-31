@@ -66,8 +66,10 @@ class MainEditor( TopEditorModule ):
             self.reloadProject()
 
         elif name == 'refresh_assets':
+            self.getProject().assetLibrary.clearAssets()
             runtime = self.getRuntime()
             runtime.refreshAssets()
+
 
     def onTool(self, node):
         name = node.name
