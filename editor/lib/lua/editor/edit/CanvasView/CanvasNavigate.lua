@@ -22,7 +22,8 @@ function CanvasNavigate:onLoad()
 	self.targetCamera = option.camera
 
 	assert( inputDevice )
-	inputDevice:addMouseListener( self.onMouseEvent, self )
+	inputDevice:addListener( self )
+	-- inputDevice:addMouseListener( self.onMouseEvent, self )
 	self.inputDevice = inputDevice
 	self.zoom = 1
 	self.dragging = false
@@ -50,39 +51,45 @@ function CanvasNavigate:updateCanvas()
 end
 
 ---------------------------------------------------------------------------------
-function CanvasNavigate:onMouseEvent( event )
-	if event.eventName == InputEvent.DOWN then
-		self:onMouseDown( event.touchId, event.x, event.y )
-	elseif event.eventName == InputEvent.UP then
-		self:onMouseUp( event.touchId, event.x, event.y )
-	elseif event.eventName == InputEvent.MOVE then
-		self:onMouseMove( event.x, event.y )
+function CanvasNavigate:onInputEvent( event )
+	if event.id == InputEvent.MOUSE_EVENT then
+		self:onMouseEvent( event )
 	end
 end
 
-function CanvasNavigate:onMouseDown( btn, x, y )
+function CanvasNavigate:onMouseEvent( event )
+	if event.eventName == InputEvent.DOWN then
+		self:onMouseDown( event.idx, event.wx, event.wy )
+	elseif event.eventName == InputEvent.UP then
+		self:onMouseUp( event.idx, event.wx, event.wy )
+	elseif event.eventName == InputEvent.MOVE then
+		self:onMouseMove( event.wx, event.wy )
+	end
+end
+
+function CanvasNavigate:onMouseDown( btn, wx, wy )
 	if btn == 'right' then
 		if self.dragging then return end
-		self:startDrag( btn, x, y )
+		self:startDrag( btn, wx, wy )
 
 	elseif btn == 'left' then
 		if self.dragging then return end
 		if self.inputDevice:isKeyDown( 'space' ) then
-			self:startDrag( btn, x, y )
+			self:startDrag( btn, wx, wy )
 		end
 	end
 end
 
-function CanvasNavigate:onMouseUp( btn, x, y )
+function CanvasNavigate:onMouseUp( btn, wx, wy )
 	if btn == self.dragging then
 		self:stopDrag()
 	end
 end
 
-function CanvasNavigate:onMouseMove( x, y )
+function CanvasNavigate:onMouseMove( wx, wy )
 	if not self.dragging then return end
 	local x0, y0 = unpack( self.dragFrom )
-	local dx, dy = x - x0, y - y0
+	local dx, dy = wx - x0, wy - y0
 	local cx0, cy0 = unpack( self.cameraFrom )
 	-- local zoom = cameraCom:getZoom()
 	-- local z0 = self.targetCamera:getLocZ()

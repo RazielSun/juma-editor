@@ -1,5 +1,5 @@
 
-local ScriptProp = require("ui.ScriptProp")
+local ScriptProp = require("core.ScriptProp")
 
 ---------------------------------------------------------------------------------
 --

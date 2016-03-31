@@ -41,7 +41,7 @@ end
 function CanvasView:initAddons()
 	self.grid = self:addChild( CanvasGrid() )
 	if self.EDITOR_TYPE == "ui" then
-		self.frame = self:addChild( CanvasFrame( { ui = self:getScene().rootUI } ) )
+		self.frame = self:addChild( CanvasFrame( { ui = self:getScene().jui } ) )
 	end
 	self.nav = self:addChild( CanvasNavigate { inputDevice = self.inputDevice, camera = self.camera } )
 	self.toolMgr = self:addChild( CanvasToolManager() )
@@ -57,6 +57,7 @@ function CanvasView:resizeCanvas( w, h )
 		viewport:setSize(w,h)
 		viewport:setScale(w,h)
 	end
+
 	self.grid:resizeView( w, h )
 end
 

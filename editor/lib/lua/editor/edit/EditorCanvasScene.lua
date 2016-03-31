@@ -1,6 +1,9 @@
 
 local Scene = require("scenes.Scene")
 local InputDevice = require("input.InputDevice")
+local JUI = require("ui.JUI")
+local UIScreen = require("ui.UIScreen")
+
 local UICanvas = require("ui.UICanvas")
 local UIPanel = require("ui.UIPanel")
 
@@ -19,17 +22,17 @@ end
 
 function EditorCanvasScene:getRootGroup()
 	if self.EDITOR_TYPE == "ui" then
-		return self.rootUI.panel
+		return self.jui._activeScreens[1]
 	end
     return self.rootGroup
 end
 
 function EditorCanvasScene:setRootGroup( group )
 	if self.EDITOR_TYPE == "ui" then
-		self.rootUI:removeChildren()
-		self.rootUI:addChild( group )
-		self.rootUI.panel = group
-		group.parent = nil
+		-- self.rootUI:removeChildren()
+		-- self.rootUI:addChild( group )
+		-- self.rootUI.panel = group
+		-- group.parent = nil
 
 		return
 	end
@@ -129,19 +132,27 @@ end
 function createEditorCanvasScene( stype )
 	stype = stype or "layout"
 	local env = getfenv( 2 )
-	local scene = EditorCanvasScene( { viewport = MOAIViewport.new() } )
+	local viewport = MOAIViewport.new()
+	local scene = EditorCanvasScene( { viewport = viewport } )
 	scene.EDITOR_TYPE = stype
 
 	scene:setEnv( env )
 
 	if stype == "ui" then
-		scene.rootUI = UICanvas()
-		scene:addLayer( "ui", scene.rootUI.layers )
-		scene.rootUI:setSize( 320, 480 )
+		local jui = JUI()
+		jui:setSize( 320, 480 )
+		scene.jui = jui
+		table.insert( scene.renderTable, jui._renderables )
 
-		local panel = scene.rootUI:addChild( UIPanel() )
-		scene.rootUI.panel = panel
-		panel.parent = nil
+		local screen = UIScreen( { viewport = viewport } )
+		jui:internalOpenScreen( screen )
+		-- scene.rootUI = UICanvas()
+		-- scene:addLayer( "ui", scene.rootUI.layers )
+		-- scene.rootUI:setSize( 320, 480 )
+
+		-- local panel = scene.rootUI:addChild( UIPanel() )
+		-- scene.rootUI.panel = panel
+		-- panel.parent = nil
 	end
 
 	-- FIXME

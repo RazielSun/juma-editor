@@ -20,9 +20,11 @@ end
 
 function CanvasItemManager:onLoad()
 	assert( self.layer )
+	-- InputManager
 	local inputDevice = self:getView():getInputDevice()
-	inputDevice:addMouseListener( self.onMouseEvent, self )
-	inputDevice:addKeyListener( self.onKeyEvent, self )
+	inputDevice:addListener( self )
+	-- inputDevice:addMouseListener( self.onMouseEvent, self )
+	-- inputDevice:addKeyListener( self.onKeyEvent, self )
 	self.inputDevice = inputDevice
 end
 
@@ -52,38 +54,46 @@ function CanvasItemManager:findTopItem( x, y, pad )
 end
 
 ---------------------------------------------------------------------------------
-function CanvasItemManager:onMouseEvent( event )
-	if event.eventName == InputEvent.DOWN then
-		self:onMouseDown( event.touchId, event.x, event.y )
-	elseif event.eventName == InputEvent.UP then
-		self:onMouseUp( event.touchId, event.x, event.y )
-	elseif event.eventName == InputEvent.MOVE then
-		self:onMouseMove( event.x, event.y )
+function CanvasItemManager:onInputEvent( event )
+	if event.id == InputEvent.MOUSE_EVENT then
+		self:onMouseEvent( event )
+	elseif event.id == InputEvent.KEY_EVENT then
+		self:onKeyEvent( event )
 	end
 end
 
-function CanvasItemManager:onMouseDown( btn, x, y )
+function CanvasItemManager:onMouseEvent( event )
+	if event.eventName == InputEvent.DOWN then
+		self:onMouseDown( event.idx, event.wx, event.wy )
+	elseif event.eventName == InputEvent.UP then
+		self:onMouseUp( event.idx, event.wx, event.wy )
+	elseif event.eventName == InputEvent.MOVE then
+		self:onMouseMove( event.wx, event.wy )
+	end
+end
+
+function CanvasItemManager:onMouseDown( btn, wx, wy )
 	if self.activeItem then return end
-	local item = self:findTopItem( x, y )
+	local item = self:findTopItem( wx, wy )
 	if item then
 		self.activeItem = item
-		self.activeItem:onMouseDown( btn, x, y )
+		self.activeItem:onMouseDown( btn, wx, wy )
 		self.activeMouseButton = btn	
 	end
 	-- self:focus( item )
 end
 
-function CanvasItemManager:onMouseUp( btn, x, y )
+function CanvasItemManager:onMouseUp( btn, wx, wy )
 	if self.activeMouseButton == btn then
-		self.activeItem:onMouseUp( btn, x, y )
+		self.activeItem:onMouseUp( btn, wx, wy )
 		self.activeMouseButton = false
 		self.activeItem = false
 	end
 end
 
-function CanvasItemManager:onMouseMove( x, y )
+function CanvasItemManager:onMouseMove( wx, wy )
 	if self.activeMouseButton then
-		self.activeItem:onMouseMove( x, y )
+		self.activeItem:onMouseMove( wx, wy )
 		return
 	end
 
