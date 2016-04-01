@@ -25,12 +25,13 @@ function EditorCanvasScene:getRootGroup()
 end
 
 function EditorCanvasScene:setRootGroup( group )
-	if self.EDITOR_TYPE == "ui" then -- FIXME
-		-- self.rootUI:removeChildren()
-		-- self.rootUI:addChild( group )
-		-- self.rootUI.panel = group
-		-- group.parent = nil
-
+	if self.EDITOR_TYPE == "ui" then
+		local ui = Loader:load( "ui/main.ui" )
+		local children = table.dup(group.children)
+		group:removeChildren()
+		local topScreen = self.jui._activeScreens[1]
+		topScreen:removeChildren()
+		topScreen:setChildren(children)
 		return
 	end
 
@@ -142,7 +143,7 @@ function createEditorCanvasScene( stype )
 		table.insert( scene.renderTable, jui._renderables )
 
 		local screen = UIScreen( { viewport = viewport } )
-		jui:internalOpenScreen( screen )
+		jui:openScreenInternal( screen )
 	end
 
 	-- FIXME

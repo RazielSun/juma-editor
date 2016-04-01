@@ -75,18 +75,18 @@ class SceneView( MainEditorModule ):
 		
 		self.findMenu( 'main/scene' ).addChild([
             dict( name = 'new_scene', label = 'New Scene' ),
-            dict( name = 'open_scene', label = 'Open Scene', shortcut = 'ctrl+O' ),
-            dict( name = 'open_scene_as', label = 'Open Scene As...', shortcut = 'ctrl+shift+O' ),
-            dict( name = 'save_scene', label = 'Save Scene', shortcut = 'ctrl+S' ),
-            dict( name = 'save_scene_as', label = 'Save Scene As...', shortcut = 'ctrl+shift+S' ),
+            dict( name = 'open_scene', label = 'Open Scene' ),
+            dict( name = 'open_scene_as', label = 'Open Scene As...' ),
+            dict( name = 'save_scene', label = 'Save Scene' ),
+            dict( name = 'save_scene_as', label = 'Save Scene As...' ),
         ], self )
 
 		self.findMenu( 'main/ui' ).addChild([
 			dict( name = 'new_ui', label = 'New UI' ),
-			dict( name = 'open_ui', label = 'Open UI' ),
-			dict( name = 'open_ui_as', label = 'Open UI As...' ),
-			dict( name = 'save_ui', label = 'Save UI' ),
-			dict( name = 'save_ui_as', label = 'Save UI As...' ),
+			dict( name = 'open_ui', label = 'Open UI', shortcut = 'ctrl+O' ),
+			dict( name = 'open_ui_as', label = 'Open UI As...', shortcut = 'ctrl+shift+O' ),
+			dict( name = 'save_ui', label = 'Save UI', shortcut = 'ctrl+S' ),
+			dict( name = 'save_ui_as', label = 'Save UI As...', shortcut = 'ctrl+shift+S' ),
 		], self )
 
 		##----------------------------------------------------------------##
