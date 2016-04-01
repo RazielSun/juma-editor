@@ -4,9 +4,6 @@ local InputDevice = require("input.InputDevice")
 local JUI = require("ui.JUI")
 local UIScreen = require("ui.UIScreen")
 
-local UICanvas = require("ui.UICanvas")
-local UIPanel = require("ui.UIPanel")
-
 ---------------------------------------------------------------------------------
 --
 -- @type EditorCanvasScene
@@ -28,7 +25,7 @@ function EditorCanvasScene:getRootGroup()
 end
 
 function EditorCanvasScene:setRootGroup( group )
-	if self.EDITOR_TYPE == "ui" then
+	if self.EDITOR_TYPE == "ui" then -- FIXME
 		-- self.rootUI:removeChildren()
 		-- self.rootUI:addChild( group )
 		-- self.rootUI.panel = group
@@ -146,13 +143,6 @@ function createEditorCanvasScene( stype )
 
 		local screen = UIScreen( { viewport = viewport } )
 		jui:internalOpenScreen( screen )
-		-- scene.rootUI = UICanvas()
-		-- scene:addLayer( "ui", scene.rootUI.layers )
-		-- scene.rootUI:setSize( 320, 480 )
-
-		-- local panel = scene.rootUI:addChild( UIPanel() )
-		-- scene.rootUI.panel = panel
-		-- panel.parent = nil
 	end
 
 	-- FIXME
