@@ -87,8 +87,8 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 
 ##----------------------------------------------------------------##
 
-registerFrameworkEditorBuilder( "UISprite", EntityEditorObject )
-registerFrameworkEditorBuilder( "UILabel", EntityEditorObject )
-registerFrameworkEditorBuilder( "UIButtonColor", EntityEditorObject )
-registerFrameworkEditorBuilder( "UIButton", EntityEditorObject )
-registerFrameworkEditorBuilder( "UIWidget", EntityEditorObject )
+# registerFrameworkEditorBuilder( "UISprite", EntityEditorObject )
+# registerFrameworkEditorBuilder( "UILabel", EntityEditorObject )
+# registerFrameworkEditorBuilder( "UIButtonColor", EntityEditorObject )
+# registerFrameworkEditorBuilder( "UIButton", EntityEditorObject )
+# registerFrameworkEditorBuilder( "UIWidget", EntityEditorObject )

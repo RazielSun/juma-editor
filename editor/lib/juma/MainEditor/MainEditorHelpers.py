@@ -19,6 +19,12 @@ class SizeComboBox( QtGui.QComboBox ):
 	dict( icon = 'iphone', width = 375, height = 667 ),
 	dict( icon = 'iphone', width = 414, height = 736 ),
 	dict( icon = 'ipad', width = 384, height = 512 ),
+	dict( icon = 'iphone', width = 640, height = 960 ),
+	dict( icon = 'iphone', width = 640, height = 1136 ),
+	dict( icon = 'iphone', width = 750, height = 1334 ),
+	dict( icon = 'iphone', width = 828, height = 1472 ),
+	dict( icon = 'ipad', width = 768, height = 1024 ),
+	dict( icon = 'ipad', width = 1536, height = 2048 ),
 	]
 
 	def __init__( self, parent ):

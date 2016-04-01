@@ -129,6 +129,8 @@ class SceneView( MainEditorModule ):
 
 		signals.connect( 'scene.open',        self.onSceneOpen        )
 
+		signals.connect( 'moai.clean',		  self.onMoaiClean     )
+
 	def onStart( self ):
 		self.scheduleUpdate()
 		self.updateTimer = self.startTimer( 0.016, self.onUpdateTimer )
@@ -171,6 +173,19 @@ class SceneView( MainEditorModule ):
 		timer.timeout.connect(trigger)
 		timer.start(interval)
 		return timer
+
+	def changeScene( self ):
+		window = self.getCurrentWindow()
+		if window and not self.installed: # this is fix - for resize after first create new scene
+			self.installed = True
+			window.resize(self.getMainWindow().size())
+
+		canvas = self.getCanvas()
+		if canvas:
+			canvas.makeCurrent()
+			created = canvas.safeCall( 'viewCreated' )
+			self.forceUpdate()
+			self.scheduleUpdate()
 
 	def newUI( self, path=None ):
 		self.newDock( path, "ui" )
@@ -302,12 +317,17 @@ class SceneView( MainEditorModule ):
 			scene = window.canvas.safeCall( 'getScene' )
 			if scene:
 				signals.emitNow( 'scene.change', scene )
+				self.changeScene()
 		getSceneSelectionManager().clearSelection()
 
 	def onTabRemoved( self, window ):
 		if window and window in self.windows:
 			index = self.getWindowIndex( window )
+			tab = self.getTab()
+			if tab.currentIndex() == index:
+				getSceneSelectionManager().clearSelection()
 			if index >= 0:
+				self.installed = False
 				self.windows.pop(index)
 				self.filePaths.pop(index)
 
@@ -374,6 +394,9 @@ class SceneView( MainEditorModule ):
 		if canvas:
 			canvas.makeCurrent()
 			canvas.safeCallMethod( 'view', 'resizeFrame', width, height )
+
+	def onMoaiClean( self ):
+		self.installed = False
 
 	# def onZoom( self, zoom='normal' ):
 	# 	self.canvas.makeCurrent()

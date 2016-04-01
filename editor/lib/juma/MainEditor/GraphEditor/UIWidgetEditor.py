@@ -39,7 +39,7 @@ signals.connect( 'framework.init', onFrameworkInited )
 ##----------------------------------------------------------------##
 class FrameworkObjectMixin(object):
 	def __init__(self):
-		super(FrameworkEditorObjectMixin, self).__init__()
+		super(FrameworkObjectMixin, self).__init__()
 
 	def initFoldState( self ):
 		self.getContainer().foldChanged.connect( self.onFoldChanged )
@@ -75,6 +75,7 @@ class UIWidgetEditorObject(FrameworkObjectMixin, CommonIntrospectorObject):
 
 registerFrameworkEditorBuilder( "UISprite", UIWidgetEditorObject )
 registerFrameworkEditorBuilder( "UILabel", UIWidgetEditorObject )
+registerFrameworkEditorBuilder( "UILabelSDF", UIWidgetEditorObject )
 registerFrameworkEditorBuilder( "UIButtonColor", UIWidgetEditorObject )
 registerFrameworkEditorBuilder( "UIButton", UIWidgetEditorObject )
 registerFrameworkEditorBuilder( "UIWidget", UIWidgetEditorObject )

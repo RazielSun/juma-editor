@@ -38,6 +38,7 @@ addColor( 'grid', 0.4, 0.4, 0.4, 0.5 )
 
 editorRegistryClassType( "UISprite", "ui" )
 editorRegistryClassType( "UILabel", "ui" )
+editorRegistryClassType( "UILabelSDF", "ui" )
 editorRegistryClassType( "UIButton", "ui" )
 editorRegistryClassType( "UIButtonColor", "ui" )
 editorRegistryClassType( "UIWidget", "ui" )
