@@ -140,7 +140,7 @@ function createEditorCanvasScene( stype )
 		local jui = JUI()
 		jui:setSize( 320, 480 )
 		scene.jui = jui
-		table.insert( scene.renderTable, jui._renderables )
+		scene:setHudLayers(jui._renderables)
 
 		local screen = UIScreen( { viewport = viewport } )
 		jui:openScreenInternal( screen )

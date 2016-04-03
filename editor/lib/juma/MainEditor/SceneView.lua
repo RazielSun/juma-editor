@@ -39,15 +39,15 @@ function onSceneOpen( scene )
 	local key = RenderContextMgr:getCurrentContextKey()
 	scene.contextName = key
 
-	-- scene:addEntity( view )
-	view.scene = scene
-	view.layer:setViewport( scene.viewport )
-	if view.onLoad then
-		view:onLoad()
-	end
+	scene:addEntity( view )
+	-- view.scene = scene
+	-- view.layer:setViewport( scene.viewport )
+	-- if view.onLoad then
+	-- 	view:onLoad()
+	-- end
 
-	RenderContextMgr:pushRenderTable( key, scene.renderTable )
-	table.insert( scene.renderTable, view.layer )
+	RenderContextMgr:pushRenderTable( key, scene.renderTbl )
+	table.insert( scene.renderTbl, view.layer )
 end
 
 function onSceneClose()

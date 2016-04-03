@@ -95,6 +95,7 @@ function CanvasNavigate:onMouseMove( wx, wy )
 	-- local z0 = self.targetCamera:getLocZ()
 	-- self.targetCamera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom, z0 )
 	self.targetCamera:setLoc( cx0 - dx, cy0 + dy, 0 )
+
 	self:updateCanvas()
 end
 

@@ -14,7 +14,7 @@ from juma.MainEditor.MainEditor       	import MainEditorModule
 from juma.SearchView 					import requestSearchView, registerSearchEnumerator
 
 ##----------------------------------------------------------------##
-def getModulePath( path ):
+def _getModulePath( path ):
 	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
@@ -60,7 +60,8 @@ class GraphEditor( MainEditorModule ):
 		self.tool = self.addToolBar( 'hierarchy', self.window.addToolBar() )
 
 		self.delegate = MOAILuaDelegate( self )
-		self.delegate.load( getModulePath( 'GraphEditor.lua' ) )
+		self.delegate.load( _getModulePath( 'GraphEditor.lua' ) )
+		print("graph_editor init")
 
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_entity', label ='Create', icon = 'plus_mint' )

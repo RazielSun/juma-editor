@@ -19,6 +19,7 @@ function CanvasView:init( canvasEnv )
 	self.canvasEnv = assert( canvasEnv )
 	EditorEntity.init( self, params)
 	self.layer = MOAILayer.new()
+	print("canvasview layer:", self.layer)
 end
 
 ---------------------------------------------------------------------------------
@@ -35,7 +36,10 @@ function CanvasView:initContext()
 end
 
 function CanvasView:initCamera()
-	self.camera = self:getScene():setCamera()
+	local camera = self:getScene():getCamera()
+    self:getScene():setCameraForLayers( self:getScene().hudTbl, camera )
+    self:getScene():setCameraForLayers( self:getScene().gameTbl, camera )
+    self.camera = camera
 end
 
 function CanvasView:initAddons()

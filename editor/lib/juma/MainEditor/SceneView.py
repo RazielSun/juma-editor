@@ -66,7 +66,8 @@ class SceneView( MainEditorModule ):
 
 		self.windows = []
 		self.filePaths = []
-		self.installed = False
+		self.fileTypes = []
+		self.loaded = []
 
 	def onLoad( self ):
 		window = self.getMainWindow()
@@ -129,7 +130,7 @@ class SceneView( MainEditorModule ):
 
 		signals.connect( 'scene.open',        self.onSceneOpen        )
 
-		signals.connect( 'moai.clean',		  self.onMoaiClean     )
+		signals.connect( 'moai.ready',		  self.onMoaiReady	      )
 
 	def onStart( self ):
 		self.scheduleUpdate()
@@ -159,9 +160,8 @@ class SceneView( MainEditorModule ):
 
 	def getWindowIndex( self, window ):
 		index = -1
-		for i in range(len(self.windows)):
-			item = self.windows[i]
-			if window == item:
+		for i,w in enumerate(self.windows):
+			if w == window:
 				index = i
 				break
 		return index
@@ -174,19 +174,6 @@ class SceneView( MainEditorModule ):
 		timer.start(interval)
 		return timer
 
-	def changeScene( self ):
-		window = self.getCurrentWindow()
-		if window and not self.installed: # this is fix - for resize after first create new scene
-			self.installed = True
-			window.resize(self.getMainWindow().size())
-
-		canvas = self.getCanvas()
-		if canvas:
-			canvas.makeCurrent()
-			created = canvas.safeCall( 'viewCreated' )
-			self.forceUpdate()
-			self.scheduleUpdate()
-
 	def newUI( self, path=None ):
 		self.newDock( path, "ui" )
 
@@ -195,17 +182,20 @@ class SceneView( MainEditorModule ):
 
 	def newDock( self, path=None, dtype="scene" ):
 		title = 'new.{} *'.format( dtype )
+		self.fileTypes.append(dtype)
 		if path:
 			title = os.path.basename( path )
 			self.filePaths.append( path )
 		else:
-			self.filePaths.append( "" )
+			self.filePaths.append( None )
 
 		window = self.requestDocumentWindow( title = title )
-		window.tool = tool = self.addToolBar( 'scene_view_config', window.addToolBar() )
+		self.windows.append(window)
 
+		window.tool = tool = self.addToolBar( 'scene_view_config', window.addToolBar() )
 		window.canvas = canvas = window.addWidget( SceneViewCanvas() )
 		canvas.loadScript( _getModulePath('SceneView.lua') )
+		self.loaded.append(True)
 
 		window.framesize = framesize = ToolSizeWidget( None )
 		framesize.valuesChanged.connect( self.onFrameResize )
@@ -222,14 +212,12 @@ class SceneView( MainEditorModule ):
 		# self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
 		# self.addTool( 'scene_view_config/goto_point', widget = self.coordWidget )
 
-		self.windows.append(window)
-
 		window.show()
 
 		scene = canvas.safeCall( 'createScene', path, dtype )
 		signals.emitNow( 'scene.change', scene )
 
-	def openScene( self, stype="layout" ):
+	def openScene( self, stype="scene" ):
 		requestSearchView( 
 			context      = 'asset',
 			type         = stype,
@@ -239,12 +227,12 @@ class SceneView( MainEditorModule ):
 			# on_search    = self.onSceneSearch,
 			)
 
-	def openSceneAs( self, stype="layout" ):
+	def openSceneAs( self, stype="scene" ):
 		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open As", self.getProject().path or "~", "File (*.{})".format(stype))
 		if filePath:
 			self.newDock( filePath, stype )
 
-	def saveScene( self, stype="layout" ):
+	def saveScene( self, stype="scene" ):
 		currentPath = None
 		windowIndex = self.getWindowIndex( self.getCurrentWindow() )
 		if windowIndex >= 0:
@@ -254,7 +242,7 @@ class SceneView( MainEditorModule ):
 		else:
 			self.saveSceneAs( stype )
 
-	def saveSceneAs( self, stype="layout" ):
+	def saveSceneAs( self, stype="scene" ):
 		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save As", self.getProject().path or "~", "File (*.{})".format(stype))
 		if filePath:
 			self.saveSceneByPath( filePath )
@@ -273,6 +261,17 @@ class SceneView( MainEditorModule ):
 		idx = tab.indexOf( window )
 		if idx >= 0:
 			tab.setTabText( idx, title )
+
+	def recreateScene( self ):
+		window = self.getCurrentWindow()
+		index = self.getWindowIndex( window )
+		if index >= 0:
+			loaded = self.loaded[index]
+			if not loaded:
+				self.loaded[index] = True
+				canvas = window.canvas
+				scene = canvas.safeCall( 'createScene', self.filePaths[index], self.fileTypes[index] )
+				signals.emitNow( 'scene.change', scene )
 
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):
@@ -312,24 +311,26 @@ class SceneView( MainEditorModule ):
 		# 	pass
 
 	def onTabChanged( self, window ):
+		getSceneSelectionManager().clearSelection()
 		if window and window in self.windows:
-			self.updateTimer.start()
+			self.updateTimer.start()			
 			scene = window.canvas.safeCall( 'getScene' )
 			if scene:
 				signals.emitNow( 'scene.change', scene )
-				self.changeScene()
-		getSceneSelectionManager().clearSelection()
+			else:
+				self.recreateScene()
 
 	def onTabRemoved( self, window ):
 		if window and window in self.windows:
-			index = self.getWindowIndex( window )
-			tab = self.getTab()
-			if tab.currentIndex() == index:
+			current = self.getCurrentWindow()
+			if window == current:
 				getSceneSelectionManager().clearSelection()
+			index = self.getWindowIndex( window )
 			if index >= 0:
-				self.installed = False
 				self.windows.pop(index)
 				self.filePaths.pop(index)
+				self.fileTypes.pop(index)
+				self.loaded.pop(index)
 
 	def onSceneSearchSelection( self, target ):
 		if target:
@@ -364,13 +365,6 @@ class SceneView( MainEditorModule ):
 			canvas.safeCallMethod( 'view', 'changeEditTool', name )
 
 	def onSceneOpen( self, scene ):
-		window = self.getCurrentWindow()
-		if window:
-			window.show()
-			if not self.installed: # this is fix - for resize after first create new scene
-				self.installed = True
-				window.resize(self.getMainWindow().size())
-
 		canvas = self.getCanvas()
 		if canvas:
 			canvas.makeCurrent()
@@ -381,7 +375,12 @@ class SceneView( MainEditorModule ):
 			self.updateTimer.start()
 			self.forceUpdate()
 			self.scheduleUpdate()
-			# self.setFocus()
+			self.setFocus()
+
+		window = self.getCurrentWindow()
+		index = self.getWindowIndex( window )
+		if index >= 0:
+			window.resize(self.getTab().size())
 
 	def onEntityModified( self, entity, context=None ):
 		canvas = self.getCanvas()
@@ -395,8 +394,10 @@ class SceneView( MainEditorModule ):
 			canvas.makeCurrent()
 			canvas.safeCallMethod( 'view', 'resizeFrame', width, height )
 
-	def onMoaiClean( self ):
-		self.installed = False
+	def onMoaiReady( self ):
+		for i,l in enumerate(self.loaded):
+			self.loaded[i] = False
+		self.recreateScene()
 
 	# def onZoom( self, zoom='normal' ):
 	# 	self.canvas.makeCurrent()

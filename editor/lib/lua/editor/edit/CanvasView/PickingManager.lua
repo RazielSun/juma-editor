@@ -50,7 +50,7 @@ end
 
 function PickingManager:getVisibleLayers()
 	local layers = {}
-	self:collectLayers( self.targetScene.layers, layers )
+	self:collectLayers( self.targetScene.gameTbl, layers )
 	return table.reverse( layers )
 end
 

@@ -440,3 +440,4 @@ QTKeymap={
 def convertKeyCode(k):
 	if k>1000: k = (k&0xff)+(255 - 0x55)
 	return QTKeymap.get(k, k)
+	
