@@ -9,5 +9,4 @@ from SceneView 			import SceneView
 from SceneToolManager 	import SceneToolManager
 from GamePreview 		import GamePreview
 
-from DebugEditors.StatsViewer 		import StatsViewer
-from DebugEditors.DebugDrawDock 	import DebugDrawDock
+from DebugEditors 		import *

@@ -79,6 +79,7 @@ class QtSupport( QtEditorModule ):
 			'Introspector',
 			'Stats Viewer',
 			'Debug Draw',
+			'Run String Dock',
 			'----',
 			]
 		)
@@ -182,13 +183,13 @@ class QtSupport( QtEditorModule ):
 
 		elif name == 'hierarchy':
 			self.getModule('graph_editor').show()
-
 		elif name == 'introspector':
 			self.getModule('introspector').show()
 
 		elif name == 'stats_viewer':
 			self.getModule('stats_viewer').show()
-
+		elif name == 'run_string_dock':
+			self.getModule('run_string_dock').show()
 		elif name == 'debug_draw':
 			self.getModule('debug_draw_dock').show()
 
