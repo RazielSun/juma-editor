@@ -1,5 +1,5 @@
 
-local EditorEntity = require("edit.EditorEntity")
+local EditorComponent = require("edit.EditorComponent")
 local InputEvent = require("input.InputEvent")
 
 local CACHE_TOOLS = {}
@@ -14,16 +14,16 @@ end
 --
 ---------------------------------------------------------------------------------
 
-local CanvasToolManager = Class( EditorEntity, "CanvasToolManager" )
+local CanvasToolManager = Class( EditorComponent, "CanvasToolManager" )
 
 function CanvasToolManager:init()
 	self.tools = {}
 	self.activeTool = nil
-	EditorEntity.init(self)
+	EditorComponent.init(self, { name = "CanvasToolManager"})
 end
 
 function CanvasToolManager:getView()
-	return self.parent
+	return self:getEntity()
 end
 
 ---------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ function CanvasToolManager:setTool( id )
 	if not tool then
 		if toolClass then
 			tool = toolClass()
-			self:addChild( tool )
+			tool.parent = self
 		else
 			return
 		end

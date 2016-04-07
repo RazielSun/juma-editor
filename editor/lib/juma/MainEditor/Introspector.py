@@ -16,7 +16,6 @@ from ui.object_container_ui 			import Ui_ObjectContainer
 def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
-
 ##----------------------------------------------------------------##
 _OBJECT_EDITOR_CACHE = {} 
 
@@ -122,12 +121,16 @@ class ObjectContainer( QtGui.QWidget ):
 class IntrospectorObject( object ):
 	def __init__(self):
 		self.target = None
+		self.parentIntrospector = None
 
 	def getContainer( self ):
 		return self.container
 
 	def getInnerContainer( self ):
 		return self.container.getBody()
+
+	def getIntrospector( self ):
+		return self.parentIntrospector
 
 	def setTarget(self, target):
 		self.target = target
@@ -196,6 +199,13 @@ class IntrospectorInstance(object):
 
 		self.updateTimer = self.container.startTimer( 0.1, self.onUpdateTimer )
 		self.updatePending = False
+
+	def addWidget( self, widget, **option ):
+		self.scroll.hide()
+		widget.setParent( self.body )
+		count = self.body.mainLayout.count()
+		self.body.mainLayout.insertWidget( count - 1, widget )
+		self.scroll.show()
 
 	def getTarget(self):
 		return self.target

@@ -197,16 +197,17 @@ class SceneView( MainEditorModule ):
 		canvas.loadScript( _getModulePath('SceneView.lua') )
 		self.loaded.append(True)
 
-		window.framesize = framesize = ToolSizeWidget( None )
-		framesize.valuesChanged.connect( self.onFrameResize )
-		framesize.owner = self
+		if dtype == "ui":
+			window.framesize = framesize = ToolSizeWidget( None )
+			framesize.valuesChanged.connect( self.onFrameResize )
+			framesize.owner = self
+			self.addTool( 'scene_view_config/canvas_frame', widget = framesize )
 
 		# self.coordWidget = ToolCoordWidget( None )
 		# self.coordWidget.gotoSignal.connect( self.goToPoint )
 		# self.coordWidget.owner = self
 
 		# self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
-		self.addTool( 'scene_view_config/canvas_frame', widget = framesize )
 		# self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
 		# self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
 		# self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )

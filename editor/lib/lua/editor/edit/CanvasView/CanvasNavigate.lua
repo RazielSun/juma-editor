@@ -1,5 +1,5 @@
 
-local EditorEntity = require("edit.EditorEntity")
+local EditorComponent = require("edit.EditorComponent")
 local InputEvent = require("input.InputEvent")
 
 ---------------------------------------------------------------------------------
@@ -8,11 +8,13 @@ local InputEvent = require("input.InputEvent")
 --
 ---------------------------------------------------------------------------------
 
-local CanvasNavigate = Class( EditorEntity, "CanvasNavigate" )
+local CanvasNavigate = Class( EditorComponent, "CanvasNavigate" )
 
 function CanvasNavigate:init( option )
 	self.option = option
-	EditorEntity.init( self, option )
+	option.name = option.name or "CanvasNavigate"
+
+	EditorComponent.init( self, option )
 end
 
 ---------------------------------------------------------------------------------
@@ -34,16 +36,16 @@ function CanvasNavigate:startDrag( btn, x, y )
 	self.dragFrom = { x, y }
 	self.cameraFrom = { self.targetCamera:getLoc() }
 	self.dragging = btn
-	self.parent:getScene():setCursor( 'closed-hand' )
+	self:getEntity():getScene():setCursor( 'closed-hand' )
 end
 
 function CanvasNavigate:stopDrag()
 	self.dragging = false
-	self.parent:getScene():setCursor( 'arrow' )
+	self:getEntity():getScene():setCursor( 'arrow' )
 end
 
 function CanvasNavigate:getView()
-	return self.parent
+	return self:getEntity()
 end
 
 function CanvasNavigate:updateCanvas()

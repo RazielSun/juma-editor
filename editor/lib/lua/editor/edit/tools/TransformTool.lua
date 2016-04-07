@@ -353,7 +353,7 @@ function TransformTool:updateSelection()
 		self.handle.tool = self
 	end
 
-	local top = self:findTopLevelEntities( entities )
+	local top = self:findTopLevelPropComponents( entities )
 	if top then
 		self:addCanvasItem( self.handle )
 		local target = TransformToolHelper()

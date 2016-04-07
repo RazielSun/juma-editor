@@ -1209,7 +1209,7 @@ QSplitter::handle:vertical {
     color: #fff;
 }
 
-#ObjectContainer QToolButton {
+#ObjectContainer QToolButton, #ButtonIntrospectorAddComponent {
     background-color: #282828;
     border: 1px solid #151515;
     margin: 1px;

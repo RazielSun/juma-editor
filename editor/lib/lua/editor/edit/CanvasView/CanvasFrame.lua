@@ -1,5 +1,5 @@
 
-local ScriptProp = require("core.ScriptProp")
+local ScriptPropComponent = require("entity.components.ScriptPropComponent")
 
 ---------------------------------------------------------------------------------
 --
@@ -7,10 +7,11 @@ local ScriptProp = require("core.ScriptProp")
 --
 ---------------------------------------------------------------------------------
 
-local CanvasFrame = Class( ScriptProp, "CanvasFrame" )
+local CanvasFrame = Class( ScriptPropComponent, "CanvasFrame" )
 
 function CanvasFrame:init( option )
-	option = option or {}
+	local option = option or {}
+	option.name = option.name or "CanvasFrame"
 	self.FLAG_EDITOR_OBJECT = true
 	self.deckSize = { 1024, 1024 }
 	self.ui = option.ui
@@ -18,11 +19,12 @@ function CanvasFrame:init( option )
 	assert( self.ui )
 
 	self.frameWidth, self.frameHeight = self.ui:getSize()
-	ScriptProp.init(self)
+	ScriptPropComponent.init(self, option)
 end
 
 ---------------------------------------------------------------------------------
 function CanvasFrame:onLoad()
+	self.layer = self:getEntity().layer
 	self.layer:insertProp( self._prop )
 	self:attach()
 end

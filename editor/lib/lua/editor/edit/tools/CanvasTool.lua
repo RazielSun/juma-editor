@@ -11,7 +11,7 @@ local InputEvent = require("input.InputEvent")
 local CanvasTool = Class( EditorEntity, "CanvasTool" )
 
 function CanvasTool:init()
-	EditorEntity.init(self)
+	EditorEntity.init(self, {name="CanvasTool"})
 	self.items = {}
 end
 
@@ -57,7 +57,7 @@ function CanvasTool:removeCanvasItem( item )
 end
 
 ---------------------------------------------------------------------------------
-function CanvasTool:findTopLevelEntities( entities )
+function CanvasTool:findTopLevelPropComponents( entities )
 	local found = {}
 	if not entities then
 		return false
@@ -74,7 +74,7 @@ function CanvasTool:findTopLevelEntities( entities )
 			p = p.parent
 		end
 		
-		if isTop then
+		if isTop and e.getProp then
 			found[e] = true
 		end
 	end

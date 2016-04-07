@@ -1,5 +1,5 @@
 
-local EditorEntity = require("edit.EditorEntity")
+local EditorComponent = require("edit.EditorComponent")
 local InputEvent = require("input.InputEvent")
 
 ---------------------------------------------------------------------------------
@@ -8,17 +8,18 @@ local InputEvent = require("input.InputEvent")
 --
 ---------------------------------------------------------------------------------
 
-local CanvasItemManager = Class( EditorEntity, "CanvasItemManager" )
+local CanvasItemManager = Class( EditorComponent, "CanvasItemManager" )
 
 function CanvasItemManager:init()
 	self.items = {}
 	self.activeItem = nil
 	self.activeMouseButton = nil
 
-	EditorEntity.init(self)
+	EditorComponent.init(self, { name = "CanvasItemManager" })
 end
 
 function CanvasItemManager:onLoad()
+	self.layer = self:getEntity().layer
 	assert( self.layer )
 	-- InputManager
 	local inputDevice = self:getView():getInputDevice()
@@ -29,18 +30,18 @@ function CanvasItemManager:onLoad()
 end
 
 function CanvasItemManager:getView()
-	return self.parent
+	return self:getEntity()
 end
 
 ---------------------------------------------------------------------------------
 function CanvasItemManager:addItem( item )
 	table.insert( self.items, 1, item )
-	self:addChild( item )
+	item:setLayer( self.layer )
 end
 
 function CanvasItemManager:removeItem( item )
 	if table.removeElement( self.items, item ) then
-		self:removeChild( item )
+		item:setLayer( nil )
 	end
 end
 

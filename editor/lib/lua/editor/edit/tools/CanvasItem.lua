@@ -1,5 +1,5 @@
 
-local ScriptProp = require("core.ScriptProp")
+local ScriptPropComponent = require("entity.components.ScriptPropComponent")
 
 ---------------------------------------------------------------------------------
 --
@@ -7,11 +7,11 @@ local ScriptProp = require("core.ScriptProp")
 --
 ---------------------------------------------------------------------------------
 
-local CanvasItem = Class( ScriptProp, "CanvasItem" )
+local CanvasItem = Class( ScriptPropComponent, "CanvasItem" )
 
 function CanvasItem:init()
 	self.FLAG_EDITOR_OBJECT = true
-	ScriptProp.init(self)
+	ScriptPropComponent.init(self, { name = "CanvasItem" })
 end
 
 function CanvasItem:getView()

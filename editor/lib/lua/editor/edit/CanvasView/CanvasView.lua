@@ -42,13 +42,13 @@ function CanvasView:initCamera()
 end
 
 function CanvasView:initAddons()
-	self.grid = self:addChild( CanvasGrid() )
+	self.grid = self:add( CanvasGrid() )
 	if self.EDITOR_TYPE == "ui" then
-		self.frame = self:addChild( CanvasFrame( { ui = self:getScene().jui } ) )
+		self.frame = self:add( CanvasFrame( { ui = self:getScene().jui } ) )
 	end
-	self.nav = self:addChild( CanvasNavigate { inputDevice = self.inputDevice, camera = self.camera } )
-	self.toolMgr = self:addChild( CanvasToolManager() )
-	self.itemMgr = self:addChild( CanvasItemManager { inputDevice = self.inputDevice } )
+	self.nav = self:add( CanvasNavigate { inputDevice = self.inputDevice, camera = self.camera } )
+	self.toolMgr = self:add( CanvasToolManager() )
+	self.itemMgr = self:add( CanvasItemManager { inputDevice = self.inputDevice } )
 	self.pickingManager = PickingManager()
 	self.pickingManager:setTargetScene( self:getScene() )
 end

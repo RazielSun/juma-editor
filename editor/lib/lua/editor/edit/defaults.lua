@@ -48,3 +48,11 @@ editorRegistryClassType( "UIWidget", "ui" )
 --------------------------------------------------------------------------------
 
 editorRegistryClassType( "Entity", "entity" )
+editorRegistryClassType( "PropComponent", "component" )
+
+-- FIXME
+local Entity = require("entity.Entity")
+registerEntity( 'Entity', Entity )
+
+local PropComponent = require("entity.components.PropComponent")
+registerEntity( 'PropComponent', PropComponent )

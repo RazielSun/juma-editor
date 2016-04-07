@@ -1,5 +1,5 @@
 
-local ScriptProp = require("core.ScriptProp")
+local ScriptPropComponent = require("entity.components.ScriptPropComponent")
 
 ---------------------------------------------------------------------------------
 --
@@ -7,18 +7,20 @@ local ScriptProp = require("core.ScriptProp")
 --
 ---------------------------------------------------------------------------------
 
-local CanvasGrid = Class( ScriptProp, "CanvasGrid" )
+local CanvasGrid = Class( ScriptPropComponent, "CanvasGrid" )
 
 function CanvasGrid:init()
 	self.FLAG_EDITOR_OBJECT = true
 	self.deckSize = { 20000, 20000 }
 	self.viewSize = { 0, 0 }
 	self.gridSize = { 100, 100 }
-	ScriptProp.init(self)
+
+	ScriptPropComponent.init(self, { name = "CanvasGrid" })
 end
 
 ---------------------------------------------------------------------------------
 function CanvasGrid:onLoad()
+	self.layer = self:getEntity().layer
 	self.layer:insertProp( self:getProp() )
 	self:attach()
 end

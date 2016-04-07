@@ -1,20 +1,20 @@
 
-local Entity = require("entity.Entity")
+local Component = require("entity.Component")
 
 ---------------------------------------------------------------------------------
 --
--- @type EditorEntity
+-- @type EditorComponent
 --
 ---------------------------------------------------------------------------------
 
-local EditorEntity = Class( Entity, "EditorEntity" )
+local EditorComponent = Class( Component, "EditorComponent" )
 
 
-function EditorEntity:init( option )
+function EditorComponent:init( option )
 	self.FLAG_EDITOR_OBJECT = true
-	Entity.init( self, option )
+	Component.init( self, option )
 end
 
 ---------------------------------------------------------------------------------
 
-return EditorEntity
+return EditorComponent

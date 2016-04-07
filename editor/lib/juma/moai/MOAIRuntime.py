@@ -281,11 +281,8 @@ class MOAIRuntime( EditorModule ):
 	def refreshAssets( self ):
 		_G.refreshAssets()
 
-	def getUIRegistry( self ):
-		return _G.getEditorRegistry( "ui" )
-
-	def getSceneRegistry( self ):
-		return _G.getEditorRegistry( "entity" )
+	def getLuaClassRegistry( self, classType ):
+		return _G.getEditorRegistry( classType )
 
 	def updateStepSim( self, step ):
 		try:

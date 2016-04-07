@@ -10,8 +10,14 @@ local TransformProxy = require("edit.tools.TransformProxy")
 
 local TransformToolHelper = Class( EditorEntity, "TransformToolHelper" )
 
+_wrapWithMoaiPropMethods( TransformToolHelper, '_prop' )
+
 function TransformToolHelper:init()
 	EditorEntity.init(self)
+
+	self._prop = MOAIProp.new()
+	self._prop.entity = self
+	
 	self.updateNode = MOAIScriptNode.new()	
 	self.syncing = false
 	self.updateTranslation = true
@@ -23,6 +29,10 @@ function TransformToolHelper:setUpdateMasks( translation, rotation, scale )
 	self.updateTranslation = translation or false
 	self.updateRotation    = rotation    or false
 	self.updateScale       = scale       or false
+end
+
+function TransformToolHelper:getProp()
+	return self._prop
 end
 
 ---------------------------------------------------------------------------------
@@ -56,7 +66,7 @@ end
 function TransformToolHelper:updatePivot()
 	local totalX, totalY = 0, 0
 	for entity in pairs( self.targets ) do
-		entity:forceUpdate()		
+		entity:forceUpdate()
 		local x1,y1 = entity:modelToWorld( entity:getPiv() )
 		totalX = totalX + x1
 		totalY = totalY + y1		

@@ -84,6 +84,7 @@ class GraphEditor( MainEditorModule ):
 		# ENUMERATORS
 		registerSearchEnumerator( uiNameSearchEnumerator )
 		registerSearchEnumerator( entityNameSearchEnumerator )
+		registerSearchEnumerator( componentNameSearchEnumerator )
 
 	def getActiveScene( self ):
 		return self.delegate.safeCallMethod( 'editor', 'getScene' )
@@ -279,8 +280,9 @@ class GraphTreeWidget( GenericTreeWidget ):
 	def getNodeChildren( self, node ):
 		output = []
 		children = node.children
-		for index in children:
-			output.append( children[index] )
+		if children:
+			for index in children:
+				output.append( children[index] )
 		return output
 
 	def reparentNode( self, node, pitem, **option ):
@@ -415,7 +417,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 
 def uiNameSearchEnumerator( typeId, context, option ):
 	if not context in [ 'ui_creation' ] : return None
-	registry = MOAIRuntime.get().getUIRegistry()
+	registry = MOAIRuntime.get().getLuaClassRegistry( "ui" )
 	result = []
 	for name in sorted( registry ):
 		entry = ( name, name, 'UI', None )
@@ -424,7 +426,16 @@ def uiNameSearchEnumerator( typeId, context, option ):
 
 def entityNameSearchEnumerator( typeId, context, option ):
 	if not context in [ 'scene_creation' ] : return None
-	registry = MOAIRuntime.get().getSceneRegistry()
+	registry = MOAIRuntime.get().getLuaClassRegistry( "entity" )
+	result = []
+	for name in sorted( registry ):
+		entry = ( name, name, 'Entity', None )
+		result.append( entry )
+	return result
+
+def componentNameSearchEnumerator( typeId, context, option ):
+	if not context in [ 'component_creation' ] : return None
+	registry = MOAIRuntime.get().getLuaClassRegistry( "component" )
 	result = []
 	for name in sorted( registry ):
 		entry = ( name, name, 'Entity', None )
