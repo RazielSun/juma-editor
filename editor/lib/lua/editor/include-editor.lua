@@ -11,8 +11,9 @@ RenderContextMgr = require("edit.RenderContextMgr")
 require("edit.EditorCanvasScene")
 require("edit.CanvasView.CanvasToolManager")
 require("edit.tools.common")
+require("edit.Command.EditorCommandRegistry")
 
-AssetsGrabber = require("edit.AssetsGrabber") --# FIXME
+AssetsGrabber = require("edit.AssetsGrabber")
 
 require("edit.EditorCanvas.SceneView")
 

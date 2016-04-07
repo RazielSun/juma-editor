@@ -24,13 +24,6 @@ function GraphEditor:getSceneRootGroup()
 	return self.scene:getRootGroup()
 end
 
-function GraphEditor:addEntityByName( entityName )
-	local builder = getEntityType( entityName )
-	assert( builder )
-	local entity = builder()
-	self:addEntity( entity )
-end
-
 function GraphEditor:addEntity( entity )
 	if entity then
 		local scene = self.scene
@@ -110,7 +103,7 @@ local CmdCreateEntity = Class( CmdCreateEntityBase, "CmdCreateEntity" )
 
 function CmdCreateEntity:setup( option )
 	CmdCreateEntityBase.setup(self, option)
-	self.entityName = option.name
+	self.entityName = option.entity
 end
 
 function CmdCreateEntity:createEntity()
@@ -123,4 +116,4 @@ function CmdCreateEntity:createEntity()
 	return e
 end
 
--- EditorCommand.register( CmdCreateEntity, 'main_editor/create_entity' )
+EditorCommand.register( CmdCreateEntity, 'main_editor/create_entity' )

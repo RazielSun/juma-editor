@@ -61,7 +61,6 @@ class GraphEditor( MainEditorModule ):
 
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'GraphEditor.lua' ) )
-		print("graph_editor init")
 
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_entity', label ='Create', icon = 'plus_mint' )
@@ -118,10 +117,6 @@ class GraphEditor( MainEditorModule ):
 	def openSceneSettings(self):
 		pass
 
-	def createEntity( self, name ):
-		# self.doCommand( 'main_editor/create_entity', name = widget )
-		self.delegate.safeCallMethod( 'editor', 'addEntityByName', name )
-
 	def removeEntity(self, item):
 		node = item.node
 		if node:
@@ -151,9 +146,8 @@ class GraphEditor( MainEditorModule ):
 			requestSearchView( 
 				info    = 'select entity type to create',
 				context = '{}_creation'.format(self.sceneType),
-				on_selection = lambda obj: 
-					self.createEntity( obj )
-					# self.doCommand( 'scene_editor/create_entity', name = obj )
+				on_selection = lambda obj:
+					self.doCommand( 'main_editor/create_entity', entity = obj )
 				)
 
 	def onMoaiClean( self ):
@@ -406,7 +400,8 @@ class GraphTreeWidget( GenericTreeWidget ):
 		self.syncSelection = False
 		item0 = self.currentItem()
 		item1 = self.itemBelow( item0 )
-		self.module.removeEntity( item0 ) # FIXME
+		self.module.removeEntity( item0 )
+		# FIXME
 		# self.module.doCommand( 'scene_editor/remove_entity' )
 		if item1:
 			self.setFocusedItem( item1 )

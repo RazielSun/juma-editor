@@ -281,6 +281,9 @@ class MOAIRuntime( EditorModule ):
 	def refreshAssets( self ):
 		_G.refreshAssets()
 
+	def getEditorCommand( self, name ):
+		return _G.getEditorCommandRegistry( name )
+
 	def getLuaClassRegistry( self, classType ):
 		return _G.getEditorRegistry( classType )
 
@@ -333,8 +336,6 @@ class MOAIRuntime( EditorModule ):
 ##----------------------------------------------------------------##
 
 MOAIRuntime().register()
-
-
 
 ##----------------------------------------------------------------##
 ## Delegate

@@ -278,44 +278,46 @@ class SafeDict(object):
 		return self.__dict.values()
 
 ##----------------------------------------------------------------##
-def registerLuaEditorCommand( fullname, cmdCreator ):
-	class LuaEditorCommand( EditorCommand ):	
-		name = fullname
-		def __init__( self ):
-			self.luaCmd = cmdCreator()
+class LuaEditorCommand( EditorCommand ):	
+	def __init__( self, **kwargs ):
+		self.name = kwargs.get( 'name', None )
+		cmdCreator = app.getModule('moai').getEditorCommand( self.name )
+		self.luaCmd = cmdCreator()
 
-		def __repr__( self ):
-			cmd = self.luaCmd
-			return cmd.toString( cmd )
+	def __repr__( self ):
+		cmd = self.luaCmd
+		return cmd.toString( cmd )
 
-		def init( self, **kwargs ):
-			cmd = self.luaCmd
-			return cmd.setup( cmd, SafeDict( kwargs ) )
+	def init( self, **kwargs ):
+		cmd = self.luaCmd
+		return cmd.setup( cmd, SafeDict( kwargs ) )
 
-		def redo( self ):
-			cmd = self.luaCmd
-			return cmd.redo( cmd )
+	def redo( self ):
+		cmd = self.luaCmd
+		return cmd.redo( cmd )
 
-		def undo( self ):
-			cmd = self.luaCmd
-			return cmd.undo( cmd )
+	def undo( self ):
+		cmd = self.luaCmd
+		return cmd.undo( cmd )
 
-		def canUndo( self ):
-			cmd = self.luaCmd
-			return cmd.canUndo( cmd )
+	def canUndo( self ):
+		cmd = self.luaCmd
+		return cmd.canUndo( cmd )
 
-		def hasHistory( self ):
-			cmd = self.luaCmd
-			return cmd.hasHistory( cmd )
+	def hasHistory( self ):
+		cmd = self.luaCmd
+		return cmd.hasHistory( cmd )
 
-		def getResult( self ):
-			cmd = self.luaCmd
-			return cmd.getResult( cmd )
+	def getResult( self ):
+		cmd = self.luaCmd
+		return cmd.getResult( cmd )
 
-		def getLuaCommand( self ):
-			return self.luaCmd
-			
-	return LuaEditorCommand
+	def getLuaCommand( self ):
+		return self.luaCmd
+
+##----------------------------------------------------------------##
+def registerLuaEditorCommand( fullname ):
+	EditorCommandRegistry.get().registerCommand( fullname, LuaEditorCommand )
 
 ##----------------------------------------------------------------##
 def doCommand( cmdId, argTable ):

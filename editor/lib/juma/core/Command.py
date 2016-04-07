@@ -1,16 +1,20 @@
 import logging
 import signals
 
-class EditorCommandMeta( type ):
-	def __init__( cls, name, bases, dict ):
-		super( EditorCommandMeta, cls ).__init__( name, bases, dict )
-		fullname = dict.get( 'name', None )
-		if not fullname: return
-		EditorCommandRegistry.get().registerCommand( fullname, cls )
+# class EditorCommandMeta( type ):
+# 	def __init__( cls, name, bases, dict ):
+# 		super( EditorCommandMeta, cls ).__init__( name, bases, dict )
+# 		fullname = dict.get( 'name', None )
+# 		if not fullname: return
+# 		EditorCommandRegistry.get().registerCommand( fullname, cls )
 
 ##----------------------------------------------------------------##
 class EditorCommand( object ):
-	__metaclass__ = EditorCommandMeta
+	# __metaclass__ = EditorCommandMeta
+
+	#fixme
+	def __init__( self, **kwargs ):
+		self.fullname = kwargs.get( 'name', None )
 
 	def init( self, **kwargs ):
 		pass
@@ -148,7 +152,7 @@ class EditorCommandRegistry(object):
 		if not stack:
 			logging.warn( 'command stack not found %s ' % stackName )
 			return None
-		cmd = cmdClass()
+		cmd = cmdClass( name = fullname )
 		cmd._fullname = fullname
 		if cmd.init( **kwargs ) ==  False: return None
 		if stack.pushCommand( cmd ):

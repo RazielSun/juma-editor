@@ -8,9 +8,9 @@
 local EditorCommand = Class( "EditorCommand" )
 
 function EditorCommand.register( clazz, name )
-	registerLuaEditorCommand( name, clazz )
+	editorCommandRegistryClass( clazz, name )
 	clazz._commandName = name
-	log.info( 'register Lua Editor Command', name )
+	-- log.info( 'register Lua Editor Command', name )
 end
 
 function EditorCommand:setup( option )
