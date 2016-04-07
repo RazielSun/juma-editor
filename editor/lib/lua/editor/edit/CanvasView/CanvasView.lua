@@ -19,7 +19,6 @@ function CanvasView:init( canvasEnv )
 	self.canvasEnv = assert( canvasEnv )
 	EditorEntity.init( self, params)
 	self.layer = MOAILayer.new()
-	print("canvasview layer:", self.layer)
 end
 
 ---------------------------------------------------------------------------------
