@@ -126,8 +126,7 @@ function TranslationItem:onArrowsPressed( key, down, shift )
 	target:forceUpdate()
 	self:forceUpdate()
 
-	self.target:preTransform()
-
+	target:preTransform()
 	local tx, ty, tz = target:getLoc()
 	target:setLoc( tx+x, ty+y, tz+z )
 	self.tool:updateCanvas()
