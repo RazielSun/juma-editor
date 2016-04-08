@@ -72,6 +72,19 @@ function CanvasView:resizeFrame( w, h )
 end
 
 ---------------------------------------------------------------------------------
+function CanvasView:changeVisibleGrid()
+	local vis = not self.grid.visible
+	self.grid:setVisible( vis )
+	self.grid.visible = vis
+	self:updateCanvas()
+end
+
+function CanvasView:moveCameraToSelected()
+	self.nav:moveCameraToSelected()
+	self:updateCanvas()
+end
+
+---------------------------------------------------------------------------------
 function CanvasView:getScene()
 	return self.scene
 end

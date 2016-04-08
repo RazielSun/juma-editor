@@ -74,8 +74,15 @@ function CanvasTool:findTopLevelPropComponents( entities )
 			p = p.parent
 		end
 		
-		if isTop and e.getProp then
-			found[e] = true
+		if isTop then
+			if e.getProp then
+				found[e] = true
+			else
+				local com = e:findMethod( "getProp" ) -- this for component with prop
+				if com then
+					found[com] = true
+				end
+			end
 		end
 	end
 

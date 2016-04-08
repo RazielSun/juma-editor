@@ -11,6 +11,8 @@ local CanvasGrid = Class( ScriptPropComponent, "CanvasGrid" )
 
 function CanvasGrid:init()
 	self.FLAG_EDITOR_OBJECT = true
+
+	self.visible = true
 	self.deckSize = { 20000, 20000 }
 	self.viewSize = { 0, 0 }
 	self.gridSize = { 100, 100 }

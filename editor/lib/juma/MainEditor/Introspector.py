@@ -7,6 +7,7 @@ from PySide.QtCore import Qt, QSize
 
 from juma.core 							import *
 from juma.qt.controls.PropertyEditor 	import PropertyEditor
+from juma.qt.helpers           			import addWidgetWithLayout, repolishWidget
 from MainEditor             			import MainEditorModule
 from juma.qt.IconCache         			import getIcon
 
@@ -96,6 +97,14 @@ class ObjectContainer( QtGui.QWidget ):
 				)		
 		self.getBodyLayout().addWidget(widget)
 		return widget
+
+	def repolish( self ):
+		repolishWidget( self.ui.body )
+		repolishWidget( self.ui.header )
+		repolishWidget( self.ui.menuBtn )
+		# repolishWidget( self.ui.buttonKey )
+		repolishWidget( self.ui.foldBtn )
+		repolishWidget( self.ui.nameBtn )
 
 	def setTitle( self, title ):
 		self.ui.nameBtn.setText( title )
@@ -233,6 +242,16 @@ class IntrospectorInstance(object):
 		if self.getObjectEditor( target ): return True
 		return False
 
+	def focusTarget( self, target ):
+		editor = self.getObjectEditor( target )
+		if not editor: return
+		
+		editorContainer = editor.getContainer() # scroll to editor
+		y = editorContainer.y()
+		scrollBar = self.scroll.verticalScrollBar()
+		scrollBar.setValue( y )
+		editor.setFocus()
+
 	def getObjectEditor( self, targetObject ):
 		for editor in self.editors:
 			if editor.getTarget() == targetObject: return editor
@@ -343,9 +362,12 @@ class Introspector( MainEditorModule ):
 				minSize = (300,200)
 		)
 		self.requestInstance()
+
 		# SIGNALS
 		signals.connect( 'selection.changed', self.onSelectionChanged )
-		signals.connect( 'entity.modified',   self.onEntityModified )
+		signals.connect( 'component.added',   self.onComponentAdded )
+		signals.connect( 'component.removed', self.onComponentRemoved )
+		signals.connect( 'entity.modified',   self.onEntityModified ) 
 
 	def requestInstance(self):
 		instance = IntrospectorInstance()
@@ -393,6 +415,17 @@ class Introspector( MainEditorModule ):
 	def onEntityModified( self, entity, context=None ):
 		if context != 'introspector' :
 			self.refresh( entity, context )
+
+	def onComponentAdded( self, com, entity ):
+		if not self.activeInstance: return
+		if self.activeInstance.target == entity:
+			self.activeInstance.setTarget( [entity], True )
+			self.activeInstance.focusTarget( com )
+
+	def onComponentRemoved( self, com, entity ):
+		if not self.activeInstance: return
+		if self.activeInstance.target == entity:
+			self.activeInstance.setTarget( [entity], True )
 
 	def refresh( self, target = None, context = None ):
 		for ins in self.instances:

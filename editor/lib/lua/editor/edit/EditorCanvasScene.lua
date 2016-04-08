@@ -36,6 +36,9 @@ function EditorCanvasScene:setRootGroup( group )
 	end
 
 	Scene.setRootGroup( self, group )
+	for _, ent in ipairs(group.children) do
+		Scene.addEntity( self, ent )
+	end
 end
 
 function EditorCanvasScene:setEnv( env )

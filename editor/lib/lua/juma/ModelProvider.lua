@@ -98,7 +98,7 @@ local function modelFromType( t )
 	local model = Model.fromClass( clazz )
 	if not model then
 		return nil
-	end	
+	end
 
 	local pyModel = model.__py_model
 	if not pyModel then

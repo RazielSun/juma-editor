@@ -1,5 +1,5 @@
 
-local defaultSortMode = MOAILayer.SORT_PRIORITY_DESCENDING--SORT_Z_ASCENDING
+local defaultSortMode = MOAILayer.SORT_PRIORITY_DESCENDING --SORT_Z_ASCENDING
 
 ---------------------------------------------------------------------------------
 --
@@ -23,9 +23,12 @@ function PickingManager:pickPoint( x, y, pad )
 		local partition = layer:getPartition()
 		local result = { partition:propListForPoint( x, y, 0, defaultSortMode ) } --propListForRay  -1000, 0, 0, 1,
 		for i, prop in ipairs( result ) do
-			local ent = prop.entity
-			if ent and not ent.FLAG_EDITOR_OBJECT then
-				return { ent }
+			local widget = prop.widget
+			local com = prop.component
+			if widget and not widget.FLAG_EDITOR_OBJECT then
+				return { widget }
+			elseif com and not com.FLAG_EDITOR_OBJECT then
+				return { com.entity }
 			end
 		end
 	end
@@ -38,9 +41,12 @@ function PickingManager:pickRect( x0, y0, x1, y1, pad )
 		local partition = layer:getPartition()
 		local result = { partition:propListForRect( x0, y0, x1, y1, defaultSortMode ) }
 		for i, prop in ipairs( result ) do
-			local ent = prop.entity
-			if ent and not ent.FLAG_EDITOR_OBJECT then
-				picked[ ent ] = true
+			local widget = prop.widget
+			local com = prop.component
+			if widget and not widget.FLAG_EDITOR_OBJECT then
+				picked[ widget ] = true
+			elseif com and not com.FLAG_EDITOR_OBJECT then
+				picked[ com.entity ] = true
 			end
 		end
 	end
@@ -51,6 +57,7 @@ end
 function PickingManager:getVisibleLayers()
 	local layers = {}
 	self:collectLayers( self.targetScene.gameTbl, layers )
+	self:collectLayers( self.targetScene.hudTbl, layers )
 	return table.reverse( layers )
 end
 

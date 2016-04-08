@@ -21,11 +21,9 @@ end
 function CanvasItemManager:onLoad()
 	self.layer = self:getEntity().layer
 	assert( self.layer )
-	-- InputManager
+
 	local inputDevice = self:getView():getInputDevice()
 	inputDevice:addListener( self )
-	-- inputDevice:addMouseListener( self.onMouseEvent, self )
-	-- inputDevice:addKeyListener( self.onKeyEvent, self )
 	self.inputDevice = inputDevice
 end
 
@@ -36,12 +34,12 @@ end
 ---------------------------------------------------------------------------------
 function CanvasItemManager:addItem( item )
 	table.insert( self.items, 1, item )
-	item:setLayer( self.layer )
+	item:setEntity( self )
 end
 
 function CanvasItemManager:removeItem( item )
 	if table.removeElement( self.items, item ) then
-		item:setLayer( nil )
+		item:setEntity( nil )
 	end
 end
 

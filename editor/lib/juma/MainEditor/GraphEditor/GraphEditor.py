@@ -71,14 +71,17 @@ class GraphEditor( MainEditorModule ):
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 		signals.connect( 'selection.hint',    self.onSelectionHint    )
 
-		signals.connect( 'scene.change',    self.onSceneChange		  )
+		signals.connect( 'scene.change',      self.onSceneChange	  )
 
 		signals.connect( 'entity.added',      self.onEntityAdded      )
 		signals.connect( 'entity.removed',    self.onEntityRemoved    )
 		signals.connect( 'entity.renamed',    self.onEntityRenamed    )
 		signals.connect( 'entity.modified',   self.onEntityModified   )
-		signals.connect( 'entity.visible_changed',    self.onEntityVisibleChanged )
+		signals.connect( 'entity.visible_changed',    self.onEntityVisibleChanged  )
 		signals.connect( 'entity.pickable_changed',   self.onEntityPickableChanged )
+
+		signals.connect( 'component.added',   self.onComponentAdded   )
+		signals.connect( 'component.removed', self.onComponentRemoved )
 
 		# ENUMERATORS
 		registerSearchEnumerator( uiNameSearchEnumerator )
@@ -117,12 +120,6 @@ class GraphEditor( MainEditorModule ):
 	def openSceneSettings(self):
 		pass
 
-	def removeEntity(self, item):
-		node = item.node
-		if node:
-			if self.tree.removeNode( node ):
-				self.delegate.safeCallMethod( 'editor', 'removeEntity', node )
-
 	def addEntityNode( self, entity ):
 		self.tree.addNode( entity, expanded = False )
 		self.tree.setNodeExpanded( entity, False )
@@ -130,12 +127,6 @@ class GraphEditor( MainEditorModule ):
 	##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
-		if name == 'scene_open':
-			self.openScene()
-		elif name == 'scene_open_as':
-			self.openSceneAs()
-		elif name == 'scene_save_as':
-			self.saveSceneAs()
 
 	def onTool( self, tool ):
 		name = tool.name
@@ -183,6 +174,8 @@ class GraphEditor( MainEditorModule ):
 		self.markDirty()
 
 	def onEntityRemoved( self, entity ):
+		if entity:
+			self.tree.removeNode( entity )
 		signals.emit( 'scene.update' )
 		self.markDirty()
 
@@ -198,6 +191,15 @@ class GraphEditor( MainEditorModule ):
 
 	def onEntityPickableChanged( self, entity ):
 		self.tree.refreshNodeContent( entity )
+
+	##----------------------------------------------------------------##
+	def onComponentAdded( self, com, entity ):
+		signals.emit( 'scene.update' )
+		self.markDirty()
+
+	def onComponentRemoved( self, com, entity ):
+		signals.emit( 'scene.update' )
+		self.markDirty()
 
 ##----------------------------------------------------------------##
 
@@ -400,9 +402,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		self.syncSelection = False
 		item0 = self.currentItem()
 		item1 = self.itemBelow( item0 )
-		self.module.removeEntity( item0 )
-		# FIXME
-		# self.module.doCommand( 'scene_editor/remove_entity' )
+		self.module.doCommand( 'main_editor/remove_entity' )
 		if item1:
 			self.setFocusedItem( item1 )
 		self.syncSelection = True

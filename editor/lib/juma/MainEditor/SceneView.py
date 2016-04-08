@@ -82,6 +82,10 @@ class SceneView( MainEditorModule ):
             dict( name = 'save_scene_as', label = 'Save Scene As...' ),
         ], self )
 
+		self.findMenu( 'main/entity' ).addChild([
+			dict( name = 'move_to_selected', label = 'Camera Move To Selected', shortcut = 'F' )
+		], self )
+
 		self.findMenu( 'main/ui' ).addChild([
 			dict( name = 'new_ui', label = 'New UI' ),
 			dict( name = 'open_ui', label = 'Open UI', shortcut = 'ctrl+O' ),
@@ -197,21 +201,22 @@ class SceneView( MainEditorModule ):
 		canvas.loadScript( _getModulePath('SceneView.lua') )
 		self.loaded.append(True)
 
+		self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
+
 		if dtype == "ui":
 			window.framesize = framesize = ToolSizeWidget( None )
 			framesize.valuesChanged.connect( self.onFrameResize )
 			framesize.owner = self
 			self.addTool( 'scene_view_config/canvas_frame', widget = framesize )
 
-		# self.coordWidget = ToolCoordWidget( None )
-		# self.coordWidget.gotoSignal.connect( self.goToPoint )
-		# self.coordWidget.owner = self
-
-		# self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
 		# self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
 		# self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
 		# self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
 		# self.addTool( 'scene_view_config/goto_point', widget = self.coordWidget )
+
+		# self.coordWidget = ToolCoordWidget( None )
+		# self.coordWidget.gotoSignal.connect( self.goToPoint )
+		# self.coordWidget.owner = self
 
 		window.show()
 
@@ -274,9 +279,20 @@ class SceneView( MainEditorModule ):
 				scene = canvas.safeCall( 'createScene', self.filePaths[index], self.fileTypes[index] )
 				signals.emitNow( 'scene.change', scene )
 
+	def changeGridView( self ):
+		canvas = self.getCanvas()
+		if canvas:
+			canvas.safeCallMethod( 'view', 'changeVisibleGrid' )
+
+	def moveCameraToSelected( self ):
+		canvas = self.getCanvas()
+		if canvas:
+			canvas.safeCallMethod( 'view', 'moveCameraToSelected' )
+
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
+		
 		if name == 'new_scene':
 			self.newScene()
 		elif name == 'open_scene':
@@ -299,8 +315,14 @@ class SceneView( MainEditorModule ):
 		elif name == 'save_ui_as':
 			self.saveSceneAs("ui")
 
+		elif name == 'move_to_selected':
+			self.moveCameraToSelected()
+
 	def onTool( self, tool ):
 		name = tool.name
+		
+		if name == 'grid_view':
+			self.changeGridView()
 		# if name == 'zoom_out':
 		# 	self.onZoom( 'out' )
 		# elif name == 'zoom_normal':

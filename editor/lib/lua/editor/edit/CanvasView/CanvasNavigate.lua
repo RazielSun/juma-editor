@@ -25,10 +25,30 @@ function CanvasNavigate:onLoad()
 
 	assert( inputDevice )
 	inputDevice:addListener( self )
-	-- inputDevice:addMouseListener( self.onMouseEvent, self )
 	self.inputDevice = inputDevice
 	self.zoom = 1
 	self.dragging = false
+end
+
+---------------------------------------------------------------------------------
+function CanvasNavigate:moveCameraToSelected()
+	local selection = getSelection( 'scene' )
+	local target = selection[1]
+	if target then
+		local prop = nil
+		if target.getProp then
+			prop = target:getProp()
+		else
+			local com = target:findMethod( "getProp" )
+			if com then
+				prop = com:getProp()
+			end
+		end
+		
+		if prop then
+			self.targetCamera:setLoc( prop:getLoc() )
+		end	
+	end
 end
 
 ---------------------------------------------------------------------------------

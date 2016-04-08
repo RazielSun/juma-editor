@@ -59,8 +59,8 @@ end
 
 function TransformToolHelper:preTransform()
 	self:syncFromTarget()
-	self.scl0 = { self:getScl() }
 	self.rot0 = { self:getRot() }
+	self.scl0 = { self:getScl() }
 end
 
 function TransformToolHelper:updatePivot()

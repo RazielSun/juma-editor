@@ -50,6 +50,7 @@ function CanvasToolManager:setTool( id )
 		if toolClass then
 			tool = toolClass()
 			tool.parent = self
+			tool:_load()
 		else
 			return
 		end

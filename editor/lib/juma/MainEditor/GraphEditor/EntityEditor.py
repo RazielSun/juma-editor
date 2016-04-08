@@ -51,6 +51,35 @@ class EntityHeader( QtGui.QWidget ):
 	def uilayout( self ):
 		return self.layout #self.ui.verticalLayout
 
+##----------------------------------------------------------------##
+class ComponentEditor(FrameworkEditorObjectMixin, CommonIntrospectorObject):
+	def onPropertyChanged( self, obj, id, value ):
+		# if _MOCK.markProtoInstanceOverrided( obj, id ):
+		# 	self.property.refershFieldState( id )
+		signals.emit( 'entity.modified', obj._entity, 'introspector' )
+
+	def onPropertyReset( self, obj, id ):
+		self.property.refershFieldState( id )
+		signals.emit( 'entity.modified', obj._entity, 'introspector' )
+
+	def initWidget( self, container, objectContainer ):
+		self.property = super( ComponentEditor, self ).initWidget( container, objectContainer )
+		
+		# self.initFieldContextMenu( self.property )
+		self.initFoldState()
+		# self.initAnimatorButton()
+		return self.property
+
+	def setTarget( self, target ):
+		super( ComponentEditor, self ).setTarget( target )
+		# if target['__proto_history']:
+		# 	self.container.setProperty( 'proto', True )
+		# else:
+		# 	self.container.setProperty( 'proto', False )
+		self.container.repolish()
+		self.restoreFoldState()
+		# self.updateAnimatorButton()
+
 class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 	def __init__(self):
 		super(EntityEditorObject, self).__init__()
@@ -78,7 +107,16 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 		self.target = target
 		self.property.setTarget( target )
 		targetName = target.className(target)
-		if targetName == 'Entity':
+		if targetName == 'Entity': # FIXME ? IsInstance
+			#add component editors
+			for com in target.getComponentsList( target ).values():
+				editor = introspector.addObjectEditor(
+						com,
+						context_menu = 'component_context',
+						editor_class = ComponentEditor
+					)
+				container = editor.getContainer()
+			# button
 			self.buttonAddComponent = buttonAddComponent = QtGui.QToolButton()
 			buttonAddComponent.setObjectName( 'ButtonIntrospectorAddComponent' )
 			buttonAddComponent.setText( 'Add Component ...' )
@@ -91,8 +129,8 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 		requestSearchView( 
 				info    = 'select component type to create',
 				context = 'component_creation',
-				# on_selection = lambda obj: 
-					# app.doCommand( 'scene_editor/create_component', name = obj )
+				on_selection = lambda obj: 
+					app.doCommand( 'main_editor/create_component', name = obj )
 				)
 
 	def onPropertyChanged( self, obj, id, value ):

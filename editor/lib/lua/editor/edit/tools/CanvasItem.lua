@@ -15,7 +15,7 @@ function CanvasItem:init()
 end
 
 function CanvasItem:getView()
-	return self.parent:getView()
+	return self.entity:getView()
 end
 
 ---------------------------------------------------------------------------------

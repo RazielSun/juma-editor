@@ -22,4 +22,7 @@ register( 'entity.renamed' )
 register( 'entity.visible_changed' )
 register( 'entity.pickable_changed' )
 
+register( 'component.added' )
+register( 'component.removed' )
+
 register( 'scene_tool.change' )
