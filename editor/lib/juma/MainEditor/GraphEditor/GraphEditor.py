@@ -104,7 +104,8 @@ class GraphEditor( MainEditorModule ):
 	def onSceneChange(self, scene):
 		self.tree.hide()
 
-		self.sceneType = scene.EDITOR_TYPE
+		if scene:
+			self.sceneType = scene.EDITOR_TYPE
 
 		self.delegate.safeCallMethod( 'editor', 'changeScene', scene )
 
@@ -318,8 +319,16 @@ class GraphTreeWidget( GenericTreeWidget ):
 		item.setData( 0, Qt.UserRole, 0 )
 
 		if node and (node is not None):
-			item.setText( 0, node.name or '<widget>' )
-			item.setIcon( 0, getIcon('dot') )				
+			className = node.className( node )
+
+			if className == 'Prefab':
+				item.setText( 0, node.name or '<prefab>' )
+				item.setIcon( 0, getIcon('prefab') )
+			else:
+				item.setText( 0, node.name or '<widget>' )
+				item.setIcon( 0, getIcon('dot') )
+
+			item.setIcon( 1, getIcon('view') )
 
 	def getItemFlags( self, node ):
 		flagNames = {}

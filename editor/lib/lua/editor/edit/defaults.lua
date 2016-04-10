@@ -48,13 +48,22 @@ editorRegistryClassType( "UIWidget", "ui" )
 --------------------------------------------------------------------------------
 
 editorRegistryClassType( "Entity", "entity" )
+editorRegistryClassType( "Prefab", "entity" )
+
 editorRegistryClassType( "PropComponent", "component" )
 
 --------------------------------------------------------------------------------
--- register Entity & Component
+-- register Entities
 --------------------------------------------------------------------------------
 local Entity = require("entity.Entity")
-registerEntity( 'Entity', Entity )
+local Prefab = require("entity.Prefab")
 
+registerEntity( 'Entity', Entity )
+registerEntity( 'Prefab', Prefab )
+
+--------------------------------------------------------------------------------
+-- register Components
+--------------------------------------------------------------------------------
 local PropComponent = require("entity.components.PropComponent")
+
 registerComponent( 'PropComponent', PropComponent )

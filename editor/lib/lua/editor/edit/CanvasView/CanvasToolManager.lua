@@ -23,7 +23,7 @@ function CanvasToolManager:init()
 end
 
 function CanvasToolManager:getView()
-	return self:getEntity()
+	return self.entity
 end
 
 ---------------------------------------------------------------------------------

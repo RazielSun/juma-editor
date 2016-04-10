@@ -22,6 +22,7 @@ function CanvasPickPlane:init()
 end
 
 function CanvasPickPlane:onLoad()
+	CanvasItem.onLoad( self )
 	self:attach()
 	self:getProp():setBlendMode( MOAIProp.GL_SRC_ALPHA, MOAIProp.GL_ONE_MINUS_SRC_ALPHA ) 
 end

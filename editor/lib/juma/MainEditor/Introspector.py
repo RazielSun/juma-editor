@@ -6,6 +6,7 @@ from PySide  import QtCore, QtGui, QtOpenGL
 from PySide.QtCore import Qt, QSize
 
 from juma.core 							import *
+from juma.qt.controls.Menu 				import MenuManager
 from juma.qt.controls.PropertyEditor 	import PropertyEditor
 from juma.qt.helpers           			import addWidgetWithLayout, repolishWidget
 from MainEditor             			import MainEditorModule
@@ -56,7 +57,6 @@ class ObjectContainer( QtGui.QWidget ):
 		self.toggleFold( False, True )
 
 		ui.nameBtn.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
-		ui.menuBtn.setVisible( False )
 		
 		# ui.nameBtn.setIcon( getIcon( 'grid' ) )
 		ui.menuBtn.setIcon( getIcon( 'list' ) )
@@ -69,9 +69,6 @@ class ObjectContainer( QtGui.QWidget ):
 		ui.foldBtn.clicked.connect( lambda: self.toggleFold( None ) )
 		ui.menuBtn.clicked.connect( lambda: self.openContextMenu() )
 		ui.nameBtn.clicked.connect( lambda: self.toggleFold( None ) )
-
-	def setContextObject( self, context ):
-		self.contextObject = context
 
 	def getBody( self ):
 		return self.ui.body
@@ -97,6 +94,20 @@ class ObjectContainer( QtGui.QWidget ):
 				)		
 		self.getBodyLayout().addWidget(widget)
 		return widget
+
+	def setContextObject( self, context ):
+		self.contextObject = context
+
+	def getButtonContext( self ):
+		return self.ui.menuBtn
+
+	def setContextMenu( self, menuName ):
+		menu = menuName and MenuManager.get().find( menuName ) or None
+		self.contextMenu = menu
+		if not menu:
+			self.ui.menuBtn.hide()
+		else:
+			self.ui.menuBtn.show()
 
 	def repolish( self ):
 		repolishWidget( self.ui.body )
@@ -148,6 +159,9 @@ class IntrospectorObject( object ):
 		return self.target
 
 	def initWidget( self, container, objectContainer ):
+		pass
+
+	def getContextMenu( self ):
 		pass
 
 	def unload( self ):
@@ -293,6 +307,9 @@ class IntrospectorInstance(object):
 				count = self.body.mainLayout.count()
 				assert count > 0
 				self.body.mainLayout.insertWidget( count - 1, container )
+				menuName = option.get( 'context_menu', editor.getContextMenu() )
+				container.setContextMenu( menuName )
+
 			else:
 				container.hide()
 
