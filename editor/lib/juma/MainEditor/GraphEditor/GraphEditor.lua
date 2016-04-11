@@ -21,7 +21,10 @@ function GraphEditor:getScene()
 end
 
 function GraphEditor:getSceneRootGroup()
-	return self.scene:getRootGroup()
+	if self.scene then
+		return self.scene:getRootGroup()
+	end
+	return nil
 end
 
 function GraphEditor:addEntity( entity )

@@ -57,7 +57,8 @@ class DebugDrawItem( QtGui.QWidget ):
 		ui.edit.setText( str(self.width) )
 
 		self.colorBlock = block = ColorBlock( self )
-		self.colorBlock.setMaximumSize( 30, 20 )
+		block.setColor( QColorF( 1,1,1 ) )
+		self.colorBlock.setMaximumSize( 20, 20 )
 		ui.horizontalLayout.addWidget( block )
 
 		ui.name.stateChanged.connect( self.changeShow )

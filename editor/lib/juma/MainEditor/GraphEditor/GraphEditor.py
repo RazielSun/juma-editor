@@ -328,7 +328,9 @@ class GraphTreeWidget( GenericTreeWidget ):
 				item.setText( 0, node.name or '<widget>' )
 				item.setIcon( 0, getIcon('dot') )
 
-			item.setIcon( 1, getIcon('view') )
+			item.setIcon( 1, getIcon('entity_view') )
+
+			item.setIcon( 2, getIcon('entity_dot') )
 
 	def getItemFlags( self, node ):
 		flagNames = {}
