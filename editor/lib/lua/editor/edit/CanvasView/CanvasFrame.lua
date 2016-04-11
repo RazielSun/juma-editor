@@ -24,7 +24,7 @@ end
 
 ---------------------------------------------------------------------------------
 function CanvasFrame:onLoad()
-	self.layer = self:getEntity().layer
+	self.layer = self.entity.layer
 	self.layer:insertProp( self._prop )
 	self:attach()
 end

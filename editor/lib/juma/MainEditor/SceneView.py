@@ -129,11 +129,8 @@ class SceneView( MainEditorModule ):
 
 		# SIGNALS
 		signals.connect( 'entity.modified',   self.onEntityModified   )
-
 		signals.connect( 'selection.changed', self.onSelectionChanged )
-
 		signals.connect( 'scene.open',        self.onSceneOpen        )
-
 		signals.connect( 'moai.ready',		  self.onMoaiReady	      )
 
 	def onStart( self ):
@@ -345,15 +342,16 @@ class SceneView( MainEditorModule ):
 
 	def onTabRemoved( self, window ):
 		if window and window in self.windows:
-			current = self.getCurrentWindow()
-			if window == current:
-				getSceneSelectionManager().clearSelection()
 			index = self.getWindowIndex( window )
 			if index >= 0:
 				self.windows.pop(index)
 				self.filePaths.pop(index)
 				self.fileTypes.pop(index)
 				self.loaded.pop(index)
+			current = self.getCurrentWindow()
+			if window == current:
+				getSceneSelectionManager().clearSelection()
+				signals.emitNow( 'scene.change', None )
 
 	def onSceneSearchSelection( self, target ):
 		if target:

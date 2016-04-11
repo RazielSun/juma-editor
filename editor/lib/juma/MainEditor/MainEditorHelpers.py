@@ -14,6 +14,8 @@ class SizeComboBox( QtGui.QComboBox ):
 
 	sizes = [
 	dict( icon = 'macbook', name = 'Custom' ),
+	dict( icon = 'macbook', width = 600, height = 400 ),
+	dict( icon = 'macbook', width = 640, height = 480 ),
 	dict( icon = 'iphone', width = 320, height = 480 ),
 	dict( icon = 'iphone', width = 320, height = 568 ),
 	dict( icon = 'iphone', width = 375, height = 667 ),

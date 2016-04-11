@@ -17,7 +17,7 @@ local CanvasView = Class( EditorEntity, "CanvasView" )
 
 function CanvasView:init( canvasEnv )
 	self.canvasEnv = assert( canvasEnv )
-	EditorEntity.init( self, params)
+	EditorEntity.init( self, { name = "CanvasView" })
 	self.layer = MOAILayer.new()
 end
 
@@ -29,7 +29,6 @@ function CanvasView:onLoad()
 end
 
 function CanvasView:initContext()
-	self:setName( '__scene_view__' )
 	local inputDevice = createEditorCanvasInputDevice( self.canvasEnv )
 	self.inputDevice = inputDevice
 end

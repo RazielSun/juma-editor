@@ -15,9 +15,6 @@ function CanvasTool:init()
 	self.items = {}
 end
 
-function CanvasTool:onLoad()
-end
-
 function CanvasTool:clear()
 end
 

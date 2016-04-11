@@ -56,16 +56,16 @@ function CanvasNavigate:startDrag( btn, x, y )
 	self.dragFrom = { x, y }
 	self.cameraFrom = { self.targetCamera:getLoc() }
 	self.dragging = btn
-	self:getEntity():getScene():setCursor( 'closed-hand' )
+	self.entity:getScene():setCursor( 'closed-hand' )
 end
 
 function CanvasNavigate:stopDrag()
 	self.dragging = false
-	self:getEntity():getScene():setCursor( 'arrow' )
+	self.entity:getScene():setCursor( 'arrow' )
 end
 
 function CanvasNavigate:getView()
-	return self:getEntity()
+	return self.entity
 end
 
 function CanvasNavigate:updateCanvas()
