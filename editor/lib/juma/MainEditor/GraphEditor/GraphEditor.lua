@@ -145,6 +145,7 @@ function CmdCreateComponent:redo()
 	-- -- end
 	-- component.__guid = generateGUID()
 	self.createdComponent = component
+	print(self.targetEntity, "add", component, self.componentName)
 	self.targetEntity:add( component )
 	-- if component.onEditorInit then
 	-- 	component:onEditorInit()
@@ -162,7 +163,7 @@ EditorCommand.register( CmdCreateComponent, 'main_editor/create_component' )
 --------------------------------------------------------------------
 local CmdRemoveEntity = Class( EditorCommand, "CmdRemoveEntity" )
 
-function CmdRemoveEntity:init( option )
+function CmdRemoveEntity:setup( option )
 	self.selection = getSelection( 'scene' )
 	-- self.selection = getTopLevelEntitySelection()-- FIXME 
 end
@@ -170,7 +171,7 @@ end
 function CmdRemoveEntity:redo()
 	for _, target in ipairs( self.selection ) do
 		editor:removeEntity( target )
-		emitPythonSignal('entity.removed', target )
+		emitPythonSignal( 'entity.removed', target )
 	end
 
 	-- for _, target in ipairs( self.selection ) do
@@ -192,3 +193,73 @@ function CmdRemoveEntity:undo()
 end
 
 EditorCommand.register( CmdRemoveEntity, 'main_editor/remove_entity' )
+
+--------------------------------------------------------------------
+local CmdCloneEntity = Class( EditorCommand, "CmdCloneEntity" )
+
+function CmdCloneEntity:setup( option )
+	self.selection = getSelection( 'scene' )
+	-- local targets = getTopLevelEntitySelection()
+	-- self.targets = targets
+	-- self.created = false
+	-- if not next( targets ) then return false end
+end
+
+function CmdCloneEntity:redo()
+	local cloneList = {}
+
+	for _, target in ipairs( self.selection ) do
+		local created = Loader:clone( target )
+
+		if created.name then
+			local finded = string.find(created.name, "%d+$")
+			if finded then
+				local digitStr = string.sub(created.name, finded)
+				local nextNum = tonumber(digitStr) + 1
+				local newname = string.format("%s%d", string.sub(created.name, 1, finded-1), nextNum)
+				created.name = newname
+			end
+		end
+
+		-- parent
+		editor:addEntity( created )
+
+		emitPythonSignal( 'entity.added', created, 'clone' )
+		table.insert( cloneList, created )
+	end
+
+	changeSelection( 'scene', unpack( cloneList ) )
+	self.cloneList = cloneList
+
+	-- local createdList = {}
+	-- for _, target in ipairs( self.targets ) do
+	-- 	if isInstance( target, mock.EntityGroup ) then
+	-- 		mock_edit.alertMessage( 'todo', 'Group clone not yet implemented', 'info' )
+	-- 		return false
+	-- 	else
+	-- 		local created = mock.copyAndPasteEntity( target, generateGUID )
+	-- 		makeNumberProfix( editor.scene, created )
+	-- 		local parent = target.parent
+	-- 		if parent then
+	-- 			parent:addChild( created )
+	-- 		else
+	-- 			editor.scene:addEntity( created, nil, target._entityGroup )
+	-- 		end		
+	-- 		gii.emitPythonSignal('entity.added', created, 'clone' )
+	-- 		table.insert( createdList, created )
+	-- 	end
+	-- end
+	-- gii.changeSelection( 'scene', unpack( createdList ) )
+	-- self.createdList = createdList
+end
+
+function CmdCloneEntity:undo()
+	--todo:
+	-- for i, created in ipairs( self.createdList ) do
+	-- 	created:destroyWithChildrenNow()
+	-- 	gii.emitPythonSignal('entity.removed', created )
+	-- end
+	-- self.createdList = false
+end
+
+EditorCommand.register( CmdCloneEntity, 'main_editor/clone_entity' )

@@ -35,11 +35,12 @@ end
 function CanvasItemManager:addItem( item )
 	table.insert( self.items, 1, item )
 	item.entity = self
-	item:_load()
+	item:_load() -- item add to layer
 end
 
 function CanvasItemManager:removeItem( item )
 	if table.removeElement( self.items, item ) then
+		item:setLayer( nil )
 		item.entity = nil
 	end
 end

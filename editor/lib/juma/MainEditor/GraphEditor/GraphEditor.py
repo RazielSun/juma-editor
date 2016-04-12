@@ -65,7 +65,19 @@ class GraphEditor( MainEditorModule ):
 		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_entity', label ='Create', icon = 'plus_mint' )
 
-		#SIGNALS
+		# MENU
+		self.findMenu( 'main/entity' ).addChild([
+			dict( name = 'create_entity', label = 'Create', shortcut = 'ctrl+shift+N' ),
+			# '----',
+			# dict( name = 'add_component', label = 'Add component' ),
+			'----',
+			dict( name = 'clone_entity', label = 'Clone', shortcut = 'ctrl+D' ),
+			'----',
+			dict( name = 'remove_entity', label = 'Remove' ),
+			'----',
+		], self )
+
+		# SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
 
 		signals.connect( 'selection.changed', self.onSelectionChanged )
@@ -121,6 +133,14 @@ class GraphEditor( MainEditorModule ):
 	def openSceneSettings(self):
 		pass
 
+	def createEntity( self ):
+		requestSearchView( 
+			info    = 'select entity type to create',
+			context = '{}_creation'.format(self.sceneType),
+			on_selection = lambda obj:
+				self.doCommand( 'main_editor/create_entity', entity = obj )
+			)
+
 	def addEntityNode( self, entity ):
 		self.tree.addNode( entity, expanded = False )
 		self.tree.setNodeExpanded( entity, False )
@@ -129,18 +149,20 @@ class GraphEditor( MainEditorModule ):
 	def onMenu( self, tool ):
 		name = tool.name
 
+		if name == 'create_entity':
+			self.createEntity()
+		elif name == 'clone_entity':
+			self.doCommand( 'main_editor/clone_entity' )
+		elif name == 'remove_entity':
+			self.doCommand( 'main_editor/remove_entity' )
+
 	def onTool( self, tool ):
 		name = tool.name
 		if name == 'scene_settings':
 			self.openSceneSettings()
 
 		elif name == 'create_entity':
-			requestSearchView( 
-				info    = 'select entity type to create',
-				context = '{}_creation'.format(self.sceneType),
-				on_selection = lambda obj:
-					self.doCommand( 'main_editor/create_entity', entity = obj )
-				)
+			self.createEntity()
 
 	def onMoaiClean( self ):
 		self.tree.clear()
@@ -282,6 +304,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 				output.append( children[index] )
 		return output
 
+	# FIXME todo:reparent move to Lua
 	def reparentNode( self, node, pitem, **option ):
 		mode = option.get("mode", None)
 
