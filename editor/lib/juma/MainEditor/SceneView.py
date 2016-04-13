@@ -208,9 +208,10 @@ class SceneView( MainEditorModule ):
 			framesize.owner = self
 			self.addTool( 'scene_view_config/canvas_frame', widget = framesize )
 
-		# self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
-		# self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
-		# self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
+		self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
+		self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
+		self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
+
 		# self.addTool( 'scene_view_config/goto_point', widget = self.coordWidget )
 
 		# self.coordWidget = ToolCoordWidget( None )
@@ -326,15 +327,12 @@ class SceneView( MainEditorModule ):
 		
 		if name == 'grid_view':
 			self.changeGridView()
-		# if name == 'zoom_out':
-		# 	self.onZoom( 'out' )
-		# elif name == 'zoom_normal':
-		# 	self.onZoom( 'normal' )
-		# elif name == 'zoom_in':
-		# 	self.onZoom( 'in' )
-
-		# elif name == 'grid_view':
-		# 	pass
+		if name == 'zoom_out':
+			self.onZoom( 'out' )
+		elif name == 'zoom_normal':
+			self.onZoom( 'normal' )
+		elif name == 'zoom_in':
+			self.onZoom( 'in' )
 
 	def onTabChanged( self, window ):
 		getSceneSelectionManager().clearSelection()
@@ -426,22 +424,11 @@ class SceneView( MainEditorModule ):
 			self.loaded[i] = False
 		self.recreateScene()
 
-	# def onZoom( self, zoom='normal' ):
-	# 	self.canvas.makeCurrent()
-	# 	maxed = self.canvas.safeCallMethod( 'scene', 'cameraZoom', zoom )
-	# 	if zoom:
-	# 		zoomN = True
-	# 		zoomI = True
-	# 		zoomO = True
-	# 		if zoom == 'normal':
-	# 			zoomN = False
-	# 		elif zoom == 'in':
-	# 			zoomI = not maxed
-	# 		elif zoom == 'out':
-	# 			zoomO = not maxed
-	# 		self.enableTool('scene_view_config/zoom_normal', zoomN)
-	# 		self.enableTool('scene_view_config/zoom_in', zoomI)
-	# 		self.enableTool('scene_view_config/zoom_out', zoomO)
+	def onZoom( self, zoom='normal' ):
+		canvas = self.getCanvas()
+		if canvas:
+			canvas.makeCurrent()
+			canvas.safeCallMethod( 'view', 'cameraZoom', zoom )
 
 	# def goToPoint( self, x, y ):
 	# 	self.canvas.makeCurrent()

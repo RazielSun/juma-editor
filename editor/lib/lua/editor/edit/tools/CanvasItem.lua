@@ -18,6 +18,10 @@ function CanvasItem:getView()
 	return self.entity:getView()
 end
 
+function CanvasItem:isConstantSize()
+	return true
+end
+
 ---------------------------------------------------------------------------------
 function CanvasItem:setTarget( target )
 	self.target = target

@@ -15,6 +15,8 @@ function CanvasItemManager:init()
 	self.activeItem = nil
 	self.activeMouseButton = nil
 
+	self.factorZoom = 1
+
 	EditorComponent.init(self, { name = "CanvasItemManager" })
 end
 
@@ -25,10 +27,25 @@ function CanvasItemManager:onLoad()
 	local inputDevice = self:getView():getInputDevice()
 	inputDevice:addListener( self )
 	self.inputDevice = inputDevice
+
+	local cameraListenerNode = MOAIScriptNode.new()
+	cameraListenerNode:setCallback( function() self:updateScaleAllItems() end )
+	cameraListenerNode:setNodeLink( self:getNav().zoomControlNode ) --WTF? not updated
+	self.cameraListenerNode = cameraListenerNode
+
+	self:updateFactorZoom()
+end
+
+function CanvasItemManager:updateFactorZoom()
+	self.factorZoom = 1 / self:getNav():getZoom()
 end
 
 function CanvasItemManager:getView()
 	return self.entity
+end
+
+function CanvasItemManager:getNav()
+	return self:getView().nav
 end
 
 ---------------------------------------------------------------------------------
@@ -36,6 +53,7 @@ function CanvasItemManager:addItem( item )
 	table.insert( self.items, 1, item )
 	item.entity = self
 	item:_load() -- item add to layer
+	self:updateScaleForItem( item )
 end
 
 function CanvasItemManager:removeItem( item )
@@ -52,6 +70,23 @@ function CanvasItemManager:findTopItem( x, y, pad )
 		end
 	end
 	return false
+end
+
+---------------------------------------------------------------------------------
+function CanvasItemManager:updateScaleForItem( item )
+	if item:isConstantSize() then
+		local scl = self.factorZoom
+		item:setScl( scl, scl, scl )
+	end
+end
+
+function CanvasItemManager:updateScaleAllItems()
+	self:updateFactorZoom()
+	print("updateScaleAllItems", self.factorZoom)
+	for i, item in ipairs( self.items ) do
+		self:updateScaleForItem( item )
+	end		
+	self:getView():updateCanvas()
 end
 
 ---------------------------------------------------------------------------------

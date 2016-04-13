@@ -2,6 +2,10 @@
 local EditorComponent = require("edit.EditorComponent")
 local InputEvent = require("input.InputEvent")
 
+local function _cameraZoomControlNodeCallback( node )
+	return node.navigate:updateZoom()
+end
+
 ---------------------------------------------------------------------------------
 --
 -- @type CanvasNavigate
@@ -26,7 +30,14 @@ function CanvasNavigate:onLoad()
 	assert( inputDevice )
 	inputDevice:addListener( self )
 	self.inputDevice = inputDevice
-	self.zoom = 1
+
+	--zoom control
+	self.zoomControlNode = MOAIScriptNode.new()
+	self.zoomControlNode:reserveAttrs( 1 )
+	self.zoomControlNode.navigate = self
+	self:setZoom( 1 )
+	self.zoomControlNode:setCallback( _cameraZoomControlNodeCallback )
+
 	self.dragging = false
 end
 
@@ -64,6 +75,23 @@ function CanvasNavigate:stopDrag()
 	self.entity:getScene():setCursor( 'arrow' )
 end
 
+function CanvasNavigate:getZoom()
+	return self.zoomControlNode:getAttr( 1 )
+end
+
+function CanvasNavigate:setZoom( zoom )
+	zoom = math.clamp( zoom, 1 / 16, 16 )
+	self.zoom = zoom
+	self.zoomControlNode:setAttr( 1, zoom or 1 )
+	self.zoomControlNode:forceUpdate()
+end
+
+function CanvasNavigate:updateZoom()
+	local zoom = self:getZoom()
+	self.targetCamera:setScl( 1/zoom, 1/zoom, 1 )
+	self:updateCanvas()
+end
+
 function CanvasNavigate:getView()
 	return self.entity
 end
@@ -86,6 +114,8 @@ function CanvasNavigate:onMouseEvent( event )
 		self:onMouseUp( event.idx, event.wx, event.wy )
 	elseif event.eventName == InputEvent.MOVE then
 		self:onMouseMove( event.wx, event.wy )
+	elseif event.eventName == InputEvent.MOUSE_SCROLL then
+		self:onMouseScroll( event.wx, event.wy )
 	end
 end
 
@@ -113,12 +143,21 @@ function CanvasNavigate:onMouseMove( wx, wy )
 	local x0, y0 = unpack( self.dragFrom )
 	local dx, dy = wx - x0, wy - y0
 	local cx0, cy0 = unpack( self.cameraFrom )
-	-- local zoom = cameraCom:getZoom()
-	-- local z0 = self.targetCamera:getLocZ()
-	-- self.targetCamera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom, z0 )
-	self.targetCamera:setLoc( cx0 - dx, cy0 + dy, 0 )
+
+	local zoom = self.zoom
+	self.targetCamera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom, 0 )
 
 	self:updateCanvas()
+end
+
+function CanvasNavigate:onMouseScroll( x, y )
+	if self.dragging then return end
+
+	if y > 0 then
+		self:setZoom( self.zoom + 0.02 )
+	else
+		self:setZoom( self.zoom - 0.02 )
+	end
 end
 
 ---------------------------------------------------------------------------------

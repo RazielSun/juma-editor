@@ -78,6 +78,16 @@ function CanvasView:changeVisibleGrid()
 	self:updateCanvas()
 end
 
+function CanvasView:cameraZoom( zoomType )
+	if zoomType == 'normal' then
+		self.nav:setZoom( 1 )
+	elseif zoomType == 'in' then
+		self.nav:setZoom( self.nav:getZoom() + 0.5 )
+	elseif zoomType == 'out' then
+		self.nav:setZoom( self.nav:getZoom()- 0.5 )
+	end
+end
+
 function CanvasView:moveCameraToSelected()
 	self.nav:moveCameraToSelected()
 	self:updateCanvas()
