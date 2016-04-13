@@ -64,6 +64,8 @@ class SceneView( MainEditorModule ):
 		self.previewing         = False
 		self.previewUpdateTimer = False
 
+		self.contextStatus = 'create'
+
 		self.windows = []
 		self.filePaths = []
 		self.fileTypes = []
@@ -73,26 +75,22 @@ class SceneView( MainEditorModule ):
 		window = self.getMainWindow()
 		window.tabChanged.connect( self.onTabChanged )
 		window.tabRemoved.connect( self.onTabRemoved )
-		
-		self.findMenu( 'main/scene' ).addChild([
-            dict( name = 'new_scene', label = 'New Scene' ),
-            dict( name = 'open_scene', label = 'Open Scene' ),
-            dict( name = 'open_scene_as', label = 'Open Scene As...' ),
-            dict( name = 'save_scene', label = 'Save Scene' ),
-            dict( name = 'save_scene_as', label = 'Save Scene As...' ),
-        ], self )
+
+		self.findMenu( 'main/file' ).addChild([
+			dict( name = 'new_window', label = 'New Window', shortcut = 'ctrl+N' ),
+            dict( name = 'open_window', label = 'Open Window', shortcut = 'ctrl+O' ),
+            dict( name = 'open_window_as', label = 'Open Window As...', shortcut = 'ctrl+shift+O' ),
+            dict( name = 'save_window', label = 'Save Window', shortcut = 'ctrl+S' ),
+            dict( name = 'save_window_as', label = 'Save Window As...', shortcut = 'ctrl+shift+S' ),
+		], self )
 
 		self.findMenu( 'main/entity' ).addChild([
 			dict( name = 'move_to_selected', label = 'Camera Move To Selected', shortcut = 'F' )
 		], self )
 
-		self.findMenu( 'main/ui' ).addChild([
-			dict( name = 'new_ui', label = 'New UI' ),
-			dict( name = 'open_ui', label = 'Open UI', shortcut = 'ctrl+O' ),
-			dict( name = 'open_ui_as', label = 'Open UI As...', shortcut = 'ctrl+shift+O' ),
-			dict( name = 'save_ui', label = 'Save UI', shortcut = 'ctrl+S' ),
-			dict( name = 'save_ui_as', label = 'Save UI As...', shortcut = 'ctrl+shift+S' ),
-		], self )
+		self.contextMenu = self.addMenu( 'windows_context', dict( label = 'Windows' ) )
+		self.addMenuItem( 'windows_context/window_scene', dict( label = 'Scene' ) )
+		self.addMenuItem( 'windows_context/window_ui', dict( label = 'UI' ) )
 
 		##----------------------------------------------------------------##
 		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
@@ -175,15 +173,19 @@ class SceneView( MainEditorModule ):
 		timer.start(interval)
 		return timer
 
-	def newUI( self, path=None ):
-		self.newDock( path, "ui" )
+	def contextClosed( self, stype ):
+		status = self.contextStatus
 
-	def newScene( self, path=None ):
-		self.newDock( path, "scene" )
+		if status == 'create':
+			self.newWindow( None, stype )
+		elif status == 'open':
+			self.openWindow( stype )
+		elif status == 'open_as':
+			self.openWindowAs( stype )
 
-	def newDock( self, path=None, dtype="scene" ):
-		title = 'new.{} *'.format( dtype )
-		self.fileTypes.append(dtype)
+	def newWindow( self, path=None, stype="scene" ):
+		title = 'new.{} *'.format( stype )
+		self.fileTypes.append(stype)
 		if path:
 			title = os.path.basename( path )
 			self.filePaths.append( path )
@@ -200,7 +202,7 @@ class SceneView( MainEditorModule ):
 
 		self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
 
-		if dtype == "ui":
+		if stype == "ui":
 			window.framesize = framesize = ToolSizeWidget( None )
 			framesize.valuesChanged.connect( self.onFrameResize )
 			framesize.owner = self
@@ -217,10 +219,10 @@ class SceneView( MainEditorModule ):
 
 		window.show()
 
-		scene = canvas.safeCall( 'createScene', path, dtype )
+		scene = canvas.safeCall( 'createScene', path, stype )
 		signals.emitNow( 'scene.change', scene )
 
-	def openScene( self, stype="scene" ):
+	def openWindow( self, stype ):
 		requestSearchView( 
 			context      = 'asset',
 			type         = stype,
@@ -230,34 +232,41 @@ class SceneView( MainEditorModule ):
 			# on_search    = self.onSceneSearch,
 			)
 
-	def openSceneAs( self, stype="scene" ):
+	def openWindowAs( self, stype ):
 		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open As", self.getProject().path or "~", "File (*.{})".format(stype))
 		if filePath:
 			self.newDock( filePath, stype )
 
-	def saveScene( self, stype="scene" ):
+	def saveWindow( self ):
+		stype = "scene"
 		currentPath = None
-		windowIndex = self.getWindowIndex( self.getCurrentWindow() )
-		if windowIndex >= 0:
-			currentPath = self.filePaths[windowIndex]
+		index = self.getWindowIndex( self.getCurrentWindow() )
+		if index >= 0:
+			currentPath = self.filePaths[index]
+			stype = self.fileTypes[index]
 		if currentPath:
-			self.saveSceneByPath( currentPath )
+			self.saveWindowByPath( currentPath )
 		else:
-			self.saveSceneAs( stype )
+			self.saveWindowAs( stype )
 
-	def saveSceneAs( self, stype="scene" ):
+	def saveWindowAs( self, stype ):
+		if stype is None:
+			stype = "scene"
+			index = self.getWindowIndex( self.getCurrentWindow() )
+			if index >= 0:
+				stype = self.fileTypes[index]
 		filePath, filt = QFileDialog.getSaveFileName(self.getMainWindow(), "Save As", self.getProject().path or "~", "File (*.{})".format(stype))
 		if filePath:
-			self.saveSceneByPath( filePath )
+			self.saveWindowByPath( filePath )
 
-	def saveSceneByPath( self, path ):
+	def saveWindowByPath( self, path ):
 		canvas = self.getCanvas()
 		success = canvas.safeCall( 'saveScene', path )
 
 		window = self.getCurrentWindow()
-		windowIndex = self.getWindowIndex( window )
-		if windowIndex >= 0:
-			self.filePaths[windowIndex] = path
+		index = self.getWindowIndex( window )
+		if index >= 0:
+			self.filePaths[index] = path
 
 		title = os.path.basename(path)
 		tab = self.getTab()
@@ -289,28 +298,25 @@ class SceneView( MainEditorModule ):
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
-		
-		if name == 'new_scene':
-			self.newScene()
-		elif name == 'open_scene':
-			self.openScene()
-		elif name == 'open_scene_as':
-			self.openSceneAs()
-		elif name == 'save_scene':
-			self.saveScene()
-		elif name == 'save_scene_as':
-			self.saveSceneAs()
 
-		elif name == 'new_ui':
-			self.newUI()
-		elif name == 'open_ui':
-			self.openScene("ui")
-		elif name == 'open_ui_as':
-			self.openSceneAs("ui")
-		elif name == 'save_ui':
-			self.saveScene("ui")
-		elif name == 'save_ui_as':
-			self.saveSceneAs("ui")
+		if name == 'new_window':
+			self.contextStatus = 'create'
+			self.contextMenu.popUp()
+		elif name == 'open_window':
+			self.contextStatus = 'open'
+			self.contextMenu.popUp()
+		elif name == 'open_window_as':
+			self.contextStatus = 'open_as'
+			self.contextMenu.popUp()
+		elif name == 'save_window':
+			self.saveWindow()
+		elif name == 'save_window_as':
+			self.saveWindowAs( None )
+
+		elif name == 'window_scene':
+			self.contextClosed( 'scene' )
+		elif name == 'window_ui':
+			self.contextClosed( 'ui' )
 
 		elif name == 'move_to_selected':
 			self.moveCameraToSelected()

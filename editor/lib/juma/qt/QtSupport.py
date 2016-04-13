@@ -49,8 +49,6 @@ class QtSupport( QtEditorModule ):
 		self.menu.addChild('&File').addChild([
 			'Open Project',
 			'----',
-			'Main Editor|F2',
-			'----',
 			'E&xit',
 			]
 		)
@@ -74,6 +72,8 @@ class QtSupport( QtEditorModule ):
 			]
 		)
 		self.menu.addChild('&Window').addChild([
+			'----',
+			'Main Editor|F2',
 			'----',
 			'Game Preview',
 			'Hierarchy',
