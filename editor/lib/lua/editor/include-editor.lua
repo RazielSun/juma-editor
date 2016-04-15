@@ -8,14 +8,12 @@ require("edit.helpers")
 
 RenderContextMgr = require("edit.RenderContextMgr")
 
-require("edit.EditorCanvasScene")
+require("edit.EditorCanvas.common")
 require("edit.CanvasView.CanvasToolManager")
 require("edit.tools.common")
 require("edit.Command.EditorCommandRegistry")
 
 AssetsGrabber = require("edit.AssetsGrabber")
-
-require("edit.EditorCanvas.SceneView")
 
 function refreshAssets()
 	AssetsGrabber.grabFromResourceMgr()

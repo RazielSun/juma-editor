@@ -236,7 +236,7 @@ class SceneView( MainEditorModule ):
 	def openWindowAs( self, stype ):
 		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open As", self.getProject().path or "~", "File (*.{})".format(stype))
 		if filePath:
-			self.newDock( filePath, stype )
+			self.newWindow( filePath, stype )
 
 	def saveWindow( self ):
 		stype = "scene"
@@ -359,7 +359,7 @@ class SceneView( MainEditorModule ):
 
 	def onSceneSearchSelection( self, target ):
 		if target:
-			self.newDock( target.getNodePath(), target.getType() )
+			self.newWindow( target.getNodePath(), target.getType() )
 
 	def onSceneSearchCancel( self ):
 		pass
