@@ -76,6 +76,7 @@ class QtSupport( QtEditorModule ):
 			'Game Preview',
 			'Hierarchy',
 			'Introspector',
+			'Command History View',
 			'Stats Viewer',
 			'Debug Draw',
 			'Run String Dock',
@@ -184,6 +185,8 @@ class QtSupport( QtEditorModule ):
 			self.getModule('graph_editor').show()
 		elif name == 'introspector':
 			self.getModule('introspector').show()
+		elif name == 'command_history_view':
+			self.getModule('command_history_view').show()
 
 		elif name == 'stats_viewer':
 			self.getModule('stats_viewer').show()
