@@ -11,7 +11,8 @@ newPythonList 		= bridge.newPythonList
 emitPythonSignal   	= bridge.emitPythonSignal
 emitPythonSignalNow = bridge.emitPythonSignalNow
 
-registerAssetNodeInLibrary = bridge.registerAssetNodeInLibrary --# FIXME
+-- hardcode register assets in moai
+registerAssetNodeInLibrary = bridge.registerAssetNodeInLibrary
 
 --------------------------------------------------------------------
 function dictToTablePlain( dict )

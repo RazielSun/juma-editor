@@ -13,8 +13,13 @@ require("edit.CanvasView.CanvasToolManager")
 require("edit.tools.common")
 require("edit.Command.EditorCommandRegistry")
 
+--------------------------------------------------------------------------------
+-- Assets Grabber
+--
 AssetsGrabber = require("edit.AssetsGrabber")
 
 function refreshAssets()
 	AssetsGrabber.grabFromResourceMgr()
 end
+
+refreshAssets()

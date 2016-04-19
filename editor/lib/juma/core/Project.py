@@ -31,7 +31,8 @@ from asset   import AssetLibrary
 # _GII_ENV_LIB_DIR        = _GII_ENV_DIR  + '/lib'
 # _GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
 
-_PROJECT_GAME_DIR			= 'lua'
+_PROJECT_LUA_DIR			= 'lua'
+_PROJECT_EDITOR_DIR 		= 'editor'
 
 _PROJECT_INFO_FILE          = 'project.json'
 _PROJECT_CONFIG_FILE        = 'config.json'
@@ -59,6 +60,8 @@ class Project(object):
 		self.assetLibrary = AssetLibrary()
 
 		self.path      	= None
+		self.editorPath = None
+		self.editorLuaPath = None
 		self.gamePath 	= None
 
 		self.info 		= None
@@ -66,8 +69,9 @@ class Project(object):
 
 	def _initPath( self, path ):
 		self.path = path
-
-		self.gamePath          = path + '/' + _PROJECT_GAME_DIR
+		self.editorPath = path + '/' + _PROJECT_EDITOR_DIR
+		self.editorLuaPath = self.editorPath + '/' + _PROJECT_LUA_DIR
+		self.gamePath   = path + '/' + _PROJECT_LUA_DIR
 
 	def _affirmDirectories( self ):
 		_affirmPath( self.gamePath )
@@ -90,7 +94,10 @@ class Project(object):
 		self._initPath( path )
 		self._affirmDirectories()
 		self.info = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_INFO_FILE ) )
-		self.config = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_CONFIG_FILE ) )
+
+		if not os.path.exists( self.editorPath ):
+			os.makedirs( self.editorPath )
+		self.config = jsonHelper.tryLoadJSON( self.getBasePath( _PROJECT_EDITOR_DIR + '/' + _PROJECT_CONFIG_FILE ) )
 		if not self.config:
 			self.config = {}
 			self.saveConfig()
@@ -118,7 +125,7 @@ class Project(object):
 		return True
 
 	def saveConfig( self ):
-		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _PROJECT_CONFIG_FILE ))
+		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _PROJECT_EDITOR_DIR + '/' + _PROJECT_CONFIG_FILE ))
 
 	def getPath( self, path = None ):
 		return self.getBasePath( path )
@@ -140,6 +147,13 @@ class Project(object):
 
 	def setConfig( self, key, value ):
 		self.config[ key ] = value
+
+##----------------------------------------------------------------##
+	def getEditorLuaPath( self ):
+		if self.editorLuaPath:
+			if os.path.exists( self.editorLuaPath ):
+				return self.editorLuaPath
+		return None
 
 ##----------------------------------------------------------------##
 	def getAssetLibrary( self ):

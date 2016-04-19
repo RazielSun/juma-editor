@@ -88,10 +88,6 @@ class SceneView( MainEditorModule ):
 			dict( name = 'move_to_selected', label = 'Camera Move To Selected', shortcut = 'F' )
 		], self )
 
-		self.contextMenu = self.addMenu( 'windows_context', dict( label = 'Windows' ) )
-		self.addMenuItem( 'windows_context/window_scene', dict( label = 'Scene' ) )
-		self.addMenuItem( 'windows_context/window_ui', dict( label = 'UI' ) )
-
 		##----------------------------------------------------------------##
 		self.mainToolBar = self.addToolBar( 'scene_view_tools', 
 			self.getMainWindow().requestToolBar( 'view_tools' )
@@ -173,15 +169,15 @@ class SceneView( MainEditorModule ):
 		timer.start(interval)
 		return timer
 
-	def contextClosed( self, stype ):
-		status = self.contextStatus
-
-		if status == 'create':
-			self.newWindow( None, stype )
-		elif status == 'open':
-			self.openWindow( stype )
-		elif status == 'open_as':
-			self.openWindowAs( stype )
+	def requestNewWindow( self, status = None ):
+		self.contextStatus = status
+		requestSearchView( 
+			context      = 'asset',
+			type         = 'create_scene',
+			multiple_selection = False,
+			on_selection = self.onCreateSceneSearchSelection,
+			on_cancel    = self.onCreateSceneSearchCancel,
+			)
 
 	def newWindow( self, path=None, stype="scene" ):
 		title = 'new.{} *'.format( stype )
@@ -301,23 +297,15 @@ class SceneView( MainEditorModule ):
 		name = tool.name
 
 		if name == 'new_window':
-			self.contextStatus = 'create'
-			self.contextMenu.popUp()
+			self.requestNewWindow( 'create' )
 		elif name == 'open_window':
-			self.contextStatus = 'open'
-			self.contextMenu.popUp()
+			self.requestNewWindow( 'open' )
 		elif name == 'open_window_as':
-			self.contextStatus = 'open_as'
-			self.contextMenu.popUp()
+			self.requestNewWindow( 'open_as' )
 		elif name == 'save_window':
 			self.saveWindow()
 		elif name == 'save_window_as':
 			self.saveWindowAs( None )
-
-		elif name == 'window_scene':
-			self.contextClosed( 'scene' )
-		elif name == 'window_ui':
-			self.contextClosed( 'ui' )
 
 		elif name == 'move_to_selected':
 			self.moveCameraToSelected()
@@ -357,6 +345,22 @@ class SceneView( MainEditorModule ):
 				getSceneSelectionManager().clearSelection()
 				signals.emitNow( 'scene.change', None )
 
+	# Create Type Scene
+	def onCreateSceneSearchSelection( self, target ):
+		if target:
+			status = self.contextStatus
+			stype = target.getNodePath()
+			if status == 'create':
+				self.newWindow( None, stype )
+			elif status == 'open':
+				self.openWindow( stype )
+			elif status == 'open_as':
+				self.openWindowAs( stype )
+
+	def onCreateSceneSearchCancel( self ):
+		pass
+
+	# Scene Search Items
 	def onSceneSearchSelection( self, target ):
 		if target:
 			self.newWindow( target.getNodePath(), target.getType() )

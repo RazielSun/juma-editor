@@ -20,6 +20,7 @@ from Command        import EditorCommandRegistry
 # _GII_BUILTIN_PACKAGES_PATH = 'packages'
 # _GII_APP_CONFIG_FILE = 'config.json'
 
+##----------------------------------------------------------------##
 class EditorApp(object):
 	_singleton = None
 
@@ -281,5 +282,7 @@ class EditorApp(object):
 			return 'win'
 		else:
 			raise Exception( 'what platform?' + name )
+
+##----------------------------------------------------------------##
 
 app = EditorApp()

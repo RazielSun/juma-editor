@@ -96,6 +96,11 @@ class MOAIRuntime( EditorModule ):
 		self.addDefaultInputDevice( 'device' )
 		self.runScript( self.getApp().getPath( 'lib/lua/juma/init.lua' ) )
 
+		customEditorLua = self.getApp().getProject().getEditorLuaPath()
+		if customEditorLua:
+			_G['LIB_PROJECT_EDITOR_LUA_PATH'] = customEditorLua
+			self.runScript( customEditorLua + '/init.lua' )
+
 		_Render._setTarget( _G['RenderContextMgr'] )
 		assert _Render, "Failed loading Editor!"
 		### finish loading lua bridge
@@ -174,6 +179,9 @@ class MOAIRuntime( EditorModule ):
 	
 	# clean holded lua object(this is CRITICAL!!!)
 	def cleanLuaReferences(self):
+		# clear assetlibrary registered types
+		self.getApp().getProject().assetLibrary.clearAssets()
+
 		signals.emitNow( 'moai.prepare_clean' )
 		for m in self.luaModules:
 			unregisterModule(m)
