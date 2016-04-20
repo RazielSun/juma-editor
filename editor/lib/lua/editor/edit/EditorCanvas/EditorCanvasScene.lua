@@ -69,6 +69,10 @@ function EditorCanvasScene:stopUpdateTimer()
 	return self.env.stopUpdateTimer()
 end
 
+function EditorCanvasScene:save( path )
+	return Loader:save( path, self:getRootGroup() )
+end
+
 ---------------------------------------------------------------------------------
 
 return EditorCanvasScene

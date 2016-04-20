@@ -16,7 +16,7 @@ end
 function saveScene( path )
 	scene = getScene()
 	if scene then
-		return Loader:save( path, scene:getRootGroup() )
+		return scene:save( path )
 	end
 	return false
 end
