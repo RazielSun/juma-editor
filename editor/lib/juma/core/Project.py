@@ -125,15 +125,12 @@ class Project(object):
 		return True
 
 	def saveConfig( self ):
-		jsonHelper.trySaveJSON( self.config, self.getConfigPath( _PROJECT_EDITOR_DIR + '/' + _PROJECT_CONFIG_FILE ))
+		jsonHelper.trySaveJSON( self.config, self.getBasePath( _PROJECT_EDITOR_DIR + '/' + _PROJECT_CONFIG_FILE ))
 
 	def getPath( self, path = None ):
 		return self.getBasePath( path )
 		
 	def getBasePath( self, path = None ):
-		return os.path.join( self.path, path )
-
-	def getConfigPath(self, path=None):
 		return os.path.join( self.path, path )
 
 ##----------------------------------------------------------------##
@@ -146,7 +143,8 @@ class Project(object):
 		return default
 
 	def setConfig( self, key, value ):
-		self.config[ key ] = value
+		if self.config:
+			self.config[ key ] = value
 
 ##----------------------------------------------------------------##
 	def getEditorLuaPath( self ):

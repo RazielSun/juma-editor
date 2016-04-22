@@ -23,6 +23,7 @@ class GamePreview( MainEditorModule ):
 
 	def __init__(self):
 		super(GamePreview, self).__init__()
+		self.projLoaded 	= False
 		self.runtime 		= None
 		self.started 		= False
 		self.paused         = False
@@ -95,8 +96,6 @@ class GamePreview( MainEditorModule ):
 		self.sizeWidget = SizeComboBox( None )
 		self.sizeWidget.sizeChanged.connect( self.onGameSizeChanged )
 		self.sizeWidget.owner = self
-		
-		self.updateViewValues()
 
 		self.updateTimer = None
 		
@@ -139,6 +138,7 @@ class GamePreview( MainEditorModule ):
 		
 		signals.connect( 'moai.reset',     		self.onMoaiReset )
 		signals.connect( 'moai.open_window', 	self.openWindow )
+		signals.connect( 'project.load', 		self.onProjectLoad )
 		# signals.connect('moai.set_sim_step', self.setSimStep)
 
 	def onStop( self ):
@@ -190,7 +190,8 @@ class GamePreview( MainEditorModule ):
 		runtime.renderAKU()
 
 	def onMoaiReset( self ):
-		self.saveViewSize()
+		if self.projLoaded:
+			self.saveViewSize()
 		self.updateViewValues()
 		runtime = self.getRuntime()
 		runtime.createRenderContext( 'game' )
@@ -201,6 +202,10 @@ class GamePreview( MainEditorModule ):
 	def openWindow(self, title, width, height):
 		# self.canvas.resize(width, height)
 		self.resizeView( self.viewWidth, self.viewHeight )
+
+	def onProjectLoad( self, project ):
+		self.projLoaded = True
+		self.updateViewValues()
 	
 	# def onDebugEnter(self):
 	# 	self.paused = True
