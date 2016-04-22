@@ -1,11 +1,6 @@
 
 ---------------------------------------------------------------------------------
 --
-registerAssetNodeInLibrary( "scene", "create_scene" )
-registerAssetNodeInLibrary( "ui", "create_scene" )
-
----------------------------------------------------------------------------------
---
 
 local CanvasView = require("edit.CanvasView.CanvasView")
 

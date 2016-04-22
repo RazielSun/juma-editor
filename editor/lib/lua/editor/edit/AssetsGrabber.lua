@@ -12,6 +12,7 @@ function AssetsGrabber.grabFromResourceMgr()
 	AssetsGrabber.grabFonts()
 	AssetsGrabber.grabLayout()
 	AssetsGrabber.grabUI()
+	AssetsGrabber.grabWindows()
 end
 
 function AssetsGrabber.grabSprites()
@@ -103,6 +104,14 @@ function AssetsGrabber.grabUI()
     for _, item in ipairs(cache) do
     	registerAssetNodeInLibrary( item, "ui" )
     end
+end
+
+function AssetsGrabber.grabWindows()
+	registerAssetNodeInLibrary( "scene", "create_scene" )
+	registerAssetNodeInLibrary( "ui", "create_scene" )
+	if AssetsGrabber.extension then
+		AssetsGrabber.extension()
+	end
 end
 
 ---------------------------------------------------------------------------------
