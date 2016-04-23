@@ -2,8 +2,11 @@
 -- Assets from data
 --------------------------------------------------------------------------------
 
-function editorAsset( asset )
-	return ASSET_EDITOR_PATH .. '/' .. asset
+function projEditorAsset( asset )
+	if LIB_PROJECT_EDITOR_ASSETS_PATH then
+		return LIB_PROJECT_EDITOR_ASSETS_PATH .. '/' .. asset
+	end
+	return nil
 end
 
 --------------------------------------------------------------------------------

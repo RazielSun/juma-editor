@@ -13,6 +13,9 @@ function AssetsGrabber.grabFromResourceMgr()
 	AssetsGrabber.grabLayout()
 	AssetsGrabber.grabUI()
 	AssetsGrabber.grabWindows()
+	if AssetsGrabber.grabProjectFiles then
+		AssetsGrabber.grabProjectFiles()
+	end
 end
 
 function AssetsGrabber.grabSprites()
@@ -109,9 +112,6 @@ end
 function AssetsGrabber.grabWindows()
 	registerAssetNodeInLibrary( "scene", "create_scene" )
 	registerAssetNodeInLibrary( "ui", "create_scene" )
-	if AssetsGrabber.extension then
-		AssetsGrabber.extension()
-	end
 end
 
 ---------------------------------------------------------------------------------

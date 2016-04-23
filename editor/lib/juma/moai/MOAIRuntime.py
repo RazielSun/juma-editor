@@ -98,7 +98,8 @@ class MOAIRuntime( EditorModule ):
 
 		customEditorLua = self.getApp().getProject().getEditorLuaPath()
 		if customEditorLua:
-			_G['LIB_PROJECT_EDITOR_LUA_PATH'] = customEditorLua
+			_G['LIB_PROJECT_EDITOR_LUA_PATH'] 		= customEditorLua
+			_G['LIB_PROJECT_EDITOR_ASSETS_PATH'] 	= self.getApp().getProject().getEditorAssetsPath()
 			self.runScript( customEditorLua + '/init.lua' )
 
 		_Render._setTarget( _G['RenderContextMgr'] )
@@ -180,7 +181,7 @@ class MOAIRuntime( EditorModule ):
 	# clean holded lua object(this is CRITICAL!!!)
 	def cleanLuaReferences(self):
 		# clear assetlibrary registered types
-		self.getApp().getProject().assetLibrary.clearAssets()
+		self.getApp().getAssetLibrary().clearAssets()
 
 		signals.emitNow( 'moai.prepare_clean' )
 		for m in self.luaModules:

@@ -32,6 +32,7 @@ from asset   import AssetLibrary
 # _GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
 
 _PROJECT_LUA_DIR			= 'lua'
+_PROJECT_ASSETS_DIR 		= 'assets'
 _PROJECT_EDITOR_DIR 		= 'editor'
 
 _PROJECT_INFO_FILE          = 'project.json'
@@ -152,6 +153,9 @@ class Project(object):
 			if os.path.exists( self.editorLuaPath ):
 				return self.editorLuaPath
 		return None
+
+	def getEditorAssetsPath( self ):
+		return self.editorPath + '/' + _PROJECT_ASSETS_DIR
 
 ##----------------------------------------------------------------##
 	def getAssetLibrary( self ):

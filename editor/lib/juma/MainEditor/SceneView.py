@@ -59,11 +59,13 @@ class SceneView( MainEditorModule ):
 
 	def __init__(self):
 		super( SceneView, self ).__init__()
+		self.requestTimer 		= None
 		self.updateTimer        = None
 		self.updatePending      = False
 		self.previewing         = False
 		self.previewUpdateTimer = False
 
+		self.windowTarget = None
 		self.contextStatus = 'create'
 
 		self.windows = []
@@ -129,6 +131,8 @@ class SceneView( MainEditorModule ):
 
 	def onStart( self ):
 		self.scheduleUpdate()
+		self.requestTimer = self.startTimer( 0.5, self.onRequestTimer )
+		self.requestTimer.stop()
 		self.updateTimer = self.startTimer( 0.016, self.onUpdateTimer )
 		self.updateTimer.stop()
 
@@ -347,15 +351,8 @@ class SceneView( MainEditorModule ):
 
 	# Create Type Scene
 	def onCreateSceneSearchSelection( self, target ):
-		if target:
-			status = self.contextStatus
-			stype = target.getNodePath()
-			if status == 'create':
-				self.newWindow( None, stype )
-			elif status == 'open':
-				self.openWindow( stype )
-			elif status == 'open_as':
-				self.openWindowAs( stype )
+		self.windowTarget = target
+		self.requestTimer.start()
 
 	def onCreateSceneSearchCancel( self ):
 		pass
@@ -370,6 +367,20 @@ class SceneView( MainEditorModule ):
 
 	def onSceneSearch( self, typeId, context, option ):
 		pass
+
+	def onRequestTimer( self ):
+		self.requestTimer.stop()
+		target = self.windowTarget
+		if target:
+			status = self.contextStatus
+			stype = target.getNodePath()
+			if status == 'create':
+				self.newWindow( None, stype )
+			elif status == 'open':
+				self.openWindow( stype )
+			elif status == 'open_as':
+				self.openWindowAs( stype )
+			self.windowTarget = None
 
 	def onUpdateTimer( self ):
 		if self.updatePending == True:
