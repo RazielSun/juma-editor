@@ -29,12 +29,15 @@ function EditorCanvasUIScene:getRootGroup()
 	return self.jui._activeScreens[1]
 end
 
-function EditorCanvasUIScene:setRootGroup( group )
-	local children = table.dup(group.children)
-	group:removeChildren()
-	local topScreen = self.jui._activeScreens[1]
-	topScreen:removeChildren()
-	topScreen:setChildren(children)
+function EditorCanvasUIScene:setLoadedPath( path )
+	local data = Loader:load( path )
+	if data then
+		local children = table.dup(data.children)
+		data:removeChildren()
+		local topScreen = self.jui._activeScreens[1]
+		topScreen:removeChildren()
+		topScreen:setChildren(children)
+	end
 end
 
 ---------------------------------------------------------------------------------

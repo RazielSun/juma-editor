@@ -3,28 +3,18 @@ view = false
 
 function createScene( path, stype )
 	local scene = createEditorCanvasScene( stype )
-	
-	if path then
-		local group = Loader:load( path )
-		if group then
-			scene:setRootGroup( group )
-		end
-	end
+	if path then scene:setLoadedPath( path ) end
 	return scene
 end
 
 function saveScene( path )
 	scene = getScene()
-	if scene then
-		return scene:save( path )
-	end
+	if scene then return scene:save( path ) end
 	return false
 end
 
 function getScene()
-	if view then
-		return view.scene
-	end
+	if view then return view.scene end
 	return false
 end
 
@@ -33,21 +23,19 @@ function viewCreated()
 end
 
 function onSceneOpen( scene )
+	local key = RenderContextMgr:getCurrentContextKey()
+	scene.contextName = key
+	RenderContextMgr:pushRenderTable( key, scene.renderTbl )
+
+	local context = RenderContextMgr:getCurrentContext()
+	local fb = context.bufferTable[1]
+	fb:setClearColor( unpack(scene.bg_color) )
+
 	local env = getfenv()
 	view = createSceneView( scene, env )
 
-	local key = RenderContextMgr:getCurrentContextKey()
-	scene.contextName = key
-
 	scene:addEntity( view )
-	-- view.scene = scene
-	-- view.layer:setViewport( scene.viewport )
-	-- if view.onLoad then
-	-- 	view:onLoad()
-	-- end
-
-	RenderContextMgr:pushRenderTable( key, scene.renderTbl )
-	table.insert( scene.renderTbl, view.layer )
+	scene.canvasView = view
 end
 
 function onSceneClose()
@@ -59,35 +47,3 @@ function onResize( w, h )
 		view:resizeCanvas( w, h )
 	end
 end
-
--- function GraphEditor:saveSceneAs( path )
--- 	local scene = self.scene
--- 	if scene then
--- 		return EntityManager:save( path, scene:getRootGroup() )
--- 	end
--- 	return nil
--- end
-
--- function GraphEditor:openScene( path )
--- 	local scene = self:getScene()
--- 	if scene then
--- 		local group = EntityManager:load( path )
--- 		if group then
--- 			scene:setRootGroup( group )
--- 		end
--- 		return scene
--- 	end
--- 	return nil
--- end
-
--- function GraphEditor:openSceneAs( path )
--- 	local scene = self:getScene()
--- 	if scene then
--- 		local group = EntityManager:loadByPath( path )
--- 		if group then
--- 			scene:setRootGroup( group )
--- 		end
--- 		return scene
--- 	end
--- 	return nil
--- end

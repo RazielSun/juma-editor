@@ -131,7 +131,7 @@ class SceneView( MainEditorModule ):
 
 	def onStart( self ):
 		self.scheduleUpdate()
-		self.requestTimer = self.startTimer( 0.5, self.onRequestTimer )
+		self.requestTimer = self.startTimer( 0.1, self.onRequestTimer )
 		self.requestTimer.stop()
 		self.updateTimer = self.startTimer( 0.016, self.onUpdateTimer )
 		self.updateTimer.stop()

@@ -7,23 +7,25 @@ local Scene = require("scenes.Scene")
 --
 ---------------------------------------------------------------------------------
 
-local EditorCanvasScene = Class( Scene, "EditorCanvasScene" )
+local EditorCanvasScene = Class( Scene, "EditorCanvasScene" ):FIELDS{
+	Field("bg_color"):type('color'):getset('BGColor'):label('BGColor');
+}
 
 function EditorCanvasScene:init( option )
 	local option = option or {}
 	option.viewport = option.viewport or MOAIViewport.new()
 	self.EDITOR_TYPE = "scene"
+	self.bg_color = { 0.06, 0.06, 0.06, 1.0 }
 	Scene.init(self, option)
 end
 
-function EditorCanvasScene:getRootGroup()
-    return self.rootGroup
-end
-
-function EditorCanvasScene:setRootGroup( group )
-	Scene.setRootGroup( self, group )
-	for _, ent in ipairs(group.children) do
-		Scene.addEntity( self, ent )
+function EditorCanvasScene:setLoadedPath( path )
+	local data = Loader:load( path )
+	if data then
+		Scene.setRootGroup( self, data )
+		for _, ent in ipairs(data.children) do
+			Scene.addEntity( self, ent )
+		end
 	end
 end
 
