@@ -22,11 +22,14 @@ function EditorCanvasUIScene:init( option )
 	self:setHudLayers(jui._renderables)
 
 	local screen = UIScreen( { viewport = self.viewport } )
-	jui:openScreenInternal( screen )
+	jui:openScreenInternal( screen ) -- THIS IS FOR CONTENT
+
+	local secondScreen = UIScreen( { viewport = self.viewport } )
+	jui:openScreenInternal( secondScreen ) -- THIS IS FOR CANVAS VIEW LAYER ITEMS
 end
 
 function EditorCanvasUIScene:getRootGroup()
-	return self.jui._activeScreens[1]
+	return self.jui:getScreen(2)
 end
 
 function EditorCanvasUIScene:setLoadedPath( path )
@@ -34,7 +37,7 @@ function EditorCanvasUIScene:setLoadedPath( path )
 	if data then
 		local children = table.dup(data.children)
 		data:removeChildren()
-		local topScreen = self.jui._activeScreens[1]
+		local topScreen = self.jui:getScreen(2)
 		topScreen:removeChildren()
 		topScreen:setChildren(children)
 	end

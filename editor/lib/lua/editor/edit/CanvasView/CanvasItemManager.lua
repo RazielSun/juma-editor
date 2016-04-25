@@ -10,23 +10,25 @@ local InputEvent = require("input.InputEvent")
 
 local CanvasItemManager = Class( EditorComponent, "CanvasItemManager" )
 
-function CanvasItemManager:init()
+function CanvasItemManager:init( option )
+	option = option or {}
 	self.items = {}
 	self.activeItem = nil
 	self.activeMouseButton = nil
 
 	self.factorZoom = 1
 
+	self.ui = option.ui
+	self.inputDevice = option.inputDevice
+
 	EditorComponent.init(self, { name = "CanvasItemManager" })
 end
 
 function CanvasItemManager:onLoad()
-	self.layer = self.entity.layer
+	self.layer = self.ui and self.ui:getScreen(1).defaultLayer or self.entity.layer
 	assert( self.layer )
 
-	local inputDevice = self:getView():getInputDevice()
-	inputDevice:addListener( self )
-	self.inputDevice = inputDevice
+	self.inputDevice:addListener( self )
 
 	local cameraListenerNode = MOAIScriptNode.new()
 	cameraListenerNode:setCallback( function() self:updateScaleAllItems() end )

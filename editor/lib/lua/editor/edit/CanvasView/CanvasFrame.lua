@@ -24,6 +24,7 @@ end
 
 ---------------------------------------------------------------------------------
 function CanvasFrame:onLoad()
+	self.layer = self.ui:getScreen(1).defaultLayer
 	self.layer = self.entity.layer
 	self.layer:insertProp( self._prop )
 	self:attach()
