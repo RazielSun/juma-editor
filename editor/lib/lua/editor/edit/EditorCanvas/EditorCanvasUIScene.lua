@@ -9,7 +9,8 @@ local UIScreen = require("ui.UIScreen")
 --
 ---------------------------------------------------------------------------------
 
-local EditorCanvasUIScene = Class( EditorCanvasScene, "EditorCanvasUIScene" )
+local EditorCanvasUIScene = Class( EditorCanvasScene, "EditorCanvasUIScene" ):FIELDS{
+}
 
 function EditorCanvasUIScene:init( option )
 	local option = option or {}

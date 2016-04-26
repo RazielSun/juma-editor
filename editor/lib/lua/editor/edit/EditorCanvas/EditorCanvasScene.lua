@@ -19,6 +19,25 @@ function EditorCanvasScene:init( option )
 	Scene.init(self, option)
 end
 
+---------------------------------------------------------------------------------
+function EditorCanvasScene:getBGColor()
+	return self.bg_color
+end
+
+function EditorCanvasScene:setBGColor( r, g, b, a )
+	self.bg_color = { r, g, b, a }
+	self:updateBGColor()
+end
+
+function EditorCanvasScene:updateBGColor()
+	local context = RenderContextMgr:get( self.contextName )
+	if context then
+		local fb = context.bufferTable[1]
+		fb:setClearColor( unpack(self.bg_color) )
+	end
+end
+
+---------------------------------------------------------------------------------
 function EditorCanvasScene:setLoadedPath( path )
 	local data = Loader:load( path )
 	if data then

@@ -24,12 +24,10 @@ end
 
 function onSceneOpen( scene )
 	local key = RenderContextMgr:getCurrentContextKey()
-	scene.contextName = key
 	RenderContextMgr:pushRenderTable( key, scene.renderTbl )
 
-	local context = RenderContextMgr:getCurrentContext()
-	local fb = context.bufferTable[1]
-	fb:setClearColor( unpack(scene.bg_color) )
+	scene.contextName = key
+	scene:updateBGColor()
 
 	local env = getfenv()
 	view = createSceneView( scene, env )

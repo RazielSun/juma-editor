@@ -131,7 +131,11 @@ class GraphEditor( MainEditorModule ):
 
 ##----------------------------------------------------------------##
 	def openSceneSettings(self):
-		pass
+		self.tree.selectNode( None )
+		scene = self.delegate.safeCallMethod( 'editor', 'getScene' )
+		selection = []
+		selection.append( scene )
+		self.changeSelection( selection )
 
 	def createEntity( self ):
 		requestSearchView( 
@@ -140,6 +144,11 @@ class GraphEditor( MainEditorModule ):
 			on_selection = lambda obj:
 				self.doCommand( 'main_editor/create_entity', entity = obj )
 			)
+
+	def renameEntity( self, target, name ):
+		#TODO:command pattern
+		target.setName( target, name )
+		signals.emit( 'entity.modified', target )
 
 	def addEntityNode( self, entity ):
 		self.tree.addNode( entity, expanded = False )
@@ -184,6 +193,7 @@ class GraphEditor( MainEditorModule ):
 		# 	self.changeSelection( selection )
 
 	##----------------------------------------------------------------##
+
 	def onEntityAdded( self, entity, context = None ):
 		if context == 'new':
 			self.setFocus()
@@ -430,7 +440,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		print("onClipboardPaste")
 
 	def onItemChanged( self, item, col ):
-		print("onItemChanged", item, col)
+		self.module.renameEntity( item.node, item.text(0) )
 
 	def onDeletePressed( self ):
 		self.syncSelection = False

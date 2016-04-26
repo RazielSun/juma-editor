@@ -74,7 +74,7 @@ function CanvasTool:findTopLevelPropComponents( entities )
 		if isTop then
 			if e.getProp then
 				found[e] = true
-			else
+			elseif e.findMethod then
 				local com = e:findMethod( "getProp" ) -- this for component with prop
 				if com then
 					found[com] = true
