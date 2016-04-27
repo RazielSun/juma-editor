@@ -79,11 +79,12 @@ class SceneView( MainEditorModule ):
 		window.tabRemoved.connect( self.onTabRemoved )
 
 		self.findMenu( 'main/file' ).addChild([
-			dict( name = 'new_window', label = 'New Window', shortcut = 'ctrl+N' ),
+			dict( name = 'new_window', label = 'New Window', shortcut = 'ctrl+T' ),
             dict( name = 'open_window', label = 'Open Window', shortcut = 'ctrl+O' ),
             dict( name = 'open_window_as', label = 'Open Window As...', shortcut = 'ctrl+shift+O' ),
             dict( name = 'save_window', label = 'Save Window', shortcut = 'ctrl+S' ),
             dict( name = 'save_window_as', label = 'Save Window As...', shortcut = 'ctrl+shift+S' ),
+            dict( name = 'close_window', label = 'Close Window', shortcut = 'ctrl+W' ),
 		], self )
 
 		self.findMenu( 'main/entity' ).addChild([
@@ -275,6 +276,23 @@ class SceneView( MainEditorModule ):
 		if idx >= 0:
 			tab.setTabText( idx, title )
 
+	def closeCurrentWindow( self ):
+		tab = self.getTab()
+		tab.removeTab( tab.currentIndex() )
+
+	def closeWindow( self, window ):
+		if window and window in self.windows:
+			index = self.getWindowIndex( window )
+			if index >= 0:
+				self.windows.pop(index)
+				self.filePaths.pop(index)
+				self.fileTypes.pop(index)
+				self.loaded.pop(index)
+			current = self.getCurrentWindow()
+			if window == current:
+				getSceneSelectionManager().clearSelection()
+				signals.emitNow( 'scene.change', None )
+
 	def recreateScene( self ):
 		window = self.getCurrentWindow()
 		index = self.getWindowIndex( window )
@@ -310,6 +328,8 @@ class SceneView( MainEditorModule ):
 			self.saveWindow()
 		elif name == 'save_window_as':
 			self.saveWindowAs( None )
+		elif name == 'close_window':
+			self.closeCurrentWindow()
 
 		elif name == 'move_to_selected':
 			self.moveCameraToSelected()
@@ -337,17 +357,7 @@ class SceneView( MainEditorModule ):
 				self.recreateScene()
 
 	def onTabRemoved( self, window ):
-		if window and window in self.windows:
-			index = self.getWindowIndex( window )
-			if index >= 0:
-				self.windows.pop(index)
-				self.filePaths.pop(index)
-				self.fileTypes.pop(index)
-				self.loaded.pop(index)
-			current = self.getCurrentWindow()
-			if window == current:
-				getSceneSelectionManager().clearSelection()
-				signals.emitNow( 'scene.change', None )
+		self.closeWindow( window )
 
 	# Create Type Scene
 	def onCreateSceneSearchSelection( self, target ):
