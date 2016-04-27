@@ -229,6 +229,15 @@ class GenericTreeWidget( QtGui.QTreeWidget ):
 			self.setCurrentIndex( idx )
 
 	##----------------------------------------------------------------##
+	def getSelection( self ):
+		return [ item.node for item in self.selectedItems() ]
+
+	def getFirstSelection( self ):
+		for item in self.selectedItems():
+			return item.node
+		return None
+
+	##----------------------------------------------------------------##
 	def _calcItemFlags( self, node ):
 		flags = Qt.ItemIsEnabled 
 		flagNames = self.getItemFlags( node )
