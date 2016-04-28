@@ -33,13 +33,21 @@ class MainEditor( TopEditorModule ):
 
         self.containers  = {}
 
-        self.findMenu( 'main/asset' ).addChild([
-            dict( name = 'refresh_assets', label = 'Refresh Assets', shortcut = 'ctrl+G' ),
-        ], self )
-
         self.findMenu( 'main/edit' ).addChild([
             dict( name = 'reload_project', label = 'Reload Project', shortcut = 'ctrl+R' ),
         ], self )
+
+        self.findMenu('main/window').addChild([
+            'Game Preview',
+            'Hierarchy',
+            'Introspector',
+            'Command History View',
+            'Stats Viewer',
+            'Debug Draw',
+            'Run String Dock',
+            '----',
+            ]
+        )
 
         self.mainToolBar = self.addToolBar( 'editor', self.mainWindow.requestToolBar( 'main' ) )     
 
@@ -65,10 +73,20 @@ class MainEditor( TopEditorModule ):
         if name == 'reload_project':
             self.reloadProject()
 
-        elif name == 'refresh_assets':
-            self.getProject().assetLibrary.clearAssets()
-            runtime = self.getRuntime()
-            runtime.refreshAssets()
+        elif name == 'game_preview':
+            self.getModule('game_preview').show()
+        elif name == 'hierarchy':
+            self.getModule('graph_editor').show()
+        elif name == 'introspector':
+            self.getModule('introspector').show()
+        elif name == 'command_history_view':
+            self.getModule('command_history_view').show()
+        elif name == 'stats_viewer':
+            self.getModule('stats_viewer').show()
+        elif name == 'run_string_dock':
+            self.getModule('run_string_dock').show()
+        elif name == 'debug_draw':
+            self.getModule('debug_draw_dock').show()
 
 
     def onTool(self, node):

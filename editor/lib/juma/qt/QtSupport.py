@@ -47,6 +47,10 @@ class QtSupport( QtEditorModule ):
 		
 		self.menu = self.addMenuBar( 'main', self.sharedMenuBar )
 		self.menu.addChild('&File').addChild([
+			'----',
+			'Main Editor|F2',
+			'Asset Editor|F3',
+			'----',
 			'Open Project',
 			'----',
 			'E&xit',
@@ -69,20 +73,7 @@ class QtSupport( QtEditorModule ):
 			'----',
 			]
 		)
-		self.menu.addChild('&Window').addChild([
-			'----',
-			'Main Editor|F2',
-			'----',
-			'Game Preview',
-			'Hierarchy',
-			'Introspector',
-			'Command History View',
-			'Stats Viewer',
-			'Debug Draw',
-			'Run String Dock',
-			'----',
-			]
-		)
+		self.menu.addChild('&Window')
 		# self.menu.addChild('&Help')
 
 	def getSharedMenubar( self ):
@@ -177,23 +168,8 @@ class QtSupport( QtEditorModule ):
 
 		elif name == 'main_editor':
 			self.getModule('main_editor').setFocus()
-
-		elif name == 'game_preview':
-			self.getModule('game_preview').show()
-
-		elif name == 'hierarchy':
-			self.getModule('graph_editor').show()
-		elif name == 'introspector':
-			self.getModule('introspector').show()
-		elif name == 'command_history_view':
-			self.getModule('command_history_view').show()
-
-		elif name == 'stats_viewer':
-			self.getModule('stats_viewer').show()
-		elif name == 'run_string_dock':
-			self.getModule('run_string_dock').show()
-		elif name == 'debug_draw':
-			self.getModule('debug_draw_dock').show()
+		elif name == 'asset_editor':
+			self.getModule('asset_editor').setFocus()
 
 		elif name == 'copy':
 			print 'copy'

@@ -33,6 +33,7 @@ class GamePreview( MainEditorModule ):
 		self.pendingScript  = None
 		self.activeFPS      = 60
 		self.nonActiveFPS   = 15
+		self.updateTimer 	= None
 
 	def getRuntime(self):
 		if not self.runtime:
@@ -81,6 +82,13 @@ class GamePreview( MainEditorModule ):
 		# self.window.hideTitleBar()
 		self.window.setFocusPolicy(Qt.StrongFocus)
 
+		self.menu = self.findMenu( 'main/preview' )
+		self.menu.addChild([
+				{'name':'run_game',   'label':'Run'}, #, 'shortcut':'meta+]' 
+				{'name':'pause_game', 'label':'Pause' }, #,  'shortcut':'meta+shit+]'
+				{'name':'stop_game',  'label':'Stop'}, #,   'shortcut':'meta+['
+			], self)
+
 		self.toolbar = self.addToolBar( 'game_preview', self.window.addToolBar() )
 
 		self.scrollArea = QtGui.QScrollArea( None )
@@ -96,16 +104,6 @@ class GamePreview( MainEditorModule ):
 		self.sizeWidget = SizeComboBox( None )
 		self.sizeWidget.sizeChanged.connect( self.onGameSizeChanged )
 		self.sizeWidget.owner = self
-
-		self.updateTimer = None
-		
-		self.menu = self.findMenu( 'main/preview' )
-		self.menu.addChild([
-				{'name':'run_game',   'label':'Run'}, #, 'shortcut':'meta+]' 
-				{'name':'pause_game', 'label':'Pause' }, #,  'shortcut':'meta+shit+]'
-				{'name':'stop_game',  'label':'Stop'}, #,   'shortcut':'meta+['
-			], self)
-
 		
 		self.addTool( 'game_preview/size_scene', widget = self.sizeWidget )
 		self.addTool( 'game_preview/collect_garbage', label = 'Collect Garbage', icon = 'bin' )

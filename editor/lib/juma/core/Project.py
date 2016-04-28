@@ -132,6 +132,8 @@ class Project(object):
 		return self.getBasePath( path )
 		
 	def getBasePath( self, path = None ):
+		if path is None:
+			return self.path
 		return os.path.join( self.path, path )
 
 ##----------------------------------------------------------------##
