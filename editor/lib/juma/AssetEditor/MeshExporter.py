@@ -98,11 +98,9 @@ def TraceAllMeshes(pScene):
 					print(layer.GetUVSetCount())
 					print(layer.GetPolygonGroups())
 					print(layer.GetVertexColors())
-					print(layer.GetLayerElementOfType(FbxLayerElement.eUV))
-					print(layer.GetUVs())
+					print(layer.GetUVs()) # print(layer.GetLayerElementOfType(FbxLayerElement.eUV))
 					print(layer.GetMaterials())
-
-					
+					print(layer.GetTextures(FbxLayerElement.eTextureDiffuse))
 
 					uvDirect = uvSet.GetDirectArray() # array uv coords for
 					uvIndexes = uvSet.GetIndexArray()
