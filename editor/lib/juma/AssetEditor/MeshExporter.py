@@ -1,5 +1,3 @@
-
-
 #!/usr/bin/env python
 
 import os.path
@@ -9,12 +7,19 @@ import logging
 from PySide                   	import QtCore, QtGui, QtOpenGL
 from PySide.QtCore            	import Qt
 
-from fbx import *
-import FbxCommon
-import fbxsip
-
 from juma.core                	import signals, app
 from AssetEditor             	import AssetEditorModule
+
+##----------------------------------------------------------------##
+_gInstalledFBX = False
+
+try:
+	from fbx import *
+	import FbxCommon
+	import fbxsip
+	_gInstalledFBX = True
+except ImportError:
+	print("MeshExporter import error: Did you install FBX SDK?")
 
 ##----------------------------------------------------------------##
 class MeshExporter( AssetEditorModule ):
@@ -71,6 +76,14 @@ class MeshExporter( AssetEditorModule ):
 			lSdkManager.Destroy()
 
 ##----------------------------------------------------------------##
+
+MeshExporter().register()
+
+##----------------------------------------------------------------##
+
+ # -- moaiserializer.serializeToString(mesh)
+
+##----------------------------------------------------------------##
 def ListAllMeshesCount(pScene):
 	print("NUMBER OF GEOMETRIES :: %i" % pScene.GetGeometryCount())
 
@@ -79,6 +92,9 @@ def TraceAllMeshes(pScene):
 	if lNode:
 		for i in range(lNode.GetChildCount()):
 			lChildNode = lNode.GetChild(i)
+			print("CHILD:", lChildNode.GetName())
+			print("CHILD MESH:", lChildNode.GetMesh())
+
 			if lChildNode.GetNodeAttribute() != None:
 				lAttributeType = (lChildNode.GetNodeAttribute().GetAttributeType())
 				if lAttributeType == FbxNodeAttribute.eMesh:
@@ -91,16 +107,31 @@ def TraceAllMeshes(pScene):
 					print("MESH VertexCount :: %i" % lMesh.GetPolygonVertexCount())
 					print("MESH Layers :: %i" % lMesh.GetLayerCount())
 					layer = lMesh.GetLayer(0)
-					uvSets = layer.GetUVSets()
-					print("UV SETS:",uvSets)
-					uvSet = uvSets[0]
-					print("UV SET:", uvSet)
+					print(layer)
 					print(layer.GetUVSetCount())
 					print(layer.GetPolygonGroups())
 					print(layer.GetVertexColors())
 					print(layer.GetUVs()) # print(layer.GetLayerElementOfType(FbxLayerElement.eUV))
 					print(layer.GetMaterials())
 					print(layer.GetTextures(FbxLayerElement.eTextureDiffuse))
+
+					for materialIndex in range( 0, lChildNode.GetMaterialCount() ):
+						material = lChildNode.GetMaterial( materialIndex )
+						print(" material:", material, material.GetName())
+						for propertyIndex in range( 0, FbxLayerElement.sTypeTextureCount() ):
+							property = material.FindProperty( FbxLayerElement.sTextureChannelNames( propertyIndex ) )
+							print("  property:", property, property.GetName())
+							texture = property.GetSrcObject()
+							print("   texture:", texture)
+							if texture:
+								textureFilename = texture.GetFileName()
+								print("   ", texture.GetName())
+								print("   filename:", textureFilename)
+
+					uvSets = layer.GetUVSets()
+					print("UV SETS:",uvSets)
+					uvSet = uvSets[0]
+					print("UV SET:", uvSet)
 
 					uvDirect = uvSet.GetDirectArray() # array uv coords for
 					uvIndexes = uvSet.GetIndexArray()
@@ -128,7 +159,3 @@ def TraceAllMeshes(pScene):
 								uvElemD.GetAt(uvIndex),
 								uvElemI.GetAt(uvIndex)
 								))
-
-##----------------------------------------------------------------##
-
-MeshExporter().register()
