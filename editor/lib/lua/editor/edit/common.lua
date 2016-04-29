@@ -32,3 +32,11 @@ function getColor( name )
 	local color = CommonColorTable[ name ] or defaultColor
 	return unpack( color )
 end
+
+--------------------------------------------------------------------------------
+local FBXExporter = require("edit.exporters.FBXExporter")
+
+function createMeshExporter() -- format 
+	local meshExp = FBXExporter()
+	return meshExp
+end

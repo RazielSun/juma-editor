@@ -296,6 +296,9 @@ class MOAIRuntime( EditorModule ):
 	def getLuaClassRegistry( self, classType ):
 		return _G.getEditorRegistry( classType )
 
+	def getNewMeshExporter( self ):
+		return _G.createMeshExporter()
+
 	def updateStepSim( self, step ):
 		try:
 			_G.updateStepSim( step )

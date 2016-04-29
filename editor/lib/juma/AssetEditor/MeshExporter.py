@@ -29,6 +29,12 @@ class MeshExporter( AssetEditorModule ):
 
 	def __init__(self):
 		super(MeshExporter, self).__init__()
+		self.runtime = None
+
+	def getRuntime(self):
+		if not self.runtime:
+			self.runtime = self.affirmModule('moai')
+		return self.runtime
 
 	def onLoad(self):
 		self.window = self.requestDockWindow(
@@ -48,11 +54,11 @@ class MeshExporter( AssetEditorModule ):
 		self.saveBtn.clicked.connect( self.saveTrigger )
 
 	def loadTrigger( self ):
-		print("load Trigger")
-		self.openFBXFile()
+		if _gInstalledFBX:
+			self.openFBXFile()
 
 	def saveTrigger( self ):
-		print("save Trigger")
+		pass
 
 	##----------------------------------------------------------------##
 	def openFBXFile( self ):
@@ -65,27 +71,76 @@ class MeshExporter( AssetEditorModule ):
 			print("open fbx file:", fileName)
 			lResult = FbxCommon.LoadScene(lSdkManager, lScene, fileName)
 
-			ListAllMeshesCount( lScene )
-			TraceAllMeshes( lScene )
+			self.parseFBXScene( lScene )
+
+			# ListAllMeshesCount( lScene )
+			# TraceAllMeshes( lScene )
 
 			# newName = 'output.fbx'
 			# path = os.path.dirname( fileName )
 			# FbxCommon.SaveScene(lSdkManager, lScene, path + '/' + newName)
 
 			# Destroy all objects created by the FBX SDK.
-			lSdkManager.Destroy()
+			# lSdkManager.Destroy()
+
+	def parseFBXScene( self, scene ):
+		runtime = self.getRuntime()
+		rootNode = scene.GetRootNode()
+		for i in range(rootNode.GetChildCount()):
+			child = rootNode.GetChild(i)
+			mesh = child.GetMesh()
+			if mesh:
+				meshLua = runtime.getNewMeshExporter()
+				meshLua.setNode( meshLua, child )
+		
 
 ##----------------------------------------------------------------##
 
 MeshExporter().register()
 
 ##----------------------------------------------------------------##
-
- # -- moaiserializer.serializeToString(mesh)
-
-##----------------------------------------------------------------##
 def ListAllMeshesCount(pScene):
 	print("NUMBER OF GEOMETRIES :: %i" % pScene.GetGeometryCount())
+
+# lNode = pScene.GetRootNode()
+# if lNode:
+# 		for i in range(lNode.GetChildCount()):
+# 			lChildNode = lNode.GetChild(i)
+# print("CHILD:", lChildNode.GetName())
+# 			print("CHILD MESH:", lChildNode.GetMesh())
+# lPoly = lMesh.GetPolygonCount()
+# print("MESH POLYGONS :: %i" % lPoly)
+# print("MESH VertexCount :: %i" % lMesh.GetPolygonVertexCount())
+# print("MESH Layers :: %i" % lMesh.GetLayerCount())
+					# layer = lMesh.GetLayer(0)
+					# uvElem = layer.GetUVs()
+					# uvElemD = uvElem.GetDirectArray()
+					# uvElemI = uvElem.GetIndexArray()
+
+					# controlPoints = lMesh.GetControlPoints()
+					# for p in range(lPoly):
+					# 	pSize = lMesh.GetPolygonSize(p)
+					# 	for v in range(pSize):
+					# 		vertexIndex = lMesh.GetPolygonVertex(p, v)
+					# 		uvIndex = lMesh.GetTextureUVIndex(p, v)
+					# 		print("   VERTEX {} ||| pos: {} || uv: {} index {}".format(
+					# 			vertexIndex, 0 
+					# 			controlPoints[vertexIndex], fbx.FbxVector4(0.500000, 0.500000, 0.500000, 0.000000)
+					# 			uvElemD.GetAt(uvIndex), fbx.FbxVector2(0.000000, 1.000000)
+					# 			uvElemI.GetAt(uvIndex), 0
+					# 			))
+					# for materialIndex in range( 0, lChildNode.GetMaterialCount() ):
+					# 	material = lChildNode.GetMaterial( materialIndex )
+					# 	print(" material:", material, material.GetName())
+					# 	for propertyIndex in range( 0, FbxLayerElement.sTypeTextureCount() ):
+					# 		property = material.FindProperty( FbxLayerElement.sTextureChannelNames( propertyIndex ) )
+					# 		print("  property:", property, property.GetName())
+					# 		texture = property.GetSrcObject()
+					# 		print("   texture:", texture)
+					# 		if texture:
+					# 			textureFilename = texture.GetFileName()
+					# 			print("   ", texture.GetName())
+					# 			print("   filename:", textureFilename)
 
 def TraceAllMeshes(pScene):
 	lNode = pScene.GetRootNode()
@@ -109,11 +164,12 @@ def TraceAllMeshes(pScene):
 					layer = lMesh.GetLayer(0)
 					print(layer)
 					print(layer.GetUVSetCount())
-					print(layer.GetPolygonGroups())
-					print(layer.GetVertexColors())
+
+					print(layer.GetPolygonGroups()) #NONE
+					print(layer.GetVertexColors()) #NONE
 					print(layer.GetUVs()) # print(layer.GetLayerElementOfType(FbxLayerElement.eUV))
 					print(layer.GetMaterials())
-					print(layer.GetTextures(FbxLayerElement.eTextureDiffuse))
+					print(layer.GetTextures(FbxLayerElement.eTextureDiffuse)) #NONE
 
 					for materialIndex in range( 0, lChildNode.GetMaterialCount() ):
 						material = lChildNode.GetMaterial( materialIndex )
