@@ -34,9 +34,8 @@ function CanvasView:initContext()
 end
 
 function CanvasView:initCamera()
-	local camera = self:getScene():getCamera()
-    self:getScene():setCameraForLayers( self:getScene().hudTbl, camera )
-    self:getScene():setCameraForLayers( self:getScene().gameTbl, camera )
+	local camera = MOAICamera2D.new()
+    self:getScene():setCameraForLayers( self:getScene():getRender(), camera )
     self.camera = camera
 end
 
@@ -47,7 +46,7 @@ function CanvasView:initAddons()
 	end
 	self.nav = self:add( CanvasNavigate { inputDevice = self.inputDevice, camera = self.camera } )
 	self.toolMgr = self:add( CanvasToolManager() )
-	self.itemMgr = self:add( CanvasItemManager { inputDevice = self.inputDevice, ui = self:getScene().jui } )
+	self.itemMgr = self:add( CanvasItemManager { inputDevice = self.inputDevice } )
 	self.pickingManager = PickingManager()
 	self.pickingManager:setTargetScene( self:getScene() )
 end

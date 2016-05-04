@@ -28,4 +28,3 @@ function createSceneView( scene, env )
 	
 	return view
 end
-

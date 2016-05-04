@@ -155,12 +155,17 @@ class GamePreview( MainEditorModule ):
 		self.canvas.updateGL()
 
 	def saveViewSize( self ):
-		self.getProject().setConfig( "preview_width", self.viewWidth )
-		self.getProject().setConfig( "preview_height", self.viewHeight )
+		config = dict( width = self.viewWidth, height = self.viewHeight )
+		self.getProject().setConfig( "preview", config )
 
 	def updateViewValues( self ):
-		self.viewWidth = self.getProject().getConfig( "preview_width", 320 )
-		self.viewHeight = self.getProject().getConfig( "preview_height", 480 )
+		self.viewWidth = 320
+		self.viewHeight = 480
+		project = self.getProject()
+		config = project.getConfig( "preview", None )
+		if config != None:
+			self.viewWidth = config.get("width", 320)
+			self.viewHeight = config.get("height", 480)
 		self.sizeWidget.findSize( self.viewWidth, self.viewHeight )
 
 	# Update AKU
@@ -313,16 +318,14 @@ class GamePreview( MainEditorModule ):
 		self.paused = True
 		# 	self.canvas.startRefreshTimer( self.nonActiveFPS )
 
-##----------------------------------------------------------------##
+	##----------------------------------------------------------------##
 	def onMenu(self, node):
 		name = node.name
 
 		if name == 'run_game':
 			self.runPreview()
-
 		elif name == 'pause_game':
 			self.pausePreview()
-
 		elif name == 'stop_game':
 			self.stopPreview()
 
@@ -334,32 +337,13 @@ class GamePreview( MainEditorModule ):
 	# 		# self.restartScript( self.runningScript )
 	# 		self.getRuntime().reset()
 
-	# 	elif name=='orient_portrait':
-	# 		self.setOrientationPortrait()
-
-	# 	elif name=='orient_landscape':
-	# 		self.setOrientationLandscape()
-
-	# 	elif name == 'start_external_scene':
-	# 		self.runSceneExternal()
-			
-	# 	elif name == 'start_external_game':
-	# 		self.runGameExternal()
-
 	def onTool( self, tool ):
 		name = tool.name
 
 		if name == 'take_screenshot':
 			self.getRuntime().takeScreenshot()
-
 		elif name == 'collect_garbage':
 			self.getRuntime().garbageCollect()
-			
-	# 	elif name == 'run_external':
-	# 		self.runSceneExternal()
-
-	# 	elif name == 'run_game_external':
-	# 		self.runGameExternal()
 
 	def onGameSizeChanged(self, width, height):
 		if self.canvas:

@@ -17,15 +17,13 @@ function CanvasItemManager:init( option )
 	self.activeMouseButton = nil
 
 	self.factorZoom = 1
-
-	self.ui = option.ui
 	self.inputDevice = option.inputDevice
 
 	EditorComponent.init(self, { name = "CanvasItemManager" })
 end
 
 function CanvasItemManager:onLoad()
-	self.layer = self.ui and self.ui:getScreen(1).defaultLayer or self.entity.layer
+	self.layer = self.entity.layer
 	assert( self.layer )
 
 	self.inputDevice:addListener( self )

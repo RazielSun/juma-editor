@@ -94,3 +94,8 @@ local EditorCanvasUIScene = require("edit.EditorCanvas.EditorCanvasUIScene")
 
 setEditorCanvasSceneForType( EditorCanvasScene, "scene" )
 setEditorCanvasSceneForType( EditorCanvasUIScene, "ui" )
+setEditorCanvasSceneForType( EditorCanvasScene, "3d" )
+
+local Canvas3DView = require("edit.CanvasView.3D.Canvas3DView")
+
+registerCanvasViewFor( Canvas3DView, "3d" )

@@ -14,6 +14,7 @@ function CanvasFrame:init( option )
 	option.name = option.name or "CanvasFrame"
 	self.FLAG_EDITOR_OBJECT = true
 	self.deckSize = { 1024, 1024 }
+
 	self.ui = option.ui
 
 	assert( self.ui )
@@ -24,7 +25,6 @@ end
 
 ---------------------------------------------------------------------------------
 function CanvasFrame:onLoad()
-	self.layer = self.ui:getScreen(1).defaultLayer
 	self.layer = self.entity.layer
 	self.layer:insertProp( self._prop )
 	self:attach()

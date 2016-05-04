@@ -1,5 +1,5 @@
 
-local Scene = require("scenes.Scene")
+local Scene = require("edit.EditorScene")
 
 ---------------------------------------------------------------------------------
 --

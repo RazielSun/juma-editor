@@ -141,12 +141,12 @@ class Project(object):
 		return self.config
 
 	def getConfig( self, key, default = None ):
-		if self.config:
+		if self.config != None:
 			return self.config.get( key, default )
 		return default
 
 	def setConfig( self, key, value ):
-		if self.config:
+		if self.config != None:
 			self.config[ key ] = value
 
 ##----------------------------------------------------------------##

@@ -3,8 +3,15 @@
 --------------------------------------------------------------------------------
 
 function projEditorAsset( asset )
-	if LIB_PROJECT_EDITOR_ASSETS_PATH then
-		return LIB_PROJECT_EDITOR_ASSETS_PATH .. '/' .. asset
+	if PROJECT_EDITOR_ASSETS_PATH then
+		return PROJECT_EDITOR_ASSETS_PATH .. '/' .. asset
+	end
+	return nil
+end
+
+function editorAssetPath( asset )
+	if EDITOR_ASSETS_PATH then
+		return EDITOR_ASSETS_PATH .. '/' .. asset
 	end
 	return nil
 end
@@ -31,12 +38,4 @@ end
 function getColor( name )
 	local color = CommonColorTable[ name ] or defaultColor
 	return unpack( color )
-end
-
---------------------------------------------------------------------------------
-local FBXExporter = require("edit.exporters.FBXExporter")
-
-function createMeshExporter() -- format 
-	local meshExp = FBXExporter()
-	return meshExp
 end

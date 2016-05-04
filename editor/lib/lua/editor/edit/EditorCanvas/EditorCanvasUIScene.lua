@@ -20,17 +20,16 @@ function EditorCanvasUIScene:init( option )
 	local jui = JUI()
 	jui:setSize( 320, 480 )
 	self.jui = jui
-	self:setHudLayers(jui._renderables)
+
+	local renderTbl = self:getRender()
+	table.insert( renderTbl, jui._renderables )
 
 	local screen = UIScreen( { viewport = self.viewport } )
-	jui:openScreenInternal( screen ) -- THIS IS FOR CONTENT
-
-	local secondScreen = UIScreen( { viewport = self.viewport } )
-	jui:openScreenInternal( secondScreen ) -- THIS IS FOR CANVAS VIEW LAYER ITEMS
+	jui:openScreenInternal( screen )
 end
 
 function EditorCanvasUIScene:getRootGroup()
-	return self.jui:getScreen(2)
+	return self.jui:getScreen(1)
 end
 
 function EditorCanvasUIScene:setLoadedPath( path )
@@ -38,7 +37,7 @@ function EditorCanvasUIScene:setLoadedPath( path )
 	if data then
 		local children = table.dup(data.children)
 		data:removeChildren()
-		local topScreen = self.jui:getScreen(2)
+		local topScreen = self.jui:getScreen(1)
 		topScreen:removeChildren()
 		topScreen:setChildren(children)
 	end
