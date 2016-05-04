@@ -9,14 +9,34 @@ local MeshObject = require("edit.exporters.MeshObject")
 
 local FBXObject = Class(MeshObject, "FBXObject")
 
-function FBXObject:init( node, size )
+function FBXObject:init( rootNode, size )
 	MeshObject.init( self )
 
 	self:setSize( size )
-	self:setNode( node )
+	self:setRootNode( rootNode )
 end
 
 ---------------------------------------------------------------------------------
+function FBXObject:setSize( size )
+	self._size = size
+end
+
+---------------------------------------------------------------------------------
+function FBXObject:setRootNode( rootNode )
+	print("FbxLayerElement", rootNode.FbxLayerElement)
+	local totalChilds = rootNode.GetChildCount()
+
+	for i = 0, totalChilds-1 do
+		local child = rootNode.GetChild(i)
+		local mesh = child.GetMesh()
+		if mesh then
+			self:setNode( child )
+			self:findMaterials( child, rootNode.FbxLayerElement )
+			break
+		end
+	end
+end
+
 function FBXObject:setNode( node )
 	print("FBXObject setNode", node)
 	self.nodeName = node.GetName()
@@ -88,9 +108,27 @@ function FBXObject:setVertex( p, n, uv )
 	self.vbo:writeColor32 ( 1, 1, 1 )
 end
 
-function FBXObject:setTextureName( textureName, fileName )
-	self.textureName = textureName
-	self.fileName = fileName
+---------------------------------------------------------------------------------
+function FBXObject:findMaterials( node, element )
+	local totalMaterials = node.GetMaterialCount()
+	local totalProperty = element.sTypeTextureCount()
+
+	for i = 0, totalMaterials-1 do
+		local material = node.GetMaterial( i )
+		for p = 0, totalProperty-1 do
+			local property = material.FindProperty( element.sTextureChannelNames( p ) )
+			local texture = property.GetSrcObject()
+			if texture then
+				self:setTexture( texture.GetName(), texture.GetFileName() )
+			end
+		end
+	end
+end
+
+function FBXObject:setTexture( textureName, texturePath )
+	self._textureName = textureName
+	self._texturePath = texturePath
+	print("setTexture", textureName, texturePath)
 end
 
 ---------------------------------------------------------------------------------
@@ -137,3 +175,110 @@ return FBXObject
 -- 					# 			textureFilename = texture.GetFileName()
 -- 					# 			print("   ", texture.GetName())
 -- 					# 			print("   filename:", textureFilename)
+
+
+
+	-- # def parseFBXScene( self, scene, fileName ):
+	-- # 	runtime = self.getRuntime()
+	-- # 	rootNode = scene.GetRootNode()
+	-- # 	for i in range(rootNode.GetChildCount()):
+	-- # 		child = rootNode.GetChild(i)
+	-- # 		mesh = child.GetMesh()
+	-- # 		if mesh:
+	-- # 			meshLua = runtime.getNewMeshExporter()
+	-- # 			meshLua.setNode( meshLua, child )
+	-- # 			meshLua.createMOAIMesh( meshLua )
+	-- # 			path = os.path.dirname(fileName)
+	-- # 			meshLua.save( meshLua, path )
+		
+
+
+-- def TraceAllMeshes(pScene):
+-- 	lNode = pScene.GetRootNode()
+-- 	if lNode:
+-- 		for i in range(lNode.GetChildCount()):
+-- 			lChildNode = lNode.GetChild(i)
+-- 			print("CHILD:", lChildNode.GetName())
+-- 			print("CHILD MESH:", lChildNode.GetMesh())
+
+-- 			if lChildNode.GetNodeAttribute() != None:
+-- 				lAttributeType = (lChildNode.GetNodeAttribute().GetAttributeType())
+-- 				if lAttributeType == FbxNodeAttribute.eMesh:
+-- 					lMesh = lChildNode.GetNodeAttribute()
+-- 					lPoly = lMesh.GetPolygonCount()
+-- 					print("\nMESH NAME :: %s" % lMesh.GetName())
+-- 					print("MESH POLYGONS :: %i" % lPoly)
+-- 					print("MESH EDGES :: %i" % lMesh.GetMeshEdgeCount())
+-- 					polyVertices = lMesh.GetPolygonVertices()
+-- 					print(polyVertices)
+-- 					print("MESH VertexCount :: %i" % lMesh.GetPolygonVertexCount())
+-- 					print("MESH Layers :: %i" % lMesh.GetLayerCount())
+-- 					layer = lMesh.GetLayer(0)
+-- 					print(layer)
+-- 					print(layer.GetUVSetCount())
+-- 					print(layer.GetNormals())
+-- 					print(layer.GetTangents()) #NONE
+-- 					print(layer.GetBinormals()) #NONE
+-- 					print(layer.GetPolygonGroups()) #NONE
+-- 					print(layer.GetVertexColors()) #NONE
+-- 					print(layer.GetUVs()) # print(layer.GetLayerElementOfType(FbxLayerElement.eUV))
+-- 					print(layer.GetMaterials())
+-- 					print(layer.GetTextures(FbxLayerElement.eTextureDiffuse)) #NONE
+
+-- 					for materialIndex in range( 0, lChildNode.GetMaterialCount() ):
+-- 						material = lChildNode.GetMaterial( materialIndex )
+-- 						print(" material:", material, material.GetName())
+-- 						for propertyIndex in range( 0, FbxLayerElement.sTypeTextureCount() ):
+-- 							property = material.FindProperty( FbxLayerElement.sTextureChannelNames( propertyIndex ) )
+-- 							print("  property:", property, property.GetName())
+-- 							texture = property.GetSrcObject()
+-- 							print("   texture:", texture)
+-- 							if texture:
+-- 								textureFilename = texture.GetFileName()
+-- 								print("   ", texture.GetName())
+-- 								print("   filename:", textureFilename)
+
+-- 					uvSets = layer.GetUVSets()
+-- 					print("UV SETS:",uvSets)
+-- 					uvSet = uvSets[0]
+-- 					print("UV SET:", uvSet)
+
+-- 					uvDirect = uvSet.GetDirectArray() # array uv coords for
+-- 					uvIndexes = uvSet.GetIndexArray()
+
+-- 					uvElem = layer.GetUVs()
+-- 					uvElemD = uvElem.GetDirectArray()
+-- 					uvElemI = uvElem.GetIndexArray()
+
+-- 					controlPoints = lMesh.GetControlPoints()
+
+-- 					for p in range(lPoly):
+-- 						pSize = lMesh.GetPolygonSize(p)
+-- 						# pPoly = []
+-- 						# pUV = []
+-- 						for v in range(pSize):
+-- 							vertexIndex = lMesh.GetPolygonVertex(p, v)
+-- 							uvIndex = lMesh.GetTextureUVIndex(p, v)
+-- 							# pPoly.append(controlPoints[vertexIndex])
+-- 							# pUV.append(uvElemD.GetAt(uvIndex))
+-- 							point = controlPoints[vertexIndex]
+-- 							print("POINT:", point[0], point[1], point[2], point[3])
+
+-- 						# print("POLY:",pPoly, pUV)
+-- 					# for p in range(lPoly):
+-- 					# 	pSize = lMesh.GetPolygonSize(p)
+-- 					# 	pGroup = lMesh.GetPolygonGroup(p)
+-- 					# 	pStart = lMesh.GetPolygonVertexIndex(p)
+-- 					# 	print("   POLYGON {} | start: {} | size: {} | group: {}".format(p, pStart, pSize, pGroup))
+-- 					# 	for v in range(pSize):
+-- 					# 		vertexIndex = lMesh.GetPolygonVertex(p, v)
+-- 					# 		uvIndex = lMesh.GetTextureUVIndex(p, v)
+-- 					# 		print("   VERTEX {} :: {} ||| pos: {} || uv: {} index {} || uv: {} index {}".format(
+-- 					# 			v,
+-- 					# 			vertexIndex,
+-- 					# 			controlPoints[vertexIndex],
+-- 					# 			uvDirect.GetAt(uvIndex),
+-- 					# 			uvIndexes.GetAt(uvIndex),
+-- 					# 			uvElemD.GetAt(uvIndex),
+-- 					# 			uvElemI.GetAt(uvIndex)
+-- 					# 			))

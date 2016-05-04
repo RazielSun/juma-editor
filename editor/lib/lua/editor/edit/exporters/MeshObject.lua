@@ -28,22 +28,30 @@ function MeshObject:init()
 end
 
 ---------------------------------------------------------------------------------
-function MeshObject:createMOAIMesh()
+function MeshObject:createMesh()
 	local vbo = self.vbo
 	local vertexFormat = self.vertexFormat
 
 	local mesh = MOAIMesh.new ()
 	mesh:setVertexBuffer( vbo, vertexFormat )
-	-- mesh:setTexture ( "moai.png" )
-	mesh.textureName = "moai.png"
+	local texturePath = self._texturePath
+	if texturePath then
+		mesh:setTexture ( texturePath )
+	end
 	mesh:setPrimType ( MOAIMesh.GL_TRIANGLES )
 	mesh:setShader ( MOAIShaderMgr.getShader( MOAIShaderMgr.MESH_SHADER ) )
-	mesh:setTotalElements( 36 )
-	print("vbo:countElements( vertexFormat )", vbo:countElements( vertexFormat ))
-	print("vbo:computeBounds( vertexFormat )", vbo:computeBounds( vertexFormat ))
+	mesh:setTotalElements( vbo:countElements( vertexFormat ) )
 	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
 
 	self.mesh = mesh
+end
+
+function MeshObject:getMesh()
+	if not self.mesh then
+		self:createMesh()
+	end
+
+	return self.mesh
 end
 
 ---------------------------------------------------------------------------------
