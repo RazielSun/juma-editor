@@ -278,6 +278,7 @@ class SceneView( MainEditorModule ):
 
 	def closeCurrentWindow( self ):
 		tab = self.getTab()
+		self.closeWindow( tab.currentWidget() )
 		tab.removeTab( tab.currentIndex() )
 
 	def closeWindow( self, window ):
