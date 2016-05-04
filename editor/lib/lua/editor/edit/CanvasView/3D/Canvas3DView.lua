@@ -15,7 +15,10 @@ local Canvas3DView = Class( EditorEntity, "Canvas3DView" )
 function Canvas3DView:init( canvasEnv )
 	self.canvasEnv = assert( canvasEnv )
 	EditorEntity.init( self, { name = "Canvas3DView" })
+
 	self.layer = MOAILayer.new()
+
+	self.props = {}
 end
 
 ---------------------------------------------------------------------------------
@@ -42,12 +45,6 @@ end
 
 function Canvas3DView:initAddons()
 	-- self.grid = self:add( CanvasGrid() )
-
-	local prop = MOAIProp.new()
-	prop:setCullMode ( MOAIGraphicsProp.CULL_BACK )
-	-- prop:seekRot ( 180, 360, 0, 10 )
-	self.layer:insertProp( prop )
-	self.prop = prop
 end
 
 ---------------------------------------------------------------------------------
@@ -84,19 +81,68 @@ function Canvas3DView:updateCanvas()
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DView:renderNode( node, nodeType, pixels )
-	local meshparser = nil
-	if nodeType == 'fbx' then
-		meshparser = FBXObject( node, pixels )
-	elseif nodeType == 'obj' then
-		meshparser = OBJObject( node, pixels )
+function Canvas3DView:renderNode( node, params )
+	self:clearProps()
+
+	print("renderNode", node, params)
+	local ftype = params.getFormat( params )
+	if ftype == 'FBX' then
+		self:renderFBX( node, params )
+	elseif ftype == 'OBJ' then
+		self:renderOBJ( node, params )
 	end
 
-	if meshparser then
-		local mesh = meshparser:getMesh()
-		self.prop:setDeck( mesh )
-		self:updateCanvas()
+	self:updateCanvas()
+end
+
+function Canvas3DView:renderFBX( rootNode, obj )
+	local size = obj.getPerPixel( obj )
+
+	self:createMeshFromFBX( rootNode, rootNode, size )
+end
+
+function Canvas3DView:createMeshFromFBX( node, rootNode, size )
+	local total = node.GetChildCount()
+
+	for i = 0, total-1 do
+		local child = node.GetChild(i)
+		local totalChilds = child.GetChildCount()
+		if totalChilds > 0 then
+			self:createMeshFromFBX( child, rootNode, size )
+		else
+			local mesh = child.GetMesh()
+			if mesh then
+				local model = FBXObject( child, size )
+				model:setFBXMaterials( child, rootNode.FbxLayerElement )
+				model:setNode( child )
+				model:createMesh()
+
+				local prop = self:createProp()
+				prop:setDeck( model:getMesh() )
+			end
+		end
 	end
+end
+
+function Canvas3DView:renderOBJ( node, obj )
+	--OBJObject( node, pixels )
+	--obj.getPerPixel()
+end
+
+function Canvas3DView:createProp()
+	local prop = MOAIProp.new()
+	prop:setCullMode ( MOAIGraphicsProp.CULL_BACK )
+	-- prop:seekRot ( 180, 360, 0, 10 )
+	self.layer:insertProp( prop )
+	table.insert( self.props, prop )
+	return prop
+end
+
+function Canvas3DView:clearProps()
+	for _, prop in ipairs(self.props) do
+		self.layer:removeProp( prop )
+	end
+	self.props = {}
 end
 
 ---------------------------------------------------------------------------------

@@ -8,6 +8,13 @@
 local MeshObject = Class("MeshObject")
 
 function MeshObject:init()
+	self._textured = false
+
+	self.nodeName = 'none'
+	self.format = '.mesh'
+end
+
+function MeshObject:initWithParams()
 	local vertexFormat = MOAIVertexFormat.new()
 	vertexFormat:declareCoord( 1, MOAIVertexFormat.GL_FLOAT, 3 )
 	-- vertexFormat:declareNormal( 2, MOAIVertexFormat.GL_FLOAT, 3 )
@@ -18,13 +25,8 @@ function MeshObject:init()
 	local vbo = MOAIVertexBuffer.new ()
 	self.vbo = vbo
 
-	-- local ibo = MOAIIndexBuffer.new ()
-	-- ibo:setIndexSize ( 2 )
-	-- ibo:reserve ( 36 * 2 )
-	-- self.ibo = ibo
-
-	self.nodeName = 'none'
-	self.format = '.mesh'
+	local ibo = MOAIIndexBuffer.new ()
+	self.ibo = ibo
 end
 
 ---------------------------------------------------------------------------------
@@ -41,6 +43,7 @@ function MeshObject:createMesh()
 	mesh:setPrimType ( MOAIMesh.GL_TRIANGLES )
 	mesh:setShader ( MOAIShaderMgr.getShader( MOAIShaderMgr.MESH_SHADER ) )
 	mesh:setTotalElements( vbo:countElements( vertexFormat ) )
+	-- print("vbo:computeBounds( vertexFormat )", vbo:computeBounds( vertexFormat ), vbo, vertexFormat)
 	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
 
 	self.mesh = mesh
@@ -55,10 +58,18 @@ function MeshObject:getMesh()
 end
 
 ---------------------------------------------------------------------------------
-function MeshObject:save( path )
+function MeshObject:setTexture( textureName, texturePath )
+	self._textureName = textureName
+	self._texturePath = texturePath
+	print("setTexture", textureName, texturePath)
+end
+
+---------------------------------------------------------------------------------
+function MeshObject:save( export_path )
 	local data = MOAISerializer.serializeToString(self.mesh)
 	-- path = path or ''
-	local fullPath = 'assets/3ds/' .. self.nodeName ..self.format
+	local export_path = export_path or 'assets/3ds/'
+	local fullPath = export_path .. self.nodeName ..self.format
 	MOAIFileSystem.saveFile(fullPath, data)
 end
 

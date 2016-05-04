@@ -29,10 +29,13 @@ def _getModulePath( path ):
 
 ##----------------------------------------------------------------##
 class MeshObject( object ):
-	def __init__( self, path ):
+	def __init__( self, path, per_pixel = 256 ):
 		self.fullpath = path
-		self.name = os.path.basename( path )
-		self.format = self.name.split('.')[-1]
+		name = os.path.basename( path )
+		self.name = name.lower()
+		frm = self.name.split('.')[-1]
+		self.format = frm.upper()
+		self._per_pixel = per_pixel
 
 	def __repr__( self ):
 		return "< {} >   {}".format(self.format, self.name)
@@ -42,6 +45,12 @@ class MeshObject( object ):
 
 	def getFormat( self ):
 		return self.format
+
+	def getPerPixel( self ):
+		return self._per_pixel
+
+	def setPerPixel( self, per_pixel ):
+		self._per_pixel = per_pixel
 
 ##----------------------------------------------------------------##
 class MeshExporter( AssetEditorModule ):
@@ -53,7 +62,6 @@ class MeshExporter( AssetEditorModule ):
 		super(MeshExporter, self).__init__()
 		self.config_name = "mesh_export_config"
 		self.export_path = "assets/3ds/"
-		self.pixel_per_point = 256
 		self.objects = []
 		self.config = {}
 
@@ -67,10 +75,22 @@ class MeshExporter( AssetEditorModule ):
 
 		self.toolbar = self.addToolBar( 'mesh_exporter', self.window.addToolBar() )
 
+		self.per_pixel_edit = ppedit = QtGui.QLineEdit( None )
+		ppedit.setMaximumSize( 50, 20 )
+		# intValidator = QtGui.QIntValidator()
+		# ppedit.setValidator( intValidator )
+		ppedit.textChanged.connect( self.onPerPixelChange )
+
+		self.export_path_edit = epedit= QtGui.QLineEdit( None )
+		epedit.textChanged.connect( self.onExportPathChange )
+
 		self.addTool( 'mesh_exporter/add_object', label = 'Add', icon = 'plus_mint' )
 		self.addTool( 'mesh_exporter/remove_object', label = 'Remove', icon = 'minus' )
 		self.addTool( 'mesh_exporter/preview_render', label = 'Preview' )
+		self.addTool( 'mesh_exporter/per_pixel_edit', widget = ppedit )
+		self.addTool( 'mesh_exporter/export_path_edit', widget = epedit )
 		self.addTool( 'mesh_exporter/export', label = 'Export' )
+		self.addTool( 'mesh_exporter/export_all', label = 'ExportAll' )
 
 		self.list = self.window.addWidget( 
 				MeshExporterListWidget( 
@@ -91,17 +111,21 @@ class MeshExporter( AssetEditorModule ):
 
 		signals.connect( 'project.load', 		self.onProjectLoad )
 
+	def onUnload(self):
+		self.saveConfig()
+
 	def updateList( self ):
 		self.list.rebuild()
 
 	def getObjects( self ):
 		return self.objects
 
-	def getObjectPaths( self ):
-		paths = []
+	def getObjectData( self ):
+		data = []
 		for obj in self.objects:
-			paths.append( obj.getPath() )
-		return paths
+			dct = dict(path = obj.getPath(), per_pixel = obj.getPerPixel())
+			data.append( dct )
+		return data
 
 	def openObject( self ):
 		fileName, filt = self.getSceneEditor().openFile( "3D Object (*.fbx *.obj)", "Open 3D Object" )
@@ -109,8 +133,12 @@ class MeshExporter( AssetEditorModule ):
 			self.addObject( fileName )
 			self.saveConfig()
 
-	def addObject( self, fileName ):
-		obj = MeshObject( fileName )
+	def addObject( self, data ):
+		obj = None
+		if type(data) is dict:
+			obj = MeshObject( data.get('path'), data.get('per_pixel') )
+		else:
+			obj = MeshObject( data )
 		self.objects.append(obj)
 		self.onAddObject( obj )
 
@@ -133,8 +161,7 @@ class MeshExporter( AssetEditorModule ):
 
 	def saveConfig( self ):
 		self.config["export_path"] = self.export_path
-		self.config["pixel_per_point"] = self.pixel_per_point
-		self.config["paths"] = self.getObjectPaths()
+		self.config["data"] = self.getObjectData()
 
 		proj = self.getProject()
 		if proj:
@@ -142,11 +169,13 @@ class MeshExporter( AssetEditorModule ):
 			proj.saveConfig()
 
 	def loadConfig( self ):
-		paths = self.config.get( "paths", None )
-		if paths:
+		data = self.config.get( "data", None )
+		if data:
 			self.objects = []
-			for p in paths:
+			for p in data:
 				self.addObject( p )
+		self.export_path = self.config.get("export_path", "")
+		self.export_path_edit.setText( self.export_path )
 
 	##----------------------------------------------------------------##
 	def previewRender( self ):
@@ -155,7 +184,13 @@ class MeshExporter( AssetEditorModule ):
 		if canvas:
 			for obj in selection:
 				node = self.getNodeFromObject( obj )
-				canvas.safeCallMethod( "view", "renderNode", node, obj.getFormat(), self.pixel_per_point )
+				canvas.safeCallMethod( "view", "renderNode", node, obj )
+
+	def exportSelected( self ):
+		pass
+
+	def export( self, obj ):
+		pass
 
 	def exportAll( self ):
 		pass
@@ -163,10 +198,10 @@ class MeshExporter( AssetEditorModule ):
 	def getNodeFromObject( self, obj ):
 		node = None
 		frm = obj.getFormat()
-		if frm == 'fbx':
+		if frm == 'FBX':
 			node = self.getFBXNode( obj.getPath() )
-		elif frm == 'obj':
-			pass
+		elif frm == 'OBJ':
+			node = self.getOBJNode( obj.getPath() )
 		return node
 
 	##----------------------------------------------------------------##
@@ -184,6 +219,8 @@ class MeshExporter( AssetEditorModule ):
 		elif name == 'preview_render':
 			self.previewRender()
 		elif name == 'export':
+			self.exportSelected()
+		elif name == 'export_all':
 			self.exportAll()
 
 	def onAddObject( self, obj ):
@@ -205,6 +242,22 @@ class MeshExporter( AssetEditorModule ):
 		canvas = self.canvas
 		if canvas:
 			canvas.updateCanvas( no_sim = False, forced = True )
+
+	def onPerPixelChange( self, text ):
+		selection = self.list.getSelection()
+		if text and text != '' and text != ' ':
+			per_pixel = float(text)
+			for obj in selection:
+				obj.setPerPixel( per_pixel )
+
+	def onExportPathChange( self, text ):
+		self.export_path = text
+
+	def onItemSelectionChanged( self ):
+		selection = self.list.getSelection()
+		for obj in selection:
+			pp = "%d" % obj.getPerPixel()
+			self.per_pixel_edit.setText( pp )
 
 	##----------------------------------------------------------------##
 	def getFBXNode( self, fileName ):
@@ -231,6 +284,10 @@ class MeshExporter( AssetEditorModule ):
 	# 	# Destroy all objects created by the FBX SDK.
 	# 	# lSdkManager.Destroy()
 
+	def getOBJNode( self, fileName ):
+		node = OBJNode( fileName )
+		return node
+
 ##----------------------------------------------------------------##
 
 MeshExporter().register()
@@ -243,6 +300,9 @@ class MeshExporterListWidget( GenericListWidget ):
 	def updateItemContent( self, item, node, **options ):
 		item.setText( repr(node) )
 
+	def onItemSelectionChanged(self):
+		self.parentModule.onItemSelectionChanged()
+
 ##----------------------------------------------------------------##
 class MeshPreviewCanvas( MOAIEditCanvas ):
 	def __init__( self, *args, **kwargs ):
@@ -252,3 +312,38 @@ class MeshPreviewCanvas( MOAIEditCanvas ):
 class OBJNode( object ):
 	def __init__( self, path ):
 		self.fullpath = path
+
+		self.commands = {
+			'v' : "writeVertex",
+			'vn' : "writeNormal",
+			'vt' : "writeUV",
+			'g' : "writeGroup",
+			'f' : "writeFace",
+		}
+
+		self.parse()
+
+	def parse( self ):
+		file = self.fullpath
+		with open(file, "rU") as f:
+			for line in f:
+				s = [x.strip() for x in line.split()]
+				if s and s[0] in self.commands:
+					name = self.commands[s[0]]
+					method = getattr(self, name)
+					method(s)
+
+	def writeFace( self, data ):
+		print("writeFace", data)
+
+	def writeGroup( self, data ):
+		print("writeGroup", data)
+
+	def writeVertex( self, data ):
+		print("writeVertex", data)
+
+	def writeNormal( self, data ):
+		print("writeNormal", data)
+
+	def writeUV( self, data ):
+		print("writeUV", data)

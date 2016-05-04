@@ -11,33 +11,13 @@ local FBXObject = Class(MeshObject, "FBXObject")
 
 function FBXObject:init( rootNode, size )
 	MeshObject.init( self )
-
-	self:setSize( size )
-	self:setRootNode( rootNode )
+	self._size = size or 256
 end
 
 ---------------------------------------------------------------------------------
-function FBXObject:setSize( size )
-	self._size = size
-end
-
----------------------------------------------------------------------------------
-function FBXObject:setRootNode( rootNode )
-	print("FbxLayerElement", rootNode.FbxLayerElement)
-	local totalChilds = rootNode.GetChildCount()
-
-	for i = 0, totalChilds-1 do
-		local child = rootNode.GetChild(i)
-		local mesh = child.GetMesh()
-		if mesh then
-			self:setNode( child )
-			self:findMaterials( child, rootNode.FbxLayerElement )
-			break
-		end
-	end
-end
-
 function FBXObject:setNode( node )
+	self:initWithParams()
+
 	print("FBXObject setNode", node)
 	self.nodeName = node.GetName()
 	local mesh = node.GetMesh()
@@ -46,7 +26,12 @@ function FBXObject:setNode( node )
 	local vertexCount = mesh.GetPolygonVertexCount()
 	print("polyCount", polyCount)
 	print("vertexCount", vertexCount)
-	self.vbo:reserve( polyCount * 6 * self.vertexFormat:getVertexSize() ) --polyCount * vertexCount )
+
+	local totalIndexes = polyCount * 6
+	self.vbo:reserve( totalIndexes * self.vertexFormat:getVertexSize() ) --polyCount * vertexCount )
+
+	self.ibo:setIndexSize ( 2 )
+	self.ibo:reserve ( totalIndexes * 2 )
 
 	local controlPoints = mesh.GetControlPoints()
 	local layer = mesh.GetLayer( 0 )
@@ -62,6 +47,7 @@ function FBXObject:setNode( node )
 		local uvp = {}
 		local normalsp = {}
 		print("POLY:", p)
+
 		for v = 0, polySize-1 do
 			local vertexIndex = mesh.GetPolygonVertex(p,v)
 			table.insert(poly, vertexIndex)
@@ -75,41 +61,48 @@ function FBXObject:setNode( node )
 			-- print("NORMAL", normalsArray[uvIndex], normalsArray[vertexIndex])
 		end
 
-		self:setPoly(
-			controlPoints[poly[1]],
-			controlPoints[poly[2]],
-			controlPoints[poly[3]],
-			controlPoints[poly[4]],
-			normalsp[1], normalsp[2], normalsp[3], normalsp[4],
-			uvp[1], uvp[2], uvp[3], uvp[4]
-			)
+		self:setFace( controlPoints, poly, normalsp, uvp )
 	end
 end
 
-function FBXObject:setPoly( p1, p2, p3, p4, n1, n2, n3, n4, uv1, uv2, uv3, uv4 )
-	self:setTriangle( p1, p2, p3, n1, n2, n3, uv1, uv2, uv3 )
-	self:setTriangle( p3, p4, p1, n1, n3, n4, uv3, uv4, uv1 )
+function FBXObject:setFace( points, idx, normals, uv )
+	if idx then
+		local total = #idx
+		if total >= 3 then
+			self:setTriangle( idx[1], idx[2], idx[3],
+				points[idx[1]], points[idx[2]], points[idx[3]],
+				normals[1], normals[2], normals[3],
+				uv[1], uv[2], uv[3])
+		end
+		if total == 4 then
+			self:setTriangle( idx[3], idx[4], idx[1],
+				points[idx[3]], points[idx[4]], points[idx[1]],
+				normals[3], normals[4], normals[1],
+				uv[3], uv[4], uv[1])
+		end
+	end
 end
 
-function FBXObject:setTriangle( p1, p2, p3, n1, n2, n3, uv1, uv2, uv3 )
+function FBXObject:setTriangle( id1, id2, id3, p1, p2, p3, n1, n2, n3, uv1, uv2, uv3 )
 	-- print("setTriangle")
-	self:setVertex( p1, n1, uv1 )
-	self:setVertex( p2, n2, uv2 )
-	self:setVertex( p3, n3, uv3 )
+	self:setVertex( id1, p1, n1, uv1 )
+	self:setVertex( id2, p2, n2, uv2 )
+	self:setVertex( id3, p3, n3, uv3 )
 end
 
-function FBXObject:setVertex( p, n, uv )
+function FBXObject:setVertex( id, p, n, uv )
+	self.ibo:writeU16( id )
+
 	local sz = self._size
 	-- print("setVertex", p[0], p[1], p[2], "uv", uv[0], uv[1])
 	self.vbo:writeFloat ( p[0]*sz, p[1]*sz, p[2]*sz )
-	-- print("setVertex",p[0]*sz, p[1]*sz, p[2]*sz)
 	-- self.vbo:writeFloat ( n[0], n[1], n[2] )
 	self.vbo:writeFloat ( uv[0], uv[1] )
 	self.vbo:writeColor32 ( 1, 1, 1 )
 end
 
 ---------------------------------------------------------------------------------
-function FBXObject:findMaterials( node, element )
+function FBXObject:setFBXMaterials( node, element )
 	local totalMaterials = node.GetMaterialCount()
 	local totalProperty = element.sTypeTextureCount()
 
@@ -123,12 +116,6 @@ function FBXObject:findMaterials( node, element )
 			end
 		end
 	end
-end
-
-function FBXObject:setTexture( textureName, texturePath )
-	self._textureName = textureName
-	self._texturePath = texturePath
-	print("setTexture", textureName, texturePath)
 end
 
 ---------------------------------------------------------------------------------
