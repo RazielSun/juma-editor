@@ -104,6 +104,19 @@ end
 function Canvas3DView:createMeshFromFBX( node, rootNode, size )
 	local total = node.GetChildCount()
 
+	print(node.GetName())
+
+	-- print("rootNode LclTranslation",node.LclTranslation)
+	-- print("rootNode LclRotation",node.LclRotation)
+ -- 	print("rootNode LclScaling",node.LclScaling)
+ 	local trsl = node.LclTranslation.Get()
+ 	print("rootNode Translation",trsl[0],trsl[1],trsl[2])
+ 	local rot = node.LclRotation.Get()
+	print("rootNode Rotation",rot[0],rot[1],rot[2])
+	local scl = node.LclScaling.Get()
+ 	print("rootNode Scaling",scl[0], scl[1], scl[2])
+ 	-- print("rootNode GlobalTransform",node.GlobalTransform)
+
 	for i = 0, total-1 do
 		local child = node.GetChild(i)
 		local totalChilds = child.GetChildCount()

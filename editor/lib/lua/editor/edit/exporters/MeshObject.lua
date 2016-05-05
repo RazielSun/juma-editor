@@ -67,17 +67,33 @@ end
 function MeshObject:setFace( points, idx, normals, uv )
 	if idx then
 		local total = #idx
+		
 		if total >= 3 then
 			self:setTriangle( idx[1], idx[2], idx[3],
 				points[idx[1]], points[idx[2]], points[idx[3]],
 				normals[1], normals[2], normals[3],
 				uv[1], uv[2], uv[3])
 		end
-		if total == 4 then
+
+		if total >= 4 then
 			self:setTriangle( idx[3], idx[4], idx[1],
 				points[idx[3]], points[idx[4]], points[idx[1]],
 				normals[3], normals[4], normals[1],
 				uv[3], uv[4], uv[1])
+		end
+
+		if total >= 5 then
+			self:setTriangle( idx[4], idx[5], idx[1],
+				points[idx[4]], points[idx[5]], points[idx[1]],
+				normals[4], normals[5], normals[1],
+				uv[4], uv[5], uv[1])
+		end
+
+		if total >= 6 then
+			self:setTriangle( idx[5], idx[6], idx[1],
+				points[idx[5]], points[idx[6]], points[idx[1]],
+				normals[5], normals[6], normals[1],
+				uv[5], uv[6], uv[1])
 		end
 	end
 end

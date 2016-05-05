@@ -20,15 +20,29 @@ function FBXObject:setNode( node )
 
 	self.nodeName = node.GetName()
 	print("FBXObject setNode", node, self.nodeName)
+
+ 	local trsl = node.LclTranslation.Get()
+ 	print("node Translation",trsl[0],trsl[1],trsl[2])
+ 	local rot = node.LclRotation.Get()
+	print("node Rotation",rot[0],rot[1],rot[2])
+	local scl = node.LclScaling.Get()
+ 	print("node Scaling",scl[0], scl[1], scl[2])
+
 	local mesh = node.GetMesh()
 
 	local polyCount = mesh.GetPolygonCount()
-	local vertexCount = mesh.GetPolygonVertexCount()
-	print("polyCount", polyCount)
-	print("vertexCount", vertexCount)
-
-	local totalIndexes = polyCount * 6
-	self.vbo:reserve( totalIndexes * self.vertexFormat:getVertexSize() ) --polyCount * vertexCount )
+	local totalIndexes = 0
+	for p = 0, polyCount-1 do
+		local size = mesh.GetPolygonSize(p)
+		local count = 0
+		if size == 6 then count = 12
+		elseif size == 5 then count = 9
+		elseif size == 4 then count = 6
+		else count = 3 end
+		totalIndexes = totalIndexes + count
+	end
+	print("polyCount", polyCount, totalIndexes)
+	self.vbo:reserve( totalIndexes * self.vertexFormat:getVertexSize() )
 
 	self.ibo:setIndexSize ( 2 )
 	self.ibo:reserve ( totalIndexes * 2 )
@@ -46,7 +60,7 @@ function FBXObject:setNode( node )
 		local poly = {}
 		local uvp = {}
 		local normalsp = {}
-		print("POLY:", p)
+		-- print("POLY:", p)
 
 		for v = 0, polySize-1 do
 			local vertexIndex = mesh.GetPolygonVertex(p,v)
@@ -56,10 +70,10 @@ function FBXObject:setNode( node )
 			local normalPoint = normalsArray[vertexIndex]
 			table.insert(uvp, uvPoint)
 			table.insert(normalsp, normalPoint)
-
-			print("V:", vertexIndex, controlPoints[vertexIndex])
+			-- print("V:", vertexIndex, controlPoints[vertexIndex])
 			-- print("NORMAL", normalsArray[uvIndex], normalsArray[vertexIndex])
 		end
+		-- print("total vertex:", #poly)
 
 		self:setFace( controlPoints, poly, normalsp, uvp )
 	end
