@@ -6,6 +6,8 @@ from PySide import QtGui, QtCore
 from PySide.QtCore import Qt
 
 from juma.core import  *
+from juma.moai.MOAIRuntime import isLuaInstance, getLuaClassName
+
 from juma.MainEditor.Introspector 		import IntrospectorObject, CommonIntrospectorObject
 from FrameworkEditor					import registerFrameworkEditorBuilder
 from juma.qt.controls.PropertyEditor 	import PropertyEditor
@@ -112,8 +114,7 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 		introspector = self.getIntrospector()
 		self.target = target
 		self.property.setTarget( target )
-		targetName = target.className(target)
-		if targetName == 'Entity': # FIXME ? IsInstance
+		if isLuaInstance( target, 'Entity' ):
 			#add component editors
 			for com in target.getComponentsList( target ).values():
 				editor = introspector.addObjectEditor(

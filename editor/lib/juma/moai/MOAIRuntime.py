@@ -31,6 +31,18 @@ signals.register( 'moai.set_sim_step' )
 import bridge
 
 ##----------------------------------------------------------------##
+def isLuaInstance( obj, name ):
+	if isinstance( obj, moaipy._LuaObject ):
+		return _G.isClassInstance( obj, name )
+	else:
+		return False
+
+def getLuaClassName( obj ):
+	if obj and isinstance( obj, moaipy._LuaTable ):
+		return obj.className( obj )
+	return None
+
+##----------------------------------------------------------------##
 ## MOAIRuntime
 ##----------------------------------------------------------------##
 class MOAIRuntime( EditorModule ):

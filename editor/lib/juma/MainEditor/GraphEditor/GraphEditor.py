@@ -7,7 +7,7 @@ from PySide.QtCore      import Qt
 from PySide.QtGui     	import QStyle, QBrush, QColor, QPen, QIcon, QPalette
 
 from juma.core                			import signals, app, AssetRefType
-from juma.moai.MOAIRuntime 				import MOAIRuntime, MOAILuaDelegate
+from juma.moai.MOAIRuntime 				import MOAIRuntime, MOAILuaDelegate, isLuaInstance, getLuaClassName
 from juma.qt.IconCache 					import getIcon
 from juma.qt.controls.GenericTreeWidget import GenericTreeWidget, GenericTreeFilter
 from juma.MainEditor.MainEditor       	import MainEditorModule
@@ -364,7 +364,7 @@ class GraphTreeWidget( GenericTreeWidget ):
 		if node and (node is not None):
 			className = node.className( node )
 
-			if className == 'Prefab':
+			if isLuaInstance( node, 'Prefab' ):
 				item.setText( 0, node.name or '<prefab>' )
 				item.setIcon( 0, getIcon('prefab') )
 			else:
