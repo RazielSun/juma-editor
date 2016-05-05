@@ -9,6 +9,7 @@ from PySide.QtCore            	import Qt
 
 from juma.core                	import signals, app
 from AssetEditor             	import AssetEditorModule
+from MeshNodes 					import OBJNode
 from juma.moai.MOAIEditCanvas 	import MOAIEditCanvas
 from juma.qt.controls.GenericListWidget import GenericListWidget
 
@@ -307,43 +308,3 @@ class MeshExporterListWidget( GenericListWidget ):
 class MeshPreviewCanvas( MOAIEditCanvas ):
 	def __init__( self, *args, **kwargs ):
 		super( MeshPreviewCanvas, self ).__init__( *args, **kwargs )
-
-##----------------------------------------------------------------##
-class OBJNode( object ):
-	def __init__( self, path ):
-		self.fullpath = path
-
-		self.commands = {
-			'v' : "writeVertex",
-			'vn' : "writeNormal",
-			'vt' : "writeUV",
-			'g' : "writeGroup",
-			'f' : "writeFace",
-		}
-
-		self.parse()
-
-	def parse( self ):
-		file = self.fullpath
-		with open(file, "rU") as f:
-			for line in f:
-				s = [x.strip() for x in line.split()]
-				if s and s[0] in self.commands:
-					name = self.commands[s[0]]
-					method = getattr(self, name)
-					method(s)
-
-	def writeFace( self, data ):
-		print("writeFace", data)
-
-	def writeGroup( self, data ):
-		print("writeGroup", data)
-
-	def writeVertex( self, data ):
-		print("writeVertex", data)
-
-	def writeNormal( self, data ):
-		print("writeNormal", data)
-
-	def writeUV( self, data ):
-		print("writeUV", data)

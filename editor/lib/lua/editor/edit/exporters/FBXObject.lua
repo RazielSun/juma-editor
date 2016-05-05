@@ -9,7 +9,7 @@ local MeshObject = require("edit.exporters.MeshObject")
 
 local FBXObject = Class(MeshObject, "FBXObject")
 
-function FBXObject:init( rootNode, size )
+function FBXObject:init( size )
 	MeshObject.init( self )
 	self._size = size or 256
 end
@@ -18,8 +18,8 @@ end
 function FBXObject:setNode( node )
 	self:initWithParams()
 
-	print("FBXObject setNode", node)
 	self.nodeName = node.GetName()
+	print("FBXObject setNode", node, self.nodeName)
 	local mesh = node.GetMesh()
 
 	local polyCount = mesh.GetPolygonCount()
@@ -65,36 +65,9 @@ function FBXObject:setNode( node )
 	end
 end
 
-function FBXObject:setFace( points, idx, normals, uv )
-	if idx then
-		local total = #idx
-		if total >= 3 then
-			self:setTriangle( idx[1], idx[2], idx[3],
-				points[idx[1]], points[idx[2]], points[idx[3]],
-				normals[1], normals[2], normals[3],
-				uv[1], uv[2], uv[3])
-		end
-		if total == 4 then
-			self:setTriangle( idx[3], idx[4], idx[1],
-				points[idx[3]], points[idx[4]], points[idx[1]],
-				normals[3], normals[4], normals[1],
-				uv[3], uv[4], uv[1])
-		end
-	end
-end
-
-function FBXObject:setTriangle( id1, id2, id3, p1, p2, p3, n1, n2, n3, uv1, uv2, uv3 )
-	-- print("setTriangle")
-	self:setVertex( id1, p1, n1, uv1 )
-	self:setVertex( id2, p2, n2, uv2 )
-	self:setVertex( id3, p3, n3, uv3 )
-end
-
 function FBXObject:setVertex( id, p, n, uv )
 	self.ibo:writeU16( id )
-
 	local sz = self._size
-	-- print("setVertex", p[0], p[1], p[2], "uv", uv[0], uv[1])
 	self.vbo:writeFloat ( p[0]*sz, p[1]*sz, p[2]*sz )
 	-- self.vbo:writeFloat ( n[0], n[1], n[2] )
 	self.vbo:writeFloat ( uv[0], uv[1] )

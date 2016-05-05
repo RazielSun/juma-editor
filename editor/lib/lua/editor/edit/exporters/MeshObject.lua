@@ -64,6 +64,34 @@ function MeshObject:setTexture( textureName, texturePath )
 	print("setTexture", textureName, texturePath)
 end
 
+function MeshObject:setFace( points, idx, normals, uv )
+	if idx then
+		local total = #idx
+		if total >= 3 then
+			self:setTriangle( idx[1], idx[2], idx[3],
+				points[idx[1]], points[idx[2]], points[idx[3]],
+				normals[1], normals[2], normals[3],
+				uv[1], uv[2], uv[3])
+		end
+		if total == 4 then
+			self:setTriangle( idx[3], idx[4], idx[1],
+				points[idx[3]], points[idx[4]], points[idx[1]],
+				normals[3], normals[4], normals[1],
+				uv[3], uv[4], uv[1])
+		end
+	end
+end
+
+function MeshObject:setTriangle( id1, id2, id3, p1, p2, p3, n1, n2, n3, uv1, uv2, uv3 )
+	self:setVertex( id1, p1, n1, uv1 )
+	self:setVertex( id2, p2, n2, uv2 )
+	self:setVertex( id3, p3, n3, uv3 )
+end
+
+function MeshObject:setVertex( id, p, n, uv )
+	--
+end
+
 ---------------------------------------------------------------------------------
 function MeshObject:save( export_path )
 	local data = MOAISerializer.serializeToString(self.mesh)

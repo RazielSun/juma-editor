@@ -112,7 +112,7 @@ function Canvas3DView:createMeshFromFBX( node, rootNode, size )
 		else
 			local mesh = child.GetMesh()
 			if mesh then
-				local model = FBXObject( child, size )
+				local model = FBXObject( size )
 				model:setFBXMaterials( child, rootNode.FbxLayerElement )
 				model:setNode( child )
 				model:createMesh()
@@ -125,8 +125,15 @@ function Canvas3DView:createMeshFromFBX( node, rootNode, size )
 end
 
 function Canvas3DView:renderOBJ( node, obj )
-	--OBJObject( node, pixels )
-	--obj.getPerPixel()
+	local size = obj.getPerPixel( obj )
+
+	local model = OBJObject( size )
+	model:setOBJMaterials( node )
+	model:setNode( node )
+	model:createMesh()
+
+	local prop = self:createProp()
+	prop:setDeck( model:getMesh() )
 end
 
 function Canvas3DView:createProp()
