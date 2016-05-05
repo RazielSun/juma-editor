@@ -58,7 +58,7 @@ class ObjectContainer( QtGui.QWidget ):
 
 		ui.nameBtn.setToolButtonStyle( Qt.ToolButtonTextBesideIcon )
 		
-		# ui.nameBtn.setIcon( getIcon( 'grid' ) )
+		ui.nameBtn.setIcon( getIcon( 'dot' ) )
 		ui.menuBtn.setIcon( getIcon( 'list' ) )
 		ui.foldBtn.setIcon( getIcon( 'arrow_down' ) )
 
@@ -113,7 +113,6 @@ class ObjectContainer( QtGui.QWidget ):
 		repolishWidget( self.ui.body )
 		repolishWidget( self.ui.header )
 		repolishWidget( self.ui.menuBtn )
-		# repolishWidget( self.ui.buttonKey )
 		repolishWidget( self.ui.foldBtn )
 		repolishWidget( self.ui.nameBtn )
 
@@ -304,12 +303,14 @@ class IntrospectorInstance(object):
 				model = ModelManager.get().getModelFromTypeId( typeId )
 				if model:
 					container.setTitle( model.name )
+				else:
+					container.setTitle( repr( typeId ) )
 				count = self.body.mainLayout.count()
 				assert count > 0
 				self.body.mainLayout.insertWidget( count - 1, container )
 				menuName = option.get( 'context_menu', editor.getContextMenu() )
 				container.setContextMenu( menuName )
-
+				container.ownerEditor = editor
 			else:
 				container.hide()
 

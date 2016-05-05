@@ -26,6 +26,13 @@ class FrameworkEditorObjectMixin(object):
 	def __init__(self):
 		super(FrameworkEditorObjectMixin, self).__init__()
 
+	def initFieldContextMenu( self, propertyEditor ):
+		self.propertyEditor = propertyEditor
+		propertyEditor.contextMenuRequested.connect( self.onFieldContextMenuRequested )
+
+	def onFieldContextMenuRequested( self, target, fieldId ):
+		pass
+
 	#foldstate
 	def initFoldState( self ):
 		self.getContainer().foldChanged.connect( self.onFoldChanged )
@@ -64,8 +71,7 @@ class ComponentEditor(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 
 	def initWidget( self, container, objectContainer ):
 		self.property = super( ComponentEditor, self ).initWidget( container, objectContainer )
-		
-		# self.initFieldContextMenu( self.property )
+		self.initFieldContextMenu( self.property )
 		self.initFoldState()
 		# self.initAnimatorButton()
 		return self.property
@@ -95,7 +101,7 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 		# self.header.buttonGoto   .clicked .connect ( self.onGotoProto )
 		# self.header.buttonUnlink .clicked .connect ( self.onUnlinkProto )
 		
-		# self.initFieldContextMenu( self.property )
+		self.initFieldContextMenu( self.property )
 		self.initFoldState()
 		# self.initAnimatorButton()
 

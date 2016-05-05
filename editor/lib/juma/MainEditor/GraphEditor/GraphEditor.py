@@ -77,6 +77,11 @@ class GraphEditor( MainEditorModule ):
 			'----',
 		], self )
 
+		self.addMenu( 'component_context', dict( label = 'Selected Component' ) )
+		self.addMenuItem( 'component_context/remove_component', 
+			dict( label = 'Remove' )
+			)
+
 		# SIGNALS
 		signals.connect( 'moai.clean',        self.onMoaiClean        )
 
@@ -155,8 +160,8 @@ class GraphEditor( MainEditorModule ):
 		self.tree.setNodeExpanded( entity, False )
 
 	##----------------------------------------------------------------##
-	def onMenu( self, tool ):
-		name = tool.name
+	def onMenu( self, menu ):
+		name = menu.name
 
 		if name == 'create_entity':
 			self.createEntity()
@@ -164,6 +169,11 @@ class GraphEditor( MainEditorModule ):
 			self.doCommand( 'main_editor/clone_entity' )
 		elif name == 'remove_entity':
 			self.doCommand( 'main_editor/remove_entity' )
+
+		elif name == 'remove_component':
+			context = menu.getContext()
+			if context:
+				self.doCommand( 'main_editor/remove_component', target = context )
 
 	def onTool( self, tool ):
 		name = tool.name

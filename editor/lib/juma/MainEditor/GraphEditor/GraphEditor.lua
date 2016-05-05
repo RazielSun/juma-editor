@@ -145,7 +145,6 @@ function CmdCreateComponent:redo()
 	-- -- end
 	-- component.__guid = generateGUID()
 	self.createdComponent = component
-	print(self.targetEntity, "add", component, self.componentName)
 	self.targetEntity:add( component )
 	-- if component.onEditorInit then
 	-- 	component:onEditorInit()
@@ -263,3 +262,28 @@ function CmdCloneEntity:undo()
 end
 
 EditorCommand.register( CmdCloneEntity, 'main_editor/clone_entity' )
+
+--------------------------------------------------------------------
+local CmdRemoveComponent = Class( EditorCommand, "CmdRemoveComponent" )
+
+function CmdRemoveComponent:setup( option )
+	self.target = option['target']
+end
+
+function CmdRemoveComponent:redo()
+	local entity = self.target.entity
+	if entity then
+		entity:remove( self.target )
+	end
+	self.previousParent = entity
+	emitPythonSignal( 'component.removed', self.target, self.previousParent )
+end
+
+function CmdRemoveComponent:undo()
+	if self.previousParent then
+		self.previousParent:add( self.target )
+	end
+	emitPythonSignal( 'component.added', self.target, self.previousParent )	
+end
+
+EditorCommand.register( CmdRemoveComponent, 'main_editor/remove_component' )

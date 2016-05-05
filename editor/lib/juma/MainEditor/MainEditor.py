@@ -68,8 +68,8 @@ class MainEditor( TopEditorModule ):
         runtime.reset()
 
     # Callbacks
-    def onMenu(self, node):
-        name = node.name
+    def onMenu(self, menu):
+        name = menu.name
         if name == 'reload_project':
             self.reloadProject()
 
@@ -89,8 +89,8 @@ class MainEditor( TopEditorModule ):
             self.getModule('debug_draw_dock').show()
 
 
-    def onTool(self, node):
-        name = node.name
+    def onTool(self, tool):
+        name = tool.name
 
 ##----------------------------------------------------------------##
 class MainEditorModule( SubEditorModule ):
