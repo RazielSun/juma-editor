@@ -188,13 +188,21 @@ class MeshExporter( AssetEditorModule ):
 				canvas.safeCallMethod( "view", "renderNode", node, obj )
 
 	def exportSelected( self ):
-		pass
+		self.canvas.safeCallMethod( "view", "clearModels" )
+		selection = self.list.getSelection()
+		for obj in selection:
+			self.export( obj )
+		self.canvas.safeCallMethod( "view", "saveBy", self.export_path )
 
 	def export( self, obj ):
-		pass
+		node = self.getNodeFromObject( obj )
+		self.canvas.safeCallMethod( "view", "createModel", node, obj )
 
 	def exportAll( self ):
-		pass
+		self.canvas.safeCallMethod( "view", "clearModels" )
+		for obj in self.objects:
+			self.export( obj )
+		self.canvas.safeCallMethod( "view", "saveBy", self.export_path )
 
 	def getNodeFromObject( self, obj ):
 		node = None
@@ -272,14 +280,6 @@ class MeshExporter( AssetEditorModule ):
 				rootNode.FbxLayerElement = FbxLayerElement
 				return rootNode
 		return None
-
-	# 	self.parseFBXScene( lScene, fileName )
-
-	# 	# ListAllMeshesCount( lScene )
-	# 	# TraceAllMeshes( lScene )
-
-	# 	# newName = 
-	# 	# path = os.path.dirname( fileName )
 	# 	# FbxCommon.SaveScene(lSdkManager, lScene, path + '/' + 'output.fbx')
 
 	# 	# Destroy all objects created by the FBX SDK.

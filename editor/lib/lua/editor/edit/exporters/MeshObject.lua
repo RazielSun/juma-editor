@@ -8,8 +8,10 @@
 local MeshObject = Class("MeshObject")
 
 function MeshObject:init()
-	self._textured = false
-
+	self.loc = {0,0,0}
+	self.rot = {0,0,0}
+	self.scl = {1,1,1}
+	
 	self.nodeName = 'none'
 	self.format = '.mesh'
 end
@@ -36,15 +38,19 @@ function MeshObject:createMesh()
 
 	local mesh = MOAIMesh.new ()
 	mesh:setVertexBuffer( vbo, vertexFormat )
+	mesh:setPrimType ( MOAIMesh.GL_TRIANGLES )
+	mesh:setShader ( MOAIShaderMgr.getShader( MOAIShaderMgr.MESH_SHADER ) )
+	mesh:setTotalElements( vbo:countElements( vertexFormat ) )
+	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
+
 	local texturePath = self._texturePath
 	if texturePath then
 		mesh:setTexture ( texturePath )
 	end
-	mesh:setPrimType ( MOAIMesh.GL_TRIANGLES )
-	mesh:setShader ( MOAIShaderMgr.getShader( MOAIShaderMgr.MESH_SHADER ) )
-	mesh:setTotalElements( vbo:countElements( vertexFormat ) )
-	-- print("vbo:computeBounds( vertexFormat )", vbo:computeBounds( vertexFormat ), vbo, vertexFormat)
-	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
+
+	mesh.loc = self.loc
+	mesh.rot = self.rot
+	mesh.scl = self.scl
 
 	self.mesh = mesh
 end
@@ -111,7 +117,6 @@ end
 ---------------------------------------------------------------------------------
 function MeshObject:save( export_path )
 	local data = MOAISerializer.serializeToString(self.mesh)
-	-- path = path or ''
 	local export_path = export_path or 'assets/3ds/'
 	local fullPath = export_path .. self.nodeName ..self.format
 	MOAIFileSystem.saveFile(fullPath, data)

@@ -22,12 +22,16 @@ function FBXObject:setNode( node )
 	print("FBXObject setNode", node, self.nodeName)
 
  	local trsl = node.LclTranslation.Get()
- 	print("node Translation",trsl[0],trsl[1],trsl[2])
+ 	self.loc = {trsl[0], trsl[1], trsl[2]}
  	local rot = node.LclRotation.Get()
-	print("node Rotation",rot[0],rot[1],rot[2])
+ 	self.rot = {rot[0],rot[1],rot[2]}
 	local scl = node.LclScaling.Get()
- 	print("node Scaling",scl[0], scl[1], scl[2])
+	self.scl = {scl[0], scl[1], scl[2]}
 
+	print("LOC", unpack(self.loc))
+	print("ROT", unpack(self.rot))
+	print("SCL", unpack(self.scl))
+	
 	local mesh = node.GetMesh()
 
 	local polyCount = mesh.GetPolygonCount()
@@ -50,7 +54,10 @@ function FBXObject:setNode( node )
 	local controlPoints = mesh.GetControlPoints()
 	local layer = mesh.GetLayer( 0 )
 	local uvs = layer.GetUVs()
-	local uvArray = uvs.GetDirectArray()
+	local uvArray = nil
+	if uvs then
+		uvArray = uvs.GetDirectArray()
+	end
 
 	local normals = layer.GetNormals()
 	local normalsArray = normals.GetDirectArray()
@@ -65,11 +72,15 @@ function FBXObject:setNode( node )
 		for v = 0, polySize-1 do
 			local vertexIndex = mesh.GetPolygonVertex(p,v)
 			table.insert(poly, vertexIndex)
-			local uvIndex = mesh.GetTextureUVIndex(p,v)
-			local uvPoint = uvArray[uvIndex]
+
 			local normalPoint = normalsArray[vertexIndex]
-			table.insert(uvp, uvPoint)
 			table.insert(normalsp, normalPoint)
+
+			local uvIndex = mesh.GetTextureUVIndex(p,v)
+			if uvArray then
+				local uvPoint = uvArray[uvIndex]
+				table.insert(uvp, uvPoint)
+			end
 			-- print("V:", vertexIndex, controlPoints[vertexIndex])
 			-- print("NORMAL", normalsArray[uvIndex], normalsArray[vertexIndex])
 		end
@@ -81,10 +92,11 @@ end
 
 function FBXObject:setVertex( id, p, n, uv )
 	self.ibo:writeU16( id )
-	local sz = self._size
-	self.vbo:writeFloat ( p[0]*sz, p[1]*sz, p[2]*sz )
+	local s = self._size
+	local sx, sy, sz = unpack(self.scl)
+	self.vbo:writeFloat ( p[0]*s*sx, p[1]*s*sy, p[2]*s*sz )
 	-- self.vbo:writeFloat ( n[0], n[1], n[2] )
-	self.vbo:writeFloat ( uv[0], uv[1] )
+	self.vbo:writeFloat ( uv and uv[0] or 0, uv and uv[1] or 0 )
 	self.vbo:writeColor32 ( 1, 1, 1 )
 end
 

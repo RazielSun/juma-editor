@@ -19,6 +19,7 @@ function Canvas3DView:init( canvasEnv )
 	self.layer = MOAILayer.new()
 
 	self.props = {}
+	self.models = {}
 end
 
 ---------------------------------------------------------------------------------
@@ -81,74 +82,6 @@ function Canvas3DView:updateCanvas()
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DView:renderNode( node, params )
-	self:clearProps()
-
-	print("renderNode", node, params)
-	local ftype = params.getFormat( params )
-	if ftype == 'FBX' then
-		self:renderFBX( node, params )
-	elseif ftype == 'OBJ' then
-		self:renderOBJ( node, params )
-	end
-
-	self:updateCanvas()
-end
-
-function Canvas3DView:renderFBX( rootNode, obj )
-	local size = obj.getPerPixel( obj )
-
-	self:createMeshFromFBX( rootNode, rootNode, size )
-end
-
-function Canvas3DView:createMeshFromFBX( node, rootNode, size )
-	local total = node.GetChildCount()
-
-	print(node.GetName())
-
-	-- print("rootNode LclTranslation",node.LclTranslation)
-	-- print("rootNode LclRotation",node.LclRotation)
- -- 	print("rootNode LclScaling",node.LclScaling)
- 	local trsl = node.LclTranslation.Get()
- 	print("rootNode Translation",trsl[0],trsl[1],trsl[2])
- 	local rot = node.LclRotation.Get()
-	print("rootNode Rotation",rot[0],rot[1],rot[2])
-	local scl = node.LclScaling.Get()
- 	print("rootNode Scaling",scl[0], scl[1], scl[2])
- 	-- print("rootNode GlobalTransform",node.GlobalTransform)
-
-	for i = 0, total-1 do
-		local child = node.GetChild(i)
-		local totalChilds = child.GetChildCount()
-		if totalChilds > 0 then
-			self:createMeshFromFBX( child, rootNode, size )
-		else
-			local mesh = child.GetMesh()
-			if mesh then
-				local model = FBXObject( size )
-				model:setFBXMaterials( child, rootNode.FbxLayerElement )
-				model:setNode( child )
-				model:createMesh()
-
-				local prop = self:createProp()
-				prop:setDeck( model:getMesh() )
-			end
-		end
-	end
-end
-
-function Canvas3DView:renderOBJ( node, obj )
-	local size = obj.getPerPixel( obj )
-
-	local model = OBJObject( size )
-	model:setOBJMaterials( node )
-	model:setNode( node )
-	model:createMesh()
-
-	local prop = self:createProp()
-	prop:setDeck( model:getMesh() )
-end
-
 function Canvas3DView:createProp()
 	local prop = MOAIProp.new()
 	prop:setCullMode ( MOAIGraphicsProp.CULL_BACK )
@@ -163,6 +96,93 @@ function Canvas3DView:clearProps()
 		self.layer:removeProp( prop )
 	end
 	self.props = {}
+end
+
+function Canvas3DView:createPropFromModels()
+	for i, model in ipairs(self.models) do
+		local prop = self:createProp()
+		prop:setDeck( model:getMesh() )
+		prop:setLoc( unpack(model.loc) )
+		prop:setRot( unpack(model.rot) )
+	end
+end
+
+---------------------------------------------------------------------------------
+function Canvas3DView:addModel( model )
+	table.insert( self.models, model )
+end
+
+function Canvas3DView:clearModels()
+	for i, m in ipairs(self.models) do
+		self.models[i] = nil
+	end
+	self.models = {}
+end
+
+function Canvas3DView:createModel( node, params )
+	print("createModel", node, params)
+	local ftype = params.getFormat( params )
+	if ftype == 'FBX' then
+		self:renderFBX( node, params )
+	elseif ftype == 'OBJ' then
+		self:renderOBJ( node, params )
+	end
+end
+
+---------------------------------------------------------------------------------
+function Canvas3DView:renderNode( node, params )
+	self:clearModels()
+	self:createModel( node, params )
+
+	self:clearProps()
+	self:createPropFromModels()
+
+	self:updateCanvas()
+end
+
+function Canvas3DView:renderFBX( rootNode, obj )
+	local size = obj.getPerPixel( obj )
+
+	self:createMeshFromFBX( rootNode, rootNode, size )
+end
+
+function Canvas3DView:createMeshFromFBX( node, rootNode, size )
+	local total = node.GetChildCount()
+
+	for i = 0, total-1 do
+		local child = node.GetChild(i)
+		local totalChilds = child.GetChildCount()
+		if totalChilds > 0 then
+			self:createMeshFromFBX( child, rootNode, size )
+		else
+			local mesh = child.GetMesh()
+			if mesh then
+				local model = FBXObject( size )
+				model:setFBXMaterials( child, rootNode.FbxLayerElement )
+				model:setNode( child )
+				model:createMesh()
+				self:addModel( model )
+			end
+		end
+	end
+end
+
+function Canvas3DView:renderOBJ( node, obj )
+	local size = obj.getPerPixel( obj )
+
+	local model = OBJObject( size )
+	model:setOBJMaterials( node )
+	model:setNode( node )
+	model:createMesh()
+
+	self:addModel( model )
+end
+
+---------------------------------------------------------------------------------
+function Canvas3DView:saveBy( path )
+	for i, model in ipairs(self.models) do
+		model:save( path )
+	end
 end
 
 ---------------------------------------------------------------------------------
