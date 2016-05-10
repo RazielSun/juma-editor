@@ -31,7 +31,7 @@ function FBXObject:setNode( node )
 	print("LOC", unpack(self.loc))
 	print("ROT", unpack(self.rot))
 	print("SCL", unpack(self.scl))
-	
+
 	local mesh = node.GetMesh()
 
 	local polyCount = mesh.GetPolygonCount()
@@ -52,6 +52,7 @@ function FBXObject:setNode( node )
 	self.ibo:reserve ( totalIndexes * 2 )
 
 	local controlPoints = mesh.GetControlPoints()
+	
 	local layer = mesh.GetLayer( 0 )
 	local uvs = layer.GetUVs()
 	local uvArray = nil
@@ -60,7 +61,10 @@ function FBXObject:setNode( node )
 	end
 
 	local normals = layer.GetNormals()
-	local normalsArray = normals.GetDirectArray()
+	local normalsArray = nil
+	if normals then
+		normalsArray = normals.GetDirectArray()
+	end
 
 	for p = 0, polyCount-1 do
 		local polySize = mesh.GetPolygonSize(p)
@@ -73,14 +77,12 @@ function FBXObject:setNode( node )
 			local vertexIndex = mesh.GetPolygonVertex(p,v)
 			table.insert(poly, vertexIndex)
 
-			local normalPoint = normalsArray[vertexIndex]
+			local normalPoint = normalsArray and normalsArray[vertexIndex]
 			table.insert(normalsp, normalPoint)
 
 			local uvIndex = mesh.GetTextureUVIndex(p,v)
-			if uvArray then
-				local uvPoint = uvArray[uvIndex]
-				table.insert(uvp, uvPoint)
-			end
+			local uvPoint = uvArray and uvArray[uvIndex]
+			table.insert(uvp, uvPoint)
 			-- print("V:", vertexIndex, controlPoints[vertexIndex])
 			-- print("NORMAL", normalsArray[uvIndex], normalsArray[vertexIndex])
 		end
@@ -96,7 +98,7 @@ function FBXObject:setVertex( id, p, n, uv )
 	local sx, sy, sz = unpack(self.scl)
 	self.vbo:writeFloat ( p[0]*s*sx, p[1]*s*sy, p[2]*s*sz )
 	-- self.vbo:writeFloat ( n[0], n[1], n[2] )
-	self.vbo:writeFloat ( uv and uv[0] or 0, uv and uv[1] or 0 )
+	self.vbo:writeFloat ( uv and uv[0] or 0, uv and 1.0-uv[1] or 0 )
 	self.vbo:writeColor32 ( 1, 1, 1 )
 end
 

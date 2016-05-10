@@ -66,7 +66,7 @@ function OBJObject:setVertex( id, p, n, uv )
 	local sz = self._size
 	self.vbo:writeFloat ( tonumber(p[0])*sz, tonumber(p[1])*sz, tonumber(p[2])*sz )
 	-- self.vbo:writeFloat ( n[0], n[1], n[2] )
-	self.vbo:writeFloat ( uv and tonumber(uv[0]) or 0, uv and tonumber(uv[1]) or 0 )
+	self.vbo:writeFloat ( uv and tonumber(uv[0]) or 0, uv and 1.0-tonumber(uv[1]) or 0 )
 	self.vbo:writeColor32 ( 1, 1, 1 )
 end
 
