@@ -10,11 +10,12 @@ def _getMainModulePath():
 		if isPythonFrozen():
 			p = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding( )))
 			if platform.system() == u'Darwin':
-				return os.path.realpath( p + '/../../..' )
+				return os.path.realpath( p + '/../../../..' )
 			elif platform.system() == u'Windows':
 				return p
 			else:
 				return p
+
 		if __name__ == 'main':
 			mainfile = os.path.realpath( __file__ )
 			return os.path.dirname( mainfile )

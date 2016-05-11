@@ -8,8 +8,8 @@ Usage:
 from setuptools import setup
 
 APP = [ 'juma_bin.py' ]
-APP_NAME='JumaEditor'
-AUTHOR='CloudTeam Pro'
+APP_NAME = 'JumaEditor'
+AUTHOR = 'CloudTeam Pro'
 DATA_FILES = []
 OPTIONS = {
 	# 'arch': 'x86_64',
@@ -22,8 +22,15 @@ OPTIONS = {
 	'includes':[
 		'PySide.QtCore',
 		'PySide.QtGui',
+		'python-Levenshtein',
 		],
-	}
+	'plist': {
+		'CFBundleName': APP_NAME,
+        'CFBundleDisplayName': APP_NAME,
+        'CFBundleVersion': "0.1.0",
+        'CFBundleShortVersionString': "0.1.0",
+		},
+}
 
 setup(
     name=APP_NAME,
