@@ -3,7 +3,7 @@
 import sys
 import os
 
-from PySide import QtCore, QtGui
+# from PySide import QtCore, QtGui
 
 from juma.core import app, signals
 from juma.qt.TopEditorModule    import TopEditorModule, QtMainWindow, SubEditorModule

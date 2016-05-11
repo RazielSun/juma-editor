@@ -219,4 +219,3 @@ class FieldEditorSliderBox(QtGui.QWidget):
 
 	def resizeEvent( self, ev ):
 		self.updateSliderStep()		
-

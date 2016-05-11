@@ -20,7 +20,7 @@ from MainModulePath import getMainModulePath
 
 ##----------------------------------------------------------------##
 
-_DEFAULT_TOOL_PATH = 'tools'
+_DEFAULT_TOOL_PATH = 'editor/tools'
 _INFO_FILE_NAME    = '__config__.json'
 _TOOLS = []
 

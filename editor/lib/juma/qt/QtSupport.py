@@ -1,9 +1,8 @@
 import sys
 import os
 
-from PySide import QtCore, QtGui
-from PySide.QtCore import QEventLoop, QEvent, QObject, QSettings, QCoreApplication, QLocale
-from PySide.QtGui import QFileDialog
+from PySide.QtCore import QSettings, QEventLoop, QEvent, QObject, QSettings, QCoreApplication, QLocale
+from PySide.QtGui import QApplication, QMainWindow, QMenuBar, QFileDialog
 
 from time import time
 import locale
@@ -42,7 +41,7 @@ class QtSupport( QtEditorModule ):
 		self.mainWindow.hide()
 		self.mainWindow.module = self
 
-		self.sharedMenuBar = QtGui.QMenuBar( None )
+		self.sharedMenuBar = QMenuBar( None )
 		self.mainWindow.setMenuWidget( self.sharedMenuBar )
 		
 		self.menu = self.addMenuBar( 'main', self.sharedMenuBar )
@@ -117,8 +116,8 @@ class QtSupport( QtEditorModule ):
 		QCoreApplication.setOrganizationDomain("cloudteam.pro")
 		QCoreApplication.setApplicationName("juma-moai-editor")
 
-		self.qtApp = QtGui.QApplication( sys.argv )
-		self.qtSetting = QtCore.QSettings()
+		self.qtApp = QApplication( sys.argv )
+		self.qtSetting = QSettings()
 		
 		self.setupMainWindow()		
 
@@ -191,7 +190,7 @@ class QtSupport( QtEditorModule ):
 QtSupport().register()
 
 ##----------------------------------------------------------------##
-class QtMainWindow( QtGui.QMainWindow ):
+class QtMainWindow( QMainWindow ):
 	"""docstring for QtMainWindow"""
 	def __init__(self, parent,*args):
 		super(QtMainWindow, self).__init__(parent, *args)

@@ -13,3 +13,7 @@ editor/lib/lua/framework
 dev/moaipy/build/
 dev/moaipy/lib/
 dev/moaipy/moaipy.so
+
+# Py 2 App
+build/
+dist/

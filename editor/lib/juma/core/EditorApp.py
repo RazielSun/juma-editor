@@ -20,6 +20,8 @@ from Command        import EditorCommandRegistry
 # _GII_BUILTIN_PACKAGES_PATH = 'packages'
 # _GII_APP_CONFIG_FILE = 'config.json'
 
+_JUMA_EDITOR_PATH = '/editor'
+
 ##----------------------------------------------------------------##
 class EditorApp(object):
 	_singleton = None
@@ -39,10 +41,11 @@ class EditorApp(object):
 		self.projectLoaded = False
 		# self.flagModified  = False
 		# self.debugging     = False
-		self.running       = False
-		self.basePath      = getMainModulePath()
-		self.dataPaths     = []
-		self.config        = {}
+		self.running       	= False
+		self.appPath 		= getMainModulePath()
+		self.basePath      	= self.appPath + _JUMA_EDITOR_PATH
+		self.dataPaths     	= []
+		self.config        	= {}
 		# self.packageManager   = PackageManager()
 
 		self.commandRegistry       = EditorCommandRegistry.get()

@@ -29,5 +29,6 @@ def _getMainModulePath():
 
 def getMainModulePath( path = None ):
 	base = _getMainModulePath()
-	if not path: return base
+	if not path:
+		return base
 	return base + '/' + path
