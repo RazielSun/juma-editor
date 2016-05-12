@@ -1,3 +1,7 @@
 #!/bin/bash
 
-./dist/JumaEditor.app/Contents/MacOS/JumaEditor $@
+# ./dist/JumaEditor.app/Contents/MacOS/JumaEditor $@
+
+d=`dirname $0`
+
+${d}/dist/JumaEditor.app/Contents/MacOS/python ${d}/juma_bin.py $@

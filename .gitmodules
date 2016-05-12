@@ -1,3 +1,4 @@
 [submodule "framework"]
 	path = editor/lib/lua/framework
 	url = git@git.cloudteam.pro:moai/lua_framework.git
+	branch = juma
