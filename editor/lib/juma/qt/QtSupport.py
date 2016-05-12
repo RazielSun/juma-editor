@@ -1,6 +1,8 @@
 import sys
 import os
 
+from colorama import Fore, Back, Style
+
 from PySide.QtCore import QSettings, QEventLoop, QEvent, QObject, QSettings, QCoreApplication, QLocale
 from PySide.QtGui import QApplication, QMainWindow, QMenuBar, QFileDialog
 
@@ -149,6 +151,9 @@ class QtSupport( QtEditorModule ):
 		self.qtSetting.setValue("theme/style", self.currentTheme)
 		self.qtSetting.setValue("project/path", self.getProject().path )
 		self.saveWindowState( self.mainWindow )
+
+	def onUnload( self ):
+		print Style.RESET_ALL + ''
 
 	def onMenu(self, node):
 		name = node.name

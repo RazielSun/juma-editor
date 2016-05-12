@@ -12,17 +12,23 @@ APP_NAME = 'JumaEditor'
 AUTHOR = 'CloudTeam Pro'
 DATA_FILES = []
 OPTIONS = {
-	# 'arch': 'x86_64',
+	'arch': 'x86_64',
 	'argv_emulation': True,
-	# 'optimize': 2,
-	# 'strip': False,
-	# 'semi_standalone' : True,
-	# 'use_pythonpath'  : True,
-	# 'emulate_shell_environment' : True,
-	'includes':[
+	'optimize': 2,
+	'strip': False,
+	'semi_standalone' : True,
+	'use_pythonpath'  : True,
+	'emulate_shell_environment' : True,
+	'iconfile'	: 'support/panda.icns',
+	'includes'	:[
+		'PySide',
 		'PySide.QtCore',
 		'PySide.QtGui',
+		'PySide.QtOpenGL',
 		],
+	'plist'	: {
+		'CFBundleShortVersionString':'0.1.0',
+	}
 }
 
 setup(
