@@ -6,12 +6,6 @@
 [Vavius IDE](https://github.com/Vavius/moai-ide)
 [Tommo IDE](https://github.com/pixpil/gii)
 
-### Dependencies
-
-```
-pip install python-levenshtein
-```
-
 ### Resources
 [Icons](https://www.behance.net/gallery/12268595/IKONS)
 
@@ -52,20 +46,6 @@ export MOAI_ROOT=/Users/yourname/moai-dev/
 ### Roadmap
 * Create DebugDraw DockWidget
 * Create RunString DockWidget
-
-### Install Python FBX
-
-Follow the instructions of Installing FBX SDK for your development platform (see Installing and Configuring).
-Let’s call the directory where you installed FBX SDK <yourFBXSDKpath> .
-Determine the directory name (<Pythonxxxxxx>) of the version of Python FBX that you wish to install (see Platforms supported).
-Copy the contents of <yourFBXSDKpath>\lib\<Pythonxxxxxx>\ into:
-Windows: yourPythonPath\Lib\site-packages\
-Mac OSX: /Library/Python/x.x/site-packages/
-Linux: /usr/local/lib/pythonx.x/site-packages/
-Optional: Copy the sample programs for Python FBX to a suitable location. The sample programs are in <yourFBXSDKpath>\examples\Python\.
-Optional: Copy the documentation for FBX SDK to a suitable location. The documentation is in <yourFBXSDKpath> \doc.
-Optional: Delete <yourFBXSDKpath> and its contents. If you have copied all the directories mentioned above, you do not need the rest of the distribution for FBX SDK.
-
 
 # About Vavius version Editor
 This editor is a Python-Qt based host for MOAI SDK. 
