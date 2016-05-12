@@ -32,7 +32,16 @@ def getMainModulePath():
 ##----------------------------------------------------------------##
 
 jumapath = getMainModulePath() + '/editor/lib'
+thirdPartyPathBase = getMainModulePath() + '/editor/lib/3rdparty'
+thirdPartyPathCommon = thirdPartyPathBase + '/common'
+if platform.system() == u'Darwin':
+	thirdPartyPathNative = thirdPartyPathBase + '/osx'
+else:
+	thirdPartyPathNative = thirdPartyPathBase + '/windows'
+
 sys.path.insert( 0, jumapath )
+sys.path.insert( 2, thirdPartyPathNative )
+sys.path.insert( 1, thirdPartyPathCommon )
 
 ##----------------------------------------------------------------##
 

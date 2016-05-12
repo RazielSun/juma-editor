@@ -22,7 +22,7 @@ OPTIONS = {
 	'includes':[
 		'PySide.QtCore',
 		'PySide.QtGui',
-		'python-Levenshtein',
+		'python-levenshtein',
 		],
 	'plist': {
 		'CFBundleName': APP_NAME,
