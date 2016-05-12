@@ -1,7 +1,7 @@
 
 rm -rf build dist
 
-./Python.app/Contents/MacOS/Python setup.py py2app -A
+python setup.py py2app -A
 
 # cp -r dist/JumaEditor.app JumaEditor.app
 

@@ -22,14 +22,7 @@ OPTIONS = {
 	'includes':[
 		'PySide.QtCore',
 		'PySide.QtGui',
-		'python-levenshtein',
 		],
-	'plist': {
-		'CFBundleName': APP_NAME,
-        'CFBundleDisplayName': APP_NAME,
-        'CFBundleVersion': "0.1.0",
-        'CFBundleShortVersionString': "0.1.0",
-		},
 }
 
 setup(
@@ -40,3 +33,10 @@ setup(
     options={'py2app': OPTIONS},
     setup_requires=['py2app'],
 )
+
+"""
+plist=dict(CFBundleName= APP_NAME,
+        CFBundleDisplayName= APP_NAME,
+        CFBundleVersion= "0.1.0",
+        CFBundleShortVersionString= "0.1.0",)
+"""
