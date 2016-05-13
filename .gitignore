@@ -9,7 +9,6 @@ Thumbs.db
 *.pyc
 
 # Libs & builds
-editor/lib/lua/framework
 dev/moaipy/build/
 dev/moaipy/lib/
 dev/moaipy/moaipy.so
