@@ -1,5 +1,7 @@
 #!/bin/bash
 
-rm -rf build dist
+d=`dirname $0`
 
-python setup.py py2app
+rm -rf build JumaEditor.app
+
+python setup.py py2app --dist-dir ${d}

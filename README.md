@@ -3,8 +3,8 @@
 ## About
 
 ### Based on
-[Vavius IDE](https://github.com/Vavius/moai-ide)
-[Tommo IDE](https://github.com/pixpil/gii)
+Vavius [IDE](https://github.com/Vavius/moai-ide)
+Gii [IDE](https://github.com/pixpil/gii)
 
 ### Resources
 [Icons](https://www.behance.net/gallery/12268595/IKONS)
@@ -14,11 +14,22 @@
 
 ### Running
 ```
+	./JumaEditor.app/Contents/MacOS/JumaEditor ide
+```
+
+For Developers:
+```
     cd juma-editor
     ./juma
     ./juma ide
 ```
-    Use file->open or cmd+O to open any moai main.lua file. 
+    Use file->open or cmd+O to open any moai main.lua file.
+
+### Load Framework
+```
+	git submodule init 
+	git submodule update
+```
 
 ## Build
 

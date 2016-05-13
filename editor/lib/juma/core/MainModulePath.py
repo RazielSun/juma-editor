@@ -10,7 +10,7 @@ def _getMainModulePath():
 		if isPythonFrozen():
 			p = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding( )))
 			if platform.system() == u'Darwin':
-				return os.path.realpath( p + '/../../../..' )
+				return os.path.realpath( p + '/../../..' )
 			elif platform.system() == u'Windows':
 				return p
 			else:

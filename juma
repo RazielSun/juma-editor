@@ -4,4 +4,4 @@
 
 d=`dirname $0`
 
-${d}/dist/JumaEditor.app/Contents/MacOS/python ${d}/juma_bin.py $@
+${d}/JumaEditor.app/Contents/MacOS/python ${d}/juma_bin.py $@
