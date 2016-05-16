@@ -33,8 +33,9 @@ end
 ---------------------------------------------------------------------------------
 function DebugDrawDock:getDrawNames()
 	local names = {}
-	for key, _ in pairs(DEBUG_DRAW) do
+	for key, value in pairs(DEBUG_DRAW) do
 		table.push( names, tostring(key) )
+		MOAIDebugLines.showStyle( value, false )
 	end
 	return tableToList(names)
 end

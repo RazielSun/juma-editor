@@ -46,8 +46,8 @@ class MainEditor( TopEditorModule ):
             'Debug Draw',
             'Run String Dock',
             '----',
-            ]
-        )
+            ],
+        self )
 
         self.mainToolBar = self.addToolBar( 'editor', self.mainWindow.requestToolBar( 'main' ) )     
 

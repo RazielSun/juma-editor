@@ -47,7 +47,7 @@ function Canvas3DGrid:getMesh()
     mesh:setTexture ( editorAssetPath( 'grid.png' ) )
 
     mesh:setPrimType ( MOAIMesh.GL_LINES )
-    mesh:setShader ( MOAIShaderMgr.getShader ( MOAIShaderMgr.LINE_SHADER_3D ) )
+    mesh:setShader ( MOAIShaderMgr.getShader ( MOAIShaderMgr.MESH_SHADER ) )
 
 	-- @const   GL_POINTS
 	-- @const	GL_LINES
