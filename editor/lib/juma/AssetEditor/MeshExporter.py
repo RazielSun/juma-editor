@@ -10,7 +10,6 @@ from PySide.QtCore            	import Qt
 from juma.core                	import signals, app
 from AssetEditor             	import AssetEditorModule
 from MeshNodes 					import OBJNode
-from juma.moai.MOAIEditCanvas 	import MOAIEditCanvas
 from juma.qt.controls.GenericListWidget import GenericListWidget
 
 ##----------------------------------------------------------------##
@@ -102,14 +101,6 @@ class MeshExporter( AssetEditorModule ):
 			)
 		self.list.parentModule = self
 
-		self.canvas = canvas = self.window.addWidget(
-				MeshPreviewCanvas(
-					context_prefix = 'preview_canvas'
-				)
-			)
-
-		canvas.loadScript( _getModulePath('MeshExporter.lua') )
-
 		signals.connect( 'project.load', 		self.onProjectLoad )
 
 	def onUnload(self):
@@ -180,29 +171,25 @@ class MeshExporter( AssetEditorModule ):
 
 	##----------------------------------------------------------------##
 	def previewRender( self ):
-		selection = self.list.getSelection()
-		canvas = self.canvas
-		if canvas:
-			for obj in selection:
-				node = self.getNodeFromObject( obj )
-				canvas.safeCallMethod( "view", "renderNode", node, obj )
-
-	def exportSelected( self ):
-		self.canvas.safeCallMethod( "view", "clearModels" )
+		signals.emitNow( 'mesh.preview' )
 		selection = self.list.getSelection()
 		for obj in selection:
-			self.export( obj )
-		self.canvas.safeCallMethod( "view", "saveBy", self.export_path )
+			node = self.getNodeFromObject( obj )
+			signals.emitNow( 'mesh.render', node, obj )
 
-	def export( self, obj ):
-		node = self.getNodeFromObject( obj )
-		self.canvas.safeCallMethod( "view", "createModel", node, obj )
+	def export( self, objlist ):
+		signals.emitNow( 'mesh.clear' )
+		for obj in objlist:
+			node = self.getNodeFromObject( obj )
+			signals.emitNow( 'mesh.create', node, obj )
+		signals.emitNow( 'mesh.save_by', self.export_path )
+
+	def exportSelected( self ):
+		selection = self.list.getSelection()
+		self.export( selection )
 
 	def exportAll( self ):
-		self.canvas.safeCallMethod( "view", "clearModels" )
-		for obj in self.objects:
-			self.export( obj )
-		self.canvas.safeCallMethod( "view", "saveBy", self.export_path )
+		self.export( self.objects )
 
 	def getNodeFromObject( self, obj ):
 		node = None
@@ -246,11 +233,6 @@ class MeshExporter( AssetEditorModule ):
 		else:
 			self.loadConfig()
 		self.updateList()
-
-	def onUpdateTimer( self ):
-		canvas = self.canvas
-		if canvas:
-			canvas.updateCanvas( no_sim = False, forced = True )
 
 	def onPerPixelChange( self, text ):
 		selection = self.list.getSelection()
@@ -303,8 +285,3 @@ class MeshExporterListWidget( GenericListWidget ):
 
 	def onItemSelectionChanged(self):
 		self.parentModule.onItemSelectionChanged()
-
-##----------------------------------------------------------------##
-class MeshPreviewCanvas( MOAIEditCanvas ):
-	def __init__( self, *args, **kwargs ):
-		super( MeshPreviewCanvas, self ).__init__( *args, **kwargs )

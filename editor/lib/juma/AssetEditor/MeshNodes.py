@@ -28,13 +28,14 @@ class OBJMaterialLib( object ):
 
 	def parse( self ):
 		file = self.getFullPath()
-		with open(file, "rU") as f:
-			for line in f:
-				s = [x.strip() for x in line.split()]
-				if s and s[0] in self.commands:
-					name = self.commands[s[0]]
-					method = getattr(self, name)
-					method(s)
+		if file and os.path.exists(file):
+			with open(file, "rU") as f:
+				for line in f:
+					s = [x.strip() for x in line.split()]
+					if s and s[0] in self.commands:
+						name = self.commands[s[0]]
+						method = getattr(self, name)
+						method(s)
 
 	def use( self, name ):
 		pass

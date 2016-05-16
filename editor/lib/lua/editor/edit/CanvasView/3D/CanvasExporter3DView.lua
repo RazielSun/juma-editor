@@ -3,18 +3,19 @@ local EditorEntity = require("edit.EditorEntity")
 local FBXObject = require("edit.exporters.FBXObject")
 local OBJObject = require("edit.exporters.OBJObject")
 -- local CanvasGrid = require("edit.CanvasView.CanvasGrid")
+local Canvas3DNavigate = require("edit.CanvasView.3D.Canvas3DNavigate")
 
 ---------------------------------------------------------------------------------
 --
--- @type Canvas3DView
+-- @type CanvasExporter3DView
 --
 ---------------------------------------------------------------------------------
 
-local Canvas3DView = Class( EditorEntity, "Canvas3DView" )
+local CanvasExporter3DView = Class( EditorEntity, "CanvasExporter3DView" )
 
-function Canvas3DView:init( canvasEnv )
+function CanvasExporter3DView:init( canvasEnv )
 	self.canvasEnv = assert( canvasEnv )
-	EditorEntity.init( self, { name = "Canvas3DView" })
+	EditorEntity.init( self, { name = "CanvasExporter3DView" })
 
 	self.layer = MOAILayer.new()
 
@@ -23,33 +24,31 @@ function Canvas3DView:init( canvasEnv )
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DView:onLoad()
+function CanvasExporter3DView:onLoad()
 	self:initContext()
 	self:initCamera()
 	self:initAddons()
 end
 
-function Canvas3DView:initContext()
-	-- local inputDevice = createEditorCanvasInputDevice( self.canvasEnv )
-	-- self.inputDevice = inputDevice
+function CanvasExporter3DView:initContext()
+	local inputDevice = createEditorCanvasInputDevice( self.canvasEnv )
+	self.inputDevice = inputDevice
 end
 
-function Canvas3DView:initCamera()
+function CanvasExporter3DView:initCamera()
 	local camera = MOAICamera.new()
 	camera:setLoc ( 0, 0, camera:getFocalLength ( 1000 ))
-	camera:setLoc( -500, 500, 500 )
-	camera:lookAt( 0, 0, 0 )
-	camera:setOrtho( false )
     self:getScene():setCameraForLayers( self:getScene():getRender(), camera )
     self.camera = camera
 end
 
-function Canvas3DView:initAddons()
+function CanvasExporter3DView:initAddons()
 	-- self.grid = self:add( CanvasGrid() )
+	self.nav = self:add( Canvas3DNavigate { camera = self.camera, inputDevice = self.inputDevice } )
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DView:resizeCanvas( w, h )
+function CanvasExporter3DView:resizeCanvas( w, h )
 	local viewport = self.layer:getViewport()
 	if viewport then
 		viewport:setSize(w,h)
@@ -60,45 +59,43 @@ function Canvas3DView:resizeCanvas( w, h )
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DView:getScene()
+function CanvasExporter3DView:getScene()
 	return self.scene
 end
 
-function Canvas3DView:getInputDevice()
+function CanvasExporter3DView:getInputDevice()
 	return self.inputDevice
 end
 
-function Canvas3DView:getCamera()
+function CanvasExporter3DView:getCamera()
 	return self.camera
 end
 
-function Canvas3DView:wndToWorld( x, y )
+function CanvasExporter3DView:wndToWorld( x, y )
 	return self.layer:wndToWorld( x, y )
-	-- return self.cameraCom:wndToWorld( x, y )
 end
 
-function Canvas3DView:updateCanvas()
+function CanvasExporter3DView:updateCanvas()
 	self.canvasEnv.updateCanvas()
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DView:createProp()
+function CanvasExporter3DView:createProp()
 	local prop = MOAIProp.new()
-	prop:setCullMode ( MOAIGraphicsProp.CULL_BACK )
-	-- prop:seekRot ( 180, 360, 0, 10 )
+	prop:setCullMode ( MOAIGraphicsProp.CULL_BACK ) --CULL_FRONT ) --
 	self.layer:insertProp( prop )
 	table.insert( self.props, prop )
 	return prop
 end
 
-function Canvas3DView:clearProps()
+function CanvasExporter3DView:clearProps()
 	for _, prop in ipairs(self.props) do
 		self.layer:removeProp( prop )
 	end
 	self.props = {}
 end
 
-function Canvas3DView:createPropFromModels()
+function CanvasExporter3DView:createPropFromModels()
 	for i, model in ipairs(self.models) do
 		local prop = self:createProp()
 		prop:setDeck( model:getMesh() )
@@ -108,18 +105,18 @@ function Canvas3DView:createPropFromModels()
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DView:addModel( model )
+function CanvasExporter3DView:addModel( model )
 	table.insert( self.models, model )
 end
 
-function Canvas3DView:clearModels()
+function CanvasExporter3DView:clearModels()
 	for i, m in ipairs(self.models) do
 		self.models[i] = nil
 	end
 	self.models = {}
 end
 
-function Canvas3DView:createModel( node, params )
+function CanvasExporter3DView:createModel( node, params )
 	print("createModel", node, params)
 	local ftype = params.getFormat( params )
 	if ftype == 'FBX' then
@@ -130,7 +127,7 @@ function Canvas3DView:createModel( node, params )
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DView:renderNode( node, params )
+function CanvasExporter3DView:renderNode( node, params )
 	self:clearModels()
 	self:createModel( node, params )
 
@@ -140,13 +137,13 @@ function Canvas3DView:renderNode( node, params )
 	self:updateCanvas()
 end
 
-function Canvas3DView:renderFBX( rootNode, obj )
+function CanvasExporter3DView:renderFBX( rootNode, obj )
 	local size = obj.getPerPixel( obj )
 
 	self:createMeshFromFBX( rootNode, rootNode, size )
 end
 
-function Canvas3DView:createMeshFromFBX( node, rootNode, size )
+function CanvasExporter3DView:createMeshFromFBX( node, rootNode, size )
 	local total = node.GetChildCount()
 
 	for i = 0, total-1 do
@@ -167,7 +164,7 @@ function Canvas3DView:createMeshFromFBX( node, rootNode, size )
 	end
 end
 
-function Canvas3DView:renderOBJ( node, obj )
+function CanvasExporter3DView:renderOBJ( node, obj )
 	local size = obj.getPerPixel( obj )
 
 	local model = OBJObject( size )
@@ -179,7 +176,7 @@ function Canvas3DView:renderOBJ( node, obj )
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DView:saveBy( path )
+function CanvasExporter3DView:saveBy( path )
 	for i, model in ipairs(self.models) do
 		model:save( path )
 	end
@@ -187,4 +184,4 @@ end
 
 ---------------------------------------------------------------------------------
 
-return Canvas3DView
+return CanvasExporter3DView

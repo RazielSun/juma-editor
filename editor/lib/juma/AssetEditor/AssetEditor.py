@@ -35,9 +35,10 @@ class AssetEditor( TopEditorModule ):
 
     	self.findMenu('main/window').addChild([
             'Mesh Exporter',
+            'Mesh Preview',
             '----',
-            ]
-        )
+            ],
+        self )
 
     	return True
 
@@ -55,7 +56,9 @@ class AssetEditor( TopEditorModule ):
         name = node.name
 
         if name == 'mesh_exporter':
-        	self.getModule('mesh_exporter').show()
+            self.getModule('mesh_exporter').show()
+        elif name == 'mesh_preview':
+            self.getModule('mesh_preview').show()
 
         elif name == 'refresh_assets':
             self.getProject().assetLibrary.clearAssets()

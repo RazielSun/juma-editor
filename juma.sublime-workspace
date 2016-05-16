@@ -352,42 +352,18 @@
 	"buffers":
 	[
 		{
-			"file": "editor/lib/juma/moai/MoaiWidget.py",
+			"file": "editor/lib/lua/editor/edit/CanvasView/3D/Canvas3DView.lua",
 			"settings":
 			{
-				"buffer_size": 7782,
+				"buffer_size": 4814,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "editor/lib/juma/SceneEditor/SceneEditor.py",
+			"file": "/Users/rsun/Library/Application Support/Sublime Text 3/Packages/GoSublime/USAGE.md",
 			"settings":
 			{
-				"buffer_size": 6178,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "editor/lib/juma/core/Project.py",
-			"settings":
-			{
-				"buffer_size": 484,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "editor/lib/juma/SceneEditor/Scene.py",
-			"settings":
-			{
-				"buffer_size": 4921,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/rzs/Developer/Moai/editor/editor/mainwindow.py",
-			"settings":
-			{
-				"buffer_size": 11978,
+				"buffer_size": 8539,
 				"line_ending": "Unix"
 			}
 		}
@@ -436,16 +412,41 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/rzs/Developer/Moai/juma-editor",
-		"/Users/rzs/Developer/Moai/juma-editor/editor",
-		"/Users/rzs/Developer/Moai/juma-editor/editor/lib",
-		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma",
-		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/moai",
-		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/SceneEditor",
-		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/moaipy"
+		"/Users/rsun/Developer/Moai/juma-editor",
+		"/Users/rsun/Developer/Moai/juma-editor/editor",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/3rdparty",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor/edit",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor/edit/CanvasView",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor/edit/CanvasView/3D",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/tools"
 	],
 	"file_history":
 	[
+		"/Users/rsun/Developer/Moai/juma-editor/juma",
+		"/Users/rsun/Developer/Moai/juma-editor/build-app.sh",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/juma/core/tool.py",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/juma/core/MainModulePath.py",
+		"/Users/rsun/Developer/Moai/juma-editor/juma_bin.py",
+		"/Users/rsun/Developer/Moai/juma-editor/setup.py",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor/edit/CanvasView/CanvasView.lua",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor/edit/CanvasView/CanvasNavigate.lua",
+		"/Users/rsun/Developer/Moai/juma-editor/README.md",
+		"/Users/rsun/Developer/Other/test-py2app/setup.py",
+		"/Users/rsun/Developer/Other/test-py2app/app.py",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor/edit/exporters/MeshObject.lua",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/juma/AssetEditor/MeshExporter.py",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor/edit/CanvasView/3D/Canvas3DView.lua",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor/edit/exporters/FBXObject.lua",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/editor/edit/exporters/OBJObject.lua",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/lua/framework/src/shaders/Desaturate.lua",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/juma/core/Project.py",
+		"/Users/rzs/Developer/Moai/editor/editor/mainwindow.py",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/juma/SceneEditor/Scene.py",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/juma/moai/MoaiWidget.py",
+		"/Users/rsun/Developer/Moai/juma-editor/editor/lib/juma/SceneEditor/SceneEditor.py",
 		"/Users/rzs/Developer/Moai/juma-editor/dev/moaipy/cmoai.pxd",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/core/EditorApp.py",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/moai/__init__.py",
@@ -461,7 +462,6 @@
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/qt/controls/Window.py",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/qt/TopEditorModule.py",
 		"/Users/rzs/Developer/Moai/editor/editor/statsdock.py",
-		"/Users/rzs/Developer/Moai/editor/editor/mainwindow.py",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/qt/controls/Menu.py",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/qt/controls/ToolBar.py",
 		"/Users/rzs/Developer/Moai/juma-editor/editor/lib/juma/SceneEditor/SceneEditor.py",
@@ -552,32 +552,11 @@
 		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/gamelogic/GameMatrix.lua",
 		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/scenes/UnlockDialog.lua",
 		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/moai/moai-android/com/moaisdk/core/Moai.java",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/views/FriendViewCell.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/scenes/FriendsDialog.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/controllers/FriendsDialogController.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/views/MailViewCell.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/external/moai-android-facebook/project/build.gradle",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/init/Preinstalled.lua",
-		"/Users/rzs/Developer/Moai/Projects/digit/hosts/xcode/Classes/MoaiAppDelegate.mm",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/framework/gui/TableView.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/app/src/main/AndroidManifest.xml.in",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/init/Constants.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/views/LeaderboardView.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/modules/moai/moai-android/com/moaisdk/core/MoaiLocalNotificationReceiver.java",
-		"/Users/rzs/Developer/Moai/moai/src/moai-android/java/AndroidManifest.xml",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/controllers/MailDialogController.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/scenes/MailDialog.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/framework/Display.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/.gitignore",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/armeabi-v7a/include/moai-android/MOAINotificationsAndroid.h",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/lib/armeabi-v7a/include/moai-android/JniUtils.h",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/android/app/src/main/jni/jni.cpp",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/models/Friends.lua",
-		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/hosts/ios/lib/FBSDKShareKit.framework/Headers/FBSDKGameRequestContent.h"
+		"/Users/rzs/Developer/Moai/Projects/nashiri-devf/lua/src/views/FriendViewCell.lua"
 	],
 	"find":
 	{
-		"height": 35.0
+		"height": 36.0
 	},
 	"find_in_files":
 	{
@@ -599,6 +578,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"zoomControlNode",
 			"AKUAppFinalize",
 			"gl",
 			"SceneObject",
@@ -725,8 +705,7 @@
 			"complete_factor",
 			"LevelsMgr.is_sequences",
 			"is_se",
-			".NoTitleBar",
-			"Ligth.No"
+			".NoTitleBar"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -755,154 +734,67 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "editor/lib/juma/moai/MoaiWidget.py",
-					"semi_transient": false,
+					"file": "editor/lib/lua/editor/edit/CanvasView/3D/Canvas3DView.lua",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 7782,
+						"buffer_size": 4814,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6697,
-								6697
+								0,
+								0
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"apply_syntax_touched": true,
+							"syntax": "Packages/Lua/Lua.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 2697.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "editor/lib/juma/SceneEditor/SceneEditor.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6178,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								251,
-								254
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 261.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "editor/lib/juma/core/Project.py",
+					"buffer": 1,
+					"file": "/Users/rsun/Library/Application Support/Sublime Text 3/Packages/GoSublime/USAGE.md",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 484,
+						"buffer_size": 8539,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								484,
-								484
+								829,
+								829
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.sublime-syntax"
+							"apply_syntax_touched": true,
+							"syntax": "Packages/Markdown/Markdown.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "editor/lib/juma/SceneEditor/Scene.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4921,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2126,
-								2126
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1183.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/Users/rzs/Developer/Moai/editor/editor/mainwindow.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 11978,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								9582,
-								9587
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4112.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]
@@ -939,6 +831,14 @@
 		]
 	},
 	"menu_visible": true,
+	"output.GoSublime-output":
+	{
+		"height": 110.0
+	},
+	"output.MarGo-output":
+	{
+		"height": 110.0
+	},
 	"output.find_results":
 	{
 		"height": 0.0
@@ -956,6 +856,38 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"canvasna",
+				"editor/lib/lua/editor/edit/CanvasView/CanvasNavigate.lua"
+			],
+			[
+				"canvasvi",
+				"editor/lib/lua/editor/edit/CanvasView/CanvasView.lua"
+			],
+			[
+				"fbx",
+				"editor/lib/lua/editor/edit/exporters/FBXObject.lua"
+			],
+			[
+				"des",
+				"editor/lib/lua/framework/src/shaders/Desaturate.lua"
+			],
+			[
+				"obj",
+				"editor/lib/lua/editor/edit/exporters/OBJObject.lua"
+			],
+			[
+				"meshob",
+				"editor/lib/lua/editor/edit/exporters/MeshObject.lua"
+			],
+			[
+				"canvas3",
+				"editor/lib/lua/editor/edit/CanvasView/3D/Canvas3DView.lua"
+			],
+			[
+				"meshe",
+				"editor/lib/juma/AssetEditor/MeshExporter.py"
+			],
 			[
 				"moaiw",
 				"editor/lib/juma/moai/MoaiWidget.py"
@@ -1435,38 +1367,6 @@
 			[
 				"mapvi",
 				"lua/src/views/MapView.lua"
-			],
-			[
-				"th",
-				"lua/src/init/ThirdParty.lua"
-			],
-			[
-				"bi",
-				"lua/src/init/Billing.lua"
-			],
-			[
-				"scro",
-				"lua/framework/gui/ScrollView.lua"
-			],
-			[
-				"scen",
-				"lua/framework/core/SceneMgr.lua"
-			],
-			[
-				"mai",
-				"lua/src/controllers/MailDialogController.lua"
-			],
-			[
-				"scenem",
-				"lua/framework/core/SceneMgr.lua"
-			],
-			[
-				"input",
-				"lua/framework/core/InputMgr.lua"
-			],
-			[
-				"friendsc",
-				"lua/src/controllers/FriendsDialogController.lua"
 			]
 		],
 		"width": 0.0

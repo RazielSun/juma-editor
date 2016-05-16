@@ -2,7 +2,7 @@
 view = false
 
 function onLoad()
-	local stype = '3d'
+	local stype = 'preview3d'
 	local scene = createEditorCanvasScene( stype )
 	scene.EDITOR_TYPE = stype
 

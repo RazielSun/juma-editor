@@ -36,15 +36,19 @@ function FBXObject:setNode( node )
 
 	local polyCount = mesh.GetPolygonCount()
 	local totalIndexes = 0
+
 	for p = 0, polyCount-1 do
 		local size = mesh.GetPolygonSize(p)
-		local count = 0
+
+		local count = 3
 		if size == 6 then count = 12
 		elseif size == 5 then count = 9
 		elseif size == 4 then count = 6
-		else count = 3 end
+		end
+
 		totalIndexes = totalIndexes + count
 	end
+
 	print("polyCount", polyCount, totalIndexes)
 	self.vbo:reserve( totalIndexes * self.vertexFormat:getVertexSize() )
 
@@ -66,7 +70,7 @@ function FBXObject:setNode( node )
 		normalsArray = normals.GetDirectArray()
 	end
 
-	for p = 0, polyCount-1 do
+	for p = polyCount-1, 0, -1 do
 		local polySize = mesh.GetPolygonSize(p)
 		local poly = {}
 		local uvp = {}

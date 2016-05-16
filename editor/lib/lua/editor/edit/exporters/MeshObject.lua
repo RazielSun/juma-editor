@@ -38,14 +38,16 @@ function MeshObject:createMesh()
 
 	local mesh = MOAIMesh.new ()
 	mesh:setVertexBuffer( vbo, vertexFormat )
-	mesh:setPrimType ( MOAIMesh.GL_TRIANGLES )
-	mesh:setShader ( MOAIShaderMgr.getShader( MOAIShaderMgr.MESH_SHADER ) )
+	mesh:setPrimType ( MOAIMesh.GL_TRIANGLES ) --GL_LINES )--
+	mesh:setShader ( MOAIShaderMgr.getShader( MOAIShaderMgr.MESH_SHADER ) ) --LINE_SHADER_3D )) --
 	mesh:setTotalElements( vbo:countElements( vertexFormat ) )
 	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
 
 	local texturePath = self._texturePath
 	if texturePath then
 		mesh:setTexture ( texturePath )
+	else
+		mesh:setTexture ( editorAssetPath( 'grid.png') )
 	end
 
 	mesh.loc = self.loc
@@ -73,7 +75,8 @@ end
 function MeshObject:setFace( points, idx, normals, uv )
 	if idx then
 		local total = #idx
-		
+		-- print("setFace", total, idx[1], idx[2], idx[3])
+
 		if total >= 3 then
 			self:setTriangle( idx[1], idx[2], idx[3],
 				points[idx[1]], points[idx[2]], points[idx[3]],
