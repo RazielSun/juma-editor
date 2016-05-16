@@ -1,0 +1,153 @@
+--MOAI
+local deserializer = ... or MOAIDeserializer.new ()
+local base64 = MOAIDeserializer.base64Decode
+
+local function init ( objects )
+
+	--Initializing Tables
+	local table
+
+	table = objects [ 0x03 ]
+	table.mTotalVBOs = 0
+	table.mSize = 14400
+	table.mData = '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'
+
+	table = objects [ 0x05 ]
+	table.mAttributeUseTable = objects [ 0x06 ]
+	table.mTotalAttributes = 3
+	table.mVertexSize = 24
+	table.mAttributes = objects [ 0x0B ]
+
+	table = objects [ 0x06 ]
+	table [ 1 ]	= objects [ 0x07 ]
+	table [ 2 ]	= objects [ 0x08 ]
+	table [ 3 ]	= objects [ 0x09 ]
+	table [ 4 ]	= objects [ 0x0A ]
+
+	table = objects [ 0x07 ]
+	table.mUse = 59
+	table.mAttrID = 2
+
+	table = objects [ 0x08 ]
+	table.mUse = 62
+	table.mAttrID = 4294967295
+
+	table = objects [ 0x09 ]
+	table.mUse = 65
+	table.mAttrID = 1
+
+	table = objects [ 0x0A ]
+	table.mUse = 66
+	table.mAttrID = 0
+
+	table = objects [ 0x0B ]
+	table [ 1 ]	= objects [ 0x0C ]
+	table [ 2 ]	= objects [ 0x0D ]
+	table [ 3 ]	= objects [ 0x0E ]
+
+	table = objects [ 0x0C ]
+	table.mNormalized = false
+	table.mOffset = 0
+	table.mType = 162
+	table.mIndex = 0
+	table.mSize = 3
+
+	table = objects [ 0x0D ]
+	table.mNormalized = false
+	table.mOffset = 12
+	table.mType = 162
+	table.mIndex = 1
+	table.mSize = 2
+
+	table = objects [ 0x0E ]
+	table.mNormalized = true
+	table.mOffset = 20
+	table.mType = 165
+	table.mIndex = 2
+	table.mSize = 4
+
+	table = objects [ 0x0F ]
+	table.loc = objects [ 0x10 ]
+	table.rot = objects [ 0x11 ]
+	table.scl = objects [ 0x12 ]
+
+	table = objects [ 0x10 ]
+	table [ 1 ]	= 0
+	table [ 2 ]	= 0
+	table [ 3 ]	= 0
+
+	table = objects [ 0x11 ]
+	table [ 1 ]	= 0
+	table [ 2 ]	= 0
+	table [ 3 ]	= 0
+
+	table = objects [ 0x12 ]
+	table [ 1 ]	= 1
+	table [ 2 ]	= 1
+	table [ 3 ]	= 1
+
+	table = objects [ 0x13 ]
+	table.mHasBounds = true
+	table.mTotalVertexBuffers = 1
+	table.mVertexBuffers = objects [ 0x14 ]
+	table.mPenWidth = 1
+	table.mTotalElements = 600
+	table.mTotalVAOs = 0
+	table.mIndexBuffer = 0
+	table.mBounds = objects [ 0x16 ]
+
+	table = objects [ 0x14 ]
+	table [ 1 ]	= objects [ 0x15 ]
+
+	table = objects [ 0x15 ]
+	table.mBuffer = 2
+	table.mFormat = 4
+
+	table = objects [ 0x16 ]
+	table.mMaxZ = 160
+	table.mMinX = -160
+	table.mMinZ = -160
+	table.mMinY = -1.0000000827404e-07
+	table.mMaxX = 160
+	table.mMaxY = 9.9999994063182e-08
+
+	deserializer:initObject ( objects [ 0x01 ], 'MOAIMesh', nil, objects [ 0x0F ], objects [ 0x13 ]) --MOAIMesh
+	deserializer:initObject ( objects [ 0x02 ], 'MOAIVertexBuffer', nil, nil, objects [ 0x03 ]) --MOAIVertexBuffer
+	deserializer:initObject ( objects [ 0x04 ], 'MOAIVertexFormat', nil, nil, objects [ 0x05 ]) --MOAIVertexFormat
+end
+
+--Declaring Objects
+local objects = {
+
+	--Declaring Tables
+	[ 0x03 ] = {},
+	[ 0x05 ] = {},
+	[ 0x06 ] = {},
+	[ 0x07 ] = {},
+	[ 0x08 ] = {},
+	[ 0x09 ] = {},
+	[ 0x0A ] = {},
+	[ 0x0B ] = {},
+	[ 0x0C ] = {},
+	[ 0x0D ] = {},
+	[ 0x0E ] = {},
+	[ 0x0F ] = {},
+	[ 0x10 ] = {},
+	[ 0x11 ] = {},
+	[ 0x12 ] = {},
+	[ 0x13 ] = {},
+	[ 0x14 ] = {},
+	[ 0x15 ] = {},
+	[ 0x16 ] = {},
+
+	--Declaring Instances
+	[ 0x01 ] = deserializer:registerObjectID ( deserializer:createObject ( 'MOAIMesh' ), 0x01 ),
+	[ 0x02 ] = deserializer:registerObjectID ( deserializer:createObject ( 'MOAIVertexBuffer' ), 0x02 ),
+	[ 0x04 ] = deserializer:registerObjectID ( deserializer:createObject ( 'MOAIVertexFormat' ), 0x04 ),
+
+}
+
+init ( objects )
+
+--Returning Root
+return objects [ 0x01 ]

@@ -96,17 +96,8 @@ function Canvas3DNavigate:getAngles( wx, wy )
 	local factor = 0.01
 	local a = self.alpha + dx * factor
 	local b = self.beta + dy * factor
-	a = self:normalize( a )
-	b = self:normalize( b )
+	b = math.clamp( b, 0, math.pi )
 	return a, b
-end
-
-function Canvas3DNavigate:normalize( angle )
-	local angle = angle or 0
-	if angle > 2*math.pi then angle = angle - math.pi*2
-	elseif angle < -2*math.pi then angle = angle + math.pi*2
-	end
-	return angle
 end
 
 function Canvas3DNavigate:updateCameraPos( a, b )

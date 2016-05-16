@@ -2,7 +2,7 @@
 local EditorEntity = require("edit.EditorEntity")
 local FBXObject = require("edit.exporters.FBXObject")
 local OBJObject = require("edit.exporters.OBJObject")
--- local CanvasGrid = require("edit.CanvasView.CanvasGrid")
+local Canvas3DGrid = require("edit.CanvasView.3D.Canvas3DGrid")
 local Canvas3DNavigate = require("edit.CanvasView.3D.Canvas3DNavigate")
 
 ---------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ function CanvasExporter3DView:initCamera()
 end
 
 function CanvasExporter3DView:initAddons()
-	-- self.grid = self:add( CanvasGrid() )
+	self.grid = self:add( Canvas3DGrid() )
 	self.nav = self:add( Canvas3DNavigate { camera = self.camera, inputDevice = self.inputDevice } )
 end
 
