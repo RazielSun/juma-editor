@@ -27,8 +27,8 @@ function MeshObject:initWithParams()
 	local vbo = MOAIVertexBuffer.new ()
 	self.vbo = vbo
 
-	local ibo = MOAIIndexBuffer.new ()
-	self.ibo = ibo
+	-- local ibo = MOAIIndexBuffer.new ()
+	-- self.ibo = ibo
 end
 
 ---------------------------------------------------------------------------------
@@ -75,13 +75,14 @@ end
 function MeshObject:setFace( points, idx, normals, uv )
 	if idx then
 		local total = #idx
-		-- print("setFace", total, idx[1], idx[2], idx[3])
+		-- local str = 'setFace: ' .. total .. ' idx:'
 
 		if total >= 3 then
 			self:setTriangle( idx[1], idx[2], idx[3],
 				points[idx[1]], points[idx[2]], points[idx[3]],
 				normals[1], normals[2], normals[3],
 				uv[1], uv[2], uv[3])
+			-- str = str .. ' ' .. idx[1] .. ' ' .. idx[2] .. ' ' .. idx[3]
 		end
 
 		if total >= 4 then
@@ -89,6 +90,7 @@ function MeshObject:setFace( points, idx, normals, uv )
 				points[idx[3]], points[idx[4]], points[idx[1]],
 				normals[3], normals[4], normals[1],
 				uv[3], uv[4], uv[1])
+			-- str = str .. ' ' .. idx[4]
 		end
 
 		if total >= 5 then
@@ -96,6 +98,7 @@ function MeshObject:setFace( points, idx, normals, uv )
 				points[idx[4]], points[idx[5]], points[idx[1]],
 				normals[4], normals[5], normals[1],
 				uv[4], uv[5], uv[1])
+			-- str = str .. ' ' .. idx[5]
 		end
 
 		if total >= 6 then
@@ -103,7 +106,10 @@ function MeshObject:setFace( points, idx, normals, uv )
 				points[idx[5]], points[idx[6]], points[idx[1]],
 				normals[5], normals[6], normals[1],
 				uv[5], uv[6], uv[1])
+			-- str = str .. ' ' .. idx[6]
 		end
+
+		-- print(str)
 	end
 end
 

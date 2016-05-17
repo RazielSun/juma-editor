@@ -24,10 +24,19 @@ function OBJObject:setNode( node )
 	local faceCount = node.GetFaceCount( node )
 	print("faceCount", faceCount)
 
-	local totalIndexes = faceCount * 6
+	local totalIndexes = 0
+	for f = 0, faceCount-1 do
+		local faceSize = node.GetFaceSize(node, f)
+		if faceSize == 4 then
+			totalIndexes = totalIndexes + 6
+		else
+			totalIndexes = totalIndexes + 3
+		end
+	end
 	self.vbo:reserve( totalIndexes * self.vertexFormat:getVertexSize() )
-	self.ibo:setIndexSize ( 2 )
-	self.ibo:reserve ( totalIndexes * 2 )
+
+	-- self.ibo:setIndexSize ( 2 )
+	-- self.ibo:reserve ( totalIndexes * 2 )
 
 	local controlPoints = node.GetVertexes( node )
 	local controlUV = node.GetUV( node )
@@ -54,7 +63,7 @@ function OBJObject:setNode( node )
 				table.insert(uvp, uvv)
 			end
 
-			table.insert(normalsp, ni-1)
+			table.insert(normalsp, normals[ni-1])
 		end
 
 		self:setFace( controlPoints, poly, normalsp, uvp )
@@ -62,17 +71,19 @@ function OBJObject:setNode( node )
 end
 
 function OBJObject:setVertex( id, p, n, uv )
-	self.ibo:writeU16( id )
+	-- self.ibo:writeU16( id )
 	local sz = self._size
 	self.vbo:writeFloat ( tonumber(p[0])*sz, tonumber(p[1])*sz, tonumber(p[2])*sz )
-	-- self.vbo:writeFloat ( n[0], n[1], n[2] )
+	-- self.vbo:writeFloat ( tonumber(n[0]), tonumber(n[1]), tonumber(n[2]) )
 	self.vbo:writeFloat ( uv and tonumber(uv[0]) or 0, uv and 1.0-tonumber(uv[1]) or 0 )
 	self.vbo:writeColor32 ( 1, 1, 1 )
 end
 
 function OBJObject:setOBJMaterials( node )
 	local mat = node.GetMaterial( node )
-	self:setTexture( mat.GetTextureName( mat ), mat.GetTexturePath( mat ) )
+	if mat then
+		self:setTexture( mat.GetTextureName( mat ), mat.GetTexturePath( mat ) )
+	end
 end
 
 ---------------------------------------------------------------------------------

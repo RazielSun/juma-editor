@@ -30,11 +30,19 @@ function EditorCanvasScene:setBGColor( r, g, b, a )
 end
 
 function EditorCanvasScene:updateBGColor()
-	local context = RenderContextMgr:get( self.contextName )
-	if context then
-		local fb = context.bufferTable[1]
+	local fb = self:getFrameBuffer()
+	if fb then
 		fb:setClearColor( unpack(self.bg_color) )
 	end
+end
+
+function EditorCanvasScene:getFrameBuffer( index )
+	local index = index or 1
+	local context = RenderContextMgr:get( self.contextName )
+	if context then
+		return context.bufferTable[index]
+	end
+	return nil
 end
 
 ---------------------------------------------------------------------------------

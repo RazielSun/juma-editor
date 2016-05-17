@@ -36,6 +36,7 @@ function Canvas3DGrid:addMesh()
 
 	prop:setDeck( mesh )
 	prop:setCullMode ( MOAIGraphicsProp.CULL_BACK )
+	prop:setDepthTest( MOAIGraphicsProp.DEPTH_TEST_ALWAYS )
 
 	self.layer:insertProp( prop )
 end

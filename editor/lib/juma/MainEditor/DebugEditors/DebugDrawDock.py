@@ -40,7 +40,6 @@ def upperFirstLetter(s):
 
 ##----------------------------------------------------------------##
 class DebugDrawItem( QtGui.QWidget ):
-	# showChanged = QtCore.Signal( str, bool )
 	styleChanged = QtCore.Signal( str, bool, int, QtGui.QColor )
 
 	def __init__(self, *args):
@@ -74,7 +73,6 @@ class DebugDrawItem( QtGui.QWidget ):
 	def changeShow( self, show ):
 		self.showed = show == Qt.Checked
 		self.styleChanged.emit( self.name, self.showed, self.width, self.color )
-		# self.showChanged.emit( self.name, self.showed )
 
 	def changeWidth( self, text ):
 		self.width = int(text)
@@ -148,7 +146,6 @@ class DebugDrawDock( MainEditorModule ):
 			if item is None:
 				item = self.window.addWidget( DebugDrawItem() )
 				item.setStyle( name )
-				# item.showChanged.connect( self.toggleStyle )
 				item.styleChanged.connect( self.changeStyle )
 				self.items[name] = item
 
@@ -166,11 +163,6 @@ class DebugDrawDock( MainEditorModule ):
 		if self.scriptEnv:
 			env.update( self.scriptEnv )
 		self.delegate.load( self.scriptPath, env )
-
-	# def toggleStyle(self, name, state):
-	# 	if self.isReady:
-	# 		self.updateConfigFlag( name, state )
-	# 		self.delegate.safeCallMethod( 'debugDraw', 'setDrawFlag', name, state )
 
 	def changeStyle(self, name, state, width, color):
 		if self.isReady:

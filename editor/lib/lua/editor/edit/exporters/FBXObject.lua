@@ -52,8 +52,8 @@ function FBXObject:setNode( node )
 	print("polyCount", polyCount, totalIndexes)
 	self.vbo:reserve( totalIndexes * self.vertexFormat:getVertexSize() )
 
-	self.ibo:setIndexSize ( 2 )
-	self.ibo:reserve ( totalIndexes * 2 )
+	-- self.ibo:setIndexSize ( 2 )
+	-- self.ibo:reserve ( totalIndexes * 2 )
 
 	local controlPoints = mesh.GetControlPoints()
 	
@@ -70,7 +70,7 @@ function FBXObject:setNode( node )
 		normalsArray = normals.GetDirectArray()
 	end
 
-	for p = polyCount-1, 0, -1 do
+	for p = 0, polyCount-1 do
 		local polySize = mesh.GetPolygonSize(p)
 		local poly = {}
 		local uvp = {}
@@ -97,7 +97,7 @@ function FBXObject:setNode( node )
 end
 
 function FBXObject:setVertex( id, p, n, uv )
-	self.ibo:writeU16( id )
+	-- self.ibo:writeU16( id )
 	local s = self._size
 	local sx, sy, sz = unpack(self.scl)
 	self.vbo:writeFloat ( p[0]*s*sx, p[1]*s*sy, p[2]*s*sz )

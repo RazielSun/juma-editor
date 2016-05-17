@@ -28,6 +28,11 @@ function CanvasExporter3DView:onLoad()
 	self:initContext()
 	self:initCamera()
 	self:initAddons()
+
+	local fb = self:getScene():getFrameBuffer()
+	if fb then
+		fb:setClearDepth( true )
+	end
 end
 
 function CanvasExporter3DView:initContext()
@@ -83,6 +88,7 @@ end
 function CanvasExporter3DView:createProp()
 	local prop = MOAIProp.new()
 	prop:setCullMode ( MOAIGraphicsProp.CULL_BACK ) --CULL_FRONT ) --
+	prop:setDepthTest( MOAIGraphicsProp.DEPTH_TEST_LESS ) --DEPTH_TEST_LESS_EQUAL
 	self.layer:insertProp( prop )
 	table.insert( self.props, prop )
 	return prop
