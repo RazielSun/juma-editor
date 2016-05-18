@@ -222,6 +222,10 @@ class LuaObjectModel(ObjectModel):
 			LuaObjectModel._EnumCache[ enumItems ] = enumType
 		return self.addLuaFieldInfo( name, enumType, data )
 
+	def addLuaCollectionFieldInfo( self, name, itemType, data = None ):
+		collectionType = CollectionType( name, itemType )
+		return self.addLuaFieldInfo( name, collectionType, data )
+
 	def addLuaAssetFieldInfo(self, name, assetType, data = None):
 		typeId = AssetRefType( assetType )
 		return self.addLuaFieldInfo( name, typeId, data )

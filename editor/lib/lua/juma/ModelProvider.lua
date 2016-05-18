@@ -36,6 +36,28 @@ local function createPyModel( model )
 			end
 		elseif typeid == "@asset" then
 			pmodel:addLuaAssetFieldInfo( id, f.__itemtype, option )
+		elseif typeid == '@array' and meta and meta['collection'] then
+			local _set = f.__setter
+			if _set~=true then
+				option.set = function( obj, list )
+					_set( obj, listToTable( list ) )
+				end
+			else
+				option.set = function( obj, list )
+					obj[ id ] = listToTable( list )
+				end
+			end
+			local _get = f.__getter
+			if _get~=true then
+				option.get = function( obj )
+					return tableToList( _get( obj ) or {} )
+				end
+			else
+				option.get = function( obj )
+					return tableToList( obj[ id ] or {} )
+				end
+			end
+			pmodel:addLuaCollectionFieldInfo( id, f.__itemtype, option )
 		else
 			pmodel:addLuaFieldInfo( id, typeid, option )
 		end
