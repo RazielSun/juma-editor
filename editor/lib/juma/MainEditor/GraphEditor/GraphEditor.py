@@ -139,7 +139,8 @@ class GraphEditor( MainEditorModule ):
 		self.tree.selectNode( None )
 		scene = self.delegate.safeCallMethod( 'editor', 'getScene' )
 		selection = []
-		selection.append( scene )
+		if scene:
+			selection.append( scene )
 		self.changeSelection( selection )
 
 	def createEntity( self ):

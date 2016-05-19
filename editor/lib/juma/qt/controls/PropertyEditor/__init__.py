@@ -11,4 +11,5 @@ import VecFieldEditor
 import EnumFieldEditor
 import AssetRefFieldEditor
 import ColorFieldEditor
+import ArrayFieldEditor
 import CollectionFieldEditor

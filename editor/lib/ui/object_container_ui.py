@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'object_container.ui'
 #
-# Created: Thu May 19 15:06:53 2016
+# Created: Thu May 19 16:41:52 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!

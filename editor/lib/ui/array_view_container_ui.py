@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'array_view_container.ui'
 #
-# Created: Thu May 19 15:06:53 2016
+# Created: Thu May 19 16:41:52 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,9 +13,9 @@ class Ui_ArrayViewContainer(object):
     def setupUi(self, ArrayViewContainer):
         ArrayViewContainer.setObjectName("ArrayViewContainer")
         ArrayViewContainer.resize(400, 300)
-        self.verticalLayout_2 = QtGui.QVBoxLayout(ArrayViewContainer)
-        self.verticalLayout_2.setContentsMargins(5, 5, 5, 5)
-        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.mainLayout = QtGui.QVBoxLayout(ArrayViewContainer)
+        self.mainLayout.setContentsMargins(5, 5, 5, 5)
+        self.mainLayout.setObjectName("mainLayout")
         self.header = QtGui.QWidget(ArrayViewContainer)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -24,28 +24,28 @@ class Ui_ArrayViewContainer(object):
         self.header.setSizePolicy(sizePolicy)
         self.header.setMinimumSize(QtCore.QSize(200, 30))
         self.header.setObjectName("header")
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.header)
-        self.horizontalLayout_2.setContentsMargins(5, 5, 5, 5)
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.headerLayout = QtGui.QHBoxLayout(self.header)
+        self.headerLayout.setContentsMargins(5, 5, 5, 5)
+        self.headerLayout.setContentsMargins(0, 0, 0, 0)
+        self.headerLayout.setObjectName("headerLayout")
         self.totalLabel = QtGui.QLabel(self.header)
         self.totalLabel.setMinimumSize(QtCore.QSize(50, 0))
         self.totalLabel.setObjectName("totalLabel")
-        self.horizontalLayout_2.addWidget(self.totalLabel)
+        self.headerLayout.addWidget(self.totalLabel)
         self.totalEdit = QtGui.QLineEdit(self.header)
         self.totalEdit.setObjectName("totalEdit")
-        self.horizontalLayout_2.addWidget(self.totalEdit)
+        self.headerLayout.addWidget(self.totalEdit)
         self.totalBtn = QtGui.QToolButton(self.header)
         self.totalBtn.setObjectName("totalBtn")
-        self.horizontalLayout_2.addWidget(self.totalBtn)
-        self.verticalLayout_2.addWidget(self.header)
+        self.headerLayout.addWidget(self.totalBtn)
+        self.mainLayout.addWidget(self.header)
         self.body = QtGui.QWidget(ArrayViewContainer)
         self.body.setObjectName("body")
-        self.verticalLayout_3 = QtGui.QVBoxLayout(self.body)
-        self.verticalLayout_3.setContentsMargins(5, 5, 5, 5)
-        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.verticalLayout_3.setObjectName("verticalLayout_3")
-        self.verticalLayout_2.addWidget(self.body)
+        self.bodyLayout = QtGui.QVBoxLayout(self.body)
+        self.bodyLayout.setContentsMargins(5, 5, 5, 5)
+        self.bodyLayout.setContentsMargins(0, 0, 0, 0)
+        self.bodyLayout.setObjectName("bodyLayout")
+        self.mainLayout.addWidget(self.body)
 
         self.retranslateUi(ArrayViewContainer)
         QtCore.QMetaObject.connectSlotsByName(ArrayViewContainer)

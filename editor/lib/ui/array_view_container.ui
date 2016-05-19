@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="mainLayout">
    <property name="margin">
     <number>5</number>
    </property>
@@ -31,7 +31,7 @@
        <height>30</height>
       </size>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="headerLayout">
       <property name="margin">
        <number>5</number>
       </property>
@@ -63,7 +63,7 @@
    </item>
    <item>
     <widget class="QWidget" name="body" native="true">
-     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <layout class="QVBoxLayout" name="bodyLayout">
       <property name="margin">
        <number>5</number>
       </property>
