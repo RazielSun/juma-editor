@@ -114,6 +114,21 @@ class AssetRefType( DataType ):
 		return '<%s> %s' % ( self.assetType, value )
 
 ##----------------------------------------------------------------##
+class ArrayType( DataType ):
+	def __init__(self, name, itemType, defaultValue = None ):
+		self.name = name
+		self.itemType = itemType	
+		
+	def getName( self ):
+		return self.name
+
+	def getSuperType( self ):
+		return ArrayType
+
+	def repr( self, value ):
+		return '<%s> %s' %( self.name, repr( value ) )
+		
+##----------------------------------------------------------------##
 class CollectionType( DataType ):
 	def __init__(self, name, itemType, defaultValue = None ):
 		self.name = name
