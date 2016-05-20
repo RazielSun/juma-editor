@@ -29,7 +29,7 @@ def _getModulePath( path ):
 
 ##----------------------------------------------------------------##
 class MeshObject( object ):
-	def __init__( self, path, per_pixel = 256 ):
+	def __init__( self, path, per_pixel = 256.0 ):
 		self.fullpath = path
 		name = os.path.basename( path )
 		self.name = name.lower()
