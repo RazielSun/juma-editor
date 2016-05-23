@@ -9,8 +9,9 @@ local defaultSortMode = MOAILayer.SORT_PRIORITY_DESCENDING --SORT_Z_ASCENDING
 
 local PickingManager = Class( "PickingManager" )
 
-function PickingManager:init()
-	--
+function PickingManager:init( option )
+	option = option or {}
+	self:setTargetScene( option.scene )
 end
 
 function PickingManager:setTargetScene( scene )
@@ -56,8 +57,7 @@ end
 
 function PickingManager:getVisibleLayers()
 	local layers = {}
-	self:collectLayers( self.targetScene.gameTbl, layers )
-	self:collectLayers( self.targetScene.hudTbl, layers )
+	self:collectLayers( self.targetScene:getRender(), layers )
 	return table.reverse( layers )
 end
 

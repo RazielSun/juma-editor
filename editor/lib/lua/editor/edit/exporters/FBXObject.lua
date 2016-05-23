@@ -87,7 +87,7 @@ function FBXObject:setNode( node )
 			local uvIndex = mesh.GetTextureUVIndex(p,v)
 			local uvPoint = uvArray and uvArray[uvIndex]
 			table.insert(uvp, uvPoint)
-			print("V:", vertexIndex, controlPoints[vertexIndex], uvIndex, uvPoint)
+			-- print("V:", vertexIndex, controlPoints[vertexIndex], uvIndex, uvPoint)
 			-- print("NORMAL", normalsArray[uvIndex], normalsArray[vertexIndex])
 		end
 		-- print("total vertex:", #poly)

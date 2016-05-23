@@ -47,8 +47,7 @@ function CanvasView:initAddons()
 	self.nav = self:add( CanvasNavigate { inputDevice = self.inputDevice, camera = self.camera } )
 	self.toolMgr = self:add( CanvasToolManager() )
 	self.itemMgr = self:add( CanvasItemManager { inputDevice = self.inputDevice } )
-	self.pickingManager = PickingManager()
-	self.pickingManager:setTargetScene( self:getScene() )
+	self.pickingManager = PickingManager { scene = self:getScene() }
 end
 
 ---------------------------------------------------------------------------------
