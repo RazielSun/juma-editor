@@ -16,10 +16,6 @@ function GraphEditor:changeScene( scene )
 	self.scene = scene
 end
 
-function GraphEditor:getScene()
-	return self.scene
-end
-
 function GraphEditor:getSceneRootGroup()
 	if self.scene then
 		return self.scene:getRootGroup()

@@ -10,6 +10,7 @@ register( 'scene.pre_open' )
 register( 'scene.open' )
 register( 'scene.update' )
 register( 'scene.change' )
+register( 'scene.settings' )
 
 # register( 'scene.clear' )
 # register( 'scene.save' )

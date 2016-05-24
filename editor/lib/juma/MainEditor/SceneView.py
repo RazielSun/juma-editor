@@ -201,6 +201,8 @@ class SceneView( MainEditorModule ):
 		canvas.loadScript( _getModulePath('SceneView.lua') )
 		self.loaded.append(True)
 
+		self.addTool( 'scene_view_config/scene_settings', label ='Scene Settings', icon = 'cog' )
+
 		self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
 
 		if stype == "ui":
@@ -305,6 +307,12 @@ class SceneView( MainEditorModule ):
 				scene = canvas.safeCall( 'createScene', self.filePaths[index], self.fileTypes[index] )
 				signals.emitNow( 'scene.change', scene )
 
+	def openSceneSettings( self ):
+		canvas = self.getCanvas()
+		if canvas:
+			scene = canvas.safeCall( 'getScene' )
+			signals.emitNow( 'scene.settings', scene )
+
 	def changeGridView( self ):
 		canvas = self.getCanvas()
 		if canvas:
@@ -338,7 +346,9 @@ class SceneView( MainEditorModule ):
 	def onTool( self, tool ):
 		name = tool.name
 		
-		if name == 'grid_view':
+		if name == 'scene_settings':
+			self.openSceneSettings()
+		elif name == 'grid_view':
 			self.changeGridView()
 		if name == 'zoom_out':
 			self.onZoom( 'out' )
