@@ -19,7 +19,7 @@ end
 function MeshObject:initWithParams()
 	local vertexFormat = MOAIVertexFormat.new()
 	vertexFormat:declareCoord( 1, MOAIVertexFormat.GL_FLOAT, 3 )
-	-- vertexFormat:declareNormal( 2, MOAIVertexFormat.GL_FLOAT, 3 )
+	-- vertexFormat:declareNormal( 2, MOAIVertexFormat.GL_FLOAT )
 	vertexFormat:declareUV( 2, MOAIVertexFormat.GL_FLOAT, 2 )
 	vertexFormat:declareColor( 3, MOAIVertexFormat.GL_UNSIGNED_BYTE )
 	self.vertexFormat = vertexFormat

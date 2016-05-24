@@ -62,7 +62,6 @@ class GraphEditor( MainEditorModule ):
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'GraphEditor.lua' ) )
 
-		self.addTool( 'hierarchy/scene_settings', label ='Scene Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_entity', label ='Create', icon = 'plus_mint' )
 
 		# MENU
@@ -89,6 +88,7 @@ class GraphEditor( MainEditorModule ):
 		signals.connect( 'selection.hint',    self.onSelectionHint    )
 
 		signals.connect( 'scene.change',      self.onSceneChange	  )
+		signals.connect( 'scene.settings',    self.onSceneSettings 	  )
 
 		signals.connect( 'entity.added',      self.onEntityAdded      )
 		signals.connect( 'entity.removed',    self.onEntityRemoved    )
@@ -105,9 +105,6 @@ class GraphEditor( MainEditorModule ):
 		registerSearchEnumerator( entityNameSearchEnumerator )
 		registerSearchEnumerator( componentNameSearchEnumerator )
 
-	def getActiveScene( self ):
-		return self.delegate.safeCallMethod( 'editor', 'getScene' )
-
 	def getActiveSceneRootGroup( self ):
 		rootNode = self.delegate.safeCallMethod( 'editor', 'getSceneRootGroup' )
 		if rootNode:
@@ -117,6 +114,13 @@ class GraphEditor( MainEditorModule ):
 	def markDirty( self, dirty = True ):
 		if not self.previewing:
 			self.dirty = dirty
+
+	def onSceneSettings( self, scene ):
+		self.tree.selectNode( None )
+		selection = []
+		if scene:
+			selection.append( scene )
+		self.changeSelection( selection )
 
 	def onSceneChange(self, scene):
 		self.tree.hide()
@@ -178,10 +182,8 @@ class GraphEditor( MainEditorModule ):
 
 	def onTool( self, tool ):
 		name = tool.name
-		if name == 'scene_settings':
-			self.openSceneSettings()
 
-		elif name == 'create_entity':
+		if name == 'create_entity':
 			self.createEntity()
 
 	def onMoaiClean( self ):
