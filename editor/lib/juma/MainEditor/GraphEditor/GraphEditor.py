@@ -67,7 +67,7 @@ class GraphEditor( MainEditorModule ):
 
 		# MENU
 		self.findMenu( 'main/entity' ).addChild([
-			dict( name = 'create_entity', label = 'Create', shortcut = 'ctrl+shift+N' ),
+			dict( name = 'create_entity', label = 'Create', shortcut = 'ctrl+N' ),
 			# '----',
 			# dict( name = 'add_component', label = 'Add component' ),
 			'----',

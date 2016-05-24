@@ -88,7 +88,7 @@ class SceneView( MainEditorModule ):
 		], self )
 
 		self.findMenu( 'main/entity' ).addChild([
-			dict( name = 'move_to_selected', label = 'Camera Move To Selected', shortcut = 'F' )
+			dict( name = 'move_to_selected', label = 'Camera Move To Selected', shortcut = 'ctrl+F' )
 		], self )
 
 		##----------------------------------------------------------------##
