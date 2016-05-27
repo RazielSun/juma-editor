@@ -81,6 +81,7 @@ function createEditorCanvasScene( stype )
 
 	if builder then
 		scene = builder()
+		scene.EDITOR_TYPE = stype
 		scene:setEnv( env )
 		scene:setInputDevice( createEditorCanvasInputDevice( env ) )
 	end
@@ -93,7 +94,9 @@ local EditorCanvasScene = require("edit.EditorCanvas.EditorCanvasScene")
 local EditorCanvasUIScene = require("edit.EditorCanvas.EditorCanvasUIScene")
 
 setEditorCanvasSceneForType( EditorCanvasScene, "scene" )
+setEditorCanvasSceneForType( EditorCanvasScene, "scene3d" )
 setEditorCanvasSceneForType( EditorCanvasUIScene, "ui" )
 setEditorCanvasSceneForType( EditorCanvasScene, "preview3d" )
 
+registerCanvasViewFor( require("edit.CanvasView.3D.Canvas3DView"), "scene3d" )
 registerCanvasViewFor( require("edit.CanvasView.3D.CanvasExporter3DView"), "preview3d" )

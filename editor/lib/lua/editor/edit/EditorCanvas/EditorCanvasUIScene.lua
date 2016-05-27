@@ -15,7 +15,6 @@ local EditorCanvasUIScene = Class( EditorCanvasScene, "EditorCanvasUIScene" ):FI
 function EditorCanvasUIScene:init( option )
 	local option = option or {}
 	EditorCanvasScene.init(self, option)
-	self.EDITOR_TYPE = "ui"
 
 	local jui = JUI()
 	jui:setSize( 320, 480 )

@@ -14,7 +14,6 @@ local EditorCanvasScene = Class( EditorScene, "EditorCanvasScene" ):FIELDS{
 function EditorCanvasScene:init( option )
 	local option = option or {}
 	option.viewport = option.viewport or MOAIViewport.new()
-	self.EDITOR_TYPE = "scene"
 	self.bg_color = { 0.06, 0.06, 0.06, 1.0 }
 	EditorScene.init(self, option)
 end

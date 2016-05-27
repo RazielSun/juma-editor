@@ -111,6 +111,7 @@ end
 
 function AssetsGrabber.grabWindows()
 	registerAssetNodeInLibrary( "scene", "create_scene" )
+	registerAssetNodeInLibrary( "scene3d", "create_scene" )
 	registerAssetNodeInLibrary( "ui", "create_scene" )
 end
 
