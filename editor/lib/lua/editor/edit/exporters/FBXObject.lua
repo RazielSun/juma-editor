@@ -39,13 +39,7 @@ function FBXObject:setNode( node )
 
 	for p = 0, polyCount-1 do
 		local size = mesh.GetPolygonSize(p)
-
-		local count = 3
-		if size == 6 then count = 12
-		elseif size == 5 then count = 9
-		elseif size == 4 then count = 6
-		end
-
+		local count = (size - 2) * 3
 		totalIndexes = totalIndexes + count
 	end
 

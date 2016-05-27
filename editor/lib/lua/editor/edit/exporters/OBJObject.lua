@@ -26,12 +26,9 @@ function OBJObject:setNode( node )
 
 	local totalIndexes = 0
 	for f = 0, faceCount-1 do
-		local faceSize = node.GetFaceSize(node, f)
-		if faceSize == 4 then
-			totalIndexes = totalIndexes + 6
-		else
-			totalIndexes = totalIndexes + 3
-		end
+		local size = node.GetFaceSize(node, f)
+		local count = (size - 2) * 3
+		totalIndexes = totalIndexes + count
 	end
 	self.vbo:reserve( totalIndexes * self.vertexFormat:getVertexSize() )
 

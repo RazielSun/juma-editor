@@ -77,39 +77,13 @@ function MeshObject:setFace( points, idx, normals, uv )
 		local total = #idx
 		-- local str = 'setFace: ' .. total .. ' idx:'
 
-		if total >= 3 then
-			self:setTriangle( idx[1], idx[2], idx[3],
-				points[idx[1]], points[idx[2]], points[idx[3]],
-				normals[1], normals[2], normals[3],
-				uv[1], uv[2], uv[3])
-			-- str = str .. ' ' .. idx[1] .. ' ' .. idx[2] .. ' ' .. idx[3]
+		for i = 3, total do
+			local id1, id2, id3 = i-1, i, 1
+			self:setTriangle( idx[id1], idx[id2], idx[id3],
+				points[idx[id1]], points[idx[id2]], points[idx[id3]],
+				normals[id1], normals[id2], normals[id3],
+				uv[id1], uv[id2], uv[id3])
 		end
-
-		if total >= 4 then
-			self:setTriangle( idx[3], idx[4], idx[1],
-				points[idx[3]], points[idx[4]], points[idx[1]],
-				normals[3], normals[4], normals[1],
-				uv[3], uv[4], uv[1])
-			-- str = str .. ' ' .. idx[4]
-		end
-
-		if total >= 5 then
-			self:setTriangle( idx[4], idx[5], idx[1],
-				points[idx[4]], points[idx[5]], points[idx[1]],
-				normals[4], normals[5], normals[1],
-				uv[4], uv[5], uv[1])
-			-- str = str .. ' ' .. idx[5]
-		end
-
-		if total >= 6 then
-			self:setTriangle( idx[5], idx[6], idx[1],
-				points[idx[5]], points[idx[6]], points[idx[1]],
-				normals[5], normals[6], normals[1],
-				uv[5], uv[6], uv[1])
-			-- str = str .. ' ' .. idx[6]
-		end
-
-		-- print(str)
 	end
 end
 
