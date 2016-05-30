@@ -1,7 +1,7 @@
 
 local EditorEntity = require("edit.EditorEntity")
 local Canvas3DDrawGrid = require("edit.CanvasView.3D.Canvas3DDrawGrid")
-local Canvas3DLookAtObject = require("edit.CanvasView.3D.Canvas3DLookAtObject")
+local Canvas3DNavigate = require("edit.CanvasView.3D.Canvas3DNavigate")
 
 ---------------------------------------------------------------------------------
 --
@@ -35,15 +35,17 @@ end
 
 function Canvas3DView:initCamera()
 	local camera = MOAICamera.new()
-	local z = camera:getFocalLength ( 1000 )
-	camera:setLoc ( 0, 0, z )
+	camera:setLoc( 0, 1000, 1000 )
+	camera:setRot( -45, 0, 0 )
     self:getScene():setCameraForLayers( self:getScene():getRender(), camera )
     self.camera = camera
 end
 
 function Canvas3DView:initAddons()
 	self.grid = self:add( Canvas3DDrawGrid() )
-	self.nav = self:add( Canvas3DLookAtObject { camera = self.camera, inputDevice = self.inputDevice } )
+	self.nav = self:add( Canvas3DNavigate {
+		camera = self.camera,
+		inputDevice = self.inputDevice } )
 end
 
 ---------------------------------------------------------------------------------
