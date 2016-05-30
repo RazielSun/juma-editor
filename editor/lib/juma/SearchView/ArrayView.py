@@ -35,7 +35,7 @@ class ArrayViewWidget( QtGui.QWidget ):
 		ui.bodyLayout.setAlignment(QtCore.Qt.AlignTop)
 
 		intValidator = QtGui.QIntValidator()
-		ui.totalEdit.setText(str(self.counts))
+		ui.totalEdit.setText( str(self.counts) )
 		ui.totalEdit.setValidator( intValidator )
 		ui.totalEdit.returnPressed.connect( self.onTotalEditPressed )
 
@@ -53,14 +53,15 @@ class ArrayViewWidget( QtGui.QWidget ):
 
 	def setup( self, typeId, data ):
 		self.hideAll()
+		total = 0
 		if data:
 			total = len(data)
-			self.ui.totalEdit.setText(str(total))
 			self.createLines( total )
 			i = 0
 			for d in data:
 				self.fill( i, d )
 				i += 1
+		self.ui.totalEdit.setText(str(total))
 
 	def createLines( self, total ):
 		self.hideAll()
@@ -97,7 +98,6 @@ class ArrayViewWidget( QtGui.QWidget ):
 	def onTotalEditPressed( self ):
 		total = int(self.ui.totalEdit.text())
 		self.createLines( total )
-		print("onTotalEditPressed {}".format(total))
 
 	def onTotalButtonClick( self ):
 		self.module.saveData()
