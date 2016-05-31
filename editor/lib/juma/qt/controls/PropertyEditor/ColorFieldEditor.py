@@ -106,7 +106,6 @@ class ColorFieldEditor( FieldEditor ):
 	def set( self, value ):
 		self.colorBlock.setColor( QColorF( *value ) )
 
-
 	def onColorChanged( self, state ):
 		return self.notifyChanged( self.get() )
 

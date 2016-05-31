@@ -6,7 +6,7 @@ from PySide.QtCore import QPoint
 def unpackQColor( c ):
 	return c.redF(), c.greenF(), c.blueF(), c.alphaF()
 
-def QColorF( r, g, b, a =1 ):
+def QColorF( r, g, b, a = 1 ):
 	return QtGui.QColor( r*255, g*255, b*255, a*255)
 
 def restrainWidgetToScreen( widget ):

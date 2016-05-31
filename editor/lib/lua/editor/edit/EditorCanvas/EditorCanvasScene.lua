@@ -20,7 +20,7 @@ end
 
 ---------------------------------------------------------------------------------
 function EditorCanvasScene:getBGColor()
-	return self.bg_color
+	return unpack(self.bg_color)
 end
 
 function EditorCanvasScene:setBGColor( r, g, b, a )
