@@ -1,25 +1,25 @@
 
-local MeshObject = require("edit.exporters.MeshObject")
+local BaseMesh = require("classes.BaseMesh")
 
 ---------------------------------------------------------------------------------
 --
--- @type OBJObject
+-- @type OBJMesh
 --
 ---------------------------------------------------------------------------------
 
-local OBJObject = Class(MeshObject, "OBJObject")
+local OBJMesh = Class(BaseMesh, "OBJMesh")
 
-function OBJObject:init( size )
-	MeshObject.init( self )
+function OBJMesh:init( size )
+	BaseMesh.init( self )
 	self._size = size or 256
 end
 
 ---------------------------------------------------------------------------------
-function OBJObject:setNode( node )
+function OBJMesh:setNode( node )
 	self:initWithParams()
 	
 	self.nodeName = node.GetName( node )
-	print("OBJObject setNode", node, self.nodeName)
+	print("OBJMesh setNode", node, self.nodeName)
 
 	local faceCount = node.GetFaceCount( node )
 	print("faceCount", faceCount)
@@ -67,7 +67,7 @@ function OBJObject:setNode( node )
 	end
 end
 
-function OBJObject:setVertex( id, p, n, uv )
+function OBJMesh:setVertex( id, p, n, uv )
 	-- self.ibo:writeU16( id )
 	local sz = self._size
 	self.vbo:writeFloat ( tonumber(p[0])*sz, tonumber(p[1])*sz, tonumber(p[2])*sz )
@@ -76,7 +76,7 @@ function OBJObject:setVertex( id, p, n, uv )
 	self.vbo:writeColor32 ( 1, 1, 1 )
 end
 
-function OBJObject:setOBJMaterials( node )
+function OBJMesh:setOBJMaterials( node )
 	local mat = node.GetMaterial( node )
 	if mat then
 		self:setTexture( mat.GetTextureName( mat ), mat.GetTexturePath( mat ) )
@@ -85,4 +85,4 @@ end
 
 ---------------------------------------------------------------------------------
 
-return OBJObject
+return OBJMesh

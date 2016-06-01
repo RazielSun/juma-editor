@@ -1,13 +1,13 @@
 
 ---------------------------------------------------------------------------------
 --
--- @type MeshObject
+-- @type BaseMesh
 --
 ---------------------------------------------------------------------------------
 
-local MeshObject = Class("MeshObject")
+local BaseMesh = Class("BaseMesh")
 
-function MeshObject:init()
+function BaseMesh:init()
 	self.loc = {0,0,0}
 	self.rot = {0,0,0}
 	self.scl = {1,1,1}
@@ -16,7 +16,7 @@ function MeshObject:init()
 	self.format = '.mesh'
 end
 
-function MeshObject:initWithParams()
+function BaseMesh:initWithParams()
 	local vertexFormat = MOAIVertexFormat.new()
 	vertexFormat:declareCoord( 1, MOAIVertexFormat.GL_FLOAT, 3 )
 	-- vertexFormat:declareNormal( 2, MOAIVertexFormat.GL_FLOAT )
@@ -32,7 +32,7 @@ function MeshObject:initWithParams()
 end
 
 ---------------------------------------------------------------------------------
-function MeshObject:createMesh()
+function BaseMesh:createMesh()
 	local vbo = self.vbo
 	local vertexFormat = self.vertexFormat
 
@@ -57,7 +57,7 @@ function MeshObject:createMesh()
 	self.mesh = mesh
 end
 
-function MeshObject:getMesh()
+function BaseMesh:getMesh()
 	if not self.mesh then
 		self:createMesh()
 	end
@@ -66,13 +66,13 @@ function MeshObject:getMesh()
 end
 
 ---------------------------------------------------------------------------------
-function MeshObject:setTexture( textureName, texturePath )
+function BaseMesh:setTexture( textureName, texturePath )
 	self._textureName = textureName
 	self._texturePath = texturePath
 	print("setTexture", textureName, texturePath)
 end
 
-function MeshObject:setFace( points, idx, normals, uv )
+function BaseMesh:setFace( points, idx, normals, uv )
 	if idx then
 		local total = #idx
 		-- local str = 'setFace: ' .. total .. ' idx:'
@@ -87,18 +87,18 @@ function MeshObject:setFace( points, idx, normals, uv )
 	end
 end
 
-function MeshObject:setTriangle( id1, id2, id3, p1, p2, p3, n1, n2, n3, uv1, uv2, uv3 )
+function BaseMesh:setTriangle( id1, id2, id3, p1, p2, p3, n1, n2, n3, uv1, uv2, uv3 )
 	self:setVertex( id1, p1, n1, uv1 )
 	self:setVertex( id2, p2, n2, uv2 )
 	self:setVertex( id3, p3, n3, uv3 )
 end
 
-function MeshObject:setVertex( id, p, n, uv )
+function BaseMesh:setVertex( id, p, n, uv )
 	--
 end
 
 ---------------------------------------------------------------------------------
-function MeshObject:save( export_path )
+function BaseMesh:save( export_path )
 	local data = MOAISerializer.serializeToString(self.mesh)
 	local export_path = export_path or 'assets/3ds/'
 	local fullPath = export_path .. self.nodeName ..self.format
@@ -107,4 +107,4 @@ end
 
 ---------------------------------------------------------------------------------
 
-return MeshObject
+return BaseMesh

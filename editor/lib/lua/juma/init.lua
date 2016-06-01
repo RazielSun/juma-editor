@@ -30,5 +30,5 @@ end
 
 --------------------------------------------------------------------
 -- Init Editor Framework
-require("include-editor")
+require("setupeditor")
 

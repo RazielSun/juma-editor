@@ -1,7 +1,8 @@
 
-local EditorEntity = require("edit.EditorEntity")
-local FBXObject = require("edit.exporters.FBXObject")
-local OBJObject = require("edit.exporters.OBJObject")
+local EditorEntity = require("core.EditorEntity")
+local FBXObject = require("classes.FBXMesh")
+local OBJObject = require("classes.OBJMesh")
+
 local Canvas3DGrid = require("edit.CanvasView.3D.Canvas3DGrid")
 local Canvas3DDrawGrid = require("edit.CanvasView.3D.Canvas3DDrawGrid")
 local Canvas3DLookAtObject = require("edit.CanvasView.3D.Canvas3DLookAtObject")

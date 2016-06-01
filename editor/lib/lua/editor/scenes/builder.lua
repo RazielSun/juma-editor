@@ -1,32 +1,12 @@
 
-require("edit.EditorCanvas.SceneView")
-
----------------------------------------------------------------------------------
---
--- @type builders
---
----------------------------------------------------------------------------------
-
-local editorCanvasRegistry = {}
-
-function setEditorCanvasSceneForType( clazz, stype )
-	editorCanvasRegistry[stype] = clazz
-end
-
-function getEditorCanvasScene( stype )
-	if not editorCanvasRegistry[stype] then
-		print("ERROR! Not find", stype, "EditorCanvasScene")
-		return nil
-	end
-	return editorCanvasRegistry[stype]
-end
+local InputDevice = require("input.InputDevice")
+local CanvasView = require("edit.CanvasView.CanvasView")
 
 ---------------------------------------------------------------------------------
 --
 -- @type create methods
 --
 ---------------------------------------------------------------------------------
-local InputDevice = require("input.InputDevice")
 
 function createEditorCanvasInputDevice( env )
 	local env = env or getfenv(2)
@@ -87,16 +67,18 @@ function createEditorCanvasScene( stype )
 	end
 
 	return scene
-end 
+end
 
----------------------------------------------------------------------------------
-local EditorCanvasScene = require("edit.EditorCanvas.EditorCanvasScene")
-local EditorCanvasUIScene = require("edit.EditorCanvas.EditorCanvasUIScene")
+---------------------------------------------------------------------
+function createSceneView( scene, env )
+	local stype = scene.EDITOR_TYPE or 'scene'
+	local builder = getCanvasViewFor(stype)
+	if not builder then
+		builder = CanvasView
+	end
 
-setEditorCanvasSceneForType( EditorCanvasScene, "scene" )
-setEditorCanvasSceneForType( EditorCanvasScene, "scene3d" )
-setEditorCanvasSceneForType( EditorCanvasUIScene, "ui" )
-setEditorCanvasSceneForType( EditorCanvasScene, "preview3d" )
-
-registerCanvasViewFor( require("edit.CanvasView.3D.Canvas3DView"), "scene3d" )
-registerCanvasViewFor( require("edit.CanvasView.3D.CanvasExporter3DView"), "preview3d" )
+	local view = builder( env )
+	view.EDITOR_TYPE = stype
+	
+	return view
+end

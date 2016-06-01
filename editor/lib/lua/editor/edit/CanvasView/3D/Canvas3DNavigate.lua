@@ -1,5 +1,5 @@
 
-local EditorComponent = require("edit.EditorComponent")
+local EditorComponent = require("core.EditorComponent")
 local InputEvent = require("input.InputEvent")
 
 local function _cameraZoomControlNodeCallback( node )

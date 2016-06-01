@@ -63,7 +63,7 @@ editor = GraphEditor()
 
 ---------------------------------------------------------------------------------
 
-local EditorCommand = require("edit.Command.EditorCommand")
+local EditorCommand = require("core.EditorCommand")
 
 ---------------------------------------------------------------------------------
 local CmdCreateEntityBase = Class( EditorCommand, "CmdCreateEntityBase" )

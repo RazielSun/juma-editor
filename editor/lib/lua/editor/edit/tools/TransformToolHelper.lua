@@ -1,5 +1,5 @@
 
-local EditorEntity = require("edit.EditorEntity")
+local EditorEntity = require("core.EditorEntity")
 local TransformProxy = require("edit.tools.TransformProxy")
 
 ---------------------------------------------------------------------------------

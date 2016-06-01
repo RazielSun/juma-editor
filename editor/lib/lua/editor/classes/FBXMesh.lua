@@ -1,25 +1,25 @@
 
-local MeshObject = require("edit.exporters.MeshObject")
+local BaseMesh = require("classes.BaseMesh")
 
 ---------------------------------------------------------------------------------
 --
--- @type FBXObject
+-- @type FBXMesh
 --
 ---------------------------------------------------------------------------------
 
-local FBXObject = Class(MeshObject, "FBXObject")
+local FBXMesh = Class(BaseMesh, "FBXMesh")
 
-function FBXObject:init( size )
-	MeshObject.init( self )
+function FBXMesh:init( size )
+	BaseMesh.init( self )
 	self._size = size or 256
 end
 
 ---------------------------------------------------------------------------------
-function FBXObject:setNode( node )
+function FBXMesh:setNode( node )
 	self:initWithParams()
 
 	self.nodeName = node.GetName()
-	print("FBXObject setNode", node, self.nodeName)
+	print("FBXMesh setNode", node, self.nodeName)
 
  	local trsl = node.LclTranslation.Get()
  	self.loc = {trsl[0], trsl[1], trsl[2]}
@@ -90,7 +90,7 @@ function FBXObject:setNode( node )
 	end
 end
 
-function FBXObject:setVertex( id, p, n, uv )
+function FBXMesh:setVertex( id, p, n, uv )
 	-- self.ibo:writeU16( id )
 	local s = self._size
 	local sx, sy, sz = unpack(self.scl)
@@ -101,7 +101,7 @@ function FBXObject:setVertex( id, p, n, uv )
 end
 
 ---------------------------------------------------------------------------------
-function FBXObject:setFBXMaterials( node, element )
+function FBXMesh:setFBXMaterials( node, element )
 	local totalMaterials = node.GetMaterialCount()
 	local totalProperty = element.sTypeTextureCount()
 
@@ -119,7 +119,7 @@ end
 
 ---------------------------------------------------------------------------------
 
-return FBXObject
+return FBXMesh
 
 
 -- # lNode = pScene.GetRootNode()

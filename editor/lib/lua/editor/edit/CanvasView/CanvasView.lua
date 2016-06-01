@@ -1,5 +1,6 @@
 
-local EditorEntity = require("edit.EditorEntity")
+local EditorEntity = require("core.EditorEntity")
+
 local CanvasGrid = require("edit.CanvasView.CanvasGrid")
 local CanvasFrame = require("edit.CanvasView.CanvasFrame")
 local CanvasNavigate = require("edit.CanvasView.CanvasNavigate")
