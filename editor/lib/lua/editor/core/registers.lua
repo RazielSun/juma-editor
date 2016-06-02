@@ -41,36 +41,31 @@ end
 
 ---------------------------------------------------------------------------------
 --
--- @type SceneView
+-- @type Scene and Canvas
 --
 ---------------------------------------------------------------------------------
 
-local sceneViewRegister = {}
+local sceneCanvasRegister = {}
 
-function registerCanvasViewFor( clazz, stype )
-	sceneViewRegister[stype] = clazz
+function registerEditorSceneCanvasForType( scene, canvas, typ )
+	local obj = { scene = scene, canvas = canvas }
+	sceneCanvasRegister[typ] = obj
 end
 
-function getCanvasViewFor( stype )
-	return sceneViewRegister[stype]
-end
-
----------------------------------------------------------------------------------
---
--- @type builders
---
----------------------------------------------------------------------------------
-
-local editorCanvasRegistry = {}
-
-function setEditorCanvasSceneForType( clazz, stype )
-	editorCanvasRegistry[stype] = clazz
-end
-
-function getEditorCanvasScene( stype )
-	if not editorCanvasRegistry[stype] then
-		print("ERROR! Not find", stype, "EditorCanvasScene")
-		return nil
+function getEditorSceneForType( typ )
+	local obj = sceneCanvasRegister[typ]
+	if not obj then
+		print("No Scene for type:", typ)
 	end
-	return editorCanvasRegistry[stype]
+	local builder = require(obj.scene)
+	return builder
+end
+
+function getEditorCanvasForType( typ )
+	local obj = sceneCanvasRegister[typ]
+	if not obj then
+		print("No Scene for type:", typ)
+	end
+	local builder = require(obj.canvas)
+	return builder
 end

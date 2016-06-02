@@ -1,20 +1,21 @@
 
-local EditorCanvasScene = require("edit.EditorCanvas.EditorCanvasScene")
+local BaseEditorScene = require("scenes.BaseEditorScene")
+
 local JUI = require("ui.JUI")
 local UIScreen = require("ui.UIScreen")
 
 ---------------------------------------------------------------------------------
 --
--- @type EditorCanvasUIScene
+-- @type UIEditorScene
 --
 ---------------------------------------------------------------------------------
 
-local EditorCanvasUIScene = Class( EditorCanvasScene, "EditorCanvasUIScene" ):FIELDS{
+local UIEditorScene = Class( BaseEditorScene, "UIEditorScene" ):FIELDS{
 }
 
-function EditorCanvasUIScene:init( option )
+function UIEditorScene:init( option )
 	local option = option or {}
-	EditorCanvasScene.init(self, option)
+	BaseEditorScene.init(self, option)
 
 	local jui = JUI()
 	jui:setSize( 320, 480 )
@@ -27,11 +28,11 @@ function EditorCanvasUIScene:init( option )
 	jui:openScreenInternal( screen )
 end
 
-function EditorCanvasUIScene:getRootGroup()
+function UIEditorScene:getRootGroup()
 	return self.jui:getScreen(1)
 end
 
-function EditorCanvasUIScene:setLoadedPath( path )
+function UIEditorScene:setLoadedPath( path )
 	local data = Loader:load( path )
 	if data then
 		local children = table.dup(data.children)
@@ -44,4 +45,4 @@ end
 
 ---------------------------------------------------------------------------------
 
-return EditorCanvasUIScene
+return UIEditorScene

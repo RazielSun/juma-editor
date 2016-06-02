@@ -34,8 +34,10 @@ end
 
 function tableToList(table)
 	local list = newPythonList()
-	for i, v in ipairs(table) do
-		appendPythonList(list,v)
+	if table then
+		for i, v in ipairs(table) do
+			appendPythonList(list,v)
+		end
 	end
 	return list
 end

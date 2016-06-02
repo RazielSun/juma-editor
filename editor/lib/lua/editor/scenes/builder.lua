@@ -1,6 +1,5 @@
 
 local InputDevice = require("input.InputDevice")
-local CanvasView = require("edit.CanvasView.CanvasView")
 
 ---------------------------------------------------------------------------------
 --
@@ -56,7 +55,7 @@ function createEditorCanvasScene( stype )
 	function env.onLoad()
 	end
 
-	local builder = getEditorCanvasScene( stype )
+	local builder = getEditorSceneForType( stype )
 	local scene = nil
 
 	if builder then
@@ -72,13 +71,8 @@ end
 ---------------------------------------------------------------------
 function createSceneView( scene, env )
 	local stype = scene.EDITOR_TYPE or 'scene'
-	local builder = getCanvasViewFor(stype)
-	if not builder then
-		builder = CanvasView
-	end
-
+	local builder = getEditorCanvasForType( stype )
 	local view = builder( env )
 	view.EDITOR_TYPE = stype
-	
 	return view
 end

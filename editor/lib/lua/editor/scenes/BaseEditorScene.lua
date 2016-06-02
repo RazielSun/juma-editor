@@ -3,15 +3,15 @@ local EditorScene = require("core.EditorScene")
 
 ---------------------------------------------------------------------------------
 --
--- @type EditorCanvasScene
+-- @type BaseEditorScene
 --
 ---------------------------------------------------------------------------------
 
-local EditorCanvasScene = Class( EditorScene, "EditorCanvasScene" ):FIELDS{
+local BaseEditorScene = Class( EditorScene, "BaseEditorScene" ):FIELDS{
 	Field("bg_color"):type('color'):getset('BGColor'):label('BGColor');
 }
 
-function EditorCanvasScene:init( option )
+function BaseEditorScene:init( option )
 	local option = option or {}
 	option.viewport = option.viewport or MOAIViewport.new()
 	self.bg_color = { 0.06, 0.06, 0.06, 1.0 }
@@ -19,23 +19,23 @@ function EditorCanvasScene:init( option )
 end
 
 ---------------------------------------------------------------------------------
-function EditorCanvasScene:getBGColor()
+function BaseEditorScene:getBGColor()
 	return unpack(self.bg_color)
 end
 
-function EditorCanvasScene:setBGColor( r, g, b, a )
+function BaseEditorScene:setBGColor( r, g, b, a )
 	self.bg_color = { r, g, b, a }
 	self:updateBGColor()
 end
 
-function EditorCanvasScene:updateBGColor()
+function BaseEditorScene:updateBGColor()
 	local fb = self:getFrameBuffer()
 	if fb then
 		fb:setClearColor( unpack(self.bg_color) )
 	end
 end
 
-function EditorCanvasScene:getFrameBuffer( index )
+function BaseEditorScene:getFrameBuffer( index )
 	local index = index or 1
 	local context = RenderContextMgr:get( self.contextName )
 	if context then
@@ -45,7 +45,7 @@ function EditorCanvasScene:getFrameBuffer( index )
 end
 
 ---------------------------------------------------------------------------------
-function EditorCanvasScene:setLoadedPath( path )
+function BaseEditorScene:setLoadedPath( path )
 	local data = Loader:load( path )
 	if data then
 		EditorScene.setRootGroup( self, data )
@@ -55,52 +55,52 @@ function EditorCanvasScene:setLoadedPath( path )
 	end
 end
 
-function EditorCanvasScene:setEnv( env )
+function BaseEditorScene:setEnv( env )
 	self.env = env
 	self.contextName = env.contextName
 end
 
-function EditorCanvasScene:getEnv()
+function BaseEditorScene:getEnv()
 	return self.env
 end
 
-function EditorCanvasScene:getContextName()
+function BaseEditorScene:getContextName()
 	return self.contextName
 end
 
-function EditorCanvasScene:getCanvasSize()
+function BaseEditorScene:getCanvasSize()
 	local s = self.env.getCanvasSize()
 	return s[0], s[1]
 end
 
-function EditorCanvasScene:hideCursor()
+function BaseEditorScene:hideCursor()
 	return self.env.hideCursor()
 end
 
-function EditorCanvasScene:setCursor( id )
+function BaseEditorScene:setCursor( id )
 	return self.env.setCursor( id )
 end
 
-function EditorCanvasScene:showCursor()
+function BaseEditorScene:showCursor()
 	return self.env.showCursor()
 end
 
-function EditorCanvasScene:setCursorPos( x, y )
+function BaseEditorScene:setCursorPos( x, y )
 	return self.env.setCursorPos( x, y )
 end
 
-function EditorCanvasScene:startUpdateTimer( fps )
+function BaseEditorScene:startUpdateTimer( fps )
 	return self.env.startUpdateTimer( fps )
 end
 
-function EditorCanvasScene:stopUpdateTimer()
+function BaseEditorScene:stopUpdateTimer()
 	return self.env.stopUpdateTimer()
 end
 
-function EditorCanvasScene:save( path )
+function BaseEditorScene:save( path )
 	return Loader:save( path, self:getRootGroup() )
 end
 
 ---------------------------------------------------------------------------------
 
-return EditorCanvasScene
+return BaseEditorScene

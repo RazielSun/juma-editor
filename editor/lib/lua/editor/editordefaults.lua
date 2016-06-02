@@ -69,13 +69,8 @@ local PropComponent = require("entity.components.PropComponent")
 registerComponent( 'PropComponent', PropComponent )
 
 ---------------------------------------------------------------------------------
-local EditorCanvasScene = require("edit.EditorCanvas.EditorCanvasScene")
-local EditorCanvasUIScene = require("edit.EditorCanvas.EditorCanvasUIScene")
 
-setEditorCanvasSceneForType( EditorCanvasScene, "scene" )
-setEditorCanvasSceneForType( EditorCanvasScene, "scene3d" )
-setEditorCanvasSceneForType( EditorCanvasUIScene, "ui" )
-setEditorCanvasSceneForType( EditorCanvasScene, "preview3d" )
-
-registerCanvasViewFor( require("edit.CanvasView.3D.Canvas3DView"), "scene3d" )
-registerCanvasViewFor( require("edit.CanvasView.3D.CanvasExporter3DView"), "preview3d" )
+registerEditorSceneCanvasForType("scenes.BaseEditorScene", "edit.CanvasView.CanvasView", "scene")
+registerEditorSceneCanvasForType("scenes.UIEditorScene", "edit.CanvasView.CanvasView", "ui")
+registerEditorSceneCanvasForType("scenes.BaseEditorScene", "edit.CanvasView.3D.Canvas3DView", "scene3d")
+registerEditorSceneCanvasForType("scenes.BaseEditorScene", "edit.CanvasView.3D.CanvasExporter3DView", "preview3d")
