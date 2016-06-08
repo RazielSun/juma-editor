@@ -16,11 +16,7 @@ function EditorScene:init( option )
     
     self.renderTbl = {}
     self.layersByName = {}
-
     self.entities = {}
-
-    self.viewport = option.viewport or App.viewport
-    self:initLayers()
 
     local group = Entity()
     self.rootGroup = group
@@ -31,10 +27,6 @@ function EditorScene:getRender()
 	return self.renderTbl
 end
 
-function EditorScene:initLayers()
-    self.defaultLayer = self:addLayer( "default" )
-end
-
 ---------------------------------------------------------------------------------
 function EditorScene:setInputDevice( inputDevice )
     self.inputDevice = inputDevice
@@ -43,6 +35,7 @@ end
 ---------------------------------------------------------------------------------
 function EditorScene:addLayer( name, addlayer, index )
     local name = name or string.format("layer%d", #self.renderTbl)
+
     local layer = self.layersByName[name]
     if not layer then
         local index = index or (1 + #self.renderTbl)
@@ -50,39 +43,13 @@ function EditorScene:addLayer( name, addlayer, index )
         layer = addlayer or MOAILayer.new()
         table.insert(self.renderTbl, index, layer)
         self.layersByName[name] = layer
-        
-        if type(layer) == 'table' then
-            for _, l in ipairs(layer) do
-                self:setViewport( l )
-            end
-        else
-            self:setViewport( layer )
-        end
     end
+
     return layer
 end
 
-function EditorScene:setViewport( layer )
-    local viewport = layer:getViewport()
-    layer:setViewport( viewport or self.viewport )
-end
-
 function EditorScene:getLayer( name )
-    if not name then
-        return self.defaultLayer
-    end
     return self.layersByName[name]
-end
-
-function EditorScene:setCameraForLayers( layers, camera )
-    assert( camera )
-    for i, layer in ipairs(layers) do
-        if type(layer) == "table" then
-            self:setCameraForLayers( layer, camera )
-        else
-            layer:setCamera( camera )
-        end
-    end
 end
 
 ---------------------------------------------------------------------------------
@@ -105,25 +72,26 @@ end
 function EditorScene:addEntity( entity, layer )
     assert( entity )
 
-    local layer = layer or entity.layer or self.defaultLayer
-    if type(layer) == "string" then
-        local layerName = layer
-        layer = self:getLayer( layerName )
-    end
-    layer = layer or self.defaultLayer
+    local layer = layer or entity.layer
+    if layer then
+        if type(layer) == "string" then
+            local layerName = layer
+            layer = self:getLayer( layerName )
+        end
 
-    if layer ~= self.defaultLayer and entity.layer == layer then
-        self:addLayer( nil, layer )
-    end
-
-    if entity.layers then
-        for _, la in ipairs(entity.layers) do
-            self:addLayer( nil, la )
+        if entity.layer then
+            self:addLayer( nil, entity.layer )
+        end
+    else
+        for _, la in pairs(self.layersByName) do
+            if la then
+                layer = la
+                break
+            end
         end
     end
 
     assert( layer )
-    
     entity:_insertToScene( self, layer )
     self.entities[entity] = true
 

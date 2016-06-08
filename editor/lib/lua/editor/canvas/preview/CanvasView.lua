@@ -1,89 +1,58 @@
 
-local EditorEntity = require("core.EditorEntity")
+local CoreCanvas = require("canvas.CanvasView")
+
 local FBXObject = require("classes.FBXMesh")
 local OBJObject = require("classes.OBJMesh")
 
-local Canvas3DGrid = require("edit.CanvasView.3D.Canvas3DGrid")
-local Canvas3DDrawGrid = require("edit.CanvasView.3D.Canvas3DDrawGrid")
-local Canvas3DLookAtObject = require("edit.CanvasView.3D.Canvas3DLookAtObject")
+local CanvasDrawGrid = require("canvas.3d.CanvasDrawGrid")
+local CanvasLookAtObject = require("canvas.preview.CanvasLookAtObject")
 
 ---------------------------------------------------------------------------------
 --
--- @type CanvasExporter3DView
+-- @type CanvasView
 --
 ---------------------------------------------------------------------------------
 
-local CanvasExporter3DView = Class( EditorEntity, "CanvasExporter3DView" )
+local CanvasView = Class( CoreCanvas, "CanvasPreviewView" )
 
-function CanvasExporter3DView:init( canvasEnv )
-	self.canvasEnv = assert( canvasEnv )
-	EditorEntity.init( self, { name = "CanvasExporter3DView" })
+---------------------------------------------------------------------------------
+function CanvasView:initCamera()
+	local camera = MOAICamera.new()
+	camera:setLoc ( 0, 0, camera:getFocalLength ( 1000 ))
+	self.layer:setCamera( camera )
+    self.camera = camera
+end
 
-	self.layer = MOAILayer.new()
+function CanvasView:initAddons()
+	self.drawGrid = self:add( CanvasDrawGrid { rotate = {90,0,0} } )
+	self.nav = self:add( CanvasLookAtObject { camera = self.camera, inputDevice = self.inputDevice } )
+end
+
+function CanvasView:initOther()
+	local fb = self:getScene():getFrameBuffer()
+	if fb then
+		fb:setClearDepth( true )
+	end
 
 	self.props = {}
 	self.models = {}
 end
 
 ---------------------------------------------------------------------------------
-function CanvasExporter3DView:onLoad()
-	self:initContext()
-	self:initCamera()
-	self:initAddons()
-
-	local fb = self:getScene():getFrameBuffer()
-	if fb then fb:setClearDepth( true ) end
+function CanvasView:addCanvasItem( item )
 end
 
-function CanvasExporter3DView:initContext()
-	local inputDevice = createEditorCanvasInputDevice( self.canvasEnv )
-	self.inputDevice = inputDevice
+function CanvasView:removeCanvasItem( item )
 end
 
-function CanvasExporter3DView:initCamera()
-	local camera = MOAICamera.new()
-	camera:setLoc ( 0, 0, camera:getFocalLength ( 1000 ))
-    self:getScene():setCameraForLayers( self:getScene():getRender(), camera )
-    self.camera = camera
+function CanvasView:changeEditTool( name )
 end
 
-function CanvasExporter3DView:initAddons()
-	self.grid = self:add( Canvas3DDrawGrid() ) --Canvas3DGrid() )
-	self.nav = self:add( Canvas3DLookAtObject { camera = self.camera, inputDevice = self.inputDevice } )
+function CanvasView:onSelectionChanged( selection )
 end
 
 ---------------------------------------------------------------------------------
-function CanvasExporter3DView:resizeCanvas( w, h )
-	local viewport = self.layer:getViewport()
-	if viewport then
-		viewport:setSize(w,h)
-		viewport:setScale(w,h)
-	end
-end
-
----------------------------------------------------------------------------------
-function CanvasExporter3DView:getScene()
-	return self.scene
-end
-
-function CanvasExporter3DView:getInputDevice()
-	return self.inputDevice
-end
-
-function CanvasExporter3DView:getCamera()
-	return self.camera
-end
-
-function CanvasExporter3DView:wndToWorld( x, y )
-	return self.layer:wndToWorld( x, y )
-end
-
-function CanvasExporter3DView:updateCanvas()
-	self.canvasEnv.updateCanvas()
-end
-
----------------------------------------------------------------------------------
-function CanvasExporter3DView:createProp()
+function CanvasView:createProp()
 	local prop = MOAIProp.new()
 	prop:setCullMode ( MOAIGraphicsProp.CULL_BACK ) --CULL_FRONT ) --
 	prop:setDepthTest( MOAIGraphicsProp.DEPTH_TEST_LESS ) --DEPTH_TEST_LESS_EQUAL
@@ -92,14 +61,14 @@ function CanvasExporter3DView:createProp()
 	return prop
 end
 
-function CanvasExporter3DView:clearProps()
+function CanvasView:clearProps()
 	for _, prop in ipairs(self.props) do
 		self.layer:removeProp( prop )
 	end
 	self.props = {}
 end
 
-function CanvasExporter3DView:createPropFromModels()
+function CanvasView:createPropFromModels()
 	for i, model in ipairs(self.models) do
 		local prop = self:createProp()
 		prop:setDeck( model:getMesh() )
@@ -109,18 +78,18 @@ function CanvasExporter3DView:createPropFromModels()
 end
 
 ---------------------------------------------------------------------------------
-function CanvasExporter3DView:addModel( model )
+function CanvasView:addModel( model )
 	table.insert( self.models, model )
 end
 
-function CanvasExporter3DView:clearModels()
+function CanvasView:clearModels()
 	for i, m in ipairs(self.models) do
 		self.models[i] = nil
 	end
 	self.models = {}
 end
 
-function CanvasExporter3DView:createModel( node, params )
+function CanvasView:createModel( node, params )
 	print("createModel", node, params)
 	local ftype = params.getFormat( params )
 	if ftype == 'FBX' then
@@ -131,7 +100,7 @@ function CanvasExporter3DView:createModel( node, params )
 end
 
 ---------------------------------------------------------------------------------
-function CanvasExporter3DView:renderNode( node, params )
+function CanvasView:renderNode( node, params )
 	self:clearModels()
 	self:createModel( node, params )
 
@@ -141,13 +110,13 @@ function CanvasExporter3DView:renderNode( node, params )
 	self:updateCanvas()
 end
 
-function CanvasExporter3DView:renderFBX( rootNode, obj )
+function CanvasView:renderFBX( rootNode, obj )
 	local size = obj.getPerPixel( obj )
 
 	self:createMeshFromFBX( rootNode, rootNode, size )
 end
 
-function CanvasExporter3DView:createMeshFromFBX( node, rootNode, size )
+function CanvasView:createMeshFromFBX( node, rootNode, size )
 	local total = node.GetChildCount()
 
 	for i = 0, total-1 do
@@ -168,7 +137,7 @@ function CanvasExporter3DView:createMeshFromFBX( node, rootNode, size )
 	end
 end
 
-function CanvasExporter3DView:renderOBJ( node, obj )
+function CanvasView:renderOBJ( node, obj )
 	local size = obj.getPerPixel( obj )
 
 	local model = OBJObject( size )
@@ -180,7 +149,7 @@ function CanvasExporter3DView:renderOBJ( node, obj )
 end
 
 ---------------------------------------------------------------------------------
-function CanvasExporter3DView:saveBy( path )
+function CanvasView:saveBy( path )
 	for i, model in ipairs(self.models) do
 		model:save( path )
 	end
@@ -188,4 +157,4 @@ end
 
 ---------------------------------------------------------------------------------
 
-return CanvasExporter3DView
+return CanvasView

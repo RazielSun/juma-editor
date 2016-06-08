@@ -18,6 +18,8 @@ function CanvasNavigate:init( option )
 	self.option = option
 	option.name = option.name or "CanvasNavigate"
 
+	self.dragging = false
+
 	EditorComponent.init( self, option )
 end
 
@@ -38,7 +40,10 @@ function CanvasNavigate:onLoad()
 	self:setZoom( 1 )
 	self.zoomControlNode:setCallback( _cameraZoomControlNodeCallback )
 
-	self.dragging = false
+	self:initOther()
+end
+
+function CanvasNavigate:initOther()
 end
 
 ---------------------------------------------------------------------------------
@@ -65,7 +70,7 @@ end
 ---------------------------------------------------------------------------------
 function CanvasNavigate:startDrag( btn, x, y )
 	self.dragFrom = { x, y }
-	self.cameraFrom = { self.targetCamera:getLoc() }
+	self.cameraLoc = { self.targetCamera:getLoc() }
 	self.dragging = btn
 	self.entity:getScene():setCursor( 'closed-hand' )
 end
@@ -142,7 +147,7 @@ function CanvasNavigate:onMouseMove( wx, wy )
 	if not self.dragging then return end
 	local x0, y0 = unpack( self.dragFrom )
 	local dx, dy = wx - x0, wy - y0
-	local cx0, cy0 = unpack( self.cameraFrom )
+	local cx0, cy0 = unpack( self.cameraLoc )
 
 	local zoom = self.zoom
 	self.targetCamera:setLoc( cx0 - dx/zoom, cy0 + dy/zoom, 0 )

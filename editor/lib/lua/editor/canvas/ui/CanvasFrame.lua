@@ -13,7 +13,7 @@ function CanvasFrame:init( option )
 	local option = option or {}
 	option.name = option.name or "CanvasFrame"
 	self.FLAG_EDITOR_OBJECT = true
-	self.deckSize = { 1024, 1024 }
+	self.deckSize = { 2048, 2048 }
 
 	self.ui = option.ui
 
@@ -25,8 +25,11 @@ end
 
 ---------------------------------------------------------------------------------
 function CanvasFrame:onLoad()
-	self.layer = self.entity.layer
-	self.layer:insertProp( self._prop )
+	local layer = self.entity.layer
+	assert(layer)
+
+	self:setLayer( layer )
+	
 	self:attach()
 end
 

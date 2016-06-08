@@ -22,8 +22,11 @@ end
 
 ---------------------------------------------------------------------------------
 function CanvasGrid:onLoad()
-	self.layer = self.entity.layer
-	self.layer:insertProp( self:getProp() )
+	local layer = self.entity.layer
+	assert(layer)
+
+	self:setLayer( layer )
+	
 	self:attach()
 end
 

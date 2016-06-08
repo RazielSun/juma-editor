@@ -13,7 +13,6 @@ local BaseEditorScene = Class( EditorScene, "BaseEditorScene" ):FIELDS{
 
 function BaseEditorScene:init( option )
 	local option = option or {}
-	option.viewport = option.viewport or MOAIViewport.new()
 	self.bg_color = { 0.06, 0.06, 0.06, 1.0 }
 	EditorScene.init(self, option)
 end

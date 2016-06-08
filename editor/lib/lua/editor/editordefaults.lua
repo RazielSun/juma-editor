@@ -70,7 +70,7 @@ registerComponent( 'PropComponent', PropComponent )
 
 ---------------------------------------------------------------------------------
 
-registerEditorSceneCanvasForType("scenes.BaseEditorScene", "edit.CanvasView.CanvasView", "scene")
-registerEditorSceneCanvasForType("scenes.UIEditorScene", "edit.CanvasView.CanvasView", "ui")
-registerEditorSceneCanvasForType("scenes.BaseEditorScene", "edit.CanvasView.3D.Canvas3DView", "scene3d")
-registerEditorSceneCanvasForType("scenes.BaseEditorScene", "edit.CanvasView.3D.CanvasExporter3DView", "preview3d")
+registerEditorSceneCanvasForType("scenes.BaseEditorScene", "canvas.CanvasView", "scene")
+registerEditorSceneCanvasForType("scenes.UIEditorScene", "canvas.ui.CanvasView", "ui")
+registerEditorSceneCanvasForType("scenes.BaseEditorScene", "canvas.3d.CanvasView", "scene3d")
+registerEditorSceneCanvasForType("scenes.BaseEditorScene", "canvas.preview.CanvasView", "preview3d")

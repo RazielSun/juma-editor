@@ -9,13 +9,17 @@ end
 
 function saveScene( path )
 	scene = getScene()
-	if scene then return scene:save( path ) end
-	return false
+	if scene then
+		return scene:save( path )
+	end
+	return nil
 end
 
 function getScene()
-	if view then return view.scene end
-	return false
+	if view then
+		return view.scene
+	end
+	return nil
 end
 
 function viewCreated()

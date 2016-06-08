@@ -311,6 +311,7 @@ class SceneView( MainEditorModule ):
 		canvas = self.getCanvas()
 		if canvas:
 			scene = canvas.safeCall( 'getScene' )
+			print("get scene:", scene)
 			signals.emitNow( 'scene.settings', scene )
 
 	def changeGridView( self ):

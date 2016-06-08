@@ -3,34 +3,36 @@ local ScriptPropComponent = require("entity.components.ScriptPropComponent")
 
 ---------------------------------------------------------------------------------
 --
--- @type Canvas3DDrawGrid
+-- @type CanvasDrawGrid
 --
 ---------------------------------------------------------------------------------
 
-local Canvas3DDrawGrid = Class( ScriptPropComponent, "Canvas3DDrawGrid" )
+local CanvasDrawGrid = Class( ScriptPropComponent, "CanvasDrawGrid" )
 
-function Canvas3DDrawGrid:init()
+function CanvasDrawGrid:init( option )
 	self.FLAG_EDITOR_OBJECT = true
 
+	local option = option or {}
 	self.visible = true
-	self.deckSize = { 1000, 1000 } --{ 20000, 20000 }
-	self.gridSize = { 100, 100 }
+	self.deckSize = option.deckSize or { 1000, 1000 }
+	self.cellSize = option.cellSize or { 100, 100 }
+	self.rotate = option.rotate or { 0, 0, 0 }
 
-	ScriptPropComponent.init(self, { name = "Canvas3DDrawGrid" })
+	ScriptPropComponent.init(self, { name = "CanvasDrawGrid" })
 end
 
 ---------------------------------------------------------------------------------
-function Canvas3DDrawGrid:onLoad()
-	self.layer = self.entity.layer
-	assert( self.layer )
+function CanvasDrawGrid:onLoad()
+	local layer = self.entity.layer
+	assert( layer )
 
-	local prop = self:getProp()
-	prop:setRot( 90, 0, 0 )
-	self.layer:insertProp( prop )
+	self:getProp():setRot( unpack(self.rotate) )
+	self:setLayer( layer )
+
 	self:attach()
 end
 
-function Canvas3DDrawGrid:onDraw()
+function CanvasDrawGrid:onDraw()
 	local w, h = unpack(self.deckSize)
 	local x0, y1 = -w*0.5, h*0.5
 	local x1, y0 = w*0.5, -h*0.5
@@ -39,7 +41,7 @@ function Canvas3DDrawGrid:onDraw()
 	
 	local dx = x1-x0
 	local dy = y1-y0
-	local gw, gh = unpack(self.gridSize)
+	local gw, gh = unpack(self.cellSize)
 	local col = math.ceil( dx/gw )
 	local row = math.ceil( dy/gh )
 	local cx0 = math.floor( x0/gw ) * gw
@@ -61,4 +63,4 @@ end
 
 ---------------------------------------------------------------------------------
 
-return Canvas3DDrawGrid
+return CanvasDrawGrid
