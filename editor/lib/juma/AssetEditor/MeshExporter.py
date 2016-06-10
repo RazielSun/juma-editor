@@ -12,16 +12,12 @@ from AssetEditor             	import AssetEditorModule
 from MeshNodes 					import OBJNode
 from juma.qt.controls.GenericListWidget import GenericListWidget
 
-##----------------------------------------------------------------##
-_gInstalledFBX = False
+import pyassimp
+import pyassimp.postprocess
 
-try:
-	from fbx import *
-	import FbxCommon
-	import fbxsip
-	_gInstalledFBX = True
-except ImportError:
-	print("MeshExporter import error: Did you install FBX SDK?")
+from fbx import *
+import FbxCommon
+import fbxsip
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -252,16 +248,14 @@ class MeshExporter( AssetEditorModule ):
 
 	##----------------------------------------------------------------##
 	def getFBXNode( self, fileName ):
-		if _gInstalledFBX:
-			# Prepare the FBX SDK.
-			lSdkManager, lScene = FbxCommon.InitializeSdkObjects()
-			# Open FBX file
-			lResult = FbxCommon.LoadScene(lSdkManager, lScene, fileName)
-			if lResult:
-				rootNode = lScene.GetRootNode()
-				rootNode.FbxLayerElement = FbxLayerElement
-				return rootNode
-		return None
+		# Prepare the FBX SDK.
+		lSdkManager, lScene = FbxCommon.InitializeSdkObjects()
+		# Open FBX file
+		lResult = FbxCommon.LoadScene(lSdkManager, lScene, fileName)
+		if lResult:
+			rootNode = lScene.GetRootNode()
+			rootNode.FbxLayerElement = FbxLayerElement
+			return rootNode
 	# 	# FbxCommon.SaveScene(lSdkManager, lScene, path + '/' + 'output.fbx')
 
 	# 	# Destroy all objects created by the FBX SDK.
