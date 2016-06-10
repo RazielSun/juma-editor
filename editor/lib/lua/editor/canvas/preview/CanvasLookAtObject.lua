@@ -43,6 +43,29 @@ function CanvasLookAtObject:stopDrag( x, y )
 end
 
 ---------------------------------------------------------------------------------
+function CanvasLookAtObject:setZoom( zoom )
+	zoom = math.clamp( zoom, 0.06, 10 )
+	self.zoom = zoom
+	self.zoomControlNode:setAttr( 1, zoom or 1 )
+	self.zoomControlNode:forceUpdate()
+end
+
+function CanvasLookAtObject:updateZoom()
+	local zoom = self:getZoom()
+	local factor = zoom * -500
+	local camera = self.targetCamera
+
+	local vx, vy, vz = camera:getViewVector()
+
+	camera:setLoc( vx*factor, vy*factor, vz*factor )
+	-- print("getViewVector", vx, vy, vz)
+	-- print("factor:", vx*factor, vy*factor, vz*factor)
+	-- print("getLoc", camera:getLoc())
+
+	self:updateCanvas()
+end
+
+---------------------------------------------------------------------------------
 function CanvasLookAtObject:getAngles( wx, wy )
 	local x0, y0 = unpack( self.dragFrom )
 	local dx, dy = wx - x0, wy - y0
@@ -55,13 +78,16 @@ end
 
 function CanvasLookAtObject:updateCameraPos( a, b )
 	local x, y, z = 0, 0, 0
-	local radius = 500
+	local camera = self.targetCamera
+
+	local dX, dY, dZ = camera:getLoc()
+	local radius = math.sqrt((dX * dX) + (dY * dY) + (dZ * dZ))
+
 	x = math.sin(b) * math.sin(a) * radius
 	z = math.sin(b) * math.cos(a) * radius
 	y = math.cos(b) * radius
 
 	-- print("move camera to", x, y, z, "angle:", a, b)
-	local camera = self.targetCamera
 	camera:setLoc( x, y, z )
 	camera:lookAt( 0, 0, 0 )
 

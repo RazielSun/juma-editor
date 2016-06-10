@@ -21,8 +21,10 @@ function FBXMesh:setNode( node )
 	self.nodeName = node.GetName()
 	print("FBXMesh setNode", node, self.nodeName)
 
+	local s = self._size
+
  	local trsl = node.LclTranslation.Get()
- 	self.loc = {trsl[0], trsl[1], trsl[2]}
+ 	self.loc = {s*trsl[0], s*trsl[1], s*trsl[2]}
  	local rot = node.LclRotation.Get()
  	self.rot = {rot[0],rot[1],rot[2]}
 	local scl = node.LclScaling.Get()
@@ -93,8 +95,8 @@ end
 function FBXMesh:setVertex( id, p, n, uv )
 	-- self.ibo:writeU16( id )
 	local s = self._size
-	local sx, sy, sz = unpack(self.scl)
-	self.vbo:writeFloat ( p[0]*s*sx, p[1]*s*sy, p[2]*s*sz )
+	-- local sx, sy, sz = unpack(self.scl)
+	self.vbo:writeFloat ( p[0]*s, p[1]*s, p[2]*s )
 	-- self.vbo:writeFloat ( n[0], n[1], n[2] )
 	self.vbo:writeFloat ( uv and uv[0] or 0, uv and 1.0-uv[1] or 0 )
 	self.vbo:writeColor32 ( 1, 1, 1 )

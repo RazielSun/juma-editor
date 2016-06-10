@@ -18,7 +18,7 @@ local CanvasView = Class( CoreCanvas, "CanvasPreviewView" )
 ---------------------------------------------------------------------------------
 function CanvasView:initCamera()
 	local camera = MOAICamera.new()
-	camera:setLoc ( 0, 0, camera:getFocalLength ( 1000 ))
+	camera:setLoc( 0, 0, 500 )
 	self.layer:setCamera( camera )
     self.camera = camera
 end
@@ -36,6 +36,9 @@ function CanvasView:initOther()
 
 	self.props = {}
 	self.models = {}
+
+	
+	self.nav:setZoom( 1 )
 end
 
 ---------------------------------------------------------------------------------
@@ -74,6 +77,7 @@ function CanvasView:createPropFromModels()
 		prop:setDeck( model:getMesh() )
 		prop:setLoc( unpack(model.loc) )
 		prop:setRot( unpack(model.rot) )
+		prop:setScl( unpack(model.scl))
 	end
 end
 

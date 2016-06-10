@@ -45,7 +45,7 @@ function BaseMesh:createMesh()
 
 	local texturePath = self._texturePath
 	if texturePath then
-		mesh:setTexture ( texturePath )
+		mesh:setTexture ( ResourceMgr:getTexture(texturePath) )
 	else
 		mesh:setTexture ( editorAssetPath( 'grid.png') )
 	end
