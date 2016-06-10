@@ -144,7 +144,6 @@ def convert3dScene(inPath, outPath, lua):
     # Finally release the model
     pyassimp.release(scene)
 
-
     # def showAssimpFileDialog(self):
     #     fileName, filt = QtGui.QFileDialog.getOpenFileName(self, "3d scene (model)", self.workingDir or "~")
     #     if fileName:
