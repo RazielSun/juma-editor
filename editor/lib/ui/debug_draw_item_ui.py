@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'debug_draw_item.ui'
 #
-# Created: Thu May 19 16:41:52 2016
+# Created: Sat Jun 11 12:39:54 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!

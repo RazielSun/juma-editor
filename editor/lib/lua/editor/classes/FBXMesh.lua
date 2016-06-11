@@ -9,9 +9,10 @@ local BaseMesh = require("classes.BaseMesh")
 
 local FBXMesh = Class(BaseMesh, "FBXMesh")
 
-function FBXMesh:init( size )
+function FBXMesh:init( size, texture )
 	BaseMesh.init( self )
 	self._size = size or 256
+	self._texture = texture or ''
 end
 
 ---------------------------------------------------------------------------------

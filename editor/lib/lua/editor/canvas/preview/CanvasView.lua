@@ -95,7 +95,7 @@ end
 
 function CanvasView:createModel( node, params )
 	print("createModel", node, params)
-	local ftype = params.getFormat( params )
+	local ftype = params.GetFormat( params )
 	if ftype == 'FBX' then
 		self:renderFBX( node, params )
 	elseif ftype == 'OBJ' then
@@ -115,23 +115,26 @@ function CanvasView:renderNode( node, params )
 end
 
 function CanvasView:renderFBX( rootNode, obj )
-	local size = obj.getPerPixel( obj )
+	local size = obj.GetPerPixel( obj )
+	local texture = obj.GetTexture( obj )
 
-	self:createMeshFromFBX( rootNode, rootNode, size )
+	self:createMeshFromFBX( rootNode, rootNode, size, texture )
 end
 
-function CanvasView:createMeshFromFBX( node, rootNode, size )
+function CanvasView:createMeshFromFBX( node, rootNode, size, texture )
+	if not node then return end
+	
 	local total = node.GetChildCount()
 
 	for i = 0, total-1 do
 		local child = node.GetChild(i)
 		local totalChilds = child.GetChildCount()
 		if totalChilds > 0 then
-			self:createMeshFromFBX( child, rootNode, size )
+			self:createMeshFromFBX( child, rootNode, size, texture )
 		else
 			local mesh = child.GetMesh()
 			if mesh then
-				local model = FBXObject( size )
+				local model = FBXObject( size, texture )
 				model:setFBXMaterials( child, rootNode.FbxLayerElement )
 				model:setNode( child )
 				model:createMesh()

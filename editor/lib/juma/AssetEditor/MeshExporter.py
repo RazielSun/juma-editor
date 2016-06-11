@@ -19,34 +19,46 @@ from fbx import *
 import FbxCommon
 import fbxsip
 
+from ui.export_params_ui import Ui_ExportParams
+
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
 	return os.path.dirname( __file__ ) + '/' + path
 
 ##----------------------------------------------------------------##
 class MeshObject( object ):
-	def __init__( self, path, per_pixel = 256.0 ):
+	def __init__( self, path, per_pixel = 256.0, texture = "" ):
 		self.fullpath = path
 		name = os.path.basename( path )
 		self.name = name.lower()
 		frm = self.name.split('.')[-1]
 		self.format = frm.upper()
 		self._per_pixel = per_pixel
+		self._texture = texture
 
 	def __repr__( self ):
 		return "< {} >   {}".format(self.format, self.name)
 
-	def getPath( self ):
+	def GetPath( self ):
 		return self.fullpath
 
-	def getFormat( self ):
+	def GetFormat( self ):
 		return self.format
 
-	def getPerPixel( self ):
+	def GetPerPixel( self ):
 		return self._per_pixel
 
-	def setPerPixel( self, per_pixel ):
+	def GetPerPixelStr( self ):
+		return "%.1f" % self._per_pixel
+
+	def SetPerPixel( self, per_pixel ):
 		self._per_pixel = per_pixel
+
+	def GetTexture( self ):
+		return self._texture
+
+	def SetTexture( self, texture ):
+		self._texture = texture
 
 ##----------------------------------------------------------------##
 class MeshExporter( AssetEditorModule ):
@@ -71,22 +83,23 @@ class MeshExporter( AssetEditorModule ):
 
 		self.toolbar = self.addToolBar( 'mesh_exporter', self.window.addToolBar() )
 
-		self.per_pixel_edit = ppedit = QtGui.QLineEdit( None )
-		ppedit.setMaximumSize( 50, 20 )
-		# intValidator = QtGui.QIntValidator()
-		# ppedit.setValidator( intValidator )
-		ppedit.textChanged.connect( self.onPerPixelChange )
-
 		self.export_path_edit = epedit= QtGui.QLineEdit( None )
 		epedit.textChanged.connect( self.onExportPathChange )
 
 		self.addTool( 'mesh_exporter/add_object', label = 'Add', icon = 'plus_mint' )
 		self.addTool( 'mesh_exporter/remove_object', label = 'Remove', icon = 'minus' )
 		self.addTool( 'mesh_exporter/preview_render', label = 'Preview' )
-		self.addTool( 'mesh_exporter/per_pixel_edit', widget = ppedit )
-		self.addTool( 'mesh_exporter/export_path_edit', widget = epedit )
 		self.addTool( 'mesh_exporter/export', label = 'Export' )
 		self.addTool( 'mesh_exporter/export_all', label = 'ExportAll' )
+		self.addTool( 'mesh_exporter/export_path_edit', widget = epedit )
+
+		container = QtGui.QWidget()
+		self.ui = ui = Ui_ExportParams()
+		ui.setupUi( container )
+		self.window.addWidget( container, expanding=False )
+
+		ui.perPixelEdit.textChanged.connect( self.onPerPixelChange )
+		ui.textureEdit.textChanged.connect( self.onTextureChange )
 
 		self.list = self.window.addWidget( 
 				MeshExporterListWidget( 
@@ -111,7 +124,7 @@ class MeshExporter( AssetEditorModule ):
 	def getObjectData( self ):
 		data = []
 		for obj in self.objects:
-			dct = dict(path = obj.getPath(), per_pixel = obj.getPerPixel())
+			dct = dict(path = obj.GetPath(), per_pixel = obj.GetPerPixel(), texture = obj.GetTexture())
 			data.append( dct )
 		return data
 
@@ -124,7 +137,7 @@ class MeshExporter( AssetEditorModule ):
 	def addObject( self, data ):
 		obj = None
 		if type(data) is dict:
-			obj = MeshObject( data.get('path'), data.get('per_pixel') )
+			obj = MeshObject( data.get('path'), data.get('per_pixel'), data.get('texture') )
 		else:
 			obj = MeshObject( data )
 		self.objects.append(obj)
@@ -189,11 +202,11 @@ class MeshExporter( AssetEditorModule ):
 
 	def getNodeFromObject( self, obj ):
 		node = None
-		frm = obj.getFormat()
+		frm = obj.GetFormat()
 		if frm == 'FBX':
-			node = self.getFBXNode( obj.getPath() )
+			node = self.getFBXNode( obj.GetPath() )
 		elif frm == 'OBJ':
-			node = self.getOBJNode( obj.getPath() )
+			node = self.getOBJNode( obj.GetPath() )
 		return node
 
 	##----------------------------------------------------------------##
@@ -231,11 +244,18 @@ class MeshExporter( AssetEditorModule ):
 		self.updateList()
 
 	def onPerPixelChange( self, text ):
-		selection = self.list.getSelection()
 		if text and text != '' and text != ' ':
 			per_pixel = float(text)
+			selection = self.list.getSelection()
 			for obj in selection:
-				obj.setPerPixel( per_pixel )
+				obj.SetPerPixel( per_pixel )
+
+	def onTextureChange( self, text ):
+		if text:
+			text = text.strip()
+			selection = self.list.getSelection()
+			for obj in selection:
+				obj.SetTexture( text )
 
 	def onExportPathChange( self, text ):
 		self.export_path = text
@@ -243,8 +263,8 @@ class MeshExporter( AssetEditorModule ):
 	def onItemSelectionChanged( self ):
 		selection = self.list.getSelection()
 		for obj in selection:
-			pp = "%d" % obj.getPerPixel()
-			self.per_pixel_edit.setText( pp )
+			self.ui.perPixelEdit.setText( obj.GetPerPixelStr() )
+			self.ui.textureEdit.setText( obj.GetTexture() )
 
 	##----------------------------------------------------------------##
 	def getFBXNode( self, fileName ):

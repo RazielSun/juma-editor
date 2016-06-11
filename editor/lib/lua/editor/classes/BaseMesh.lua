@@ -43,12 +43,19 @@ function BaseMesh:createMesh()
 	mesh:setTotalElements( vbo:countElements( vertexFormat ) )
 	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
 
-	local texturePath = self._texturePath
-	if texturePath then
-		mesh:setTexture ( ResourceMgr:getTexture( texturePath ) )
+	local tex = self._texture
+	if tex and tex ~= '' then
+		-- tex = string.
+		mesh:setTexture ( ResourceMgr:getTexture( tex ) )
 	else
-		mesh:setTexture ( ResourceMgr:getTexture( editorAssetPath( 'grid.png') ) )
+		local texturePath = self._texturePath
+		if texturePath then
+			mesh:setTexture ( ResourceMgr:getTexture( texturePath ) )
+		else
+			mesh:setTexture ( ResourceMgr:getTexture( editorAssetPath( 'grid.png') ) )
+		end
 	end
+	
 
 	mesh.loc = self.loc
 	mesh.rot = self.rot
