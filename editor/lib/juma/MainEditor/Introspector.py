@@ -325,9 +325,13 @@ class IntrospectorInstance(object):
 	def clear(self):
 		for editor in self.editors:
 			editor.container.setContextObject( None )
+			cached = False
 			if editor.needCache():
-				pushObjectEditorToCache( editor.targetTypeId, editor )
-			editor.unload()
+				editor.setTarget( None )
+				cached = pushObjectEditorToCache( editor.targetTypeId, editor )
+			if not cached:
+				editor.unload()
+			editor.target = None
 
 		layout = self.body.mainLayout
 		for count in reversed( range(layout.count()) ):
