@@ -306,9 +306,9 @@ class IntrospectorInstance(object):
 				else:
 					container.setTitle( repr( typeId ) )
 				count = self.body.mainLayout.count()
-				assert count > 0
+				assert count>0
 				self.body.mainLayout.insertWidget( count - 1, container )
-				menuName = option.get( 'context_menu', editor.getContextMenu() )
+				menuName = option.get('context_menu', editor.getContextMenu())
 				container.setContextMenu( menuName )
 				container.ownerEditor = editor
 			else:
@@ -325,12 +325,9 @@ class IntrospectorInstance(object):
 	def clear(self):
 		for editor in self.editors:
 			editor.container.setContextObject( None )
-			cached = False
 			if editor.needCache():
-				cached = pushObjectEditorToCache( editor.targetTypeId, editor )
-			if not cached:
-				editor.unload()
-			editor.target = None
+				pushObjectEditorToCache( editor.targetTypeId, editor )
+			editor.unload()
 
 		layout = self.body.mainLayout
 		for count in reversed( range(layout.count()) ):

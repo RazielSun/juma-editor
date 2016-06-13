@@ -115,6 +115,7 @@ class PropertyEditor( QtGui.QFrame ):
 
 		rebuildFields = model != self.model
 		assert(model)
+		
 		if rebuildFields:
 			self.clear()
 			self.refreshing = True
@@ -127,7 +128,7 @@ class PropertyEditor( QtGui.QFrame ):
 				self.addFieldEditor( field )			
 			assert self.refreshing
 			self.refreshing = False
-			
+		
 		self.model  = model
 		self.target = target
 		self.refreshAll()
@@ -176,7 +177,7 @@ class PropertyEditor( QtGui.QFrame ):
 	def clear( self ):
 		for editor in self.editors.values():
 			editor.clear()
-			
+		
 		layout = self.layout
 		while layout.count() > 0:
 			child = layout.takeAt( 0 )
@@ -186,6 +187,7 @@ class PropertyEditor( QtGui.QFrame ):
 					w.setParent( None )
 			else:
 				break
+
 		self.editors.clear()
 		self.target  = None
 

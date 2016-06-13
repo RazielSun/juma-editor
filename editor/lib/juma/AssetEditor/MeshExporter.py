@@ -304,6 +304,7 @@ class MeshExporter( AssetEditorModule ):
 
 	    m = pyassimp.matrix_from_transformation(node.transformation)
 	    scl, rot, pos = pyassimp.decompose_matrix(m)
+	    
 	    print("  " + "\t" * level + " pos {} {} {}".format(pos.x, pos.y, pos.z))
 	    print("  " + "\t" * level + " rot {} {} {}".format(rot.x, rot.y, rot.z))
 	    print("  " + "\t" * level + " scl {} {} {}".format(scl.x, scl.y, scl.z))

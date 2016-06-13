@@ -15,7 +15,6 @@ from juma.SearchView 					import requestSearchView, registerSearchEnumerator
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
-	import os.path
 	return os.path.dirname( __file__ ) + '/' + path
 
 ##----------------------------------------------------------------##
@@ -62,7 +61,6 @@ class GraphEditor( MainEditorModule ):
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'GraphEditor.lua' ) )
 
-		self.addTool( 'hierarchy/open_scene_settings', label ='Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_entity', label ='Create', icon = 'plus_mint' )
 
 		# MENU
@@ -121,7 +119,6 @@ class GraphEditor( MainEditorModule ):
 		selection = []
 		if scene:
 			selection.append( scene )
-		print("onSceneSettings", selection)
 		self.changeSelection( selection )
 
 	def onSceneChange(self, scene):
@@ -140,15 +137,7 @@ class GraphEditor( MainEditorModule ):
 
 		signals.emitNow( 'scene.open', scene )
 
-##----------------------------------------------------------------##
-	def openSceneSettings(self):
-		self.tree.selectNode( None )
-		scene = self.delegate.safeCallMethod( 'editor', 'getScene' )
-		selection = []
-		if scene:
-			selection.append( scene )
-		self.changeSelection( selection )
-
+	##----------------------------------------------------------------##
 	def createEntity( self ):
 		requestSearchView( 
 			info    = 'select entity type to create',
@@ -187,8 +176,6 @@ class GraphEditor( MainEditorModule ):
 
 		if name == 'create_entity':
 			self.createEntity()
-		elif name == 'open_scene_settings':
-			self.openSceneSettings()
 
 	def onMoaiClean( self ):
 		self.tree.clear()
@@ -210,7 +197,6 @@ class GraphEditor( MainEditorModule ):
 		# 	self.changeSelection( selection )
 
 	##----------------------------------------------------------------##
-
 	def onEntityAdded( self, entity, context = None ):
 		if context == 'new':
 			self.setFocus()
