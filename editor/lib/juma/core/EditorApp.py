@@ -286,6 +286,18 @@ class EditorApp(object):
 		else:
 			raise Exception( 'what platform?' + name )
 
+	def getRelPath( self, path ):
+		proj = self.getProject()
+		if proj:
+			path = path.replace(proj.getPath(), "{project}")
+		return path
+
+	def getAbsPath( self, path ):
+		proj = self.getProject()
+		if proj:
+			path = path.replace('{project}', proj.getPath())
+		return path
+
 ##----------------------------------------------------------------##
 
 app = EditorApp()

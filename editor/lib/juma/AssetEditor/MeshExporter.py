@@ -13,7 +13,8 @@ from MeshNodes 					import OBJNode
 from juma.qt.controls.GenericListWidget import GenericListWidget
 
 import pyassimp
-import pyassimp.postprocess
+from pyassimp.postprocess import *
+# from pyassimp.helper import *
 
 from fbx import *
 import FbxCommon
@@ -28,18 +29,26 @@ def _getModulePath( path ):
 ##----------------------------------------------------------------##
 class MeshObject( object ):
 	def __init__( self, path, per_pixel = 256.0, texture = "" ):
-		self.fullpath = path
+		self.SetPath( path )
+
 		name = os.path.basename( path )
 		self.name = name.lower()
+
 		frm = self.name.split('.')[-1]
 		self.format = frm.upper()
+
 		self._per_pixel = per_pixel
 		self._texture = texture
 
 	def __repr__( self ):
 		return "< {} >   {}".format(self.format, self.name)
 
-	def GetPath( self ):
+	def SetPath( self, path ):
+		self.fullpath = app.getRelPath( path )
+
+	def GetPath( self, abs_path = False ):
+		if abs_path:
+			return app.getAbsPath( self.fullpath )
 		return self.fullpath
 
 	def GetFormat( self ):
@@ -54,7 +63,9 @@ class MeshObject( object ):
 	def SetPerPixel( self, per_pixel ):
 		self._per_pixel = per_pixel
 
-	def GetTexture( self ):
+	def GetTexture( self, abs_path = False ):
+		if abs_path:
+			return app.getAbsPath( self._texture )
 		return self._texture
 
 	def SetTexture( self, texture ):
@@ -139,7 +150,7 @@ class MeshExporter( AssetEditorModule ):
 		if type(data) is dict:
 			obj = MeshObject( data.get('path'), data.get('per_pixel'), data.get('texture') )
 		else:
-			obj = MeshObject( data )
+			obj = MeshObject( app.getRelPath(data) )
 		self.objects.append(obj)
 		self.onAddObject( obj )
 
@@ -204,9 +215,12 @@ class MeshExporter( AssetEditorModule ):
 		node = None
 		frm = obj.GetFormat()
 		if frm == 'FBX':
-			node = self.getFBXNode( obj.GetPath() )
+			node = self.getFBXNode( obj.GetPath( True ) )
 		elif frm == 'OBJ':
-			node = self.getOBJNode( obj.GetPath() )
+			node = self.getOBJNode( obj.GetPath( True ) )
+
+		self.convert3dScene( obj )
+
 		return node
 
 	##----------------------------------------------------------------##
@@ -276,14 +290,88 @@ class MeshExporter( AssetEditorModule ):
 			rootNode = lScene.GetRootNode()
 			rootNode.FbxLayerElement = FbxLayerElement
 			return rootNode
-	# 	# FbxCommon.SaveScene(lSdkManager, lScene, path + '/' + 'output.fbx')
+		# FbxCommon.SaveScene(lSdkManager, lScene, path + '/' + 'output.fbx')
 
-	# 	# Destroy all objects created by the FBX SDK.
-	# 	# lSdkManager.Destroy()
+		# Destroy all objects created by the FBX SDK.
+		lSdkManager.Destroy()
 
 	def getOBJNode( self, fileName ):
 		node = OBJNode( fileName )
 		return node
+
+	def recur_node(self,node,level = 0):
+	    print("  " + "\t" * level + "- " + str(node))
+
+	    m = pyassimp.matrix_from_transformation(node.transformation)
+	    scl, rot, pos = pyassimp.decompose_matrix(m)
+	    print("  " + "\t" * level + " pos {} {} {}".format(pos.x, pos.y, pos.z))
+	    print("  " + "\t" * level + " rot {} {} {}".format(rot.x, rot.y, rot.z))
+	    print("  " + "\t" * level + " scl {} {} {}".format(scl.x, scl.y, scl.z))
+	    
+	    for mesh in node.meshes:
+	    	print("  " + "\t" * level + " mesh:" + str(mesh.name))
+	    
+	    for child in node.children:
+	        self.recur_node(child, level + 1)
+
+	def convert3dScene(self, obj):
+	    scene = pyassimp.load(obj.GetPath( True ), processing = aiProcessPreset_TargetRealtime_MaxQuality)
+	    #the model we load
+	    print
+	    print("MODEL:" + str(obj))
+	    print
+	    
+	    #write some statistics
+	    print("SCENE:")
+	    print("  meshes:" + str(len(scene.meshes)))
+	    print("  materials:" + str(len(scene.materials)))
+	    print("  textures:" + str(len(scene.textures)))
+	    print
+	    
+	    print("NODES:")
+	    self.recur_node(scene.rootnode)
+
+	    print
+	    print("MESHES:")
+	    for index, mesh in enumerate(scene.meshes):
+	        print("  MESH id: " + str(index+1) + " (" + str(mesh.name) + ")")
+	        print("    material id: " + str(mesh.materialindex+1))
+	        print("    vertices: " + str(len(mesh.vertices)))
+	        print("    normals: " + str(len(mesh.normals)))
+	        print("    colors: " + str(len(mesh.colors)))
+	        print("    uv channels: " + str(len(mesh.texturecoords)))
+	        print("    uv-component-count:" + str(len(mesh.numuvcomponents)))
+	        print("    faces:" + str(len(mesh.faces)))
+	        print("    bones:" + str(len(mesh.bones)))
+	        print
+	        meshDict = {
+	            'name'          : mesh.name or index,
+	            'vertices'      : mesh.vertices,
+	            'verticesCount' : len(mesh.vertices),
+	            'texturecoords' : mesh.texturecoords,
+	            'faces'         : mesh.faces,
+	            'facesCount'    : len(mesh.faces),
+	            'bones'         : mesh.bones,
+	            'normals'       : mesh.normals
+	        }
+
+	    print("MATERIALS:")
+	    for index, material in enumerate(scene.materials):
+	        print("  MATERIAL (id:" + str(index+1) + ")")
+	        for key, value in material.properties.items():
+	            print("    %s: %s" % (key, value))
+	    print
+	    
+	    print("TEXTURES:")
+	    for index, texture in enumerate(scene.textures):
+	        print("  TEXTURE" + str(index+1))
+	        print("    width:" + str(texture.width))
+	        print("    height:" + str(texture.height))
+	        print("    hint:" + str(texture.achformathint))
+	        print("    data (size):" + str(len(texture.data)))
+	    
+	    # Finally release the model
+	    pyassimp.release(scene)
 
 ##----------------------------------------------------------------##
 

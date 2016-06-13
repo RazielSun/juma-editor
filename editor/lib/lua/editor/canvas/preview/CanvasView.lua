@@ -116,7 +116,7 @@ end
 
 function CanvasView:renderFBX( rootNode, obj )
 	local size = obj.GetPerPixel( obj )
-	local texture = obj.GetTexture( obj )
+	local texture = obj.GetTexture( obj, true )
 
 	self:createMeshFromFBX( rootNode, rootNode, size, texture )
 end

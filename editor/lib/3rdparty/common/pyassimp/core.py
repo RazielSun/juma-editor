@@ -471,4 +471,15 @@ def decompose_matrix(matrix):
     
     from ctypes import byref, pointer
     _assimp_lib.dll.aiDecomposeMatrix(pointer(matrix), byref(scaling), byref(rotation), byref(position))
-    return scaling._init(), rotation._init(), position._init()
+    # return scaling._init(), rotation._init(), position._init()
+    return scaling, rotation, position
+
+_MATRIX_PARAMS = [ 'a', 'b', 'c', 'd' ]
+
+def matrix_from_transformation(tr):
+    m = structs.Matrix4x4()
+    for i, word in enumerate(_MATRIX_PARAMS):
+        for j in range(1,5):
+            attr = "{}{}".format(word,j)
+            setattr(m, attr, tr[i][j-1])
+    return m

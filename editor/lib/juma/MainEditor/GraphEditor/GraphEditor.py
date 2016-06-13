@@ -62,6 +62,7 @@ class GraphEditor( MainEditorModule ):
 		self.delegate = MOAILuaDelegate( self )
 		self.delegate.load( _getModulePath( 'GraphEditor.lua' ) )
 
+		self.addTool( 'hierarchy/open_scene_settings', label ='Settings', icon = 'cog' )
 		self.addTool( 'hierarchy/create_entity', label ='Create', icon = 'plus_mint' )
 
 		# MENU
@@ -120,6 +121,7 @@ class GraphEditor( MainEditorModule ):
 		selection = []
 		if scene:
 			selection.append( scene )
+		print("onSceneSettings", selection)
 		self.changeSelection( selection )
 
 	def onSceneChange(self, scene):
@@ -185,6 +187,8 @@ class GraphEditor( MainEditorModule ):
 
 		if name == 'create_entity':
 			self.createEntity()
+		elif name == 'open_scene_settings':
+			self.openSceneSettings()
 
 	def onMoaiClean( self ):
 		self.tree.clear()
