@@ -40,6 +40,12 @@ class MeshPreview( AssetEditorModule ):
 		signals.connect( 'mesh.create',   	self.onMeshCreate )
 		signals.connect( 'mesh.save_by',   	self.onMeshSaveBy )
 
+		signals.connect( 'mesh.assimp_clear',   	self.onAssimpClear )
+		signals.connect( 'mesh.assimp_mesh',   		self.onAssimpMesh )
+		signals.connect( 'mesh.assimp_transforms',  self.onAssimpTransforms )
+		signals.connect( 'mesh.assimp_render',   	self.onAssimpRender )
+		signals.connect( 'mesh.assimp_save',   		self.onAssimpSave )
+
 	def onSetFocus( self ):
 		self.getModule( 'asset_editor' ).setFocus()
 		self.window.show()
@@ -49,6 +55,32 @@ class MeshPreview( AssetEditorModule ):
 		canvas = self.canvas
 		if canvas:
 			canvas.updateCanvas( no_sim = False, forced = True )
+
+	##----------------------------------------------------------------##
+	def onAssimpClear( self ):
+		canvas = self.canvas
+		if canvas:
+			canvas.safeCallMethod( "view", "prepareAssimp" )
+
+	def onAssimpMesh( self, node, obj ):
+		canvas = self.canvas
+		if canvas:
+			canvas.safeCallMethod( "view", "createAssimpMesh", node, obj )
+
+	def onAssimpTransforms( self, name, data ):
+		canvas = self.canvas
+		if canvas:
+			canvas.safeCallMethod( "view", "assimpTransforms", name, data )
+
+	def onAssimpRender( self ):
+		canvas = self.canvas
+		if canvas:
+			canvas.safeCallMethod( "view", "assimpRender" )
+
+	def onAssimpSave( self, path ):
+		canvas = self.canvas
+		if canvas:
+			canvas.safeCallMethod( "view", "assimpSave", path )
 
 	##----------------------------------------------------------------##
 	def onShowPreview( self ):

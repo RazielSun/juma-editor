@@ -2,6 +2,7 @@
 
 import os.path
 import time
+import math
 import logging
 
 from PySide                   	import QtCore, QtGui, QtOpenGL
@@ -32,16 +33,18 @@ class MeshObject( object ):
 		self.SetPath( path )
 
 		name = os.path.basename( path )
-		self.name = name.lower()
-
-		frm = self.name.split('.')[-1]
-		self.format = frm.upper()
+		array = name.split('.')
+		self.format = array[-1].upper()
+		self.name = array[0].lower()
 
 		self._per_pixel = per_pixel
 		self._texture = texture
 
 	def __repr__( self ):
 		return "< {} >   {}".format(self.format, self.name)
+
+	def GetName( self ):
+		return self.name
 
 	def SetPath( self, path ):
 		self.fullpath = app.getRelPath( path )
@@ -192,17 +195,23 @@ class MeshExporter( AssetEditorModule ):
 	##----------------------------------------------------------------##
 	def previewRender( self ):
 		signals.emitNow( 'mesh.preview' )
+		signals.emitNow( 'mesh.assimp_clear' )
 		selection = self.list.getSelection()
 		for obj in selection:
-			node = self.getNodeFromObject( obj )
-			signals.emitNow( 'mesh.render', node, obj )
+			self.convert3dScene( obj )
+			# node = self.getNodeFromObject( obj )
+			# signals.emitNow( 'mesh.render', node, obj )
+		signals.emitNow( 'mesh.assimp_render' )
 
 	def export( self, objlist ):
-		signals.emitNow( 'mesh.clear' )
+		# signals.emitNow( 'mesh.clear' )
+		signals.emitNow( 'mesh.assimp_clear' )
 		for obj in objlist:
-			node = self.getNodeFromObject( obj )
-			signals.emitNow( 'mesh.create', node, obj )
-		signals.emitNow( 'mesh.save_by', self.export_path )
+			self.convert3dScene( obj )
+			# node = self.getNodeFromObject( obj )
+			# signals.emitNow( 'mesh.create', node, obj )
+		# signals.emitNow( 'mesh.save_by', self.export_path )
+		signals.emitNow( 'mesh.assimp_save', self.export_path )
 
 	def exportSelected( self ):
 		selection = self.list.getSelection()
@@ -218,8 +227,6 @@ class MeshExporter( AssetEditorModule ):
 			node = self.getFBXNode( obj.GetPath( True ) )
 		elif frm == 'OBJ':
 			node = self.getOBJNode( obj.GetPath( True ) )
-
-		self.convert3dScene( obj )
 
 		return node
 
@@ -299,24 +306,54 @@ class MeshExporter( AssetEditorModule ):
 		node = OBJNode( fileName )
 		return node
 
-	def recur_node(self,node,level = 0):
-	    print("  " + "\t" * level + "- " + str(node))
+	def getTransform( self, nodeTr, rootTr ):
+		if not rootTr:
+			return nodeTr
+		newTr = []
+		for i, row in enumerate(nodeTr):
+			newTr.append([])
+			for j, col in enumerate(row):
+				newTr[i].append(0)
+				for k in range(0,4):
+					newTr[i][j] += rootTr[i][k] * nodeTr[k][j]
+		return newTr
 
-	    m = pyassimp.matrix_from_transformation(node.transformation)
-	    scl, rot, pos = pyassimp.decompose_matrix(m)
-	    
-	    print("  " + "\t" * level + " pos {} {} {}".format(pos.x, pos.y, pos.z))
-	    print("  " + "\t" * level + " rot {} {} {}".format(rot.x, rot.y, rot.z))
-	    print("  " + "\t" * level + " scl {} {} {}".format(scl.x, scl.y, scl.z))
-	    
-	    for mesh in node.meshes:
-	    	print("  " + "\t" * level + " mesh:" + str(mesh.name))
-	    
-	    for child in node.children:
-	        self.recur_node(child, level + 1)
+	def quatToEuler( self, q ):
+		a = math.atan2(2*(q.w*q.x+q.y*q.z), 1-2*(q.x*q.x+q.y*q.y))
+		b = math.asin(2*(q.w*q.y-q.z*q.x))
+		c = math.atan2(2*(q.w*q.z+q.x*q.y),1-2*(q.y*q.y+q.z*q.z))
+		return a, b, c
+
+	def recur_node(self,node,data,tr = None,level = 0):
+		print("  " + "\t" * level + "- " + str(node))
+
+		hasMesh = None
+		for mesh in node.meshes:
+			hasMesh = mesh.name
+			print("  " + "\t" * level + " mesh:" + str(mesh.name))
+
+		ntr = self.getTransform(node.transformation, tr)
+
+		if hasMesh:
+			m = pyassimp.matrix_from_transformation(ntr)
+			scl, rot, pos = pyassimp.decompose_matrix(m)
+			ra, rb, rc = self.quatToEuler(rot)
+			trDict = {
+				'name': hasMesh,
+				'pos':[pos.x, pos.y, pos.z],
+				'rot':[math.degrees(ra), math.degrees(rb), math.degrees(rc)],
+				'scl':[scl.x, scl.y, scl.z],
+			}
+			data.append( trDict )
+			# print("  " + "\t" * level + " pos {} {} {}".format(pos.x, pos.y, pos.z))
+			# print("  " + "\t" * level + " rot {} {} {}".format(a, b, c))
+			# print("  " + "\t" * level + " scl {} {} {}".format(scl.x, scl.y, scl.z))
+
+		for child in node.children:
+			self.recur_node(child,data,ntr,level+1)
 
 	def convert3dScene(self, obj):
-	    scene = pyassimp.load(obj.GetPath( True ), processing = aiProcessPreset_TargetRealtime_MaxQuality)
+	    scene = pyassimp.load(obj.GetPath( True ), processing = (aiProcessPreset_TargetRealtime_MaxQuality|aiProcess_FlipUVs))
 	    #the model we load
 	    print
 	    print("MODEL:" + str(obj))
@@ -329,12 +366,10 @@ class MeshExporter( AssetEditorModule ):
 	    print("  textures:" + str(len(scene.textures)))
 	    print
 	    
-	    print("NODES:")
-	    self.recur_node(scene.rootnode)
-
-	    print
 	    print("MESHES:")
 	    for index, mesh in enumerate(scene.meshes):
+	    	if not mesh.name:
+	    		mesh.name = "{}Mesh{}".format(obj.GetName(),index+1)
 	        print("  MESH id: " + str(index+1) + " (" + str(mesh.name) + ")")
 	        print("    material id: " + str(mesh.materialindex+1))
 	        print("    vertices: " + str(len(mesh.vertices)))
@@ -355,6 +390,18 @@ class MeshExporter( AssetEditorModule ):
 	            'bones'         : mesh.bones,
 	            'normals'       : mesh.normals
 	        }
+	        signals.emitNow( 'mesh.assimp_mesh', meshDict, obj )
+
+	    print
+	    print("NODES:")
+	    transforms = []
+	    self.recur_node(scene.rootnode, transforms)
+	    size = obj.GetPerPixel()
+	    for tr in transforms:
+	    	pos = tr['pos']
+	    	for i, v in enumerate(pos):
+	    		pos[i] = v * size
+	    signals.emitNow( 'mesh.assimp_transforms', obj.GetName(), transforms )
 
 	    print("MATERIALS:")
 	    for index, material in enumerate(scene.materials):
