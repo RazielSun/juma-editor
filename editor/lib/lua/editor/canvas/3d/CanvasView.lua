@@ -18,6 +18,7 @@ function CanvasView:initCamera()
 	camera:setLoc( 0, 1000, 1000 )
 	camera:setRot( -45, 0, 0 )
 	self.layer:setCamera( camera )
+	self:getScene():getLayer():setCamera( camera )
     self.camera = camera
 end
 

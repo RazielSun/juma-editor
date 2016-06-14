@@ -327,7 +327,6 @@ class IntrospectorInstance(object):
 			editor.container.setContextObject( None )
 			cached = False
 			if editor.needCache():
-				editor.setTarget( None )
 				cached = pushObjectEditorToCache( editor.targetTypeId, editor )
 			if not cached:
 				editor.unload()

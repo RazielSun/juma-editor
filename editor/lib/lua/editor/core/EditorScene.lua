@@ -20,6 +20,8 @@ function EditorScene:init( option )
 
     local group = Entity()
     self.rootGroup = group
+
+    self.defaultLayer = self:addLayer( "default" )
 end
 
 ---------------------------------------------------------------------------------
@@ -49,6 +51,7 @@ function EditorScene:addLayer( name, addlayer, index )
 end
 
 function EditorScene:getLayer( name )
+    local name = name or "default"
     return self.layersByName[name]
 end
 
@@ -82,14 +85,9 @@ function EditorScene:addEntity( entity, layer )
         if entity.layer then
             self:addLayer( nil, entity.layer )
         end
-    else
-        for _, la in pairs(self.layersByName) do
-            if la then
-                layer = la
-                break
-            end
-        end
     end
+
+    layer = layer or self:getLayer()
 
     assert( layer )
     entity:_insertToScene( self, layer )

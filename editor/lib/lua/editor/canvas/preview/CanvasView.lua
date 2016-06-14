@@ -20,6 +20,7 @@ function CanvasView:initCamera()
 	local camera = MOAICamera.new()
 	camera:setLoc( 0, 0, 500 )
 	self.layer:setCamera( camera )
+	self:getScene():getLayer():setCamera( camera )
     self.camera = camera
 end
 

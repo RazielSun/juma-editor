@@ -27,17 +27,19 @@ function viewCreated()
 end
 
 function onSceneOpen( scene )
-	local key = RenderContextMgr:getCurrentContextKey()
-	RenderContextMgr:pushRenderTable( key, scene.renderTbl )
+	if scene then
+		local key = RenderContextMgr:getCurrentContextKey()
+		RenderContextMgr:pushRenderTable( key, scene:getRender() )
 
-	scene.contextName = key
-	scene:updateBGColor()
+		scene.contextName = key
+		scene:updateBGColor()
 
-	local env = getfenv()
-	view = createSceneView( scene, env )
+		local env = getfenv()
+		view = createSceneView( scene, env )
 
-	scene:addEntity( view )
-	scene.canvasView = view
+		scene:addEntity( view )
+		scene.canvasView = view
+	end
 end
 
 function onSceneClose()

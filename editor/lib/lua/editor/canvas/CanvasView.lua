@@ -38,12 +38,14 @@ end
 function CanvasView:initViewport()
 	local viewport = MOAIViewport.new()
 	self.layer:setViewport( viewport )
+	self:getScene():getLayer():setViewport( viewport )
 	self.viewport = viewport
 end
 
 function CanvasView:initCamera()
 	local camera = MOAICamera2D.new()
 	self.layer:setCamera( camera )
+	self:getScene():getLayer():setCamera( camera )
     self.camera = camera
 end
 
