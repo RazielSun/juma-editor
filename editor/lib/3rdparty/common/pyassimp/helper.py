@@ -5,6 +5,7 @@ Some fancy helper functions.
 """
 
 import os
+import math
 import ctypes
 from ctypes import POINTER
 import operator
@@ -63,6 +64,26 @@ def transform(vector3, matrix4x4):
             m2[0]*x + m2[1]*y + m2[2]*z + m2[3],
             m3[0]*x + m3[1]*y + m3[2]*z + m3[3]
             ]
+
+def multiplyTransform( node, root ):
+    """ Multiply a transformation matrix
+    """
+    if not root:
+        return node
+    transform = []
+    for i, row in enumerate(node):
+        transform.append([])
+        for j, col in enumerate(row):
+            transform[i].append(0)
+            for k in range(0,4):
+                transform[i][j] += root[i][k] * node[k][j]
+    return transform
+
+def quatToEuler( q ):
+    a = math.atan2(2*(q.w*q.x+q.y*q.z), 1-2*(q.x*q.x+q.y*q.y))
+    b = math.asin(2*(q.w*q.y-q.z*q.x))
+    c = math.atan2(2*(q.w*q.z+q.x*q.y),1-2*(q.y*q.y+q.z*q.z))
+    return a, b, c
     
 def _inv(matrix4x4):
     m0,m1,m2,m3 = matrix4x4

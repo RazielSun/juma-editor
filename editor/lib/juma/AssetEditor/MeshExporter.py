@@ -15,7 +15,7 @@ from juma.qt.controls.GenericListWidget import GenericListWidget
 
 import pyassimp
 from pyassimp.postprocess import *
-# from pyassimp.helper import *
+from pyassimp.helper import multiplyTransform, quatToEuler
 
 from fbx import *
 import FbxCommon
@@ -198,7 +198,8 @@ class MeshExporter( AssetEditorModule ):
 		signals.emitNow( 'mesh.assimp_clear' )
 		selection = self.list.getSelection()
 		for obj in selection:
-			self.convert3dScene( obj )
+			self.assimpConvert( obj )
+			self.fbxConvert( obj )
 			# node = self.getNodeFromObject( obj )
 			# signals.emitNow( 'mesh.render', node, obj )
 		signals.emitNow( 'mesh.assimp_render' )
@@ -207,7 +208,7 @@ class MeshExporter( AssetEditorModule ):
 		# signals.emitNow( 'mesh.clear' )
 		signals.emitNow( 'mesh.assimp_clear' )
 		for obj in objlist:
-			self.convert3dScene( obj )
+			self.assimpConvert( obj )
 			# node = self.getNodeFromObject( obj )
 			# signals.emitNow( 'mesh.create', node, obj )
 		# signals.emitNow( 'mesh.save_by', self.export_path )
@@ -306,24 +307,6 @@ class MeshExporter( AssetEditorModule ):
 		node = OBJNode( fileName )
 		return node
 
-	def getTransform( self, nodeTr, rootTr ):
-		if not rootTr:
-			return nodeTr
-		newTr = []
-		for i, row in enumerate(nodeTr):
-			newTr.append([])
-			for j, col in enumerate(row):
-				newTr[i].append(0)
-				for k in range(0,4):
-					newTr[i][j] += rootTr[i][k] * nodeTr[k][j]
-		return newTr
-
-	def quatToEuler( self, q ):
-		a = math.atan2(2*(q.w*q.x+q.y*q.z), 1-2*(q.x*q.x+q.y*q.y))
-		b = math.asin(2*(q.w*q.y-q.z*q.x))
-		c = math.atan2(2*(q.w*q.z+q.x*q.y),1-2*(q.y*q.y+q.z*q.z))
-		return a, b, c
-
 	def recur_node(self,node,data,tr = None,level = 0):
 		print("  " + "\t" * level + "- " + str(node))
 
@@ -332,12 +315,12 @@ class MeshExporter( AssetEditorModule ):
 			hasMesh = mesh.name
 			print("  " + "\t" * level + " mesh:" + str(mesh.name))
 
-		ntr = self.getTransform(node.transformation, tr)
+		ntr = multiplyTransform( node.transformation, tr )
 
 		if hasMesh:
 			m = pyassimp.matrix_from_transformation(ntr)
 			scl, rot, pos = pyassimp.decompose_matrix(m)
-			ra, rb, rc = self.quatToEuler(rot)
+			ra, rb, rc = quatToEuler( rot )
 			trDict = {
 				'name': hasMesh,
 				'pos':[pos.x, pos.y, pos.z],
@@ -345,14 +328,11 @@ class MeshExporter( AssetEditorModule ):
 				'scl':[scl.x, scl.y, scl.z],
 			}
 			data.append( trDict )
-			# print("  " + "\t" * level + " pos {} {} {}".format(pos.x, pos.y, pos.z))
-			# print("  " + "\t" * level + " rot {} {} {}".format(a, b, c))
-			# print("  " + "\t" * level + " scl {} {} {}".format(scl.x, scl.y, scl.z))
 
 		for child in node.children:
 			self.recur_node(child,data,ntr,level+1)
 
-	def convert3dScene(self, obj):
+	def assimpConvert(self, obj):
 	    scene = pyassimp.load(obj.GetPath( True ), processing = (aiProcessPreset_TargetRealtime_MaxQuality|aiProcess_FlipUVs))
 	    #the model we load
 	    print
@@ -420,6 +400,68 @@ class MeshExporter( AssetEditorModule ):
 	    
 	    # Finally release the model
 	    pyassimp.release(scene)
+
+	def fbxConvert(self, obj):
+		if obj.GetFormat() == 'FBX':
+			lSdkManager, lScene = FbxCommon.InitializeSdkObjects()
+			lResult = FbxCommon.LoadScene(lSdkManager, lScene, obj.GetPath( True ))
+			if lResult:
+				print
+				print("FBX")
+				print
+
+				count = lScene.GetSrcObjectCount()
+				# print
+				# print("ALL SRC OBJECTS: ", count)
+				# print
+				animEvaluator = None
+				animStack = None
+				for i in range(count):
+					srcObject = lScene.GetSrcObject(i)
+					print(str(i) + ". object " + str(srcObject))
+					if srcObject.ClassId == FbxAnimStack.ClassId:
+						animStack = srcObject
+					if srcObject.ClassId == FbxAnimEvaluator.ClassId:
+						animEvaluator = srcObject
+						# print(" Anim stack:" + str(srcObject))
+						# self.fbxAnimStack(srcObject)
+
+				rootNode = lScene.GetRootNode()
+				self.fbxNode(rootNode, animEvaluator, animStack)
+				
+			lSdkManager.Destroy()
+
+	def fbxNode(self, node, evaluator, stack, level = 0):
+		print(" " + "\t" * level + " - " + str(node) + " " + str(node.GetName()))
+		print(" " + "\t" * level + "   global " + str(evaluator.GetNodeLocalTransform(node)) )
+		print(" " + "\t" * level + "   translation " + str(node.LclTranslation.GetCurveNode(stack)))
+		print(" " + "\t" * level + "   rotation " + str(node.LclRotation.GetCurveNode(stack)))
+		print(" " + "\t" * level + "   scale " + str(node.LclScaling.GetCurveNode(stack)))
+
+		for a in range(node.GetNodeAttributeCount()):
+			attr = node.GetNodeAttributeByIndex(a)
+			print(" " + "\t" * level + "   + " + str(attr) + " " + str(attr.GetName()))
+		
+		for i in range(node.GetChildCount()):
+			child = node.GetChild(i)
+			self.fbxNode(child, evaluator, stack, level + 1)
+
+	def fbxAnimStack( self, stack ):
+		for i in range(stack.GetSrcObjectCount()):
+			obj = stack.GetSrcObject(i) #FbxAnimLayer
+			print("   - layer: " + str(obj))
+			for j in range(obj.GetSrcObjectCount()):
+				node = obj.GetSrcObject(j) #FbxAnimCurveNode
+				print("     - node: " + str(node) + " " + str(node.GetName())) 
+				for ch in range(node.GetChannelsCount()):
+					for c in range(node.GetCurveCount(ch)):
+						curve = node.GetCurve(ch,c) #FbxAnimCurve
+						print("       - curve: " + str(curve) + " channel:" + node.GetChannelName(ch))
+						for k in range(curve.KeyGetCount()):
+							key = curve.KeyGetValue(k)
+							time = curve.KeyGetTime(k)
+							print("         - " + str(k) + " key: " + str(key) + " time: " + str(time.Get()))
+						
 
 ##----------------------------------------------------------------##
 
