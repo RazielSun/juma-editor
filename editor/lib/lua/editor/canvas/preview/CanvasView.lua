@@ -117,23 +117,27 @@ function CanvasView:getModelByName( name )
 end
 
 function CanvasView:assimpSave( path )
-	for i, model in ipairs(self.models) do
-		local mesh = model:getMesh()
-		local data = MOAISerializer.serializeToString(mesh)
-		local fullPath = path .. model.name .. '.mesh'
-		MOAIFileSystem.saveFile(fullPath, data)
+	if self.models then
+		for i, model in ipairs(self.models) do
+			local mesh = model:getMesh()
+			local data = MOAISerializer.serializeToString(mesh)
+			local fullPath = path .. model.name .. '.mesh'
+			MOAIFileSystem.saveFile(fullPath, data)
+		end
 	end
 
-	for i, trname in ipairs(self.namesTransforms) do
-		local tab = {}
-		for _, tr in ipairs(self.transforms) do
-			if tr.package == trname then
-				table.insert(tab, tr)
+	if self.namesTransforms and #self.namesTransforms > 0 then
+		for i, trname in ipairs(self.namesTransforms) do
+			local tab = {}
+			for _, tr in ipairs(self.transforms) do
+				if tr.package == trname then
+					table.insert(tab, tr)
+				end
 			end
+			local data = Loader:dataToString( tab )
+			local fullPath = path .. trname .. '.transform'
+			MOAIFileSystem.saveFile(fullPath, "return " .. data)
 		end
-		local data = Loader:dataToString( tab )
-		local fullPath = path .. trname .. '.transform'
-		MOAIFileSystem.saveFile(fullPath, "return " .. data)
 	end
 end
 

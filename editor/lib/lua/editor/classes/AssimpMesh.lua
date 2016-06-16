@@ -13,6 +13,7 @@ function AssimpMesh:init( size, texture )
 	BaseMesh.init( self )
 	self._size = size or 256
 	self._texture = texture or ''
+	self._bones = {}
 end
 
 ---------------------------------------------------------------------------------
@@ -53,6 +54,12 @@ function AssimpMesh:setNode( node )
     for face in python.iter ( node.faces ) do
         ibo:writeU32 ( face [ 0 ], face [ 1 ], face [ 2 ])
     end
+
+    local bones = {}
+    for bname in python.iter ( node.bonesNames ) do
+    	table.insert(bones, bname)
+    end
+    self._bones = bones
 end
 
 ---------------------------------------------------------------------------------
@@ -85,6 +92,8 @@ function AssimpMesh:createMesh()
 		local texture = ResourceMgr:getTexture( textureName )
 		mesh:setTexture ( texture )
 	end
+
+	mesh.bones = self._bones
 
 	self.mesh = mesh
 end

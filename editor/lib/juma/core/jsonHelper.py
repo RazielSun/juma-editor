@@ -1,6 +1,14 @@
 import logging
 import json
 
+def getJson( data, **option ):
+	outputString = json.dumps( data , 
+			indent    = option.get( 'indent' ,2 ),
+			sort_keys = option.get( 'sort_keys', True ),
+			ensure_ascii=False
+		).encode('utf-8')
+	return outputString
+
 def saveJSON( data, path, **option ):
 	outputString = json.dumps( data , 
 			indent    = option.get( 'indent' ,2 ),
