@@ -35,16 +35,16 @@ def _traceClass( clazz ):
 
 ##----------------------------------------------------------------##
 class MeshObject( object ):
-	def __init__( self, path, per_pixel = 256.0, texture = "" ):
-		self.SetPath( path )
+	def __init__( self, path ):
+		self._per_pixel = 256.0
+		self._texture = ""
+		self._export_name = ""
+		self._export_anim = "animation.json"
 
-		name = os.path.basename( path )
-		array = name.split('.')
-		self.format = array[-1].upper()
-		self.name = array[0].lower()
-
-		self._per_pixel = per_pixel
-		self._texture = texture
+		if isinstance(path, dict):
+			self.LoadObject( path )
+		else:
+			self.SetPath( path )
 
 	def __repr__( self ):
 		return "< {} >   {}".format(self.format, self.name)
@@ -54,6 +54,10 @@ class MeshObject( object ):
 
 	def SetPath( self, path ):
 		self.fullpath = app.getRelPath( path )
+		fullname = os.path.basename( path )
+		array = fullname.split('.')
+		self.format = array[-1].upper()
+		self.name = array[0].lower()
 
 	def GetPath( self, abs_path = False ):
 		if abs_path:
@@ -79,6 +83,26 @@ class MeshObject( object ):
 
 	def SetTexture( self, texture ):
 		self._texture = texture
+
+	def GetExportName( self ):
+		return self._export_name
+
+	def SetExportName( self, name ):
+		self._export_name = name
+
+	def GetExportAnimation( self ):
+		return self._export_anim
+
+	def SetExportAnimation( self, name ):
+		self._export_anim = name
+
+	def GetSaveObject( self ):
+		return dict(path = self.GetPath(), per_pixel = self.GetPerPixel(), texture = self.GetTexture())
+
+	def LoadObject( self, data ):
+		self.SetPath( data.get('path', "") )
+		self._per_pixel = data.get('per_pixel', 1.0)
+		self._texture = data.get('texture', "")
 
 ##----------------------------------------------------------------##
 class MeshExporter( AssetEditorModule ):
@@ -145,8 +169,7 @@ class MeshExporter( AssetEditorModule ):
 	def getObjectData( self ):
 		data = []
 		for obj in self.objects:
-			dct = dict(path = obj.GetPath(), per_pixel = obj.GetPerPixel(), texture = obj.GetTexture())
-			data.append( dct )
+			data.append( obj.GetSaveObject() )
 		return data
 
 	def openObject( self ):
@@ -158,7 +181,7 @@ class MeshExporter( AssetEditorModule ):
 	def addObject( self, data ):
 		obj = None
 		if type(data) is dict:
-			obj = MeshObject( data.get('path'), data.get('per_pixel'), data.get('texture') )
+			obj = MeshObject( data )
 		else:
 			obj = MeshObject( app.getRelPath(data) )
 		self.objects.append(obj)
@@ -449,6 +472,8 @@ class MeshExporter( AssetEditorModule ):
 						self.currentAnimStack = srcObject
 					if srcObject.ClassId == FbxAnimEvaluator.ClassId:
 						self.currentAnimEvaluator = srcObject
+					if srcObject.ClassId == FbxPose.ClassId:
+						self.loadPose(srcObject)
 						# print(" Anim stack:" + str(srcObject))
 						# self.fbxAnimStack(srcObject)
 
@@ -460,7 +485,7 @@ class MeshExporter( AssetEditorModule ):
 				# _traceClass(FbxNode)
 				# _traceClass(FbxTime)
 
-				self.findAnimation(rootNode, self.currentAnimStack)
+				# self.findAnimation(rootNode, self.currentAnimStack)
 				
 				frames, frameRate = self.getTotalFrames(self.currentAnimStack)
 				skeleton = { 'bones' : [], "animations" : { "default" : { 'bones' : {}, 'frameRate' : int(frameRate), 'frames' : int(frames) } } }
@@ -486,18 +511,32 @@ class MeshExporter( AssetEditorModule ):
 
 	def addSkeleton(self, bones, anims, node):
 		evaluator = self.currentAnimEvaluator
-		matrix = evaluator.GetNodeLocalTransform(node)
+		time = FbxTime()
+		time.SetTime( 0, 0, 0 )
+		matrix = evaluator.GetNodeLocalTransform(node, time)
 
 		name = node.GetName()
-		transform = []
-		for y in range(4):
-			transform.append([])
-			for x in range(4):
-				transform[y].append(matrix.Get(y,x))
+		# transform = []
+		# for y in range(4):
+		# 	transform.append([])
+		# 	for x in range(4):
+		# 		transform[y].append(matrix.Get(x,y))
+
+		pos = matrix.GetT()
+		rot = matrix.GetR()
+		scl = matrix.GetS()
+
+		# prer = node.PreRotation.Get()
+		# print(" bone "+ str(name) + " PreRotation " + str(prer) + " " + str(prer))
+
 		bone = {
 			'name' : name,
 			'children' : [],
-			'transform' : transform,
+			'inverseBindPose' : self.bindPoses[name] or [],
+			# 'transform' : transform,
+			'position' : [pos[0], pos[1], pos[2]],
+			'rotation' : [rot[0], rot[1], rot[2]],
+			'scale' : [scl[0], scl[1], scl[2]],
 		}
 		bones.append(bone)
 
@@ -540,6 +579,22 @@ class MeshExporter( AssetEditorModule ):
 					return key
 		return None
 
+	def loadPose( self, pose ):
+		bindPoses = {}
+		# _traceClass(FbxPose)
+		for i in range(pose.GetCount()):
+			node = pose.GetNode(i)
+			name = pose.GetNodeName(i)
+			mtx = pose.GetMatrix(i)
+			inv = mtx.Inverse()
+			transform = []
+			for y in range(4):
+				transform.append([])
+				for x in range(4):
+					transform[y].append(inv.Get(x,y))
+			bindPoses[str(name.GetCurrentName())] = transform
+			# print(" pose node " + str(node) + " " + str(name.GetCurrentName()) + " " + str(transform))
+		self.bindPoses = bindPoses
 
 	def traceCurveNode(self, node, name):
 		print(" CURVE NODE:" + str(node) + " " + name.upper())
