@@ -36,7 +36,7 @@ def _traceClass( clazz ):
 ##----------------------------------------------------------------##
 class MeshObject( object ):
 	def __init__( self, path ):
-		self._per_pixel = 256.0
+		self._per_pixel = 1.0
 		self._texture = ""
 		self._export_name = ""
 		self._export_anim = "animation.json"
@@ -154,6 +154,8 @@ class MeshExporter( AssetEditorModule ):
 
 		ui.perPixelEdit.textChanged.connect( self.onPerPixelChange )
 		ui.textureEdit.textChanged.connect( self.onTextureChange )
+		ui.exportNameEdit.textChanged.connect( self.onExportNameChange )
+		ui.exportAnimEdit.textChanged.connect( self.onExportAnimChange )
 
 		self.list = self.window.addWidget( 
 				MeshExporterListWidget( 
@@ -244,18 +246,12 @@ class MeshExporter( AssetEditorModule ):
 		selection = self.list.getSelection()
 		for obj in selection:
 			self.assimpConvert( obj )
-			# node = self.getNodeFromObject( obj )
-			# signals.emitNow( 'mesh.render', node, obj )
 		signals.emitNow( 'mesh.assimp_render' )
 
 	def export( self, olist ):
-		# signals.emitNow( 'mesh.clear' )
 		signals.emitNow( 'mesh.assimp_clear' )
 		for obj in olist:
 			self.assimpConvert( obj )
-			# node = self.getNodeFromObject( obj )
-			# signals.emitNow( 'mesh.create', node, obj )
-		# signals.emitNow( 'mesh.save_by', self.export_path )
 		path = self.getFullPath(self.export_path)
 		signals.emitNow( 'mesh.assimp_save', path )
 
@@ -273,16 +269,6 @@ class MeshExporter( AssetEditorModule ):
 
 	def exportAll( self ):
 		self.export( self.objects )
-
-	def getNodeFromObject( self, obj ):
-		node = None
-		frm = obj.GetFormat()
-		if frm == 'FBX':
-			node = self.getFBXNode( obj.GetPath( True ) )
-		elif frm == 'OBJ':
-			node = self.getOBJNode( obj.GetPath( True ) )
-
-		return node
 
 	##----------------------------------------------------------------##
 	def onMenu(self, node):
@@ -328,11 +314,21 @@ class MeshExporter( AssetEditorModule ):
 				obj.SetPerPixel( per_pixel )
 
 	def onTextureChange( self, text ):
+		self.onObjectTextChange( text, "SetTexture" )
+
+	def onExportNameChange( self, text ):
+		self.onObjectTextChange( text, "SetExportName" )
+
+	def onExportAnimChange( self, text ):
+		self.onObjectTextChange( text, "SetExportAnimation" )
+
+	def onObjectTextChange( self, text, fname ):
 		if text:
 			text = text.strip()
 			selection = self.list.getSelection()
 			for obj in selection:
-				obj.SetTexture( text )
+				func = getattr(obj, fname)
+				func( text )
 
 	def onExportPathChange( self, text ):
 		self.export_path = text
@@ -342,6 +338,8 @@ class MeshExporter( AssetEditorModule ):
 		for obj in selection:
 			self.ui.perPixelEdit.setText( obj.GetPerPixelStr() )
 			self.ui.textureEdit.setText( obj.GetTexture() )
+			self.ui.exportNameEdit.setText( obj.GetExportName() )
+			self.ui.exportAnimEdit.setText( obj.GetExportAnimation() )
 
 	##----------------------------------------------------------------##
 	def getFBXNode( self, fileName ):
