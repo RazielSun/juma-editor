@@ -400,9 +400,14 @@ class MeshExporter( AssetEditorModule ):
 	    print
 	    
 	    print("MESHES:")
+	    meshCount = len(scene.meshes)
+
 	    for index, mesh in enumerate(scene.meshes):
-	    	if not mesh.name:
+	    	if meshCount == 1:
+	    		mesh.name = obj.GetExportName()
+	    	else:
 	    		mesh.name = "{}{}".format(obj.GetExportName(),index+1)
+
 	        print("  MESH id: " + str(index+1) + " (" + str(mesh.name) + ")")
 	        print("    material id: " + str(mesh.materialindex+1))
 	        print("    vertices: " + str(len(mesh.vertices)))
@@ -439,7 +444,7 @@ class MeshExporter( AssetEditorModule ):
 	    	pos = tr['pos']
 	    	for i, v in enumerate(pos):
 	    		pos[i] = v * size
-	    signals.emitNow( 'mesh.assimp_transforms', obj.GetName(), transforms )
+	    signals.emitNow( 'mesh.assimp_transforms', obj.GetExportName(), transforms )
 
 	    print("MATERIALS:")
 	    for index, material in enumerate(scene.materials):
