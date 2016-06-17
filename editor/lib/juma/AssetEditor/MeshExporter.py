@@ -58,6 +58,7 @@ class MeshObject( object ):
 		array = fullname.split('.')
 		self.format = array[-1].upper()
 		self.name = array[0].lower()
+		self._export_name = array[0]
 
 	def GetPath( self, abs_path = False ):
 		if abs_path:
@@ -97,12 +98,20 @@ class MeshObject( object ):
 		self._export_anim = name
 
 	def GetSaveObject( self ):
-		return dict(path = self.GetPath(), per_pixel = self.GetPerPixel(), texture = self.GetTexture())
+		return dict(
+			path = self.GetPath(),
+			per_pixel = self.GetPerPixel(),
+			texture = self.GetTexture(),
+			export_name = self.GetExportName(),
+			export_anim = self.GetExportAnimation()
+			)
 
 	def LoadObject( self, data ):
 		self.SetPath( data.get('path', "") )
 		self._per_pixel = data.get('per_pixel', 1.0)
 		self._texture = data.get('texture', "")
+		self._export_name = data.get('export_name', "")
+		self._export_anim = data.get('export_anim', "")
 
 ##----------------------------------------------------------------##
 class MeshExporter( AssetEditorModule ):
@@ -395,7 +404,7 @@ class MeshExporter( AssetEditorModule ):
 	    print("MESHES:")
 	    for index, mesh in enumerate(scene.meshes):
 	    	if not mesh.name:
-	    		mesh.name = "{}Mesh{}".format(obj.GetName(),index+1)
+	    		mesh.name = "{}{}".format(obj.GetExportName(),index+1)
 	        print("  MESH id: " + str(index+1) + " (" + str(mesh.name) + ")")
 	        print("    material id: " + str(mesh.materialindex+1))
 	        print("    vertices: " + str(len(mesh.vertices)))
@@ -492,7 +501,7 @@ class MeshExporter( AssetEditorModule ):
 				self.searchSkeleton(rootNode, skeleton)
 
 				path = self.getFullPath(self.export_path)
-				jsonHelper.saveJSON(skeleton, path+"animation.json")
+				jsonHelper.saveJSON(skeleton, path + obj.GetExportAnimation())
 				
 			lSdkManager.Destroy()
 
@@ -542,9 +551,9 @@ class MeshExporter( AssetEditorModule ):
 
 		stack = self.currentAnimStack
 		boneAnimation = {}
-		self.findCurveNode(node.LclTranslation.GetCurveNode(stack), 'translate', boneAnimation)
-		self.findCurveNode(node.LclRotation.GetCurveNode(stack), 'rotate', boneAnimation)
-		self.findCurveNode(node.LclScaling.GetCurveNode(stack), 'scale', boneAnimation)
+		self.findCurveNode(node.LclTranslation.GetCurveNode(stack), 'loc', boneAnimation)
+		self.findCurveNode(node.LclRotation.GetCurveNode(stack), 'rot', boneAnimation)
+		self.findCurveNode(node.LclScaling.GetCurveNode(stack), 'scl', boneAnimation)
 		anims[str(name)] = boneAnimation
 
 		for i in range(node.GetChildCount()):
@@ -553,30 +562,28 @@ class MeshExporter( AssetEditorModule ):
 
 	def findCurveNode(self, node, name, bone):
 		if node:
-			animation = []
-			bone[str(name)] = animation
 			for ch in range(node.GetChannelsCount()):
 				for c in range(node.GetCurveCount(ch)):
+
 					curve = node.GetCurve(ch,c)
-					channel = node.GetChannelName(ch)
+					channel = str(node.GetChannelName(ch))
+					animKey = "{}{}".format(name, channel)
+					animation = self.getAnimWithKey(bone, animKey)
+					if not animation:
+						animation = []
+						bone[animKey] = animation
+
 					for k in range(curve.KeyGetCount()):
 						time = curve.KeyGetTime(k)
 						frame = int(self.getFrameFromTime(time))
-						key = self.getKeyWithFrame(animation, frame)
-						isnew = False
-						if not key:
-							isnew = True
-							key = { 'frame' : frame }
 						value = curve.KeyGetValue(k)
-						key[str(channel.Lower())] = value
-						if isnew:
-							animation.append(key)
+						animation.append( { 'frame' : frame, 'value' : value } )
 
-	def getKeyWithFrame(self, anim, frame):
-		if anim:
-			for key in anim:
-				if key['frame'] == frame:
-					return key
+	def getAnimWithKey(self, bone, key):
+		if bone:
+			for k in bone:
+				if k == key:
+					return bone[key]
 		return None
 
 	def loadPose( self, pose ):
