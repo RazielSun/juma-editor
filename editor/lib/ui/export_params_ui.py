@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'export_params.ui'
 #
-# Created: Sat Jun 11 12:39:54 2016
+# Created: Fri Jun 17 13:29:29 2016
 #      by: pyside-uic 0.2.15 running on PySide 1.2.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -19,23 +19,35 @@ class Ui_ExportParams(object):
         sizePolicy.setHeightForWidth(ExportParams.sizePolicy().hasHeightForWidth())
         ExportParams.setSizePolicy(sizePolicy)
         ExportParams.setMinimumSize(QtCore.QSize(300, 200))
-        self.formLayout = QtGui.QFormLayout(ExportParams)
-        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.ExpandingFieldsGrow)
-        self.formLayout.setRowWrapPolicy(QtGui.QFormLayout.DontWrapRows)
-        self.formLayout.setContentsMargins(5, 5, 5, 5)
-        self.formLayout.setObjectName("formLayout")
+        self.exportParamsLayout = QtGui.QFormLayout(ExportParams)
+        self.exportParamsLayout.setFieldGrowthPolicy(QtGui.QFormLayout.ExpandingFieldsGrow)
+        self.exportParamsLayout.setRowWrapPolicy(QtGui.QFormLayout.DontWrapRows)
+        self.exportParamsLayout.setContentsMargins(5, 5, 5, 5)
+        self.exportParamsLayout.setObjectName("exportParamsLayout")
         self.perPixelLabel = QtGui.QLabel(ExportParams)
         self.perPixelLabel.setObjectName("perPixelLabel")
-        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.perPixelLabel)
+        self.exportParamsLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.perPixelLabel)
         self.perPixelEdit = QtGui.QLineEdit(ExportParams)
         self.perPixelEdit.setObjectName("perPixelEdit")
-        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.perPixelEdit)
+        self.exportParamsLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.perPixelEdit)
         self.textureLabel = QtGui.QLabel(ExportParams)
         self.textureLabel.setObjectName("textureLabel")
-        self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.textureLabel)
+        self.exportParamsLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.textureLabel)
         self.textureEdit = QtGui.QLineEdit(ExportParams)
         self.textureEdit.setObjectName("textureEdit")
-        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.textureEdit)
+        self.exportParamsLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.textureEdit)
+        self.exportNameEdit = QtGui.QLineEdit(ExportParams)
+        self.exportNameEdit.setObjectName("exportNameEdit")
+        self.exportParamsLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.exportNameEdit)
+        self.exportAnimEdit = QtGui.QLineEdit(ExportParams)
+        self.exportAnimEdit.setObjectName("exportAnimEdit")
+        self.exportParamsLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.exportAnimEdit)
+        self.exportNameLabel = QtGui.QLabel(ExportParams)
+        self.exportNameLabel.setObjectName("exportNameLabel")
+        self.exportParamsLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.exportNameLabel)
+        self.exportAnimLabel = QtGui.QLabel(ExportParams)
+        self.exportAnimLabel.setObjectName("exportAnimLabel")
+        self.exportParamsLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.exportAnimLabel)
 
         self.retranslateUi(ExportParams)
         QtCore.QMetaObject.connectSlotsByName(ExportParams)
@@ -45,4 +57,6 @@ class Ui_ExportParams(object):
         self.perPixelLabel.setText(QtGui.QApplication.translate("ExportParams", "Pixels", None, QtGui.QApplication.UnicodeUTF8))
         self.perPixelEdit.setText(QtGui.QApplication.translate("ExportParams", "256", None, QtGui.QApplication.UnicodeUTF8))
         self.textureLabel.setText(QtGui.QApplication.translate("ExportParams", "Texture", None, QtGui.QApplication.UnicodeUTF8))
+        self.exportNameLabel.setText(QtGui.QApplication.translate("ExportParams", "Export Name", None, QtGui.QApplication.UnicodeUTF8))
+        self.exportAnimLabel.setText(QtGui.QApplication.translate("ExportParams", "Export Anim", None, QtGui.QApplication.UnicodeUTF8))
 

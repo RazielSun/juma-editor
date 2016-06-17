@@ -1,21 +1,18 @@
 /* based on xnview qss and Colin Duquesnoy qss */
 
-QWidget
-{
+QWidget {
     color:#ccc;
     background-color: #282828;
     font-size: 11px;
     font-family: Roboto, Arial;
 }
 
-QWidget:item:hover
-{
+QWidget:item:hover {
     background-color: #78879b;
     color: black;
 }
 
-QWidget:item:selected
-{
+QWidget:item:selected {
     background-color: #5285a6;
 }
 
@@ -29,8 +26,7 @@ QProgressBar::chunk:horizontal {
     background-color: qlineargradient(spread:reflect, x1:1, y1:0.545, x2:1, y2:0, stop:0 rgba(28, 66, 111, 255), stop:1 rgba(37, 87, 146, 255));
 }
 
-QToolTip
-{
+QToolTip {
     border: 1px solid #3A3939;
     background-color: rgb(90, 102, 117);;
     color: white;
@@ -38,42 +34,38 @@ QToolTip
     opacity: 200;
 }
 
-QCheckBox
-{
+QCheckBox {
     spacing: 5px;
     outline: none;
     color: #bbb;
     margin-bottom: 2px;
 }
 
-QCheckBox:disabled
-{
+QCheckBox:disabled {
     color: #777777;
 }
+
 QCheckBox::indicator,
-QGroupBox::indicator
-{
+QGroupBox::indicator {
     width: 18px;
     height: 18px;
 }
-QGroupBox::indicator
-{
+
+QGroupBox::indicator {
     margin-left: 2px;
 }
 
 QCheckBox::indicator:unchecked,
 QCheckBox::indicator:unchecked:hover,
 QGroupBox::indicator:unchecked,
-QGroupBox::indicator:unchecked:hover
-{
+QGroupBox::indicator:unchecked:hover {
     image: url(:/qss_icons/rc/checkbox_unchecked.png);
 }
 
 QCheckBox::indicator:unchecked:focus,
 QCheckBox::indicator:unchecked:pressed,
 QGroupBox::indicator:unchecked:focus,
-QGroupBox::indicator:unchecked:pressed
-{
+QGroupBox::indicator:unchecked:pressed {
   border: none;
     image: url(:/qss_icons/rc/checkbox_unchecked_focus.png);
 }
@@ -1071,8 +1063,7 @@ QTableView
 }
 
 
-QTableView, QHeaderView
-{
+QTableView, QHeaderView {
     border-radius: 0px;
 }
 
@@ -1087,8 +1078,7 @@ QTableView::item:selected:active, QTreeView::item:selected:active, QListView::it
 }
 
 
-QHeaderView
-{
+QHeaderView {
     border: 1px transparent;
     border-radius: 2px;
     margin: 0px;
@@ -1123,7 +1113,6 @@ QHeaderView::section::horizontal
 {
     border-left: transparent;
 }
-
 
 QHeaderView::section:checked
  {
@@ -1209,19 +1198,23 @@ QSplitter::handle:vertical {
     color: #fff;
 }
 
-#ObjectContainer QToolButton, #ButtonIntrospectorAddComponent {
+#ObjectContainer QToolButton,
+#ButtonIntrospectorAddComponent {
     background-color: #282828;
     border: 1px solid #151515;
     margin: 1px;
 }
 
-#ObjectContainer QToolButton:hover, #ObjectContainer QToolButton::menu-button:hover {
+#ObjectContainer QToolButton:hover,
+#ObjectContainer QToolButton::menu-button:hover {
     background-color: #323232;
     border: 1px solid #d6d6d6;
 }
 
-#ObjectContainer QToolButton:checked, #ObjectContainer QToolButton:pressed,
-        #ObjectContainer QToolButton::menu-button:pressed {
+#ObjectContainer QToolButton:checked,
+#ObjectContainer QToolButton:pressed,
+#ObjectContainer QToolButton::menu-button:pressed {
     background-color: #eda900;
     border: 1px solid #d6d6d6;
 }
+
