@@ -174,6 +174,9 @@ class SceneView( MainEditorModule ):
 		timer.start(interval)
 		return timer
 
+	def getWindowParams( self, stype ):
+		return app.getSetting(name = "windows", exists = stype)
+
 	def requestNewWindow( self, status = None ):
 		self.contextStatus = status
 		requestSearchView( 
@@ -201,25 +204,26 @@ class SceneView( MainEditorModule ):
 		canvas.loadScript( _getModulePath('SceneView.lua') )
 		self.loaded.append(True)
 
-		self.addTool( 'scene_view_config/scene_settings', label ='Scene Settings', icon = 'cog' )
+		params = self.getWindowParams(stype)
+		if not params:
+			params = dict()
 
-		self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
+		if params.get('settings', True):
+			self.addTool( 'scene_view_config/scene_settings', label ='Scene Settings', icon = 'cog' )
 
-		if stype == "ui":
+		if params.get('grid', True):
+			self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
+
+		if params.get('frame_size', False):
 			window.framesize = framesize = ToolSizeWidget( None )
 			framesize.valuesChanged.connect( self.onFrameResize )
 			framesize.owner = self
 			self.addTool( 'scene_view_config/canvas_frame', widget = framesize )
 
-		self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
-		self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
-		self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
-
-		# self.addTool( 'scene_view_config/goto_point', widget = self.coordWidget )
-
-		# self.coordWidget = ToolCoordWidget( None )
-		# self.coordWidget.gotoSignal.connect( self.goToPoint )
-		# self.coordWidget.owner = self
+		if params.get('zoom', True):
+			self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
+			self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
+			self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
 
 		window.show()
 

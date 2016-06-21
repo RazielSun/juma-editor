@@ -20,6 +20,8 @@ from Command        import EditorCommandRegistry
 # _GII_BUILTIN_PACKAGES_PATH = 'packages'
 # _GII_APP_CONFIG_FILE = 'config.json'
 
+_JUMA_PROJECT_DEFAULT_SETTINGS = 'projectDefaults.json'
+
 _JUMA_EDITOR_PATH = '/editor'
 
 ##----------------------------------------------------------------##
@@ -46,6 +48,7 @@ class EditorApp(object):
 		self.basePath      	= self.appPath + _JUMA_EDITOR_PATH
 		self.dataPaths     	= []
 		self.config        	= {}
+		self.settings 		= {}
 		# self.packageManager   = PackageManager()
 
 		self.commandRegistry       = EditorCommandRegistry.get()
@@ -81,6 +84,7 @@ class EditorApp(object):
 		# 		return False
 		
 		self.loadConfig()
+		self.loadSettings()
 
 		if self.initialized: return True
 		self.openProject()
@@ -184,6 +188,33 @@ class EditorApp(object):
 	def stop( self ):
 		self.running = False
 		self.saveConfig()
+
+	def loadSettings( self ):
+		loaded = jsonHelper.tryLoadJSON( self.getPath( 'data/' + _JUMA_PROJECT_DEFAULT_SETTINGS ) )
+		if loaded:
+			self.settings = loaded
+
+	def getSetting( self, **options ):
+		project = self.getProject()
+		settingName = options.get("name", "None")
+		hasItem = options.get("exists", None)
+
+		projSetting = project.info.get(settingName, None)
+		if projSetting:
+			if hasItem:
+				for st in projSetting:
+					if st.get("name") == hasItem:
+						return st
+			else:
+				return projSetting
+
+		projSetting = self.settings.get(settingName, None)
+		if hasItem:
+			for st in projSetting:
+				if st.get("name") == hasItem:
+					return st
+		else:
+			return projSetting
 
 	def saveConfig( self ):
 		pass
