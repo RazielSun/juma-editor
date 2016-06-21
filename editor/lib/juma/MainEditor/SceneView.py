@@ -216,14 +216,17 @@ class SceneView( MainEditorModule ):
 
 		if params.get('frame_size', False):
 			window.framesize = framesize = ToolSizeWidget( None )
-			framesize.valuesChanged.connect( self.onFrameResize )
 			framesize.owner = self
+			framesize.valuesChanged.connect( self.onFrameResize )
 			self.addTool( 'scene_view_config/canvas_frame', widget = framesize )
 
 		if params.get('zoom', True):
 			self.addTool( 'scene_view_config/zoom_out', label = 'Zoom Out', icon = 'glass_remove' )
 			self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
 			self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
+
+		if params.get('run_scene', True):
+			self.addTool( 'scene_view_config/run_scene', label = 'Run Scene', icon = 'arrow_right' )
 
 		window.show()
 
@@ -328,6 +331,11 @@ class SceneView( MainEditorModule ):
 		if canvas:
 			canvas.safeCallMethod( 'view', 'moveCameraToSelected' )
 
+	def runScene( self ):
+		canvas = self.getCanvas()
+		if canvas:
+			canvas.safeCallMethod( 'view', 'runScene' )
+
 ##----------------------------------------------------------------##
 	def onMenu( self, tool ):
 		name = tool.name
@@ -361,6 +369,8 @@ class SceneView( MainEditorModule ):
 			self.onZoom( 'normal' )
 		elif name == 'zoom_in':
 			self.onZoom( 'in' )
+		elif name == 'run_scene':
+			self.runScene()
 
 	def onTabChanged( self, window ):
 		getSceneSelectionManager().clearSelection()
