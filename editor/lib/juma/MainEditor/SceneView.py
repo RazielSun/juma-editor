@@ -225,8 +225,8 @@ class SceneView( MainEditorModule ):
 			self.addTool( 'scene_view_config/zoom_normal', label = 'Zoom Normal', icon = 'glass' )
 			self.addTool( 'scene_view_config/zoom_in', label = 'Zoom In', icon = 'glass_add' )
 
-		if params.get('run_scene', True):
-			self.addTool( 'scene_view_config/run_scene', label = 'Run Scene', icon = 'arrow_right' )
+		if params.get('run_scene', False):
+			self.addTool( 'scene_view_config/run_scene', label = 'Run Scene', icon = 'run' )
 
 		window.show()
 
