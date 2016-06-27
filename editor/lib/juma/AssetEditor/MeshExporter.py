@@ -386,7 +386,8 @@ class MeshExporter( AssetEditorModule ):
 			self.recur_node(child,data,ntr,level+1)
 
 	def assimpConvert(self, obj):
-	    scene = pyassimp.load(obj.GetPath( True ), processing = (aiProcessPreset_TargetRealtime_MaxQuality|aiProcess_FlipUVs))
+	    scene = pyassimp.load(obj.GetPath( True ), processing = (aiProcessPreset_TargetRealtime_MaxQuality|aiProcess_FlipUVs)) 
+	    # aiProcess_PreTransformVertices - Static Batching (Material)
 	    #the model we load
 	    print
 	    print("MODEL:" + str(obj))
