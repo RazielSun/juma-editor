@@ -10,7 +10,11 @@ python setup.py build
 
 echo "=== LIBRARY BUILT ==="
 
-cd 'build/lib.macosx-10.11-intel-2.7/'
+cd 'build/'
+
+dir1=$(find . -name lib.\* -type d -maxdepth 1 -print | head -n1)
+cd "$dir1"
+
 echo "overriding loader path for libfmod.dylib ..."
 install_name_tool -change "@rpath/libfmod.dylib" "@loader_path/libfmod.dylib" moaipy.so
 echo "moving moaipy.so to edtior/moaipy/moaipy.so ..."
