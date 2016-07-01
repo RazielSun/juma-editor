@@ -145,10 +145,11 @@ class MeshExporter( AssetEditorModule ):
 
 		self.addTool( 'mesh_exporter/add_object', label = 'Add', icon = 'plus_mint' )
 		self.addTool( 'mesh_exporter/remove_object', label = 'Remove', icon = 'minus' )
-		self.addTool( 'mesh_exporter/preview_render', label = 'Preview' )
+		self.addTool( 'mesh_exporter/preview_render', label = 'Preview', icon = 'view' )
 		self.addTool( 'mesh_exporter/export', label = 'Export' )
 		# self.addTool( 'mesh_exporter/export_all', label = 'ExportAll' )
 		self.addTool( 'mesh_exporter/export_animation', label = 'Animation' )
+		self.addTool( 'mesh_exporter/play_animation', label = 'Play', icon = 'run' )
 		self.addTool( 'mesh_exporter/export_path_edit', widget = epedit )
 
 		self.mainWidget = wdgt = QtGui.QWidget()
@@ -278,6 +279,16 @@ class MeshExporter( AssetEditorModule ):
 			self.assimpConvert( obj )
 		signals.emitNow( 'mesh.assimp_render' )
 
+	def playAnimation( self ):
+		self.previewRender()
+		self.exportAnimationSelected()
+
+		path = self.getFullPath(self.export_path)
+		selection = self.list.getSelection()
+		for obj in selection:
+			signals.emitNow( 'mesh.animation_play', path + obj.GetExportAnimation() )
+
+	##----------------------------------------------------------------##
 	def export( self, olist ):
 		signals.emitNow( 'mesh.assimp_clear' )
 		for obj in olist:
@@ -285,13 +296,13 @@ class MeshExporter( AssetEditorModule ):
 		path = self.getFullPath(self.export_path)
 		signals.emitNow( 'mesh.assimp_save', path )
 
-	def exportAnimation( self, olist ):
-		for obj in olist:
-			self.fbxConvert( obj )
-
 	def exportSelected( self ):
 		selection = self.list.getSelection()
 		self.export( selection )
+
+	def exportAnimation( self, olist ):
+		for obj in olist:
+			self.fbxConvert( obj )
 
 	def exportAnimationSelected( self ):
 		selection = self.list.getSelection()
@@ -318,6 +329,8 @@ class MeshExporter( AssetEditorModule ):
 			self.exportSelected()
 		elif name == 'export_animation':
 			self.exportAnimationSelected()
+		elif name == 'play_animation':
+			self.playAnimation()
 		elif name == 'export_all':
 			self.exportAll()
 
@@ -359,24 +372,8 @@ class MeshExporter( AssetEditorModule ):
 			self.editors.get("LightDircetion").set( obj.GetLightDirection() )
 
 	##----------------------------------------------------------------##
-	def getFBXNode( self, fileName ):
-		# Prepare the FBX SDK.
-		lSdkManager, lScene = FbxCommon.InitializeSdkObjects()
-		# Open FBX file
-		lResult = FbxCommon.LoadScene(lSdkManager, lScene, fileName)
-		if lResult:
-			rootNode = lScene.GetRootNode()
-			rootNode.FbxLayerElement = FbxLayerElement
-			return rootNode
-		# FbxCommon.SaveScene(lSdkManager, lScene, path + '/' + 'output.fbx')
-
-		# Destroy all objects created by the FBX SDK.
-		lSdkManager.Destroy()
-
-	def getOBJNode( self, fileName ):
-		node = OBJNode( fileName )
-		return node
-
+	# ASSIMP CONVERTER
+	#
 	def recur_node(self,node,data,tr = None,level = 0):
 		print("  " + "\t" * level + "- " + str(node))
 

@@ -2,6 +2,8 @@
 local CoreCanvas = require("canvas.CanvasView")
 
 local AssimpMesh = require("classes.AssimpMesh")
+local MeshAnimation = require("classes.MeshAnimation")
+
 local FBXObject = require("classes.FBXMesh")
 local OBJObject = require("classes.OBJMesh")
 
@@ -143,7 +145,19 @@ function CanvasView:assimpSave( path )
 end
 
 ---------------------------------------------------------------------------------
--- OLD FBX OBJ system
+-- Animation
+---------------------------------------------------------------------------------
+function CanvasView:loadAnimation( path )
+	local animation = MeshAnimation( path )
+	self.animation = animation
+
+	for _, prop in ipairs(self.props) do
+		prop:setShader( animation.shader )
+	end
+end
+
+---------------------------------------------------------------------------------
+-- PROPS
 ---------------------------------------------------------------------------------
 function CanvasView:createProp()
 	local prop = MOAIProp.new()
@@ -196,6 +210,8 @@ function CanvasView:createModel( node, params )
 	end
 end
 
+---------------------------------------------------------------------------------
+-- OLD FBX OBJ system
 ---------------------------------------------------------------------------------
 function CanvasView:renderNode( node, params )
 	self:clearModels()

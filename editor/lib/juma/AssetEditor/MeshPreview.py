@@ -46,6 +46,9 @@ class MeshPreview( AssetEditorModule ):
 		signals.connect( 'mesh.assimp_render',   	self.onAssimpRender )
 		signals.connect( 'mesh.assimp_save',   		self.onAssimpSave )
 
+		signals.connect( 'mesh.animation_play',   	self.onAnimationPlay )
+		
+
 	def onSetFocus( self ):
 		self.getModule( 'asset_editor' ).setFocus()
 		self.window.show()
@@ -81,6 +84,12 @@ class MeshPreview( AssetEditorModule ):
 		canvas = self.canvas
 		if canvas:
 			canvas.safeCallMethod( "view", "assimpSave", path )
+
+	##----------------------------------------------------------------##
+	def onAnimationPlay( self, path ):
+		canvas = self.canvas
+		if canvas:
+			canvas.safeCallMethod( "view", "loadAnimation", path )
 
 	##----------------------------------------------------------------##
 	def onShowPreview( self ):
