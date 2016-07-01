@@ -8,7 +8,7 @@ import logging
 from PySide                   	import QtCore, QtGui, QtOpenGL
 from PySide.QtCore            	import Qt
 
-from juma.core                	import signals, app, jsonHelper
+from juma.core                	import signals, app, jsonHelper, Field
 from AssetEditor             	import AssetEditorModule
 from MeshNodes 					import OBJNode
 from juma.qt.controls.GenericListWidget import GenericListWidget
@@ -21,7 +21,7 @@ from fbx import *
 import FbxCommon
 import fbxsip
 
-from ui.export_params_ui import Ui_ExportParams
+from juma.qt.controls.PropertyEditor.PropertyEditor import buildFieldEditor
 
 ##----------------------------------------------------------------##
 def _getModulePath( path ):
@@ -40,17 +40,18 @@ class MeshObject( object ):
 		self._texture = ""
 		self._export_name = ""
 		self._export_anim = "animation.json"
-
+		self._bake_light = False
+		self._diffuse_power = 0.3
+		self._ambient_light = (0.7, 0.7, 0.7, 1.0)
+		self._light_direction = (0.14, 0.98, 0.14)
 		if isinstance(path, dict):
 			self.LoadObject( path )
 		else:
 			self.SetPath( path )
 
-	def __repr__( self ):
-		return "< {} >   {}".format(self.format, self.name)
-
-	def GetName( self ):
-		return self.name
+	def __repr__( self ): return "< {} >   {}".format(self.format, self.name)
+	def GetName( self ): return self.name
+	def GetFormat( self ): return self.format
 
 	def SetPath( self, path ):
 		self.fullpath = app.getRelPath( path )
@@ -65,37 +66,32 @@ class MeshObject( object ):
 			return app.getAbsPath( self.fullpath )
 		return self.fullpath
 
-	def GetFormat( self ):
-		return self.format
-
-	def GetPerPixel( self ):
-		return self._per_pixel
-
-	def GetPerPixelStr( self ):
-		return "%.1f" % self._per_pixel
-
-	def SetPerPixel( self, per_pixel ):
-		self._per_pixel = per_pixel
+	def GetPerPixel( self ): return self._per_pixel
+	def SetPerPixel( self, per_pixel ): self._per_pixel = per_pixel
 
 	def GetTexture( self, abs_path = False ):
 		if abs_path:
 			return app.getAbsPath( self._texture )
 		return self._texture
+	def SetTexture( self, texture ): self._texture = texture
 
-	def SetTexture( self, texture ):
-		self._texture = texture
+	def GetExportName( self ): return self._export_name
+	def SetExportName( self, name ): self._export_name = name
 
-	def GetExportName( self ):
-		return self._export_name
+	def GetExportAnimation( self ): return self._export_anim
+	def SetExportAnimation( self, name ): self._export_anim = name
 
-	def SetExportName( self, name ):
-		self._export_name = name
+	def GetBakeLight( self ): return self._bake_light
+	def SetBakeLight( self, bake_light ): self._bake_light = bake_light
 
-	def GetExportAnimation( self ):
-		return self._export_anim
+	def GetDiffusePower( self ): return self._diffuse_power
+	def SetDiffusePower( self, power ): self._diffuse_power = power
 
-	def SetExportAnimation( self, name ):
-		self._export_anim = name
+	def GetAmbientLight( self ): return self._ambient_light
+	def SetAmbientLight( self, light ): self._ambient_light = light
+
+	def GetLightDirection( self ): return self._light_direction
+	def SetLightDirection( self, direction ): self._light_direction = direction
 
 	def GetSaveObject( self ):
 		return dict(
@@ -103,7 +99,11 @@ class MeshObject( object ):
 			per_pixel = self.GetPerPixel(),
 			texture = self.GetTexture(),
 			export_name = self.GetExportName(),
-			export_anim = self.GetExportAnimation()
+			export_anim = self.GetExportAnimation(),
+			bake_light = self.GetBakeLight(),
+			diffuse_power = self.GetDiffusePower(),
+			ambient_light = self.GetAmbientLight(),
+			light_direction = self.GetLightDirection()
 			)
 
 	def LoadObject( self, data ):
@@ -112,6 +112,10 @@ class MeshObject( object ):
 		self._texture = data.get('texture', "")
 		self._export_name = data.get('export_name', "")
 		self._export_anim = data.get('export_anim', "")
+		self._bake_light = data.get('bake_light', False)
+		self._diffuse_power = data.get('diffuse_power', 0.3)
+		self._ambient_light = data.get('ambient_light', (0.7, 0.7, 0.7, 1.0))
+		self._light_direction = data.get('light_direction', (0.14, 0.98, 0.14))
 
 ##----------------------------------------------------------------##
 class MeshExporter( AssetEditorModule ):
@@ -147,15 +151,32 @@ class MeshExporter( AssetEditorModule ):
 		self.addTool( 'mesh_exporter/export_animation', label = 'Animation' )
 		self.addTool( 'mesh_exporter/export_path_edit', widget = epedit )
 
-		container = QtGui.QWidget()
-		self.ui = ui = Ui_ExportParams()
-		ui.setupUi( container )
-		self.window.addWidget( container, expanding=False )
+		self.mainWidget = wdgt = QtGui.QWidget()
+		sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+		sizePolicy.setHorizontalStretch(0)
+		sizePolicy.setVerticalStretch(0)
+		sizePolicy.setHeightForWidth(wdgt.sizePolicy().hasHeightForWidth())
+		wdgt.setSizePolicy(sizePolicy)
+		wdgt.setMinimumSize(QtCore.QSize(300, 400))
+		wdgt.resize(300, 500)
 
-		ui.perPixelEdit.textChanged.connect( self.onPerPixelChange )
-		ui.textureEdit.textChanged.connect( self.onTextureChange )
-		ui.exportNameEdit.textChanged.connect( self.onExportNameChange )
-		ui.exportAnimEdit.textChanged.connect( self.onExportAnimChange )
+		self.mainLayout = layout = QtGui.QFormLayout(wdgt)
+		layout.setFieldGrowthPolicy(QtGui.QFormLayout.ExpandingFieldsGrow)
+		layout.setRowWrapPolicy(QtGui.QFormLayout.DontWrapRows)
+		layout.setContentsMargins(5, 5, 5, 5)
+
+		self.window.addWidget( wdgt, expanding=False )
+
+		self.editors = {}
+
+		self.addField( Field("SetPerPixel", "PerPixelSize", float) )
+		self.addField( Field("SetTexture", "Texture", str) )
+		self.addField( Field("SetExportName", "ExportName", str) )
+		self.addField( Field("SetExportAnimation", "ExportAnim", str) )
+		self.addField( Field("SetBakeLight", "BakeLight", bool) )
+		self.addField( Field("SetDiffusePower", "DiffusePower", float) )
+		self.addField( Field("SetAmbientLight", "AmbientLight", 'color') )
+		self.addField( Field("SetLightDirection", "LightDircetion", 'vec3') )
 
 		self.list = self.window.addWidget( 
 				MeshExporterListWidget( 
@@ -170,6 +191,15 @@ class MeshExporter( AssetEditorModule ):
 
 	def onUnload(self):
 		self.saveConfig()
+
+	def addField( self, field ):
+		label = field.label
+		editor  =  buildFieldEditor( self, field )
+		labelWidget  = editor.initLabel( label, self.mainWidget )
+		editorWidget = editor.initEditor( self.mainWidget )
+		self.mainLayout.addRow ( labelWidget, editorWidget )
+		self.editors[label] = editor
+		return editor
 
 	def updateList( self ):
 		self.list.rebuild()
@@ -306,40 +336,27 @@ class MeshExporter( AssetEditorModule ):
 			self.loadConfig()
 		self.updateList()
 
-	def onPerPixelChange( self, text ):
-		if text and text != '' and text != ' ':
-			per_pixel = float(text)
-			selection = self.list.getSelection()
-			for obj in selection:
-				obj.SetPerPixel( per_pixel )
-
-	def onTextureChange( self, text ):
-		self.onObjectTextChange( text, "SetTexture" )
-
-	def onExportNameChange( self, text ):
-		self.onObjectTextChange( text, "SetExportName" )
-
-	def onExportAnimChange( self, text ):
-		self.onObjectTextChange( text, "SetExportAnimation" )
-
-	def onObjectTextChange( self, text, fname ):
-		if text:
-			text = text.strip()
-			selection = self.list.getSelection()
-			for obj in selection:
-				func = getattr(obj, fname)
-				func( text )
-
 	def onExportPathChange( self, text ):
 		self.export_path = text
+
+	def onPropertyChanged( self, field, value ):
+		selection = self.list.getSelection()
+		for obj in selection:
+			fname = field.model
+			func = getattr(obj, fname)
+			func( value )
 
 	def onItemSelectionChanged( self ):
 		selection = self.list.getSelection()
 		for obj in selection:
-			self.ui.perPixelEdit.setText( obj.GetPerPixelStr() )
-			self.ui.textureEdit.setText( obj.GetTexture() )
-			self.ui.exportNameEdit.setText( obj.GetExportName() )
-			self.ui.exportAnimEdit.setText( obj.GetExportAnimation() )
+			self.editors.get("PerPixelSize").set( obj.GetPerPixel() )
+			self.editors.get("Texture").set( obj.GetTexture() )
+			self.editors.get("ExportName").set( obj.GetExportName() )
+			self.editors.get("ExportAnim").set( obj.GetExportAnimation() )
+			self.editors.get("BakeLight").set( obj.GetBakeLight() )
+			self.editors.get("DiffusePower").set( obj.GetDiffusePower() )
+			self.editors.get("AmbientLight").set( obj.GetAmbientLight() )
+			self.editors.get("LightDircetion").set( obj.GetLightDirection() )
 
 	##----------------------------------------------------------------##
 	def getFBXNode( self, fileName ):

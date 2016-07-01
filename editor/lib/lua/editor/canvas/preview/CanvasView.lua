@@ -70,6 +70,7 @@ function CanvasView:createAssimpMesh( node, obj )
 	local texture = obj.GetTexture( obj, true )
 
 	local model = AssimpMesh( size, texture )
+	model:setLightNode( obj )
 	model:setNode( node )
 	
 	self:addModel( model )

@@ -29,7 +29,7 @@ class SimpleFieldEditorFactory( FieldEditorFactory ):
 	def createEditor( self, parentEditor, field ):
 		return self.create( parentEditor, field )
 
-	def build( self,parentEditor, field, context = None ):
+	def build( self, parentEditor, field, context = None ):
 		dataType  = field._type
 		if field.getOption( 'objtype', None) == 'ref' :
 			dataType    = ReferenceType
@@ -57,7 +57,8 @@ def registerSimpleFieldEditorFactory( dataType, clas, priority = -1 ):
 def buildFieldEditor( parentEditor, field ):
 	for factory in _FieldEditorFactories:
 		editor = factory.build( parentEditor, field )
-		if editor : return editor
+		if editor:
+			return editor
 	return None
 
 ##----------------------------------------------------------------##

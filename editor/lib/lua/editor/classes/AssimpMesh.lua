@@ -17,6 +17,24 @@ function AssimpMesh:init( size, texture )
 end
 
 ---------------------------------------------------------------------------------
+function AssimpMesh:setLightNode( node )
+	local useBakeLight = node.GetBakeLight( node )
+	local diffusePower = node.GetDiffusePower( node )
+	local ambientLight = node.GetAmbientLight( node )
+	local lightDirection = node.GetLightDirection( node )
+
+	self.useBakeLight = useBakeLight
+	self.diffusePower = diffusePower
+	self.ambientLight = { ambientLight[0], ambientLight[1], ambientLight[2], ambientLight[3] }
+	self.lightDirection = { lightDirection[0], lightDirection[1], lightDirection[2] }
+end
+
+function AssimpMesh:luminosity(r, g, b)
+	local light = self.ambientLight
+	return light[1] * r + light[2] * g + light[3] * b
+end
+
+---------------------------------------------------------------------------------
 function AssimpMesh:setNode( node )
 	local sz = self._size
 
@@ -48,7 +66,20 @@ function AssimpMesh:setNode( node )
         local uv = node.texturecoords [ 0 ][ i ]
         vbo:writeFloat ( sz * vtx [ 0 ], sz * vtx [ 1 ], sz * vtx [ 2 ])
         vbo:writeFloat ( uv [ 0 ], uv [ 1 ])
-        vbo:writeColor32 ( 1, 1, 1, 1 )
+
+        if self.useBakeLight then
+        	local n = node.normals [ i ]
+        	local ambient = self.ambientLight
+        	local diffuse = self.diffusePower
+        	local luma = math.max(0, self:luminosity ( n [ 0 ], n [ 1 ], n [ 2 ]))
+        	local r = math.min ( 1, ambient [ 1 ] + diffuse * luma )
+            local g = math.min ( 1, ambient [ 2 ] + diffuse * luma )
+            local b = math.min ( 1, ambient [ 3 ] + diffuse * luma )
+            -- vbo:writeColor32 ( 0.5 + 0.5 * n [ 0 ], 0.5 + 0.5 * n [ 1 ], 0.5 + 0.5 * n [ 2 ], 1 )
+            vbo:writeColor32 ( r, g, b, 1 )
+        else
+        	vbo:writeColor32 ( 1, 1, 1, 1 )
+        end
     end
 
     for face in python.iter ( node.faces ) do
