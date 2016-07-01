@@ -99,6 +99,7 @@ function CanvasView:assimpRender()
 		if model then
 			local prop = self:createProp()
 			prop:setDeck( model:getMesh() )
+			prop.texture = model:getTexture()
 			prop:setLoc( unpack(tr.loc) )
 			prop:setRot( unpack(tr.rot) )
 			prop:setScl( unpack(tr.scl) )
@@ -152,7 +153,10 @@ function CanvasView:loadAnimation( path )
 	self.animation = animation
 
 	for _, prop in ipairs(self.props) do
-		prop:setShader( animation.shader )
+		print("loadAnimation:", prop)
+		prop:setTexture(editorAssetPath( 'grid.png'))
+		-- prop:setTexture(prop.texture)
+		-- prop:setShader( animation.shader )
 	end
 end
 
@@ -161,8 +165,8 @@ end
 ---------------------------------------------------------------------------------
 function CanvasView:createProp()
 	local prop = MOAIProp.new()
-	prop:setCullMode ( MOAIGraphicsProp.CULL_BACK ) --CULL_FRONT ) --
-	prop:setDepthTest( MOAIGraphicsProp.DEPTH_TEST_LESS ) --DEPTH_TEST_LESS_EQUAL
+	prop:setDepthTest( MOAIProp.DEPTH_TEST_LESS ) --DEPTH_TEST_LESS_EQUAL
+    prop:setDepthMask(true)
 	self.layer:insertProp( prop )
 	table.insert( self.props, prop )
 	return prop

@@ -110,15 +110,7 @@ function AssimpMesh:createMesh()
 	mesh:setTotalElements ( self.idxCount )
 	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
 
-	local textureName = self._texture
-
-	if not textureName or textureName == '' then
-		local textureName = self._texturePath
-		if not textureName then
-			textureName = editorAssetPath( 'grid.png')
-		end
-	end
-
+	local textureName = self:getTexture()
 	if textureName then
 		local texture = ResourceMgr:getTexture( textureName )
 		mesh:setTexture ( texture )
@@ -127,6 +119,18 @@ function AssimpMesh:createMesh()
 	mesh.bones = self._bones
 
 	self.mesh = mesh
+end
+
+---------------------------------------------------------------------------------
+function AssimpMesh:getTexture()
+	local textureName = self._texture
+	if not textureName or textureName == '' then
+		local textureName = self._texturePath
+		if not textureName then
+			textureName = editorAssetPath( 'grid.png')
+		end
+	end
+	return textureName
 end
 
 ---------------------------------------------------------------------------------

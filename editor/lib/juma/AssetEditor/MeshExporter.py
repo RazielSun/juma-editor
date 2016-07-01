@@ -146,9 +146,9 @@ class MeshExporter( AssetEditorModule ):
 		self.addTool( 'mesh_exporter/add_object', label = 'Add', icon = 'plus_mint' )
 		self.addTool( 'mesh_exporter/remove_object', label = 'Remove', icon = 'minus' )
 		self.addTool( 'mesh_exporter/preview_render', label = 'Preview', icon = 'view' )
-		self.addTool( 'mesh_exporter/export', label = 'Export' )
+		self.addTool( 'mesh_exporter/export', label = 'Export Mesh', icon = 'diskette' )
 		# self.addTool( 'mesh_exporter/export_all', label = 'ExportAll' )
-		self.addTool( 'mesh_exporter/export_animation', label = 'Animation' )
+		self.addTool( 'mesh_exporter/export_animation', label = 'Export Animation Json', icon = 'diskette' )
 		self.addTool( 'mesh_exporter/play_animation', label = 'Play', icon = 'run' )
 		self.addTool( 'mesh_exporter/export_path_edit', widget = epedit )
 
