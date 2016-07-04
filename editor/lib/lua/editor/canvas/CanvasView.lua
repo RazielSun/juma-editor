@@ -3,9 +3,9 @@ local EditorEntity = require("core.EditorEntity")
 local CanvasNavigate = require("canvas.CanvasNavigate")
 local CanvasGrid = require("canvas.CanvasGrid")
 
-local CanvasToolManager = require("edit.CanvasView.CanvasToolManager")
-local CanvasItemManager = require("edit.CanvasView.CanvasItemManager")
-local PickingManager = require("edit.CanvasView.PickingManager")
+local CanvasToolManager = require("canvas.managers.CanvasToolManager")
+local CanvasItemManager = require("canvas.managers.CanvasItemManager")
+local PickingManager = require("canvas.managers.PickingManager")
 
 ---------------------------------------------------------------------------------
 --

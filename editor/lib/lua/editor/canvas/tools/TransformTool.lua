@@ -1,5 +1,5 @@
 
-local CanvasItem = require("edit.tools.CanvasItem")
+local CanvasItem = require("canvas.tools.CanvasItem")
 
 local itemSize = 80
 local itemArrowSize = 16
@@ -312,8 +312,8 @@ end
 
 ---------------------------------------------------------------------------------
 
-local SelectionTool = require("edit.tools.SelectionTool")
-local TransformToolHelper = require("edit.tools.TransformToolHelper")
+local SelectionTool = require("canvas.tools.SelectionTool")
+local TransformToolHelper = require("canvas.tools.TransformToolHelper")
 
 ---------------------------------------------------------------------------------
 --

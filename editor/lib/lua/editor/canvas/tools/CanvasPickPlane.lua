@@ -1,5 +1,5 @@
 
-local CanvasItem = require("edit.tools.CanvasItem")
+local CanvasItem = require("canvas.tools.CanvasItem")
 
 ---------------------------------------------------------------------------------
 --

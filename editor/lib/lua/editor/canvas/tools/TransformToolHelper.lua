@@ -1,6 +1,6 @@
 
 local EditorEntity = require("core.EditorEntity")
-local TransformProxy = require("edit.tools.TransformProxy")
+local TransformProxy = require("canvas.tools.TransformProxy")
 
 ---------------------------------------------------------------------------------
 --

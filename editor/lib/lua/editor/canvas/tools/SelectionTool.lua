@@ -1,6 +1,6 @@
 
-local CanvasTool = require("edit.tools.CanvasTool")
-local CanvasPickPlane = require("edit.tools.CanvasPickPlane")
+local CanvasTool = require("canvas.tools.CanvasTool")
+local CanvasPickPlane = require("canvas.tools.CanvasPickPlane")
 
 ---------------------------------------------------------------------------------
 --

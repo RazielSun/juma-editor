@@ -9,8 +9,8 @@ require("scenes.builder")
 
 RenderContextMgr = require("render.RenderContextMgr")
 
-require("edit.CanvasView.CanvasToolManager")
-require("edit.tools.common")
+require("canvas.managers.CanvasToolManager")
+require("canvas.tools.common")
 
 require("assets.common")
 
