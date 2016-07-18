@@ -65,10 +65,10 @@ class MeshPreview( AssetEditorModule ):
 		if canvas:
 			canvas.safeCallMethod( "view", "prepareAssimp" )
 
-	def onAssimpMesh( self, node, obj ):
+	def onAssimpMesh( self, node, obj, options ):
 		canvas = self.canvas
 		if canvas:
-			canvas.safeCallMethod( "view", "createAssimpMesh", node, obj )
+			canvas.safeCallMethod( "view", "createAssimpMesh", node, obj, options )
 
 	def onAssimpTransforms( self, name, data ):
 		canvas = self.canvas

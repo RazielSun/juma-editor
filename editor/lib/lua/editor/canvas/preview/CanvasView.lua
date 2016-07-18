@@ -67,9 +67,11 @@ function CanvasView:prepareAssimp()
 	self.namesTransforms = {}
 end
 
-function CanvasView:createAssimpMesh( node, obj )
+function CanvasView:createAssimpMesh( node, obj, option )
 	local size = obj.GetPerPixel( obj )
 	local texture = obj.GetTexture( obj, true )
+
+	print("createAssimpMesh:", option) -- option for create different assim mesh class
 
 	local model = AssimpMesh( size, texture )
 	model:setLightNode( obj )

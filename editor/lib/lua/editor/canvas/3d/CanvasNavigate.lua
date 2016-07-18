@@ -13,6 +13,7 @@ function CanvasNavigate:init( option )
 	self.option = option
 	option.name = option.name or "CanvasNavigate"
 
+	self.dragging = false
 	self.rotating = false
 
 	CoreNavigate.init( self, option )
@@ -40,9 +41,20 @@ function CanvasNavigate:moveCameraToSelected()
 end
 
 ---------------------------------------------------------------------------------
+function CanvasNavigate:startDrag( btn, x, y )
+	self.dragFrom = { x, y }
+	local camera = self.targetCamera
+	self.viewVector = { camera:getViewVector() }
+	self.cameraLoc = { camera:getLoc() }
+	self.dragging = btn
+	self.entity:getScene():setCursor( 'closed-hand' )
+end
+
 function CanvasNavigate:startRotate( btn, x, y )
 	self.rotateFrom = { x, y }
-	self.cameraRot = { self.targetCamera:getRot() }
+	local camera = self.targetCamera
+	self.viewVector = { camera:getViewVector() }
+	self.cameraRot = { camera:getRot() }
 	self.rotating = btn
 	self.entity:getScene():setCursor( 'cross' )
 end
@@ -53,9 +65,39 @@ function CanvasNavigate:stopRotate()
 end
 
 ---------------------------------------------------------------------------------
+function CanvasNavigate:updateLoc( x, y )  -- todo: fixme
+	local x0, y0 = unpack( self.dragFrom )
+	local dx, dy = x - x0, y - y0
+	local cx0, cy0, cz0 = unpack( self.cameraLoc )
+	local camera = self.targetCamera
+
+	local factor = self.inputDevice:isKeyDown( 'shift' ) and 10 or 1
+
+	print("floorMove:", camera:getFloorMove( x, y ))
+
+	camera:setLoc( cx0, cy0 + dy*factor, cz0 ) --# - dx*factor
+
+	self:updateCanvas()
+end
+
+function CanvasNavigate:updateRot( x, y )  -- todo: fixme
+	local rx0, ry0 = unpack( self.rotateFrom )
+	-- local dx, dy = wx - rx0
+	local camera = self.targetCamera
+
+	print("coords:", x, y, "floorMove:", camera:getFloorMove( x, y ))
+
+	self:updateCanvas()
+end
+
 function CanvasNavigate:updateZoom()
 	local zoom = self:getZoom()
-	self.targetCamera:setScl( 1/zoom, 1/zoom, 1 ) -- todo: fixme
+	local factor = zoom * -500
+	local camera = self.targetCamera
+
+	local vx, vy, vz = camera:getViewVector()
+	camera:setLoc( vx*factor, vy*factor, vz*factor )
+
 	self:updateCanvas()
 end
 
@@ -83,18 +125,10 @@ function CanvasNavigate:onMouseMove( wx, wy )
 	if not self.dragging and not self.rotating then return end
 
 	if self.dragging then
-		local x0, y0 = unpack( self.dragFrom )
-		local dx, dy = wx - x0, wy - y0
-		local cx0, cy0 = unpack( self.cameraLoc )
-		local factor = self.inputDevice:isKeyDown( 'shift' ) and 10 or 1
-		self.targetCamera:setLoc( cx0 - dx*factor, cy0 + dy*factor, 0 ) -- todo: fixme
+		self:updateLoc( wx, wy )
 	elseif self.rotating then
-		local rx0, ry0 = unpack( self.rotateFrom )
-		-- local dx, dy = wx - rx0
-		-- todo: create rotate
+		self:updateRot( wx, wy )
 	end
-
-	self:updateCanvas()
 end
 
 function CanvasNavigate:onMouseScroll( x, y )

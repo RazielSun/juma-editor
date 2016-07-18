@@ -271,12 +271,12 @@ class MeshExporter( AssetEditorModule ):
 		return path
 
 	##----------------------------------------------------------------##
-	def previewRender( self ):
+	def previewRender( self, options = None ):
 		signals.emitNow( 'mesh.preview' )
 		signals.emitNow( 'mesh.assimp_clear' )
 		selection = self.list.getSelection()
 		for obj in selection:
-			self.assimpConvert( obj )
+			self.assimpConvert( obj, options )
 		signals.emitNow( 'mesh.assimp_render' )
 
 	def playAnimation( self ):
@@ -289,10 +289,10 @@ class MeshExporter( AssetEditorModule ):
 			signals.emitNow( 'mesh.animation_play', path + obj.GetExportAnimation() )
 
 	##----------------------------------------------------------------##
-	def export( self, olist ):
+	def export( self, olist, options = None ):
 		signals.emitNow( 'mesh.assimp_clear' )
 		for obj in olist:
-			self.assimpConvert( obj )
+			self.assimpConvert( obj, options )
 		path = self.getFullPath(self.export_path)
 		signals.emitNow( 'mesh.assimp_save', path )
 
@@ -399,7 +399,7 @@ class MeshExporter( AssetEditorModule ):
 		for child in node.children:
 			self.recur_node(child,data,ntr,level+1)
 
-	def assimpConvert(self, obj):
+	def assimpConvert(self, obj, options):
 	    scene = pyassimp.load(obj.GetPath( True ), processing = (aiProcessPreset_TargetRealtime_MaxQuality|aiProcess_FlipUVs)) 
 	    # aiProcess_PreTransformVertices - Static Batching (Material)
 	    #the model we load
@@ -448,7 +448,7 @@ class MeshExporter( AssetEditorModule ):
 	            'bonesNames'	: bonesNames,
 	            'normals'       : mesh.normals
 	        }
-	        signals.emitNow( 'mesh.assimp_mesh', meshDict, obj )
+	        signals.emitNow( 'mesh.assimp_mesh', meshDict, obj, options )
 
 	    print
 	    print("NODES:")
