@@ -42,7 +42,7 @@ setup(
 
 """
 plist=dict(CFBundleName= APP_NAME,
-        CFBundleDisplayName= APP_NAME,
-        CFBundleVersion= "0.1.0",
-        CFBundleShortVersionString= "0.1.0",)
+    CFBundleDisplayName= APP_NAME,
+    CFBundleVersion= "0.1.0",
+    CFBundleShortVersionString= "0.1.0",)
 """

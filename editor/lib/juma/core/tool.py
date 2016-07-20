@@ -114,12 +114,17 @@ def startupTool( info ):
 	colorama.init()
 
 	scanTools( info and info['path'] or None )
+
 	argv = sys.argv
+	cmd = None
 	if len( argv ) < 2:
 		printHeader()
 		printUsage()
-		return False
-	cmd = argv[1]
+		cmd = 'ide'
+		# return False
+	else:
+		cmd = argv[1]
+
 	for toolInfo in _prjTools + _libTools:
 		if toolInfo.get('name') == cmd:
 			return startTool( toolInfo )
