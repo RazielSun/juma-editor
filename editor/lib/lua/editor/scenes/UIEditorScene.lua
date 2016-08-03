@@ -23,9 +23,11 @@ function UIEditorScene:init( option )
 
 	local renderTbl = self:getRender()
 	table.insert( renderTbl, jui._renderables )
+end
 
-	local screen = UIScreen( { viewport = self.viewport } )
-	jui:openScreenInternal( screen )
+function UIEditorScene:createScreen( viewport )
+	local screen = UIScreen( { viewport = viewport } )
+	self.jui:openScreenInternal( screen )
 end
 
 function UIEditorScene:getRootGroup()

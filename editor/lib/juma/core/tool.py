@@ -120,7 +120,7 @@ def startupTool( info ):
 	if len( argv ) < 2:
 		printHeader()
 		printUsage()
-		cmd = 'ide'
+		cmd = 'ide' # start ide tool if not argv
 		# return False
 	else:
 		cmd = argv[1]

@@ -17,6 +17,15 @@ local PickingManager = require("canvas.managers.PickingManager")
 local CanvasView = Class( CoreCanvas, "CanvasUIView" )
 
 ---------------------------------------------------------------------------------
+function CanvasView:initViewport()
+	local viewport = MOAIViewport.new()
+	self.layer:setViewport( viewport )
+	self:getScene():getLayer():setViewport( viewport )
+	self.viewport = viewport
+
+	self:getScene():createScreen( viewport )
+end
+
 function CanvasView:initAddons()
 	self.grid = self:add( CanvasGrid() )
 	self.frame = self:add( CanvasFrame( { ui = self:getScene().jui } ) )
