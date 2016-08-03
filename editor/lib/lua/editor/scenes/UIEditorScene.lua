@@ -17,15 +17,16 @@ function UIEditorScene:init( option )
 	local option = option or {}
 	BaseEditorScene.init(self, option)
 
+	local viewport = MOAIViewport.new()
+	self.viewport = viewport
+
 	local jui = JUI()
 	jui:setSize( 320, 480 )
 	self.jui = jui
 
 	local renderTbl = self:getRender()
 	table.insert( renderTbl, jui._renderables )
-end
 
-function UIEditorScene:createScreen( viewport )
 	local screen = UIScreen( { viewport = viewport } )
 	self.jui:openScreenInternal( screen )
 end
@@ -36,12 +37,14 @@ end
 
 function UIEditorScene:setLoadedPath( path )
 	local data = Loader:load( path )
+
 	if data then
 		local children = table.dup(data.children)
 		data:removeChildren()
-		local topScreen = self.jui:getScreen(1)
-		topScreen:removeChildren()
-		topScreen:setChildren(children)
+
+		local screen = self:getRootGroup()
+		screen:removeChildren()
+		screen:setChildren(children)
 	end
 end
 

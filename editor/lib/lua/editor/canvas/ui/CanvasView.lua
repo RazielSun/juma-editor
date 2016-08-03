@@ -18,12 +18,10 @@ local CanvasView = Class( CoreCanvas, "CanvasUIView" )
 
 ---------------------------------------------------------------------------------
 function CanvasView:initViewport()
-	local viewport = MOAIViewport.new()
+	local viewport = self:getScene().viewport
 	self.layer:setViewport( viewport )
 	self:getScene():getLayer():setViewport( viewport )
 	self.viewport = viewport
-
-	self:getScene():createScreen( viewport )
 end
 
 function CanvasView:initAddons()
