@@ -129,7 +129,6 @@ class PropertyEditor( QtGui.QFrame ):
 				self.addFieldEditor( field )			
 			assert self.refreshing
 			self.refreshing = False
-		
 		self.model  = model
 		self.target = target
 		self.refreshAll()

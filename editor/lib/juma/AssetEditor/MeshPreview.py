@@ -43,6 +43,7 @@ class MeshPreview( AssetEditorModule ):
 		signals.connect( 'mesh.assimp_clear',   	self.onAssimpClear )
 		signals.connect( 'mesh.assimp_mesh',   		self.onAssimpMesh )
 		signals.connect( 'mesh.assimp_transforms',  self.onAssimpTransforms )
+		signals.connect( 'mesh.assimp_materials',  	self.onAssimpMaterials )
 		signals.connect( 'mesh.assimp_render',   	self.onAssimpRender )
 		signals.connect( 'mesh.assimp_save',   		self.onAssimpSave )
 
@@ -74,6 +75,11 @@ class MeshPreview( AssetEditorModule ):
 		canvas = self.canvas
 		if canvas:
 			canvas.safeCallMethod( "view", "assimpTransforms", name, data )
+
+	def onAssimpMaterials( self, array ):
+		canvas = self.canvas
+		if canvas:
+			canvas.safeCallMethod( "view", "assimpMaterials", array )
 
 	def onAssimpRender( self ):
 		canvas = self.canvas

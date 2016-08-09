@@ -83,7 +83,12 @@ function AssimpMesh:setNode( node )
     end
 
     for face in python.iter ( node.faces ) do
-        ibo:writeU32 ( face [ 0 ], face [ 1 ], face [ 2 ])
+    	local sz = sizeOfPythonObject(face)
+    	if sz >= 3 then
+	        ibo:writeU32 ( face [ 0 ], face [ 1 ], face [ 2 ])
+	    else
+	    	print("AssimpMesh: FACE is BROKEN!")
+	    end
     end
 
     local bones = {}
@@ -91,6 +96,9 @@ function AssimpMesh:setNode( node )
     	table.insert(bones, bname)
     end
     self._bones = bones
+
+    local mid = node.materialID
+    self._materialID = mid
 end
 
 ---------------------------------------------------------------------------------
@@ -117,6 +125,7 @@ function AssimpMesh:createMesh()
 	end
 
 	mesh.bones = self._bones
+	mesh._materialID = self._materialID
 
 	self.mesh = mesh
 end

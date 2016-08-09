@@ -439,6 +439,7 @@ class MeshExporter( AssetEditorModule ):
 
 	        meshDict = {
 	            'name'          : mesh.name or index,
+	            'materialID'	: mesh.materialindex+1,
 	            'vertices'      : mesh.vertices,
 	            'verticesCount' : len(mesh.vertices),
 	            'texturecoords' : mesh.texturecoords,
@@ -461,12 +462,27 @@ class MeshExporter( AssetEditorModule ):
 	    		pos[i] = v * size
 	    signals.emitNow( 'mesh.assimp_transforms', obj.GetExportName(), transforms )
 
+	    materials = []
 	    print("MATERIALS:")
 	    for index, material in enumerate(scene.materials):
 	        print("  MATERIAL (id:" + str(index+1) + ")")
+	        path = ""
+	        matName = ""
 	        for key, value in material.properties.items():
 	            print("    %s: %s" % (key, value))
+	            if key == "file":
+	            	path = value
+	            elif key == "name":
+	            	matName = value
+	        mat = {
+	        	"id" 	: index+1,
+	        	"file"	: os.path.basename(path),
+	        	"path"	: path,
+	        	"name"	: matName,
+	        }
+	        materials.append(mat)
 	    print
+	    signals.emitNow( 'mesh.assimp_materials', materials )
 	    
 	    print("TEXTURES:")
 	    for index, texture in enumerate(scene.textures):

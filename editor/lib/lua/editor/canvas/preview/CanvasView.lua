@@ -63,6 +63,7 @@ function CanvasView:prepareAssimp()
 	self:clearProps()
 
 	self.models = {}
+	self.materials = {}
 	self.transforms = {}
 	self.namesTransforms = {}
 end
@@ -93,6 +94,18 @@ function CanvasView:assimpTransforms( name, data )
 	end
 
 	table.insert(self.namesTransforms, name)
+end
+
+function CanvasView:assimpMaterials( array )
+	for mat in python.iter ( array ) do
+		local material = {
+			id = mat.id,
+			path = mat.path,
+			file = mat.file,
+			name = mat.name,
+		}
+		table.insert(self.materials, material)
+	end
 end
 
 function CanvasView:assimpRender()
@@ -126,6 +139,7 @@ function CanvasView:assimpSave( path )
 	if self.models then
 		for i, model in ipairs(self.models) do
 			local mesh = model:getMesh()
+			mesh.material = self:getMaterial(mesh)
 			local data = MOAISerializer.serializeToString(mesh)
 			local fullPath = path .. model.name .. '.mesh'
 			MOAIFileSystem.saveFile(fullPath, data)
@@ -214,6 +228,18 @@ function CanvasView:createModel( node, params )
 	elseif ftype == 'OBJ' then
 		self:renderOBJ( node, params )
 	end
+end
+
+function CanvasView:getMaterial( mesh )
+	local id = mesh._materialID
+
+	for _, mat in ipairs(self.materials) do
+		if mat.id == id then
+			return mat
+		end
+	end
+
+	return nil
 end
 
 ---------------------------------------------------------------------------------

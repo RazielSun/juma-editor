@@ -63,6 +63,7 @@ class EntityHeader( QtGui.QWidget ):
 ##----------------------------------------------------------------##
 class ComponentEditor(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 	def onPropertyChanged( self, obj, id, value ):
+		print("ComponentEditor onPropertyChanged", obj, id, value)
 		# if _MOCK.markProtoInstanceOverrided( obj, id ):
 		# 	self.property.refershFieldState( id )
 		signals.emit( 'entity.modified', obj._entity, 'introspector' )
@@ -147,8 +148,6 @@ class EntityEditorObject(FrameworkEditorObjectMixin, CommonIntrospectorObject):
 			signals.emit( 'entity.renamed', obj, value )
 		elif id == 'sprite':
 			self.property.refershFieldState( 'size' )
-		elif id == 'loc':
-			self.property.refershFieldState( 'pos' )
 		# elif id == 'layer':
 		# 	signals.emit( 'entity.renamed', obj, value )
 		# elif id == 'visible':

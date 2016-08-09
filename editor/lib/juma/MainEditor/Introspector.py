@@ -194,7 +194,7 @@ class CommonIntrospectorObject( IntrospectorObject ):
 		self.target = None
 
 	def onPropertyChanged( self, obj, id, value ):
-		pass
+		print("CommonIntrospectorObject onPropertyChanged", obj, id, value)
 
 ##----------------------------------------------------------------##
 class IntrospectorInstance(object):

@@ -9,6 +9,7 @@ register( 'mesh.save_by' )
 register( 'mesh.assimp_clear' )
 register( 'mesh.assimp_mesh' )
 register( 'mesh.assimp_transforms' )
+register( 'mesh.assimp_materials' )
 register( 'mesh.assimp_render' )
 register( 'mesh.assimp_save' )
 
