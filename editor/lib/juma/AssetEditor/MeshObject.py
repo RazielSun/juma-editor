@@ -1,6 +1,98 @@
 #!/usr/bin/env python
 
 import os.path
+from juma.core                	import app
+
+##----------------------------------------------------------------##
+class MeshObject( object ):
+	def __init__( self, path ):
+		self._per_pixel = 1.0
+		self._texture = ""
+		self._export_name = ""
+		self._export_anim = "animation.json"
+		self._bake_light = False
+		self._diffuse_power = 0.3
+		self._ambient_light = (0.7, 0.7, 0.7, 1.0)
+		self._light_direction = (0.14, 0.98, 0.14)
+		self._static_batch = False
+
+		if isinstance(path, dict):
+			self.LoadObject( path )
+		else:
+			self.SetPath( path )
+
+	def __repr__( self ): return "< {} >   {}".format(self.format, self.name)
+	def GetName( self ): return self.name
+	def GetFormat( self ): return self.format
+
+	def SetPath( self, path ):
+		self.fullpath = app.getRelPath( path )
+		fullname = os.path.basename( path )
+		array = fullname.split('.')
+		self.format = array[-1].upper()
+		self.name = array[0].lower()
+		self._export_name = array[0]
+
+	def GetPath( self, abs_path = False ):
+		if abs_path:
+			return app.getAbsPath( self.fullpath )
+		return self.fullpath
+
+	def GetPerPixel( self ): return self._per_pixel
+	def SetPerPixel( self, per_pixel ): self._per_pixel = per_pixel
+
+	def GetTexture( self, abs_path = False ):
+		if abs_path:
+			return app.getAbsPath( self._texture )
+		return self._texture
+	def SetTexture( self, texture ): self._texture = texture
+
+	def GetExportName( self ): return self._export_name
+	def SetExportName( self, name ): self._export_name = name
+
+	def GetExportAnimation( self ): return self._export_anim
+	def SetExportAnimation( self, name ): self._export_anim = name
+
+	def GetBakeLight( self ): return self._bake_light
+	def SetBakeLight( self, bake_light ): self._bake_light = bake_light
+
+	def GetDiffusePower( self ): return self._diffuse_power
+	def SetDiffusePower( self, power ): self._diffuse_power = power
+
+	def GetAmbientLight( self ): return self._ambient_light
+	def SetAmbientLight( self, light ): self._ambient_light = light
+
+	def GetLightDirection( self ): return self._light_direction
+	def SetLightDirection( self, direction ): self._light_direction = direction
+
+	def GetStaticBatch( self ): return self._static_batch
+	def SetStaticBatch( self, static_batch ): self._static_batch = static_batch
+
+	def GetSaveObject( self ):
+		return dict(
+			path = self.GetPath(),
+			per_pixel = self.GetPerPixel(),
+			texture = self.GetTexture(),
+			export_name = self.GetExportName(),
+			export_anim = self.GetExportAnimation(),
+			bake_light = self.GetBakeLight(),
+			diffuse_power = self.GetDiffusePower(),
+			ambient_light = self.GetAmbientLight(),
+			light_direction = self.GetLightDirection(),
+			static_batch = self.GetStaticBatch()
+			)
+
+	def LoadObject( self, data ):
+		self.SetPath( data.get('path', "") )
+		self.SetPerPixel( data.get('per_pixel', 1.0) )
+		self.SetTexture( data.get('texture', "") )
+		self.SetExportName( data.get('export_name', "") )
+		self.SetExportAnimation( data.get('export_anim', "") )
+		self.SetBakeLight( data.get('bake_light', False) )
+		self.SetDiffusePower( data.get('diffuse_power', 0.3) )
+		self.SetAmbientLight( data.get('ambient_light', (0.7, 0.7, 0.7, 1.0)) )
+		self.SetLightDirection( data.get('light_direction', (0.14, 0.98, 0.14)) )
+		self.SetStaticBatch( data.get('static_batch', False) )
 
 ##----------------------------------------------------------------##
 class OBJMaterialLib( object ):
