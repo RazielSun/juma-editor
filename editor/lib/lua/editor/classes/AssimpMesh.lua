@@ -96,10 +96,9 @@ function AssimpMesh:setNode( node )
     for bname in python.iter ( node.bonesNames ) do
     	table.insert(bones, bname)
     end
-    self._bones = bones
 
-    local mid = node.materialID
-    self._materialID = mid
+    self._bones = bones
+    self._materialID = node.materialID
 end
 
 ---------------------------------------------------------------------------------
@@ -122,6 +121,7 @@ function AssimpMesh:createMesh ( option )
 
 	local textureName = self:getTexture()
 	if textureName then
+		mesh.textureName = textureName
 		local texture = ResourceMgr:getTexture( textureName )
 		mesh:setTexture ( texture )
 	end
@@ -140,7 +140,6 @@ function AssimpMesh:createMesh ( option )
 	end
 
 	self.canSave = option.exportMesh
-
 	self.mesh = mesh
 end
 
