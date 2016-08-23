@@ -64,24 +64,37 @@ function CanvasView:prepareAssimp()
 
 	self.models = {}
 	self.materials = {}
+
 	self.transforms = {}
-	self.namesTransforms = {}
+	self.saveTransforms = {}
 end
 
 function CanvasView:createAssimpMesh( node, obj, option )
-	local size = obj.GetPerPixel( obj )
-	local texture = obj.GetTexture( obj, true )
+	local size = obj.GetPerPixel ( obj )
+	local texture = obj.GetTexture ( obj, true )
 
-	print("createAssimpMesh:", option) -- option for create different assim mesh class
+	-- print("createAssimpMesh:", option)
+	-- option for create different assim mesh class
 
 	local model = AssimpMesh( size, texture )
 	model:setLightNode( obj )
 	model:setNode( node )
+
+	local option = {
+		exportMesh = obj.GetExportMesh( obj ),
+		exportBuffers = obj.GetExportBuffers( obj ),
+		exportBones = false,
+		exportMaterialID = false
+	}
+
+	model:createMesh ( option )
 	
-	self:addModel( model )
+	self:addModel ( model )
 end
 
-function CanvasView:assimpTransforms( name, data )
+function CanvasView:assimpTransforms( obj, data )
+	local name = obj.GetExportName ( obj )
+
 	for tr in python.iter ( data ) do
 		local transform = {
 			name = tr.name,
@@ -93,7 +106,10 @@ function CanvasView:assimpTransforms( name, data )
 		table.insert(self.transforms, transform)
 	end
 
-	table.insert(self.namesTransforms, name)
+	local canSave = obj.GetExportTransform ( obj )
+	if canSave then
+		table.insert(self.saveTransforms, name)
+	end
 end
 
 function CanvasView:assimpMaterials( array )
@@ -138,16 +154,18 @@ end
 function CanvasView:assimpSave( path )
 	if self.models then
 		for i, model in ipairs(self.models) do
-			local mesh = model:getMesh()
-			mesh.material = self:getMaterial(mesh)
-			local data = MOAISerializer.serializeToString(mesh)
-			local fullPath = path .. model.name .. '.mesh'
-			MOAIFileSystem.saveFile(fullPath, data)
+			if model.canSave then
+				local mesh = model:getMesh()
+				mesh.material = self:getMaterial(mesh)
+				local data = MOAISerializer.serializeToString(mesh)
+				local fullPath = path .. model.name .. '.mesh'
+				MOAIFileSystem.saveFile(fullPath, data)
+			end
 		end
 	end
 
-	if self.namesTransforms and #self.namesTransforms > 0 then
-		for i, trname in ipairs(self.namesTransforms) do
+	if self.saveTransforms and #self.saveTransforms > 0 then
+		for i, trname in ipairs(self.saveTransforms) do
 			local tab = {}
 			for _, tr in ipairs(self.transforms) do
 				if tr.package == trname then
@@ -169,8 +187,8 @@ function CanvasView:loadAnimation( path )
 	self.animation = animation
 
 	for _, prop in ipairs(self.props) do
-		print("loadAnimation:", prop)
-		prop:setTexture(editorAssetPath( 'grid.png'))
+		-- print("loadAnimation:", prop)
+		prop:setTexture ( editorAssetPath ( 'grid.png' ) )
 		-- prop:setTexture(prop.texture)
 		-- prop:setShader( animation.shader )
 	end
@@ -240,62 +258,6 @@ function CanvasView:getMaterial( mesh )
 	end
 
 	return nil
-end
-
----------------------------------------------------------------------------------
--- OLD FBX OBJ system
----------------------------------------------------------------------------------
-function CanvasView:renderNode( node, params )
-	self:clearModels()
-	self:createModel( node, params )
-
-	self:clearProps()
-	self:createPropFromModels()
-
-	self:updateCanvas()
-end
-
-function CanvasView:renderFBX( rootNode, obj )
-	local size = obj.GetPerPixel( obj )
-	local texture = obj.GetTexture( obj, true )
-
-	self:createMeshFromFBX( rootNode, rootNode, size, texture )
-end
-
-function CanvasView:createMeshFromFBX( node, rootNode, size, texture )
-	if not node then return end
-	
-	local total = node.GetChildCount()
-
-	for i = 0, total-1 do
-		local child = node.GetChild(i)
-		print("CHILD:", child, child.GetName())
-		local totalChilds = child.GetChildCount()
-		if totalChilds > 0 then
-			self:createMeshFromFBX( child, rootNode, size, texture )
-		else
-			local mesh = child.GetMesh()
-			if mesh then
-				print("   mesh:", mesh)
-				local model = FBXObject( size, texture )
-				model:setFBXMaterials( child, rootNode.FbxLayerElement )
-				model:setNode( child )
-				model:createMesh()
-				self:addModel( model )
-			end
-		end
-	end
-end
-
-function CanvasView:renderOBJ( node, obj )
-	local size = obj.getPerPixel( obj )
-
-	local model = OBJObject( size )
-	model:setOBJMaterials( node )
-	model:setNode( node )
-	model:createMesh()
-
-	self:addModel( model )
 end
 
 ---------------------------------------------------------------------------------

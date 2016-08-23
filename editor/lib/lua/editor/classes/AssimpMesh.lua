@@ -59,6 +59,7 @@ function AssimpMesh:setNode( node )
     ibo:setIndexSize ( 4 )
     ibo:reserve ( idxCount * 4 )
 
+    print(self.name, "vtxCount", vtxCount)
     vbo:reserve ( vtxCount * vertexFormat:getVertexSize ())
 
     for i = 0, vtxCount - 1 do
@@ -102,7 +103,8 @@ function AssimpMesh:setNode( node )
 end
 
 ---------------------------------------------------------------------------------
-function AssimpMesh:createMesh()
+function AssimpMesh:createMesh ( option )
+	local option = option or {}
 	local vbo = self.vbo
 	local ibo = self.ibo
 	local vertexFormat = self.vertexFormat
@@ -124,8 +126,20 @@ function AssimpMesh:createMesh()
 		mesh:setTexture ( texture )
 	end
 
-	mesh.bones = self._bones
-	mesh._materialID = self._materialID
+	if option.exportBones then
+		mesh._bones = self._bones
+	end
+
+	if option.exportMaterialID then
+		mesh._materialID = self._materialID
+	end
+
+	if option.exportBuffers then
+		mesh._vbo = vbo
+		mesh._ibo = ibo
+	end
+
+	self.canSave = option.exportMesh
 
 	self.mesh = mesh
 end

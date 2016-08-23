@@ -32,7 +32,7 @@ function BaseMesh:initWithParams()
 end
 
 ---------------------------------------------------------------------------------
-function BaseMesh:createMesh()
+function BaseMesh:createMesh( option )
 	local vbo = self.vbo
 	local vertexFormat = self.vertexFormat
 
@@ -65,9 +65,9 @@ function BaseMesh:createMesh()
 	self.mesh = mesh
 end
 
-function BaseMesh:getMesh()
+function BaseMesh:getMesh( option )
 	if not self.mesh then
-		self:createMesh()
+		self:createMesh( option )
 	end
 
 	return self.mesh

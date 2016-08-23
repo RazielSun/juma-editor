@@ -99,7 +99,8 @@ class PyAssimpConverter( object ):
 			pos = tr['pos']
 			for i, v in enumerate(pos):
 				pos[i] = v * size
-		signals.emitNow( 'mesh.assimp_transforms', obj.GetExportName(), transforms )
+
+		signals.emitNow( 'mesh.assimp_transforms', obj, transforms )
 
 		materials = []
 		print("MATERIALS:")

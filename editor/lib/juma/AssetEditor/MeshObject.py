@@ -8,13 +8,17 @@ class MeshObject( object ):
 	def __init__( self, path ):
 		self._per_pixel = 1.0
 		self._texture = ""
-		self._export_name = ""
-		self._export_anim = "animation.json"
 		self._bake_light = False
 		self._diffuse_power = 0.3
 		self._ambient_light = (0.7, 0.7, 0.7, 1.0)
 		self._light_direction = (0.14, 0.98, 0.14)
 		self._static_batch = False
+		self._export_name = ""
+		self._export_animation_name = "animation.json"
+		self._export_mesh = True
+		self._export_animation = False
+		self._export_transform = False
+		self._export_buffers = False
 
 		if isinstance(path, dict):
 			self.LoadObject( path )
@@ -50,8 +54,8 @@ class MeshObject( object ):
 	def GetExportName( self ): return self._export_name
 	def SetExportName( self, name ): self._export_name = name
 
-	def GetExportAnimation( self ): return self._export_anim
-	def SetExportAnimation( self, name ): self._export_anim = name
+	def GetExportAnimationName( self ): return self._export_animation_name
+	def SetExportAnimationName( self, name ): self._export_animation_name = name
 
 	def GetBakeLight( self ): return self._bake_light
 	def SetBakeLight( self, bake_light ): self._bake_light = bake_light
@@ -68,18 +72,34 @@ class MeshObject( object ):
 	def GetStaticBatch( self ): return self._static_batch
 	def SetStaticBatch( self, static_batch ): self._static_batch = static_batch
 
+	def GetExportMesh( self ): return self._export_mesh
+	def SetExportMesh( self, export_mesh ): self._export_mesh = export_mesh
+
+	def GetExportAnimation( self ): return self._export_animation
+	def SetExportAnimation( self, export_animation ): self._export_animation = export_animation
+
+	def GetExportTransform( self ): return self._export_transform
+	def SetExportTransform( self, export_transform ): self._export_transform = export_transform
+
+	def GetExportBuffers( self ): return self._export_buffers
+	def SetExportBuffers( self, export_buffers ): self._export_buffers = export_buffers
+
 	def GetSaveObject( self ):
 		return dict(
 			path = self.GetPath(),
 			per_pixel = self.GetPerPixel(),
 			texture = self.GetTexture(),
 			export_name = self.GetExportName(),
-			export_anim = self.GetExportAnimation(),
+			export_animation_name = self.GetExportAnimationName(),
 			bake_light = self.GetBakeLight(),
 			diffuse_power = self.GetDiffusePower(),
 			ambient_light = self.GetAmbientLight(),
 			light_direction = self.GetLightDirection(),
-			static_batch = self.GetStaticBatch()
+			static_batch = self.GetStaticBatch(),
+			export_mesh = self.GetExportMesh(),
+			export_animation = self.GetExportAnimation(),
+			export_transform = self.GetExportTransform(),
+			export_buffers = self.GetExportBuffers()
 			)
 
 	def LoadObject( self, data ):
@@ -87,12 +107,16 @@ class MeshObject( object ):
 		self.SetPerPixel( data.get('per_pixel', 1.0) )
 		self.SetTexture( data.get('texture', "") )
 		self.SetExportName( data.get('export_name', "") )
-		self.SetExportAnimation( data.get('export_anim', "") )
+		self.SetExportAnimationName( data.get('export_animation_name', "") )
 		self.SetBakeLight( data.get('bake_light', False) )
 		self.SetDiffusePower( data.get('diffuse_power', 0.3) )
 		self.SetAmbientLight( data.get('ambient_light', (0.7, 0.7, 0.7, 1.0)) )
 		self.SetLightDirection( data.get('light_direction', (0.14, 0.98, 0.14)) )
 		self.SetStaticBatch( data.get('static_batch', False) )
+		self.SetExportMesh( data.get('export_mesh', True) )
+		self.SetExportAnimation( data.get('export_animation', False) )
+		self.SetExportTransform( data.get('export_transform', False) )
+		self.SetExportBuffers( data.get('export_buffers', False) )
 
 ##----------------------------------------------------------------##
 class OBJMaterialLib( object ):

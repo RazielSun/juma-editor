@@ -55,10 +55,10 @@ class MeshExporter( AssetEditorModule ):
 		self.addTool( 'mesh_exporter/add_object', label = 'Add', icon = 'plus_mint' )
 		self.addTool( 'mesh_exporter/remove_object', label = 'Remove', icon = 'minus' )
 		self.addTool( 'mesh_exporter/preview_render', label = 'Preview', icon = 'view' )
-		self.addTool( 'mesh_exporter/export', label = 'Export Mesh', icon = 'diskette' )
+		self.addTool( 'mesh_exporter/export', label = 'Export', icon = 'diskette' )
 		# self.addTool( 'mesh_exporter/export_all', label = 'ExportAll' )
-		self.addTool( 'mesh_exporter/export_animation', label = 'Export Animation Json', icon = 'diskette' )
-		self.addTool( 'mesh_exporter/play_animation', label = 'Play', icon = 'run' )
+		# self.addTool( 'mesh_exporter/export_animation', label = 'Export Animation Json', icon = 'diskette' )
+		# self.addTool( 'mesh_exporter/play_animation', label = 'Play', icon = 'run' )
 		self.addTool( 'mesh_exporter/export_path_edit', widget = epedit )
 
 		self.mainWidget = wdgt = QtGui.QWidget()
@@ -81,13 +81,17 @@ class MeshExporter( AssetEditorModule ):
 
 		self.addField( Field("SetPerPixel", "PerPixelSize", float) )
 		self.addField( Field("SetTexture", "Texture", str) )
-		self.addField( Field("SetExportName", "ExportName", str) )
-		self.addField( Field("SetExportAnimation", "ExportAnim", str) )
 		self.addField( Field("SetBakeLight", "BakeLight", bool) )
 		self.addField( Field("SetDiffusePower", "DiffusePower", float) )
 		self.addField( Field("SetAmbientLight", "AmbientLight", 'color') )
 		self.addField( Field("SetLightDirection", "LightDircetion", 'vec3') )
 		self.addField( Field("SetStaticBatch", "StaticBatch", bool) )
+		self.addField( Field("SetExportName", "ExportName", str) )
+		self.addField( Field("SetExportAnimationName", "ExportAnimName", str) )
+		self.addField( Field("SetExportMesh", "ExportMesh", bool) )
+		self.addField( Field("SetExportAnimation", "ExportAnimation", bool) )
+		self.addField( Field("SetExportTransform", "ExportTransform", bool) )
+		self.addField( Field("SetExportBuffers", "ExportBuffers", bool) )
 
 		self.list = self.window.addWidget( 
 				MeshExporterListWidget( 
@@ -207,7 +211,7 @@ class MeshExporter( AssetEditorModule ):
 		self.export( selection )
 
 	def exportAnimation( self, olist ):
-		pass
+		print("Export Animation ERROR! FIXME!")
 		# for obj in olist:
 		# 	self.fbxConvert( obj )
 
@@ -234,7 +238,6 @@ class MeshExporter( AssetEditorModule ):
 			self.previewRender()
 		elif name == 'export':
 			self.exportSelected()
-		elif name == 'export_animation':
 			self.exportAnimationSelected()
 		elif name == 'play_animation':
 			self.playAnimation()
@@ -271,14 +274,17 @@ class MeshExporter( AssetEditorModule ):
 		for obj in selection:
 			self.editors.get("PerPixelSize").set( obj.GetPerPixel() )
 			self.editors.get("Texture").set( obj.GetTexture() )
-			self.editors.get("ExportName").set( obj.GetExportName() )
-			self.editors.get("ExportAnim").set( obj.GetExportAnimation() )
 			self.editors.get("BakeLight").set( obj.GetBakeLight() )
 			self.editors.get("DiffusePower").set( obj.GetDiffusePower() )
 			self.editors.get("AmbientLight").set( obj.GetAmbientLight() )
 			self.editors.get("LightDircetion").set( obj.GetLightDirection() )
 			self.editors.get("StaticBatch").set( obj.GetStaticBatch() )
-
+			self.editors.get("ExportName").set( obj.GetExportName() )
+			self.editors.get("ExportAnimName").set( obj.GetExportAnimation() )
+			self.editors.get("ExportMesh").set( obj.GetExportMesh() )
+			self.editors.get("ExportAnimation").set( obj.GetExportAnimation() )
+			self.editors.get("ExportTransform").set( obj.GetExportTransform() )
+			self.editors.get("ExportBuffers").set( obj.GetExportBuffers() )
 	
 ##----------------------------------------------------------------##
 
