@@ -36,9 +36,12 @@ end
 
 ---------------------------------------------------------------------------------
 function AssimpMesh:setNode( node )
-	local sz = self._size
+	
 
 	self.name = node.name
+
+	print()
+	print("Assimp Node", self.name)
 
 	local vertexFormat = MOAIVertexFormat.new()
 	vertexFormat:declareCoord( 1, MOAIVertexFormat.GL_FLOAT, 3 )
@@ -59,13 +62,16 @@ function AssimpMesh:setNode( node )
     ibo:setIndexSize ( 4 )
     ibo:reserve ( idxCount * 4 )
 
-    print(self.name, "vtxCount", vtxCount)
+    print("vtxCount", vtxCount)
     vbo:reserve ( vtxCount * vertexFormat:getVertexSize ())
+
+    local sz = self._size
 
     for i = 0, vtxCount - 1 do
         local vtx = node.vertices [ i ]
         local uv = node.texturecoords [ 0 ][ i ]
-        vbo:writeFloat ( sz * vtx [ 0 ], sz * vtx [ 1 ], sz * vtx [ 2 ])
+        vbo:writeFloat ( sz * vtx [ 0 ], sz * vtx [ 1 ], sz * vtx [ 2 ] )
+        -- print(i, ".", sz * vtx [ 0 ], sz * vtx [ 1 ], sz * vtx [ 2 ] )
         vbo:writeFloat ( uv [ 0 ], uv [ 1 ])
 
         if self.useBakeLight then
@@ -86,7 +92,8 @@ function AssimpMesh:setNode( node )
     for face in python.iter ( node.faces ) do
     	local sz = sizeOfPythonObject(face)
     	if sz >= 3 then
-	        ibo:writeU32 ( face [ 0 ], face [ 1 ], face [ 2 ])
+	        ibo:writeU32 ( face [ 0 ], face [ 1 ], face [ 2 ] )
+	        -- print("ibo:", face [ 0 ], face [ 1 ], face [ 2 ])
 	    else
 	    	print("AssimpMesh: FACE is BROKEN!")
 	    end
