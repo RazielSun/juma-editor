@@ -27,8 +27,8 @@ function BaseMesh:initWithParams()
 	local vbo = MOAIVertexBuffer.new ()
 	self.vbo = vbo
 
-	-- local ibo = MOAIIndexBuffer.new ()
-	-- self.ibo = ibo
+	local ibo = MOAIIndexBuffer.new ()
+	self.ibo = ibo
 end
 
 ---------------------------------------------------------------------------------

@@ -156,10 +156,11 @@ function CanvasView:assimpSave( path )
 		for i, model in ipairs(self.models) do
 			if model.canSave then
 				local mesh = model:getMesh()
-				mesh.material = self:getMaterial(mesh)
-				local data = MOAISerializer.serializeToString(mesh)
+				mesh.material = self:getMaterial ( mesh )
+
+				local data = MOAISerializer.serializeToString ( mesh )
 				local fullPath = path .. model.name .. '.mesh'
-				MOAIFileSystem.saveFile(fullPath, data)
+				MOAIFileSystem.saveFile ( fullPath, data )
 			end
 		end
 	end
@@ -238,25 +239,13 @@ function CanvasView:clearModels()
 end
 
 ---------------------------------------------------------------------------------
-function CanvasView:createModel( node, params )
-	print("createModel", node, params)
-	local ftype = params.GetFormat( params )
-	if ftype == 'FBX' then
-		self:renderFBX( node, params )
-	elseif ftype == 'OBJ' then
-		self:renderOBJ( node, params )
-	end
-end
-
 function CanvasView:getMaterial( mesh )
 	local id = mesh._materialID
-
 	for _, mat in ipairs(self.materials) do
 		if mat.id == id then
 			return mat
 		end
 	end
-
 	return nil
 end
 

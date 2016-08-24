@@ -36,31 +36,23 @@ end
 
 ---------------------------------------------------------------------------------
 function AssimpMesh:setNode( node )
-	
-
 	self.name = node.name
 
 	print()
-	print("Assimp Node", self.name)
+	print("AssimpMesh setNode", self.name)
 
-	local vertexFormat = MOAIVertexFormat.new()
-	vertexFormat:declareCoord( 1, MOAIVertexFormat.GL_FLOAT, 3 )
-	vertexFormat:declareUV( 2, MOAIVertexFormat.GL_FLOAT, 2 )
-	vertexFormat:declareColor( 3, MOAIVertexFormat.GL_UNSIGNED_BYTE )
-	self.vertexFormat = vertexFormat
-
-	local vbo = MOAIVertexBuffer.new ()
-	self.vbo = vbo
-
-	local ibo = MOAIIndexBuffer.new ()
-	self.ibo = ibo
+	self:initWithParams()
+	local vertexFormat = self.vertexFormat
+	local vbo = self.vbo
+	local ibo = self.ibo
 
 	local vtxCount = node.verticesCount
     local idxCount = 3 * node.facesCount
     self.idxCount = idxCount
 
-    ibo:setIndexSize ( 4 )
-    ibo:reserve ( idxCount * 4 )
+    local iboSize = 2 -- 2/4
+    ibo:setIndexSize ( iboSize )
+    ibo:reserve ( idxCount * iboSize )
 
     print("vtxCount", vtxCount)
     vbo:reserve ( vtxCount * vertexFormat:getVertexSize ())
@@ -82,7 +74,6 @@ function AssimpMesh:setNode( node )
         	local r = math.min ( 1, ambient [ 1 ] + diffuse * luma )
             local g = math.min ( 1, ambient [ 2 ] + diffuse * luma )
             local b = math.min ( 1, ambient [ 3 ] + diffuse * luma )
-            -- vbo:writeColor32 ( 0.5 + 0.5 * n [ 0 ], 0.5 + 0.5 * n [ 1 ], 0.5 + 0.5 * n [ 2 ], 1 )
             vbo:writeColor32 ( r, g, b, 1 )
         else
         	vbo:writeColor32 ( 1, 1, 1, 1 )
@@ -92,12 +83,18 @@ function AssimpMesh:setNode( node )
     for face in python.iter ( node.faces ) do
     	local sz = sizeOfPythonObject(face)
     	if sz >= 3 then
-	        ibo:writeU32 ( face [ 0 ], face [ 1 ], face [ 2 ] )
+    		if iboSize == 4 then
+		        ibo:writeU32 ( face [ 0 ], face [ 1 ], face [ 2 ] )
+	        else
+		       	ibo:writeU16 ( face [ 0 ], face [ 1 ], face [ 2 ] )
+	        end
 	        -- print("ibo:", face [ 0 ], face [ 1 ], face [ 2 ])
 	    else
 	    	print("AssimpMesh: FACE is BROKEN!")
 	    end
     end
+
+    -- ibo:printIndices()
 
     local bones = {}
     for bname in python.iter ( node.bonesNames ) do
@@ -133,13 +130,8 @@ function AssimpMesh:createMesh ( option )
 		mesh:setTexture ( texture )
 	end
 
-	if option.exportBones then
-		mesh._bones = self._bones
-	end
-
-	if option.exportMaterialID then
-		mesh._materialID = self._materialID
-	end
+	mesh._bones = self._bones -- option.exportBones
+	mesh._materialID = self._materialID --option.exportMaterialID
 
 	if option.exportBuffers then
 		mesh._vbo = vbo

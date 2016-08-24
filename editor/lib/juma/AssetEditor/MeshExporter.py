@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import os
+import glob
 import os.path
 import time
 import math
@@ -60,6 +62,7 @@ class MeshExporter( AssetEditorModule ):
 		# self.addTool( 'mesh_exporter/export_animation', label = 'Export Animation Json', icon = 'diskette' )
 		# self.addTool( 'mesh_exporter/play_animation', label = 'Play', icon = 'run' )
 		self.addTool( 'mesh_exporter/export_path_edit', widget = epedit )
+		self.addTool( 'mesh_exporter/clear_path', icon = 'bin' )
 
 		self.mainWidget = wdgt = QtGui.QWidget()
 		sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
@@ -222,6 +225,15 @@ class MeshExporter( AssetEditorModule ):
 	def exportAll( self ):
 		self.export( self.objects )
 
+	def clearPath( self ):
+		path = self.getFullPath(self.export_path)
+		if os.path.exists(path):
+			result = glob.glob(path + '/*')
+			for file in result:
+			   os.remove(file)
+		else:
+			os.makedirs(path)
+
 	##----------------------------------------------------------------##
 	def onMenu(self, node):
 		name = node.name
@@ -243,6 +255,9 @@ class MeshExporter( AssetEditorModule ):
 			self.playAnimation()
 		elif name == 'export_all':
 			self.exportAll()
+
+		elif name == 'clear_path':
+			self.clearPath()
 
 	def onAddObject( self, obj ):
 		self.list.addNode( obj )
