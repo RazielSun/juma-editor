@@ -48,13 +48,10 @@ function AssimpMesh:setNode( node )
 
 	local vtxCount = node.verticesCount
     local idxCount = 3 * node.facesCount
-    self.idxCount = idxCount
 
     local iboSize = 2 -- 2/4
     ibo:setIndexSize ( iboSize )
     ibo:reserve ( idxCount * iboSize )
-
-    print("vtxCount", vtxCount)
     vbo:reserve ( vtxCount * vertexFormat:getVertexSize ())
 
     local sz = self._size
@@ -103,6 +100,9 @@ function AssimpMesh:setNode( node )
 
     self._bones = bones
     self._materialID = node.materialID
+
+    self._vertexCount = vtxCount
+    self._indexCount = idxCount
 end
 
 ---------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ function AssimpMesh:createMesh ( option )
 	mesh:setPrimType ( MOAIMesh.GL_TRIANGLES )
 	mesh:setShader ( MOAIShaderMgr.getShader( MOAIShaderMgr.MESH_SHADER ) )
 
-	mesh:setTotalElements ( self.idxCount )
+	mesh:setTotalElements ( self._indexCount )
 	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
 
 	local textureName = self:getTexture()
@@ -137,6 +137,9 @@ function AssimpMesh:createMesh ( option )
 		mesh._vbo = vbo
 		mesh._ibo = ibo
 	end
+
+	mesh._vertexCount = self._vertexCount
+	mesh._indexCount = self._indexCount
 
 	self.canSave = option.exportMesh
 	self.mesh = mesh
