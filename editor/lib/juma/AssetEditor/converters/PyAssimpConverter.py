@@ -53,6 +53,36 @@ class PyAssimpConverter( object ):
 		print("  textures:" + str(len(scene.textures)))
 		print
 
+		materials = []
+		print("MATERIALS:")
+		for index, material in enumerate(scene.materials):
+			print("  MATERIAL (id:" + str(index+1) + ")")
+			path = ""
+			matName = ""
+			for key, value in material.properties.items():
+				print("    %s: %s" % (key, value))
+				if key == "file":
+					path = value
+				elif key == "name":
+					matName = value
+			mat = {
+				"id" 	: index+1,
+				"file"	: os.path.basename(path),
+				"path"	: path,
+				"name"	: matName,
+			}
+			materials.append(mat)
+		print
+		signals.emitNow( 'mesh.assimp_materials', materials )
+
+		print("TEXTURES:")
+		for index, texture in enumerate(scene.textures):
+			print("  TEXTURE" + str(index+1))
+			print("    width:" + str(texture.width))
+			print("    height:" + str(texture.height))
+			print("    hint:" + str(texture.achformathint))
+			print("    data (size):" + str(len(texture.data)))
+
 		print("MESHES:")
 		meshCount = len(scene.meshes)
 
@@ -101,36 +131,6 @@ class PyAssimpConverter( object ):
 				pos[i] = v * size
 
 		signals.emitNow( 'mesh.assimp_transforms', obj, transforms )
-
-		materials = []
-		print("MATERIALS:")
-		for index, material in enumerate(scene.materials):
-			print("  MATERIAL (id:" + str(index+1) + ")")
-			path = ""
-			matName = ""
-			for key, value in material.properties.items():
-				print("    %s: %s" % (key, value))
-				if key == "file":
-					path = value
-				elif key == "name":
-					matName = value
-			mat = {
-				"id" 	: index+1,
-				"file"	: os.path.basename(path),
-				"path"	: path,
-				"name"	: matName,
-			}
-			materials.append(mat)
-		print
-		signals.emitNow( 'mesh.assimp_materials', materials )
-
-		print("TEXTURES:")
-		for index, texture in enumerate(scene.textures):
-			print("  TEXTURE" + str(index+1))
-			print("    width:" + str(texture.width))
-			print("    height:" + str(texture.height))
-			print("    hint:" + str(texture.achformathint))
-			print("    data (size):" + str(len(texture.data)))
 
 		# Finally release the model
 		pyassimp.release(scene)

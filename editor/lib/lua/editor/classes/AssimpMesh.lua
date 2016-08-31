@@ -123,39 +123,30 @@ function AssimpMesh:createMesh ( option )
 	mesh:setTotalElements ( self._indexCount )
 	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
 
-	local textureName = self:getTexture()
-	if textureName then
-		mesh.textureName = textureName
-		local texture = ResourceMgr:getTexture( textureName )
-		mesh:setTexture ( texture )
-	end
-
-	mesh._bones = self._bones -- option.exportBones
-	mesh._materialID = self._materialID --option.exportMaterialID
+	mesh._vertexCount = self._vertexCount
+	mesh._indexCount = self._indexCount
 
 	if option.exportBuffers then
 		mesh._vbo = vbo
 		mesh._ibo = ibo
 	end
 
-	mesh._vertexCount = self._vertexCount
-	mesh._indexCount = self._indexCount
+	mesh._bones = self._bones -- option.exportBones
+	-- mesh._materialID = self._materialID --option.exportMaterialID
+	mesh.material = self._material
+
+	local textureName = self:getTexture()
+	if textureName then
+		local texture = ResourceMgr:getTexture( textureName )
+		mesh:setTexture ( texture )
+	end
 
 	self.canSave = option.exportMesh
 	self.mesh = mesh
 end
 
 ---------------------------------------------------------------------------------
-function AssimpMesh:getTexture()
-	local textureName = self._texture
-	if not textureName or textureName == '' then
-		local textureName = self._texturePath
-		if not textureName then
-			textureName = editorAssetPath( 'grid.png')
-		end
-	end
-	return textureName
-end
+
 
 ---------------------------------------------------------------------------------
 

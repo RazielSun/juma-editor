@@ -72,13 +72,16 @@ end
 function CanvasView:createAssimpMesh( node, obj, option )
 	local size = obj.GetPerPixel ( obj )
 	local texture = obj.GetTexture ( obj, true )
+	local path = obj.GetPath ( obj, true )
 
 	-- print("createAssimpMesh:", option)
 	-- option for create different assim mesh class
 
 	local model = AssimpMesh( size, texture )
+	model:setPath( path )
 	model:setLightNode( obj )
 	model:setNode( node )
+	model:setMaterial( self:getMaterial( model:getMaterialID() ) )
 
 	local option = {
 		exportMesh = obj.GetExportMesh( obj ),
@@ -87,7 +90,7 @@ function CanvasView:createAssimpMesh( node, obj, option )
 		exportMaterialID = false
 	}
 
-	model:createMesh ( option )
+	model:createMesh( option )
 	
 	self:addModel ( model )
 end
@@ -127,10 +130,11 @@ end
 function CanvasView:assimpRender()
 	for i, tr in ipairs(self.transforms) do
 		local model = self:getModelByName( tr.name )
+
 		if model then
+			local mesh = model:getMesh()
 			local prop = self:createProp()
-			prop:setDeck( model:getMesh() )
-			prop.texture = model:getTexture()
+			prop:setDeck( mesh )
 			prop:setLoc( unpack(tr.loc) )
 			prop:setRot( unpack(tr.rot) )
 			prop:setScl( unpack(tr.scl) )
@@ -156,8 +160,6 @@ function CanvasView:assimpSave( path )
 		for i, model in ipairs(self.models) do
 			if model.canSave then
 				local mesh = model:getMesh()
-				mesh.material = self:getMaterial ( mesh )
-
 				local data = MOAISerializer.serializeToString ( mesh )
 				local fullPath = path .. model.name .. '.mesh'
 				MOAIFileSystem.saveFile ( fullPath, data )
@@ -239,11 +241,12 @@ function CanvasView:clearModels()
 end
 
 ---------------------------------------------------------------------------------
-function CanvasView:getMaterial( mesh )
-	local id = mesh._materialID
-	for _, mat in ipairs(self.materials) do
-		if mat.id == id then
-			return mat
+function CanvasView:getMaterial( id )
+	if id then
+		for _, mat in ipairs(self.materials) do
+			if mat.id == id then
+				return mat
+			end
 		end
 	end
 	return nil

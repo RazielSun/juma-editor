@@ -32,6 +32,14 @@ function BaseMesh:initWithParams()
 end
 
 ---------------------------------------------------------------------------------
+function BaseMesh:setPath( path )
+	self._path = path
+	local index = path:match'^.*()/'
+	self._dir = string.sub( path, 1, index )
+	-- print("path", path, index, self._dir)
+end
+
+---------------------------------------------------------------------------------
 function BaseMesh:createMesh( option )
 	local vbo = self.vbo
 	local vertexFormat = self.vertexFormat
@@ -43,18 +51,9 @@ function BaseMesh:createMesh( option )
 	mesh:setTotalElements( vbo:countElements( vertexFormat ) )
 	mesh:setBounds( vbo:computeBounds( vertexFormat ) )
 
-	local textureName = self._texture
-
-	if not textureName or textureName == '' then
-		local textureName = self._texturePath
-		if not textureName then
-			textureName = editorAssetPath( 'grid.png')
-		end
-	end
-
+	local textureName = self:getTexture()
 	if textureName then
 		local texture = ResourceMgr:getTexture( textureName )
-		print("textureName", textureName, "texture", texture)
 		mesh:setTexture ( texture )
 	end
 
@@ -74,12 +73,36 @@ function BaseMesh:getMesh( option )
 end
 
 ---------------------------------------------------------------------------------
+function BaseMesh:getMaterialID()
+	return self._materialID
+end
+
+function BaseMesh:setMaterial( material )
+	self._material = material
+	-- print("setMaterial", table.pretty(material))
+end
+
+---------------------------------------------------------------------------------
 function BaseMesh:setTexture( textureName, texturePath )
 	self._textureName = textureName
 	self._texturePath = texturePath
-	print("setTexture", textureName, texturePath)
+	-- print("setTexture", textureName, texturePath)
 end
 
+function BaseMesh:getTexture()
+	local textureName = self._texture
+
+	if not textureName or textureName == '' then
+		if self._material then
+			textureName = self._dir .. self._material.file
+		else
+			textureName = editorAssetPath( 'grid.png')
+		end
+	end
+	return textureName
+end
+
+---------------------------------------------------------------------------------
 function BaseMesh:setFace( points, idx, normals, uv )
 	if idx then
 		local total = #idx
