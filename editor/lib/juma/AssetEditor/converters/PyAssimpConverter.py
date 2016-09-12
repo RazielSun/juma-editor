@@ -112,6 +112,7 @@ class PyAssimpConverter( object ):
 				'vertices'      : mesh.vertices,
 				'verticesCount' : len(mesh.vertices),
 				'texturecoords' : mesh.texturecoords,
+				'uvcounts' 		: len(mesh.texturecoords),
 				'faces'         : mesh.faces,
 				'facesCount'    : len(mesh.faces),
 				'bones'         : mesh.bones,

@@ -39,6 +39,11 @@ function AssimpMesh:setNode( node )
 	self.name = node.name
 	print()
 	print("AssimpMesh setNode", self.name)
+	print()
+
+	if self.useLightMap and node.uvcounts == 1 then
+		self.useLightMap = false
+	end
 
 	self:initWithParams()
 
@@ -61,10 +66,11 @@ function AssimpMesh:setNode( node )
         vbo:writeFloat ( sz * vtx [ 0 ], sz * vtx [ 1 ], sz * vtx [ 2 ] )
 
         local uv = node.texturecoords [ 0 ][ i ]
-        vbo:writeFloat ( uv [ 0 ], uv [ 1 ])
+        vbo:writeFloat ( uv [ 0 ], uv [ 1 ] )
+        
         if self.useLightMap then
         	local uv2 = node.texturecoords [ 1 ][ i ]
-	        vbo:writeFloat ( uv2 [ 0 ], uv2 [ 1 ])
+	        vbo:writeFloat ( uv2 [ 0 ], uv2 [ 1 ] )
         end
 
         if self.useBakeLight then
@@ -137,6 +143,7 @@ function AssimpMesh:createMesh ( option )
 
 	mesh._bones = self._bones
 	mesh.material = self._material
+	mesh.useLightMap = self.useLightMap
 
 	local textureName = self:getTexture()
 	if textureName then
