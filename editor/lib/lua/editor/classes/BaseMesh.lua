@@ -16,29 +16,6 @@ function BaseMesh:init()
 	self.format = '.mesh'
 end
 
-function BaseMesh:initWithParams()
-	local vertexFormat = MOAIVertexFormat.new()
-	vertexFormat:declareCoord( 1, MOAIVertexFormat.GL_FLOAT, 3 )
-	-- vertexFormat:declareNormal( 2, MOAIVertexFormat.GL_FLOAT )
-	vertexFormat:declareUV( 2, MOAIVertexFormat.GL_FLOAT, 2 )
-	vertexFormat:declareColor( 3, MOAIVertexFormat.GL_UNSIGNED_BYTE )
-	self.vertexFormat = vertexFormat
-
-	local vbo = MOAIVertexBuffer.new ()
-	self.vbo = vbo
-
-	local ibo = MOAIIndexBuffer.new ()
-	self.ibo = ibo
-end
-
----------------------------------------------------------------------------------
-function BaseMesh:setPath( path )
-	self._path = path
-	local index = path:match'^.*()/'
-	self._dir = string.sub( path, 1, index )
-	-- print("path", path, index, self._dir)
-end
-
 ---------------------------------------------------------------------------------
 function BaseMesh:createMesh( option )
 	local vbo = self.vbo
@@ -70,6 +47,50 @@ function BaseMesh:getMesh( option )
 	end
 
 	return self.mesh
+end
+
+---------------------------------------------------------------------------------
+function BaseMesh:setParams( params )
+	local size = params.GetPerPixel ( params )
+	local texture = params.GetTexture ( params, true )
+	local path = params.GetPath ( params, true )
+
+	self._size = size or 256
+	self._texture = texture or ''
+	self:setPath( path )
+	self:setLightNode( params )
+end
+
+function BaseMesh:initWithParams()
+	local vertexFormat = MOAIVertexFormat.new()
+	
+	if self.useLightMap then
+		vertexFormat:declareCoord( 1, MOAIVertexFormat.GL_FLOAT, 3 )
+		vertexFormat:declareUV( 2, MOAIVertexFormat.GL_FLOAT, 2 )
+		vertexFormat:declareUV( 3, MOAIVertexFormat.GL_FLOAT, 2 )
+		vertexFormat:declareColor( 4, MOAIVertexFormat.GL_UNSIGNED_BYTE )
+	else
+		vertexFormat:declareCoord( 1, MOAIVertexFormat.GL_FLOAT, 3 )
+		vertexFormat:declareUV( 2, MOAIVertexFormat.GL_FLOAT, 2 )
+		vertexFormat:declareColor( 3, MOAIVertexFormat.GL_UNSIGNED_BYTE )
+	end
+	self.vertexFormat = vertexFormat
+
+	local vbo = MOAIVertexBuffer.new ()
+	self.vbo = vbo
+
+	local ibo = MOAIIndexBuffer.new ()
+	self.ibo = ibo
+end
+
+function BaseMesh:setPath( path )
+	self._path = path
+	local index = path:match'^.*()/'
+	self._dir = string.sub( path, 1, index )
+	-- print("path", path, index, self._dir)
+end
+
+function BaseMesh:setLightNode( node )
 end
 
 ---------------------------------------------------------------------------------

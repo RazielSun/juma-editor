@@ -70,16 +70,8 @@ function CanvasView:prepareAssimp()
 end
 
 function CanvasView:createAssimpMesh( node, obj, option )
-	local size = obj.GetPerPixel ( obj )
-	local texture = obj.GetTexture ( obj, true )
-	local path = obj.GetPath ( obj, true )
-
-	-- print("createAssimpMesh:", option)
-	-- option for create different assim mesh class
-
-	local model = AssimpMesh( size, texture )
-	model:setPath( path )
-	model:setLightNode( obj )
+	local model = AssimpMesh()
+	model:setParams( obj )
 	model:setNode( node )
 	model:setMaterial( self:getMaterial( model:getMaterialID() ) )
 

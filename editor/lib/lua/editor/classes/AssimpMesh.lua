@@ -9,10 +9,8 @@ local BaseMesh = require("classes.BaseMesh")
 
 local AssimpMesh = Class(BaseMesh, "AssimpMesh")
 
-function AssimpMesh:init( size, texture )
+function AssimpMesh:init()
 	BaseMesh.init( self )
-	self._size = size or 256
-	self._texture = texture or ''
 	self._bones = {}
 end
 
@@ -22,11 +20,13 @@ function AssimpMesh:setLightNode( node )
 	local diffusePower = node.GetDiffusePower( node )
 	local ambientLight = node.GetAmbientLight( node )
 	local lightDirection = node.GetLightDirection( node )
+	local useLightMap = node.GetUseLightMap( node )
 
 	self.useBakeLight = useBakeLight
 	self.diffusePower = diffusePower
 	self.ambientLight = { ambientLight[0], ambientLight[1], ambientLight[2], ambientLight[3] }
 	self.lightDirection = { lightDirection[0], lightDirection[1], lightDirection[2] }
+	self.useLightMap = useLightMap
 end
 
 function AssimpMesh:luminosity(r, g, b)
@@ -37,11 +37,11 @@ end
 ---------------------------------------------------------------------------------
 function AssimpMesh:setNode( node )
 	self.name = node.name
-
 	print()
 	print("AssimpMesh setNode", self.name)
 
 	self:initWithParams()
+
 	local vertexFormat = self.vertexFormat
 	local vbo = self.vbo
 	local ibo = self.ibo
@@ -58,10 +58,14 @@ function AssimpMesh:setNode( node )
 
     for i = 0, vtxCount - 1 do
         local vtx = node.vertices [ i ]
-        local uv = node.texturecoords [ 0 ][ i ]
         vbo:writeFloat ( sz * vtx [ 0 ], sz * vtx [ 1 ], sz * vtx [ 2 ] )
-        -- print(i, ".", sz * vtx [ 0 ], sz * vtx [ 1 ], sz * vtx [ 2 ] )
+
+        local uv = node.texturecoords [ 0 ][ i ]
         vbo:writeFloat ( uv [ 0 ], uv [ 1 ])
+        if self.useLightMap then
+        	local uv2 = node.texturecoords [ 1 ][ i ]
+	        vbo:writeFloat ( uv2 [ 0 ], uv2 [ 1 ])
+        end
 
         if self.useBakeLight then
         	local n = node.normals [ i ]
@@ -131,8 +135,7 @@ function AssimpMesh:createMesh ( option )
 		mesh._ibo = ibo
 	end
 
-	mesh._bones = self._bones -- option.exportBones
-	-- mesh._materialID = self._materialID --option.exportMaterialID
+	mesh._bones = self._bones
 	mesh.material = self._material
 
 	local textureName = self:getTexture()
@@ -144,9 +147,6 @@ function AssimpMesh:createMesh ( option )
 	self.canSave = option.exportMesh
 	self.mesh = mesh
 end
-
----------------------------------------------------------------------------------
-
 
 ---------------------------------------------------------------------------------
 

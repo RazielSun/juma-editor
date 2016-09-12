@@ -9,6 +9,7 @@ class MeshObject( object ):
 		self._per_pixel = 1.0
 		self._texture = ""
 		self._bake_light = False
+		self._use_light_map = False
 		self._diffuse_power = 0.3
 		self._ambient_light = (0.7, 0.7, 0.7, 1.0)
 		self._light_direction = (0.14, 0.98, 0.14)
@@ -60,6 +61,9 @@ class MeshObject( object ):
 	def GetBakeLight( self ): return self._bake_light
 	def SetBakeLight( self, bake_light ): self._bake_light = bake_light
 
+	def GetUseLightMap( self ): return self._use_light_map
+	def SetUseLightMap( self, use_light_map ): self._use_light_map = use_light_map
+
 	def GetDiffusePower( self ): return self._diffuse_power
 	def SetDiffusePower( self, power ): self._diffuse_power = power
 
@@ -92,6 +96,7 @@ class MeshObject( object ):
 			export_name = self.GetExportName(),
 			export_animation_name = self.GetExportAnimationName(),
 			bake_light = self.GetBakeLight(),
+			use_light_map = self.GetUseLightMap(),
 			diffuse_power = self.GetDiffusePower(),
 			ambient_light = self.GetAmbientLight(),
 			light_direction = self.GetLightDirection(),
@@ -109,6 +114,7 @@ class MeshObject( object ):
 		self.SetExportName( data.get('export_name', "") )
 		self.SetExportAnimationName( data.get('export_animation_name', "") )
 		self.SetBakeLight( data.get('bake_light', False) )
+		self.SetUseLightMap( data.get('use_light_map', False) )
 		self.SetDiffusePower( data.get('diffuse_power', 0.3) )
 		self.SetAmbientLight( data.get('ambient_light', (0.7, 0.7, 0.7, 1.0)) )
 		self.SetLightDirection( data.get('light_direction', (0.14, 0.98, 0.14)) )

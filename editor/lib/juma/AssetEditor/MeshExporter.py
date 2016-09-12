@@ -82,19 +82,20 @@ class MeshExporter( AssetEditorModule ):
 
 		self.editors = {}
 
-		self.addField( Field("SetPerPixel", "PerPixelSize", float) )
+		self.addField( Field("SetPerPixel", "Scale Size", float) )
 		self.addField( Field("SetTexture", "Texture", str) )
-		self.addField( Field("SetBakeLight", "BakeLight", bool) )
-		self.addField( Field("SetDiffusePower", "DiffusePower", float) )
-		self.addField( Field("SetAmbientLight", "AmbientLight", 'color') )
-		self.addField( Field("SetLightDirection", "LightDircetion", 'vec3') )
-		self.addField( Field("SetStaticBatch", "StaticBatch", bool) )
-		self.addField( Field("SetExportName", "ExportName", str) )
-		self.addField( Field("SetExportAnimationName", "ExportAnimName", str) )
-		self.addField( Field("SetExportMesh", "ExportMesh", bool) )
-		self.addField( Field("SetExportAnimation", "ExportAnimation", bool) )
-		self.addField( Field("SetExportTransform", "ExportTransform", bool) )
-		self.addField( Field("SetExportBuffers", "ExportBuffers", bool) )
+		self.addField( Field("SetUseLightMap", "Use Light Map", bool) )
+		self.addField( Field("SetBakeLight", "Bake Light", bool) )
+		self.addField( Field("SetDiffusePower", "Diffuse Power", float) )
+		self.addField( Field("SetAmbientLight", "Ambient Light", 'color') )
+		self.addField( Field("SetLightDirection", "Light Dircetion", 'vec3') )
+		self.addField( Field("SetStaticBatch", "Static Batch", bool) )
+		self.addField( Field("SetExportName", "Export Name", str) )
+		self.addField( Field("SetExportAnimationName", "Export Anim Name", str) )
+		self.addField( Field("SetExportMesh", "Export Mesh", bool) )
+		self.addField( Field("SetExportAnimation", "Export Animation", bool) )
+		self.addField( Field("SetExportTransform", "Export Transform", bool) )
+		self.addField( Field("SetExportBuffers", "Export Buffers", bool) )
 
 		self.list = self.window.addWidget( 
 				MeshExporterListWidget( 
@@ -287,19 +288,20 @@ class MeshExporter( AssetEditorModule ):
 	def onItemSelectionChanged( self ):
 		selection = self.list.getSelection()
 		for obj in selection:
-			self.editors.get("PerPixelSize").set( obj.GetPerPixel() )
+			self.editors.get("Scale Size").set( obj.GetPerPixel() )
 			self.editors.get("Texture").set( obj.GetTexture() )
-			self.editors.get("BakeLight").set( obj.GetBakeLight() )
-			self.editors.get("DiffusePower").set( obj.GetDiffusePower() )
-			self.editors.get("AmbientLight").set( obj.GetAmbientLight() )
-			self.editors.get("LightDircetion").set( obj.GetLightDirection() )
-			self.editors.get("StaticBatch").set( obj.GetStaticBatch() )
-			self.editors.get("ExportName").set( obj.GetExportName() )
-			self.editors.get("ExportAnimName").set( obj.GetExportAnimation() )
-			self.editors.get("ExportMesh").set( obj.GetExportMesh() )
-			self.editors.get("ExportAnimation").set( obj.GetExportAnimation() )
-			self.editors.get("ExportTransform").set( obj.GetExportTransform() )
-			self.editors.get("ExportBuffers").set( obj.GetExportBuffers() )
+			self.editors.get("Use Light Map").set( obj.GetUseLightMap() )
+			self.editors.get("Bake Light").set( obj.GetBakeLight() )
+			self.editors.get("Diffuse Power").set( obj.GetDiffusePower() )
+			self.editors.get("Ambient Light").set( obj.GetAmbientLight() )
+			self.editors.get("Light Dircetion").set( obj.GetLightDirection() )
+			self.editors.get("Static Batch").set( obj.GetStaticBatch() )
+			self.editors.get("Export Name").set( obj.GetExportName() )
+			self.editors.get("Export Anim Name").set( obj.GetExportAnimation() )
+			self.editors.get("Export Mesh").set( obj.GetExportMesh() )
+			self.editors.get("Export Animation").set( obj.GetExportAnimation() )
+			self.editors.get("Export Transform").set( obj.GetExportTransform() )
+			self.editors.get("Export Buffers").set( obj.GetExportBuffers() )
 	
 ##----------------------------------------------------------------##
 

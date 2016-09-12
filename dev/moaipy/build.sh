@@ -17,6 +17,6 @@ cd "$dir1"
 
 echo "overriding loader path for libfmod.dylib ..."
 install_name_tool -change "@rpath/libfmod.dylib" "@loader_path/libfmod.dylib" moaipy.so
-echo "moving moaipy.so to edtior/moaipy/moaipy.so ..."
+echo "moving moaipy.so to editor/moaipy/moaipy.so ..."
 cp moaipy.so '../../../../editor/lib/moaipy/moaipy.so'
 echo "=== COMPLETE ==="
