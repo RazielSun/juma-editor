@@ -15,7 +15,6 @@ _luaSignalConnections=[]
 _luaSignalRegistration=[]
 
 def emitPythonSignal(name, *args):
-	print("emitPythonSignal {} {}".format(name, args))
 	signals.emit(name, *args)
 
 def emitPythonSignalNow(name, *args):	
