@@ -85,6 +85,7 @@ class PropertyEditor( QtGui.QFrame ):
 		self.refreshing = False
 		self.context    = None
 		self.model      = False
+		self.fieldMap 	= {}
 		self.readonly   = False
 		self.clear()
 
@@ -119,11 +120,13 @@ class PropertyEditor( QtGui.QFrame ):
 		
 		if rebuildFields:
 			self.clear()
+			self.fieldMap.clear()
 			self.refreshing = True
 			currentId = None
 			for field in model.fieldList:
 				lastId = currentId
 				currentId = field.id
+				self.fieldMap[currentId] = field
 				if field.getOption('no_edit'):
 					continue
 				self.addFieldEditor( field )			
@@ -140,15 +143,14 @@ class PropertyEditor( QtGui.QFrame ):
 	def refreshAll( self ):
 		target = self.target
 		if not target: return
-		for field in self.model.fieldList: # tommo todo: just use propMap to iter?
+		for field in self.model.fieldList:
 			self._refreshField( field )
 
 	def refreshField( self, fieldId ):
-		for field in self.model.fieldList: # tommo todo: just use propMap to iter?
-			if field.id == fieldId:
-				self._refreshField( field )
-				return True
-		return False
+		field = self.fieldMap.get(fieldId, None)
+		if field is None:
+			return False
+		self._refreshField( field )
 
 	def _refreshField( self, field ):
 		target = self.target
@@ -165,14 +167,21 @@ class PropertyEditor( QtGui.QFrame ):
 			self.refreshing = False
 			editor.setOverrided( self.model.isFieldOverrided( target, field.id ) )
 
-	def refershFieldState( self, fieldId ):
+	def refreshFieldState( self, fieldId ):
 		target = self.target
 		if not target: return
-		for field in self.model.fieldList: #todo: just use propMap to iter?
-			if field.id == fieldId:
-				editor = self.editors.get( field, None )
-				if not editor: return
-				editor.setOverrided( self.model.isFieldOverrided( target, field.id ) )
+		field = self.fieldMap.get(fieldId, None)
+		if field != None:
+			editor = self.editors.get( field, None )
+			if not editor: return
+			editor.setOverrided( self.model.isFieldOverrided( target, field.id ) )
+
+	def calculateField( self, fieldId ):
+		target = self.target
+		if not target: return
+		field = self.fieldMap.get(fieldId, None)
+		if field != None:
+			self.model.calculateField( target, field.id )
 
 	def clear( self ):
 		for editor in self.editors.values():

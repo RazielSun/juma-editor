@@ -15,6 +15,7 @@ local function createPyModel( model )
 		local option = {
 			get   = f.__getter,
 			set   = f.__setter,
+			calc  = f.__calc,
 			label = f.__label,
 			meta  = f.__meta
 		}

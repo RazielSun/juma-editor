@@ -40,17 +40,21 @@ class UIWidgetEditorObject(FrameworkObjectMixin, CommonIntrospectorObject):
 		self.initFoldState()
 		return self.property
 
+	def needRefreshForContext(self, context = None):
+		if context == "translation":
+			self.property.refreshField( 'loc' )
+			self.property.refreshField( 'rot' )
+			self.property.refreshField( 'scl' )
+			self.property.calculateField( 'anchorPos' )
+			self.property.refreshField( 'anchorPos' )
+			return True
+		return False
+
 	def onPropertyChanged( self, obj, id, value ):
 		if id == 'name':
 			signals.emit( 'entity.renamed', obj, value )
 		elif id == 'sprite':
-			self.property.refershFieldState( 'size' )
-		elif id == 'loc':
-			self.property.refershFieldState( 'pos' )
-		# elif id == 'layer':
-		# 	signals.emit( 'entity.renamed', obj, value )
-		# elif id == 'visible':
-		# 	signals.emit( 'entity.visible_changed', obj )
+			self.property.refreshFieldState( 'size' )
 		signals.emit( 'entity.modified', obj, 'introspector' )
 
 ##----------------------------------------------------------------##

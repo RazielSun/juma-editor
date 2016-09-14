@@ -186,8 +186,12 @@ class CommonIntrospectorObject( IntrospectorObject ):
 		self.target = target
 		self.property.setTarget( target )
 
-	def refresh( self ):
-		self.property.refreshAll()
+	def needRefreshForContext(self, context=None):
+		return False
+
+	def refresh( self, context = None ):
+		if not self.needRefreshForContext(context):
+			self.property.refreshAll()
 
 	def unload( self ):
 		self.property.clear()
@@ -199,10 +203,11 @@ class CommonIntrospectorObject( IntrospectorObject ):
 ##----------------------------------------------------------------##
 class IntrospectorInstance(object):
 	def __init__(self):
-		self.target    = None
-		self.container = None
-		self.body      = None
-		self.editors   = []
+		self.target    	= None
+		self.container 	= None
+		self.body      	= None
+		self.context 	= None
+		self.editors   	= []
 
 	def createWidget(self, container):
 		self.container = container
@@ -347,15 +352,17 @@ class IntrospectorInstance(object):
 	def refresh(self, target = None):
 		for editor in self.editors:
 			if not target or editor.getTarget() == target:
-				editor.refresh()
+				editor.refresh( self.context )
+		self.context = None
 
 	def onUpdateTimer(self):
 		if self.updatePending == True:
 			self.updatePending = False
 			self.refresh()
 
-	def scheduleUpdate( self ):
+	def scheduleUpdate( self, context = None ):
 		self.updatePending = True
+		self.context = context
 
 ##----------------------------------------------------------------##
 def registerEditorBuilder( typeId, editorBuilder ):
@@ -448,7 +455,7 @@ class Introspector( MainEditorModule ):
 	def refresh( self, target = None, context = None ):
 		for ins in self.instances:
 			if not target or ins.hasTarget( target ):
-				ins.scheduleUpdate()
+				ins.scheduleUpdate( context )
 
 ##----------------------------------------------------------------##
 

@@ -14,7 +14,8 @@ from juma.core.SelectionManager import getSelectionManager
 _luaSignalConnections=[]
 _luaSignalRegistration=[]
 
-def emitPythonSignal(name, *args):	
+def emitPythonSignal(name, *args):
+	print("emitPythonSignal {} {}".format(name, args))
 	signals.emit(name, *args)
 
 def emitPythonSignalNow(name, *args):	

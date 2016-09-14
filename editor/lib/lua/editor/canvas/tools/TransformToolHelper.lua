@@ -111,7 +111,7 @@ function TransformToolHelper:onUpdate()
 			drx, dry, drz, ssx ,ssy, ssz, 
 			updateTranslation, updateRotation, updateScale
 		)
-		emitPythonSignal( 'entity.modified', entity )
+		emitPythonSignal( 'entity.modified', entity, "translation" )
 	end
 	self.syncing = false
 end

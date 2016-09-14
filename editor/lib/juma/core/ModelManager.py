@@ -173,6 +173,10 @@ class ObjectModel(DataType):
 		f = self.getFieldInfo(id)
 		f.setValue(obj, value)
 
+	def calculateField(self, obj, id):
+		f = self.getFieldInfo(id)
+		f.calculate(obj)
+
 	def isFieldOverrided( self, obj, id ):
 		return False
 
@@ -187,6 +191,7 @@ class Field(object):
 		self.default   = option.get( 'default',  None )
 		self.getter	   = option.get( 'get',      True )
 		self.setter	   = option.get( 'set',      True )
+		self.calculate = option.get( 'calc', 	 False )
 		self.readonly  = option.get( 'readonly', False )
 		if self.setter == False: self.readonly = True
 		option[ 'readonly' ] = self.readonly
@@ -222,6 +227,11 @@ class Field(object):
 				setattr(obj, self.id, value)
 		else:
 			self.setter(obj, value)
+
+	def calculate( self, obj ):
+		if self.readonly: return 
+		if self.calculate:
+			self.calculate(obj)
 
 ##----------------------------------------------------------------##
 ## ModelManager
