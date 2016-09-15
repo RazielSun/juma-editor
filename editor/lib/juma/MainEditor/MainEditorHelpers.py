@@ -105,6 +105,11 @@ class ToolSizeWidget( QtGui.QWidget ):
 		self.xEdit.setText( '{}'.format(self.valueX) )
 		self.yEdit.setText( '{}'.format(self.valueY) )
 
+	def setValues( self, x, y ):
+		self.valueX = x
+		self.valueY = y
+		self.setup()
+
 	def valueChangedX( self, text ):
 		if text =='':
 			text = '0'

@@ -62,6 +62,7 @@ class GraphEditor( MainEditorModule ):
 		self.delegate.load( _getModulePath( 'GraphEditor.lua' ) )
 
 		self.addTool( 'hierarchy/create_entity', label ='Create', icon = 'plus_mint' )
+		self.addTool( 'hierarchy/remove_entity', label ='Remove', icon = 'minus' )
 
 		# MENU
 		self.findMenu( 'main/entity' ).addChild([

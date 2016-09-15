@@ -68,31 +68,10 @@ function CanvasGrid:resizeView( width, height )
 	self.viewSize = { width or 0, height or 0 }
 end
 
+function CanvasGrid:setSize( w, h )
+	self.gridSize = { w, h }
+end
+
 ---------------------------------------------------------------------------------
 
 return CanvasGrid
-
--- function CanvasGrid:getWidth()
--- 	return self.gridSize[1]
--- end
-
--- function CanvasGrid:getHeight()
--- 	return self.gridSize[2]
--- end
-
--- function CanvasGrid:setWidth( w )
--- 	self:setSize( w, self:getHeight() )
--- end
-
--- function CanvasGrid:setHeight( h )
--- 	self:setSize( self:getWidth(), h )
--- end
-
--- function CanvasGrid:setSize( w, h )
--- 	self.gridSize = { w, h }
--- end
-
--- function CanvasGrid:getSize()
--- 	return self.gridSize[1], self.gridSize[2]
--- end
-

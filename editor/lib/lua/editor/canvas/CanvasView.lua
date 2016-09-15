@@ -74,6 +74,14 @@ function CanvasView:resizeCanvas( w, h )
 end
 
 ---------------------------------------------------------------------------------
+function CanvasView:resizeGrid( w, h )
+	if self.grid then
+		self.grid:setSize( w, h )
+	end
+
+	self:updateCanvas()
+end
+
 function CanvasView:changeVisibleGrid()
 	local vis = not self.grid.visible
 	self.grid:setVisible( vis )

@@ -212,6 +212,11 @@ class SceneView( MainEditorModule ):
 			self.addTool( 'scene_view_config/scene_settings', label ='Scene Settings', icon = 'cog' )
 
 		if params.get('grid', True):
+			window.gridsize = gridsize = ToolSizeWidget( None )
+			gridsize.setValues( 100, 100 )
+			gridsize.owner = self
+			gridsize.valuesChanged.connect( self.onGridResize )
+			self.addTool( 'scene_view_config/grid_frame', widget = gridsize )
 			self.addTool( 'scene_view_config/grid_view', label = 'Grid', icon = 'grid' )
 
 		if params.get('frame_size', False):
@@ -463,6 +468,12 @@ class SceneView( MainEditorModule ):
 		if canvas:
 			canvas.makeCurrent()
 			self.forceUpdate()
+
+	def onGridResize( self, width, height ):
+		canvas = self.getCanvas()
+		if canvas:
+			canvas.makeCurrent()
+			canvas.safeCallMethod( 'view', 'resizeGrid', width, height )
 
 	def onFrameResize( self, width, height ):
 		canvas = self.getCanvas()
