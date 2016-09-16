@@ -24,6 +24,12 @@ function CanvasView:initViewport()
 	self.viewport = viewport
 end
 
+function CanvasView:initCamera()
+	CoreCanvas.initCamera(self)
+	local screen = self:getScene():getRootGroup()
+	screen.defaultLayer:setCamera( self.camera )
+end
+
 function CanvasView:initAddons()
 	self.grid = self:add( CanvasGrid() )
 	self.frame = self:add( CanvasFrame( { ui = self:getScene().jui } ) )

@@ -177,6 +177,8 @@ class GraphEditor( MainEditorModule ):
 
 		if name == 'create_entity':
 			self.createEntity()
+		elif name == 'remove_entity':
+			self.doCommand( 'main_editor/remove_entity' )
 
 	def onMoaiClean( self ):
 		self.tree.clear()
