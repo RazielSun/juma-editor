@@ -38,6 +38,11 @@ def popObjectEditorFromCache( typeId ):
 			editor.container.setUpdatesEnabled( True )
 		return editor
 
+def moaiCleanObjectEditorCache():
+	for key, pool in _OBJECT_EDITOR_CACHE.iteritems():
+		for editor in pool:
+			editor.onMoaiClean()
+
 def clearObjectEditorCache( typeId ):
 	if _OBJECT_EDITOR_CACHE.has_key( typeId ):
 		del _OBJECT_EDITOR_CACHE[ typeId ]
@@ -196,6 +201,10 @@ class CommonIntrospectorObject( IntrospectorObject ):
 	def unload( self ):
 		self.property.clear()
 		self.target = None
+
+	def onMoaiClean( self ):
+		if self.property:
+			self.property.onMoaiClean()
 
 	def onPropertyChanged( self, obj, id, value ):
 		print("CommonIntrospectorObject onPropertyChanged", obj, id, value)
@@ -364,6 +373,10 @@ class IntrospectorInstance(object):
 		self.updatePending = True
 		self.context = context
 
+	def onMoaiClean( self ):
+		self.clear()
+		moaiCleanObjectEditorCache()
+
 ##----------------------------------------------------------------##
 def registerEditorBuilder( typeId, editorBuilder ):
 	app.getModule('introspector').registerEditorBuilder( typeId, editorBuilder )
@@ -389,6 +402,7 @@ class Introspector( MainEditorModule ):
 		self.requestInstance()
 
 		# SIGNALS
+		signals.connect( 'moai.prepare_clean',self.onMoaiPrepareClean )
 		signals.connect( 'selection.changed', self.onSelectionChanged )
 		signals.connect( 'component.added',   self.onComponentAdded )
 		signals.connect( 'component.removed', self.onComponentRemoved )
@@ -425,6 +439,10 @@ class Introspector( MainEditorModule ):
 		return CommonIntrospectorObject
 
 	# CALLBACKS #
+	def onMoaiPrepareClean( self ):
+		for instance in self.instances:
+			instance.onMoaiClean()
+
 	def onSelectionChanged( self, selection, key ):
 		if key != 'scene': return
 		if not self.activeInstance: return

@@ -215,6 +215,7 @@ class MOAIEditCanvasBase( MOAICanvasBase ):
 	def onMoaiClean(self):
 		self.stopUpdateTimer()
 		self.stopRefreshTimer()
+		self.delegate.clearLua()
 
 	def onDraw(self):
 		runtime = self.runtime

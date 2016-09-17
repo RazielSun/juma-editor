@@ -132,6 +132,7 @@ class PropertyEditor( QtGui.QFrame ):
 				self.addFieldEditor( field )			
 			assert self.refreshing
 			self.refreshing = False
+
 		self.model  = model
 		self.target = target
 		self.refreshAll()
@@ -157,6 +158,7 @@ class PropertyEditor( QtGui.QFrame ):
 		if not target:
 			return
 		editor = self.editors.get( field, None )
+
 		if editor:
 			v = self.model.getFieldValue( target, field.id )
 			self.refreshing = True # avoid duplicated update
@@ -213,6 +215,10 @@ class PropertyEditor( QtGui.QFrame ):
 		self.model.setFieldValue( self.target, field.id, value )
 		self.propertyChanged.emit( self.target, field.id, value )
 		self.objectChanged.emit( self.target )
+
+	def onMoaiClean( self ):
+		self.clear()
+		self.model = False
 
 ##----------------------------------------------------------------##
 class FieldEditor( object ):
