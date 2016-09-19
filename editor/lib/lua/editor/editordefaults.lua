@@ -35,7 +35,6 @@ addColor( 'grid', 0.4, 0.4, 0.4, 0.5 )
 --------------------------------------------------------------------------------
 -- UI Register
 --------------------------------------------------------------------------------
-
 editorRegistryClassType( "UISprite", "ui" )
 editorRegistryClassType( "UILabel", "ui" )
 editorRegistryClassType( "UILabelSDF", "ui" )
@@ -44,33 +43,37 @@ editorRegistryClassType( "UIButtonColor", "ui" )
 editorRegistryClassType( "UIWidget", "ui" )
 
 --------------------------------------------------------------------------------
+-- Prefab UI Register
+--------------------------------------------------------------------------------
+editorRegistryClassType( "UISprite", "prefabUI" )
+editorRegistryClassType( "UILabel", "prefabUI" )
+editorRegistryClassType( "UILabelSDF", "prefabUI" )
+editorRegistryClassType( "UIButton", "prefabUI" )
+editorRegistryClassType( "UIButtonColor", "prefabUI" )
+editorRegistryClassType( "UIWidget", "prefabUI" )
+
+--------------------------------------------------------------------------------
 -- UI Register
 --------------------------------------------------------------------------------
-
 editorRegistryClassType( "Entity", "entity" )
 editorRegistryClassType( "Prefab", "entity" )
-
 editorRegistryClassType( "PropComponent", "component" )
 
 --------------------------------------------------------------------------------
 -- register Entities
 --------------------------------------------------------------------------------
-local Entity = require("entity.Entity")
-local Prefab = require("entity.Prefab")
-
-registerEntity( 'Entity', Entity )
-registerEntity( 'Prefab', Prefab )
+registerEntity( 'Entity', require("entity.Entity") )
+registerEntity( 'Prefab', require("entity.Prefab") )
 
 --------------------------------------------------------------------------------
 -- register Components
 --------------------------------------------------------------------------------
-local PropComponent = require("entity.components.PropComponent")
-
-registerComponent( 'PropComponent', PropComponent )
+registerComponent( 'PropComponent', require("entity.components.PropComponent") )
 
 ---------------------------------------------------------------------------------
 
 registerEditorSceneCanvasForType("scenes.BaseEditorScene", "canvas.CanvasView", "scene")
 registerEditorSceneCanvasForType("scenes.UIEditorScene", "canvas.ui.CanvasView", "ui")
+registerEditorSceneCanvasForType("scenes.PrefabUIEditorScene", "canvas.ui.CanvasView", "prefabUI")
 registerEditorSceneCanvasForType("scenes.BaseEditorScene", "canvas.3d.CanvasView", "scene3d")
 registerEditorSceneCanvasForType("scenes.BaseEditorScene", "canvas.preview.CanvasView", "preview3d")

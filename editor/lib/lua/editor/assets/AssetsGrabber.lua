@@ -9,9 +9,10 @@ local AssetsGrabber = {}
 
 function AssetsGrabber.grabFromResourceMgr()
 	AssetsGrabber.grabSprites()
-	AssetsGrabber.grabFonts()
-	AssetsGrabber.grabLayout()
-	AssetsGrabber.grabUI()
+	AssetsGrabber.grabResource( "font", "%.ttf", "fonts/" )
+	AssetsGrabber.grabResource( "scene", "%.scene", "scenes/" )
+	AssetsGrabber.grabResource( "ui", "%.ui", "ui/" )
+	AssetsGrabber.grabResource( "prefabUI", "%.prefabUI", "ui/" )
 	AssetsGrabber.grabWindows()
 	if AssetsGrabber.grabProjectFiles then
 		AssetsGrabber.grabProjectFiles()
@@ -32,7 +33,6 @@ function AssetsGrabber.grabSprites()
 
 	for name, valid in pairs(sprites) do
 		if valid then
-			-- print("register: sprite: ", name)
 			registerAssetNodeInLibrary( name, "sprite" )
 		end
 	end
@@ -64,48 +64,18 @@ function AssetsGrabber.setupAtlas( path, atlasses )
     table.insert( atlasses, atlas )
 end
 
-function AssetsGrabber.grabFonts()
-	local folders = { '', 'fonts/' }
+function AssetsGrabber.grabResource( name, format, path )
+	local folders = { '', path }
 	local cache = {}
 
-    AssetsGrabber.findInPath( '', folders, cache, "%.ttf" )
+	AssetsGrabber.findInPath( '', folders, cache, format )
 
     for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
-    	AssetsGrabber.findInPath( pathInfo.path, folders, cache, "%.ttf" )
+    	AssetsGrabber.findInPath( pathInfo.path, folders, cache, format )
     end
 
     for _, item in ipairs(cache) do
-    	registerAssetNodeInLibrary( item, "font" )
-    end
-end
-
-function AssetsGrabber.grabLayout()
-	local folders = { '', 'scenes/' }
-	local cache = {}
-
-	AssetsGrabber.findInPath( '', folders, cache, "%.scene" )
-
-    for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
-    	AssetsGrabber.findInPath( pathInfo.path, folders, cache, "%.scene" )
-    end
-
-    for _, item in ipairs(cache) do
-    	registerAssetNodeInLibrary( item, "scene" )
-    end
-end
-
-function AssetsGrabber.grabUI()
-	local folders = { '', 'ui/' }
-	local cache = {}
-
-	AssetsGrabber.findInPath( '', folders, cache, "%.ui" )
-
-    for i, pathInfo in ipairs(ResourceMgr.resourceDirectories) do
-    	AssetsGrabber.findInPath( pathInfo.path, folders, cache, "%.ui" )
-    end
-
-    for _, item in ipairs(cache) do
-    	registerAssetNodeInLibrary( item, "ui" )
+    	registerAssetNodeInLibrary( item, name )
     end
 end
 
@@ -113,6 +83,7 @@ function AssetsGrabber.grabWindows()
 	registerAssetNodeInLibrary( "scene", "create_scene" )
 	registerAssetNodeInLibrary( "scene3d", "create_scene" )
 	registerAssetNodeInLibrary( "ui", "create_scene" )
+	registerAssetNodeInLibrary( "prefabUI", "create_scene" )
 end
 
 ---------------------------------------------------------------------------------

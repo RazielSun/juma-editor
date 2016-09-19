@@ -13,6 +13,9 @@
 		{
 			"name" : "ui",
 			"frame_size" : true
+		},
+		{
+			"name" : "prefabUI"
 		}
 	]
 }
