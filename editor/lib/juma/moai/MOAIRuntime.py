@@ -307,6 +307,7 @@ class MOAIRuntime( EditorModule ):
 		return _G.getEditorCommandRegistry( name )
 
 	def getLuaClassRegistry( self, classType ):
+		print("getLuaClassRegistry", classType)
 		return _G.getEditorRegistry( classType )
 
 	def getNewMeshExporter( self ):

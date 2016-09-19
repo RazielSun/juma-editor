@@ -43,16 +43,6 @@ editorRegistryClassType( "UIButtonColor", "ui" )
 editorRegistryClassType( "UIWidget", "ui" )
 
 --------------------------------------------------------------------------------
--- Prefab UI Register
---------------------------------------------------------------------------------
-editorRegistryClassType( "UISprite", "prefabUI" )
-editorRegistryClassType( "UILabel", "prefabUI" )
-editorRegistryClassType( "UILabelSDF", "prefabUI" )
-editorRegistryClassType( "UIButton", "prefabUI" )
-editorRegistryClassType( "UIButtonColor", "prefabUI" )
-editorRegistryClassType( "UIWidget", "prefabUI" )
-
---------------------------------------------------------------------------------
 -- UI Register
 --------------------------------------------------------------------------------
 editorRegistryClassType( "Entity", "entity" )
