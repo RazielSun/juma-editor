@@ -17,6 +17,8 @@ function UIEditorScene:init( option )
 	local option = option or {}
 	BaseEditorScene.init(self, option)
 
+	self.SCENE_TYPE = "ui"
+
 	local viewport = MOAIViewport.new()
 	self.viewport = viewport
 

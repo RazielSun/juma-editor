@@ -61,6 +61,9 @@ function createEditorCanvasScene( stype )
 	if builder then
 		scene = builder()
 		scene.EDITOR_TYPE = stype
+		if not scene.SCENE_TYPE then
+			scene.SCENE_TYPE = stype
+		end
 		scene:setEnv( env )
 		scene:setInputDevice( createEditorCanvasInputDevice( env ) )
 	end

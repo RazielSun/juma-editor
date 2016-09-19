@@ -126,7 +126,7 @@ class GraphEditor( MainEditorModule ):
 		self.tree.hide()
 
 		if scene:
-			self.sceneType = scene.EDITOR_TYPE
+			self.sceneType = scene.SCENE_TYPE
 
 		self.delegate.safeCallMethod( 'editor', 'changeScene', scene )
 

@@ -15,6 +15,7 @@ function BaseEditorScene:init( option )
 	local option = option or {}
 	self.bg_color = { 0.06, 0.06, 0.06, 1.0 }
 	EditorScene.init(self, option)
+	self.SCENE_TYPE = 'scene'
 end
 
 ---------------------------------------------------------------------------------
