@@ -21,7 +21,7 @@ lib_nojit = [
     'lib/nojit/libmoai-osx-luaext.a',
     'lib/nojit/libmoai-osx-sdl.a',
     'lib/nojit/libmoai-osx-sim.a',
-    'lib/nojit/libmoai-osx-spine.a',
+    'lib/nojit/libmoai-osx-spine-v3.a',
     'lib/nojit/libmoai-osx-untz.a',
     'lib/nojit/libmoai-osx-zl-core.a',
     'lib/nojit/libmoai-osx-zl-crypto.a',

@@ -17,16 +17,17 @@ class SizeComboBox( QtGui.QComboBox ):
 	dict( icon = 'macbook', width = 600, height = 400 ),
 	dict( icon = 'macbook', width = 640, height = 480 ),
 	dict( icon = 'iphone', width = 320, height = 480 ),
+	dict( icon = 'iphone_h', width = 480, height = 320 ),
 	dict( icon = 'iphone', width = 320, height = 568 ),
+	dict( icon = 'iphone_h', width = 568, height = 320 ),
 	dict( icon = 'iphone', width = 375, height = 667 ),
+	dict( icon = 'iphone_h', width = 667, height = 375 ),
 	dict( icon = 'iphone', width = 414, height = 736 ),
+	dict( icon = 'iphone_h', width = 736, height = 414 ),
 	dict( icon = 'ipad', width = 384, height = 512 ),
-	dict( icon = 'iphone', width = 640, height = 960 ),
-	dict( icon = 'iphone', width = 640, height = 1136 ),
-	dict( icon = 'iphone', width = 750, height = 1334 ),
-	dict( icon = 'iphone', width = 828, height = 1472 ),
+	dict( icon = 'ipad_h', width = 512, height = 384 ),
 	dict( icon = 'ipad', width = 768, height = 1024 ),
-	dict( icon = 'ipad', width = 1536, height = 2048 ),
+	dict( icon = 'ipad_h', width = 1024, height = 768 ),
 	]
 
 	def __init__( self, parent ):

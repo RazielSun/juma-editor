@@ -252,7 +252,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "moai-fmod-studio/host.h"
 #include "moai-http-client/host.h"
 #include "moai-crypto/host.h"
-#include "moai-spine/host.h"
+#include "moai-spine-v3/host.h"
 #include "ct-util/host.h"
 #include "lua-headers/moai_lua.h"
 #include "moai-luaext/host.h"

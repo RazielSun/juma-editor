@@ -80,7 +80,7 @@ cdef extern from "moai-crypto/host.h":
     void            AKUCryptoAppInitialize      ()
     void            AKUCryptoContextInitialize  ()
 
-cdef extern from "moai-spine/host.h":
+cdef extern from "moai-spine-v3/host.h":
     void            AKUSpineAppFinalize        ()
     void            AKUSpineAppInitialize      ()
     void            AKUSpineContextInitialize  ()
