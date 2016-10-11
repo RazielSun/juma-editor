@@ -16,21 +16,6 @@ import jsonHelper
 from cache   import CacheManager
 from asset   import AssetLibrary
 
-# _GII_ENV_DIR            = 'env'
-# _GII_GAME_DIR           = 'game'
-# _GII_HOST_DIR           = 'host'
-# _GII_BINARY_DIR         = 'bin'
-
-# _GII_ASSET_DIR          = _GII_GAME_DIR + '/asset'
-# _GII_SCRIPT_LIB_DIR     = _GII_GAME_DIR + '/lib'
-
-# _GII_HOST_EXTENSION_DIR = _GII_HOST_DIR  + '/extension'
-
-# _GII_ENV_PACKAGE_DIR    = _GII_ENV_DIR  + '/packages'
-# _GII_ENV_DATA_DIR       = _GII_ENV_DIR  + '/data'
-# _GII_ENV_LIB_DIR        = _GII_ENV_DIR  + '/lib'
-# _GII_ENV_CONFIG_DIR     = _GII_ENV_DIR  + '/config'
-
 _PROJECT_LUA_DIR			= 'lua'
 _PROJECT_ASSETS_DIR 		= 'assets'
 _PROJECT_EDITOR_DIR 		= 'editor'
@@ -115,7 +100,8 @@ class Project(object):
 	def save(self):
 		signals.emitNow('project.presave', self)
 
-		jsonHelper.trySaveJSON( self.info, self.getBasePath( _PROJECT_INFO_FILE ) )
+		if self.getBasePath():
+			jsonHelper.trySaveJSON( self.info, self.getBasePath( _PROJECT_INFO_FILE ) )
 
 		#save asset & cache
 		self.assetLibrary.save()
@@ -126,7 +112,8 @@ class Project(object):
 		return True
 
 	def saveConfig( self ):
-		jsonHelper.trySaveJSON( self.config, self.getBasePath( _PROJECT_EDITOR_DIR + '/' + _PROJECT_CONFIG_FILE ))
+		if self.getBasePath():
+			jsonHelper.trySaveJSON( self.config, self.getBasePath( _PROJECT_EDITOR_DIR + '/' + _PROJECT_CONFIG_FILE ))
 
 	def getPath( self, path = None ):
 		return self.getBasePath( path )
