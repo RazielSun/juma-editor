@@ -81,7 +81,8 @@ def multiplyTransform( node, root ):
 
 def quatToEuler( q ):
     a = math.atan2(2*(q.w*q.x+q.y*q.z), 1-2*(q.x*q.x+q.y*q.y))
-    b = math.asin(2*(q.w*q.y-q.z*q.x))
+    val = 2*(q.w*q.y-q.z*q.x)
+    b = math.asin(max(-1.0, min(1.0, val)))
     c = math.atan2(2*(q.w*q.z+q.x*q.y),1-2*(q.y*q.y+q.z*q.z))
     return a, b, c
     
