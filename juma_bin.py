@@ -13,7 +13,7 @@ def getMainModulePath():
 	if isPythonFrozen():
 		p = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding( )))
 		if platform.system() == u'Darwin':
-			return os.path.realpath( p + '/../../..' )
+			return os.environ.get('JUMA_IDE_PATH') or os.path.realpath( p + '/../../..' )
 		elif platform.system() == u'Windows':
 			return p
 		else:
@@ -26,7 +26,7 @@ def getMainModulePath():
 		if hasattr( __main__, "__gii_path__" ):
 			return __main__.__gii_path__
 		else:
-			mainfile = os.path.realpath( __main__.__file__ )
+			mainfile = os.path.realpath( __main__.__file__ ) # from juma ide
 			return os.path.dirname( mainfile )
 
 ##----------------------------------------------------------------##

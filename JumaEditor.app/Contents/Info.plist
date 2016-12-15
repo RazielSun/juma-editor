@@ -80,7 +80,7 @@
 	<key>PyRuntimeLocations</key>
 	<array>
 		<string>@executable_path/../Frameworks/Python.framework/Versions/2.7/Python</string>
-		<string>/usr/local/Cellar/python/2.7.12/Frameworks/Python.framework/Versions/2.7/Python</string>
+		<string>/usr/local/Cellar/python/2.7.12_2/Frameworks/Python.framework/Versions/2.7/Python</string>
 	</array>
 	<key>PythonInfoDict</key>
 	<dict>

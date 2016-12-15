@@ -77,9 +77,11 @@ function BaseMesh:initWithParams()
 	self.vertexFormat = vertexFormat
 
 	local vbo = MOAIVertexBuffer.new ()
+	vbo:reserveVBOs (1)
 	self.vbo = vbo
 
 	local ibo = MOAIIndexBuffer.new ()
+	ibo:reserveVBOs (1)
 	self.ibo = ibo
 end
 
