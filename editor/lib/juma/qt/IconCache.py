@@ -20,7 +20,7 @@ def getIcon(name, fallback=None):
 	if not path:
 		if fallback:
 			return getIcon(fallback)
-		logging.error('icon not found: %s' % name)
+		# logging.error('icon not found: %s' % name)
 		return QtGui.QIcon()
 
 	icon = QtGui.QIcon(QtGui.QPixmap(path))
