@@ -37,7 +37,17 @@ moai_root = os.environ["MOAI_ROOT"]
 cdir = os.path.dirname(os.path.realpath( __file__ ))
 extensions_path = os.path.abspath(os.path.join(cdir, "../../extensions"))
 
-extensions_src = [ os.path.join(extensions_path,"ParticlePresets.cpp") ]
+
+extensions_src = []
+
+for f in os.listdir(extensions_path):
+    filename = os.path.join(extensions_path, f)
+    ext = os.path.splitext(f)[1][1:]
+    if os.path.isfile(filename) and ext == 'cpp':
+        extensions_src.append( filename )
+        print("Added extension file: %s" % filename)
+
+# extensions_src = [ os.path.join(extensions_path,"ParticlePresets.cpp") ]
 extensions_includes = [ extensions_path ]
 
 sources = ["moaipy.pyx", "lock.pxi"]
@@ -69,7 +79,7 @@ setup(
             include_dirs=[
             os.path.join(moai_root, 'src'),
             os.path.join(moai_root, '3rdparty/lua-5.1.3/src'),
-            extensions_path
+            extensions_path,
             ])
     ]
 )
