@@ -49,7 +49,7 @@ class MainWindow( QMainWindow ):
 
         self.centerTabWidget = QtGui.QTabWidget( None )
         self.centerTabWidget.setTabsClosable( True )
-        self.centerTabWidget.setMovable( False )
+        self.centerTabWidget.setMovable( True )
 
         self.setCentralWidget( self.centerTabWidget )
 
@@ -115,6 +115,7 @@ class MainWindow( QMainWindow ):
         size = windowOption.get('size',None)
         if size:
             window.resize(*size)
+
         return window
 
     def requestDockWindow(self, id, **dockOptions ):

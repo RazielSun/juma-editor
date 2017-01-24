@@ -65,8 +65,12 @@ function AssimpMesh:setNode( node )
         local vtx = node.vertices [ i ]
         vbo:writeFloat ( sz * vtx [ 0 ], sz * vtx [ 1 ], sz * vtx [ 2 ] )
 
-        local uv = node.texturecoords [ 0 ][ i ]
-        vbo:writeFloat ( uv [ 0 ], uv [ 1 ] )
+        if node.uvcounts > 0 then
+	        local uv = node.texturecoords [ 0 ][ i ]
+	        vbo:writeFloat ( uv [ 0 ], uv [ 1 ] )
+	    else
+	    	vbo:writeFloat ( 0.0, 0.0 )
+	    end
         
         if self.useLightMap then
         	local uv2 = node.texturecoords [ 1 ][ i ]
