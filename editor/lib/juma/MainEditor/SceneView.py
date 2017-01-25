@@ -242,16 +242,17 @@ class SceneView( MainEditorModule ):
 		requestSearchView( 
 			context      = 'asset',
 			type         = stype,
-			multiple_selection = False,
+			multiple_selection = True,
 			on_selection = self.onSceneSearchSelection,
 			on_cancel    = self.onSceneSearchCancel,
 			# on_search    = self.onSceneSearch,
 			)
 
 	def openWindowAs( self, stype ):
-		filePath, filt = QFileDialog.getOpenFileName(self.getMainWindow(), "Open As", self.getProject().path or "~", "File (*.{})".format(stype))
-		if filePath:
-			self.newWindow( filePath, stype )
+		filePaths, filt = QFileDialog.getOpenFileNames(self.getMainWindow(), "Open As", self.getProject().path or "~", "File (*.{})".format(stype))
+		if filePaths:
+			for filePath in filePaths:
+				self.newWindow( filePath, stype )
 
 	def saveWindow( self ):
 		stype = "scene"
@@ -401,7 +402,11 @@ class SceneView( MainEditorModule ):
 	# Scene Search Items
 	def onSceneSearchSelection( self, target ):
 		if target:
-			self.newWindow( target.getNodePath(), target.getType() )
+			if isinstance(target, list):
+				for t in target:
+					self.newWindow( t.getNodePath(), t.getType() )
+			else:
+				self.newWindow( target.getNodePath(), target.getType() )
 
 	def onSceneSearchCancel( self ):
 		pass
