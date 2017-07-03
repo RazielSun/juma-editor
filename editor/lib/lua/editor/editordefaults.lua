@@ -40,6 +40,7 @@ editorRegistryClassType( "UILabel", "ui" )
 editorRegistryClassType( "UILabelSDF", "ui" )
 editorRegistryClassType( "UIButton", "ui" )
 editorRegistryClassType( "UIButtonColor", "ui" )
+editorRegistryClassType( "UIToggle", "ui" )
 editorRegistryClassType( "UIWidget", "ui" )
 
 --------------------------------------------------------------------------------
