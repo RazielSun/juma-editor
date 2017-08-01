@@ -10,8 +10,6 @@ import ctypes
 from ctypes import POINTER
 import operator
 
-from juma.core.MainModulePath import getMainModulePath
-
 try: import numpy
 except: numpy = None
 
@@ -25,7 +23,6 @@ additional_dirs, ext_whitelist = [],[]
 # depending on the platform we're running on.
 if os.name=='posix':
     additional_dirs.append('./')
-    additional_dirs.append(getMainModulePath('editor/lib/3rdparty/osx'))
     additional_dirs.append('/usr/lib/')
     additional_dirs.append('/usr/local/lib/')
 

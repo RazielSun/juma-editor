@@ -35,9 +35,9 @@ class PyAssimpConverter( object ):
 
 	##----------------------------------------------------------------##
 	def convert(self, obj, options):
-		processing = (aiProcessPreset_TargetRealtime_MaxQuality|aiProcess_FlipUVs)
+		processing = (aiProcess_Triangulate|aiProcessPreset_TargetRealtime_MaxQuality|aiProcess_FlipUVs)
 		if obj.GetStaticBatch():
-			processing = (aiProcessPreset_TargetRealtime_MaxQuality|aiProcess_FlipUVs|aiProcess_PreTransformVertices)
+			processing = (aiProcess_Triangulate|aiProcessPreset_TargetRealtime_MaxQuality|aiProcess_FlipUVs|aiProcess_PreTransformVertices)
 
 		scene = pyassimp.load(obj.GetPath( True ), processing = processing)
 
