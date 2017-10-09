@@ -42,7 +42,7 @@ class ArrayViewWidget( QtGui.QWidget ):
 		ui.totalBtn.setText( 'Save' )
 		ui.totalBtn.clicked.connect( self.onTotalButtonClick )
 		
-		self.setMinimumSize( 400, 300  )
+		self.setMinimumSize( 300, 200  )
 
 	def body( self ):
 		return self.ui.bodyLayout
@@ -77,6 +77,8 @@ class ArrayViewWidget( QtGui.QWidget ):
 				view = self.getLine()
 				self.body().addWidget( view )
 				self.views.append( view )
+		height = total * 28 + 40
+		self.resize( 350, height )
 
 	def fill( self, index, value ):
 		view = self.views[index]
