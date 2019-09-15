@@ -2,6 +2,20 @@
 
 ## About
 
+Editor for open-source game engine MOAI SDK.
+
+![](images/juma-editor-levels.png)
+
+You can create your custom window like this level editor.
+
+![](images/juma-editor-ui.png)
+
+You can develop and organize your ui.
+
+![](images/juma-editor-assets-manager.png)
+
+You can prepare a 3d mesh for MOAI SDK game engine and parse to engine format.
+
 ### Based on
 Vavius [IDE](https://github.com/Vavius/moai-ide)
 Gii [IDE](https://github.com/pixpil/gii)
